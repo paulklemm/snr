@@ -26,22 +26,18 @@ class BarChart extends React.Component {
 	}
 
 	componentDidMount() {
-		this.handle = window.setInterval(() => { this._update(); }, 100);
+		this.handle = window.setInterval(() => { this._update(); }, 500);
 	}
 
 	render() {
 		const width = this.props.width;
 		const height = this.props.height;
 
-		// coerce value to number
-		// const data = preData.map(({name, value}) => ({name, value: +value}));
-
-		// const maxDatum = Math.max(...data.map(datum => datum.value));
 		const maxDatum = 1;
 
 		const y = scaleLinear()
-		  .domain([0, maxDatum])
-		  .range([height, 0]);
+			.domain([0, maxDatum])
+			.range([height, 0]);
 
 		const barWidth = width / this.state.data.name.length;
 		const bars = [];
@@ -50,16 +46,16 @@ class BarChart extends React.Component {
 			const value = this.state.data.value[i];
 			bars.push(
 				<g transform={`translate(${i * barWidth}, 0)`} key={name}>
-		  	  <rect y={y(value)} height={height - y(value)} width={barWidth - 1} />
-		  	  <text x={(barWidth / 2) - 6} y={y(value) - 15} dy=".75em">
-		  	    {name}
-		  	  </text>
-		  	</g>);
+					<rect y={y(value)} height={height - y(value)} width={barWidth - 1} />
+					<text x={(barWidth / 2) - 6} y={y(value) - 15} dy=".75em">
+						{name}
+					</text>
+				</g>);
 		}
 		return (
-		  <svg width={width} height={height}>
-		    {bars}
-		  </svg>
+			<svg width={width} height={height}>
+				{bars}
+			</svg>
 		);
 	}
 }
