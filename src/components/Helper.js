@@ -11,8 +11,8 @@ class Helper {
 	}
 	static createDummySettingsScatterplot() {
 		return ({
-			'x': {'variableName': 'xValues', 'label': 'Dummy x values'}, 
-			'y': {'variableName': 'yValues', 'label': 'Dummy y Values'}
+			'x': {'variableName': 'xValues', 'label': 'dummy x values'}, 
+			'y': {'variableName': 'yValues', 'label': 'dummy y values'}
 		});
 	}
 
