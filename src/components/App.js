@@ -22,7 +22,7 @@ class App extends React.Component {
 	render() {
 		return (
 			<div className="App">
-				<Hexplot width={600} height={600} data={Helper.getIris()} settings={Helper.getIrisSettingsScatterplot()} stressTest={{elementCount: 1000, milliseconds: 5000}} />
+				<Hexplot width={600} height={600} data={Helper.getIris()} settings={Helper.getIrisSettingsScatterplot()} stressTest={{elementCount: 1000, milliseconds: 5000}} hexSize={10} hexMax={10} />
 				<Scatterplot width={200} height={200} data={Helper.getIris()} settings={Helper.getIrisSettingsScatterplot()} stressTest={{elementCount: 1000, milliseconds: 5000}} />
 			</div>
 		);

@@ -9,6 +9,7 @@ import {scaleLinear} from 'd3-scale';
 // https://github.com/joelburget/d4/blob/master/demo/dynamic-hexbin.js
 // https://bl.ocks.org/mbostock/4248145
 // https://github.com/d3/d3-hexbin#_hexbin
+// TODO: Add Colormap Legend
 class Hexplot extends Scatterplot {
 
 	createPointArray(x, y) {
@@ -18,6 +19,24 @@ class Hexplot extends Scatterplot {
 			pointArray.push(point);
 		});
 		return pointArray;
+	}
+
+	static printHexagons(pointArray, hexRadius, maximum) {
+		let hexbin = D3Hexbin().radius(hexRadius);
+		let color = scaleLinear()
+			.domain([0, maximum])
+			.range(["rgba(0, 0, 0, 0)", "steelblue"])
+			.interpolate(interpolateLab);
+
+		const hexagons = hexbin(pointArray).map(point => (
+			<path
+				d={hexbin.hexagon(hexRadius - 0.5)}
+				transform={`translate(${point.x}, ${point.y})`}
+				fill={color(point.length)}
+				key={`${point.x},${point.y}`}
+			/>
+		));
+		return hexagons;
 	}
 
 	render() {
@@ -34,20 +53,7 @@ class Hexplot extends Scatterplot {
 		let dots = this.renderDots(this.state.data[xVariableName], this.state.data[yVariableName], 1);
 		let pointArray = this.createPointArray(this.state.data[xVariableName], this.state.data[yVariableName]);
 
-		const hexbin = D3Hexbin().radius(10);
-		let color = scaleLinear()
-			.domain([0, 10])
-			.range(["rgba(0, 0, 0, 0)", "steelblue"])
-			.interpolate(interpolateLab);
-
-		const hexagons = hexbin(pointArray).map(point => (
-			<path
-				d={hexbin.hexagon(10.5)}
-				transform={`translate(${point.x}, ${point.y})`}
-				fill={color(point.length)}
-				key={`${point.x},${point.y}`}
-			/>
-		));
+		const hexagons = Hexplot.printHexagons(pointArray, this.props.hexSize, this.props.hexMax);
 
 		// <p>{`Hexplot Element 1: ${this.state.data[xVariableName][1]}`}</p>
 		return(
