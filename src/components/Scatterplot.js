@@ -5,6 +5,7 @@ import * as d3axis from 'd3-axis';
 import * as D3Selection from 'd3-selection';
 import {max} from 'd3-array';
 import Helper from './Helper';
+import * as D3Brush from 'd3-brush';
 
 const margin = {top: 20, right: 20, bottom: 30, left: 40};
 
@@ -95,7 +96,14 @@ class Scatterplot extends React.Component {
 			let currentX = x[i];
 			let currentY = y[i];
 			dots.push(
-				<circle className="dot" r={size} cx={this.xScale(currentX)} cy={this.yScale(currentY)} key={`${currentX},${currentY},${i}`}></circle>
+				<circle 
+					className="dot" 
+					r={size} 
+					cx={this.xScale(currentX)} 
+					cy={this.yScale(currentY)} 
+					key={`${currentX},${currentY},${i}`}
+					onClick={(e) => this.handleClick(e, currentX, currentY)}>
+				</circle>
 			);
 		}
 		return dots;
@@ -108,6 +116,11 @@ class Scatterplot extends React.Component {
 		axisLabels.push(<text className='label' transform="rotate(-90)" y={6} dy=".71em" style={{'textAnchor': 'end'}} key={yLabel}>{yLabel}</text>);
 		axisLabels.push(<text className='label' x={this.widthNoMargin} y={this.heightNoMargin - 6} style={{'textAnchor': 'end'}} key={xLabel}>{xLabel}</text>);
 		return axisLabels;
+	}
+
+	handleClick(event, x, y){
+		// https://stackoverflow.com/questions/42576198/get-object-data-and-target-element-from-onclick-event-in-react-js
+		console.log(`Click Event on ${x}, ${y}`);
 	}
 
 	render() {
