@@ -16,8 +16,10 @@ class Scatterplot extends React.Component {
 			width: props.width,
 			height: props.height,
 			data: props.data,
-			settings: props.settings
+			settings: props.settings,
+			tooltip: []
 		};
+		this.onMouseLeaveTooltip = this.onMouseLeaveTooltip.bind(this);
 	}
 
 	setMargin() {
@@ -89,6 +91,26 @@ class Scatterplot extends React.Component {
 			return fauxAxes.toReact();
 	}
 
+	onMouseEnterTooltip(e, x, y) {
+		let tooltip = [];
+		let dx = this.xScale(x) + 5;
+		let dy = this.yScale(y) + 5;
+		tooltip.push(
+			<text x={dx} y={dy} key={`${dx},${dy}`}>
+				Tooltip of awesomeness
+			</text>
+		);
+		this.setState({
+			tooltip: tooltip
+		});
+	}
+
+	onMouseLeaveTooltip() {
+		this.setState({
+			tooltip: []
+		});
+	}
+
 	// create array of circle SVG elements based on the input array
 	renderDots(x, y, size){
 		let dots = [];
@@ -102,7 +124,9 @@ class Scatterplot extends React.Component {
 					cx={this.xScale(currentX)} 
 					cy={this.yScale(currentY)} 
 					key={`${currentX},${currentY},${i}`}
-					onClick={(e) => this.handleClick(e, currentX, currentY)}>
+					onClick={(e) => this.handleClick(e, currentX, currentY)}
+					onMouseEnter={(e) => this.onMouseEnterTooltip(e, currentX, currentY)}
+					onMouseLeave={this.onMouseLeaveTooltip}>
 				</circle>
 			);
 		}
@@ -133,17 +157,20 @@ class Scatterplot extends React.Component {
 		this.setScale(this.state.data[xVariableName], this.state.data[yVariableName]);
 
 		let axes = this.renderAxes();
-		let dots = this.renderDots(this.state.data[xVariableName], this.state.data[yVariableName], 1.5);
+		let dots = this.renderDots(this.state.data[xVariableName], this.state.data[yVariableName], 3);
 		let axisLabels = this.renderAxisLabels();
 
 		return (
-			<svg width={this.widthNoMargin + this.margin.left + this.margin.right} height={this.heightNoMargin + this.margin.top + this.margin.bottom}>
-				<g transform={`translate(${this.margin.left},${this.margin.top})`}>
-					{axes}
-					{dots}
-					{axisLabels}
-				</g>
-			</svg>
+			<div>
+				<svg width={this.widthNoMargin + this.margin.left + this.margin.right} height={this.heightNoMargin + this.margin.top + this.margin.bottom}>
+					<g transform={`translate(${this.margin.left},${this.margin.top})`}>
+						{axes}
+						{dots}
+						{axisLabels}
+						{this.state.tooltip}
+					</g>
+				</svg>
+			</div>
 		);
 	}
 }
