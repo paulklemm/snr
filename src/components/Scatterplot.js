@@ -6,6 +6,7 @@ import * as D3Selection from 'd3-selection';
 import {max} from 'd3-array';
 import Helper from './Helper';
 import * as D3Brush from 'd3-brush';
+import {mouse, select} from 'd3-selection';
 
 const margin = {top: 20, right: 20, bottom: 30, left: 40};
 
@@ -147,6 +148,34 @@ class Scatterplot extends React.Component {
 		console.log(`Click Event on ${x}, ${y}`);
 	}
 
+	onMouseMove(e) {
+		// let mySelect = select('.scatterplot');
+		// console.log(mySelect.node());
+		// console.log(mouse(mySelect.node()));
+		// let container = mySelect['_groups'][0][0]
+		// console.log(container);
+		// let [x, y] = mouse(container);
+		// this.setState({ mouseX: e.screenX, mouseY: e.screenY });
+		// this.setState({ mouseX: x, mouseY: y });
+	}
+
+	// Hack: Attach D3js Event listener
+	// https://swizec.com/blog/animating-with-react-redux-and-d3/swizec/6775
+	componentDidUpdate(){
+		// select('.scatterplot').on("mousemove", function() {
+		// 	let {x, y} = mouse(this);
+		// 	console.log(mouse(this));
+		// 	// D3 cannot access state
+		// 	//this.setState({ mouseX: x, mouseY: y });
+		// });
+		select('.scatterplot').on("mousemove", () => {
+			let {x, y} = mouse(this);
+			console.log(mouse(this));
+			// D3 cannot access state
+			//this.setState({ mouseX: x, mouseY: y });
+		});
+	}
+
 	render() {
 
 		let xVariableName = this.state.settings.x.variableName;
@@ -162,7 +191,12 @@ class Scatterplot extends React.Component {
 
 		return (
 			<div>
-				<svg width={this.widthNoMargin + this.margin.left + this.margin.right} height={this.heightNoMargin + this.margin.top + this.margin.bottom}>
+				<p>Mouse Position: {`${this.state.mouseX}, ${this.state.mouseY}`}</p>
+				<svg 
+					className="scatterplot"
+					width={this.widthNoMargin + this.margin.left + this.margin.right} 
+					height={this.heightNoMargin + this.margin.top + this.margin.bottom}
+					onMouseMove={this.onMouseMove.bind(this)}>
 					<g transform={`translate(${this.margin.left},${this.margin.top})`}>
 						{axes}
 						{dots}
@@ -174,14 +208,5 @@ class Scatterplot extends React.Component {
 		);
 	}
 }
-
-// Proptypes are deprecated
-// https://stackoverflow.com/questions/43303761/accessing-proptypes-via-the-main-react-package-is-deprecated
-// Scatterplot.propTypes = {
-// 	width: React.PropTypes.number.isRequired,
-// 	height: React.PropTypes.number.isRequired,
-// 	data: React.PropTypes.object.isRequired,
-// 	settings: React.PropTypes.object.isRequired
-// };
 
 export default Scatterplot;
