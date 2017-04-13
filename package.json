@@ -5,9 +5,11 @@
   "dependencies": {
     "d3": "^4.7.4",
     "d3-hexbin": "^0.2.2",
+    "material-ui": "^0.17.3",
     "react": "^15.5.3",
     "react-dom": "^15.5.3",
-    "react-faux-dom": "^3.0.1"
+    "react-faux-dom": "^3.0.1",
+    "react-tap-event-plugin": "^2.0.1"
   },
   "devDependencies": {
     "react-scripts": "0.9.5"
