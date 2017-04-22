@@ -5,6 +5,7 @@ import BarChart from './BarChart';
 import Scatterplot from './Scatterplot';
 import Helper from './Helper';
 import Hexplot from './Hexplot';
+import Piechart from './Piechart';
 import DynamicHexBin from './DynamicHexBin';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import injectTapEventPlugin from 'react-tap-event-plugin';
@@ -28,6 +29,7 @@ class App extends React.Component {
 				<div className="App">
 					<Hexplot width={200} height={200} data={Helper.getIris()} settings={Helper.getIrisSettingsScatterplot()} stressTest={{elementCount: 1000, milliseconds: 5000}} hexSize={10} hexMax={10} />
 					<Scatterplot width={400} height={400} data={Helper.getIris()} settings={Helper.getIrisSettingsScatterplot()} stressTest={{elementCount: 1000, milliseconds: 5000000}} />
+					<Piechart width={400} height={400} />
 				</div>
 			</MuiThemeProvider>
 		);
