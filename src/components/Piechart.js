@@ -1,29 +1,42 @@
 import React from 'react';
 import {pie, arc} from 'd3-shape';
+// https://github.com/d3/d3-scale/blob/master/README.md#schemeCategory10
+import {schemeCategory20} from 'd3-scale';
+
+// Code adapted from https://bl.ocks.org/mbostock/3887235
+// TODO: Add labels
 
 class Piechart extends React.Component {
 	render() {
-		let data = [1, 1, 2, 3, 5, 8, 13, 21];
-		let pieSlices = pie()(data);
-		let arcPaths = [];
+		let radius = Math.min(this.props.width, this.props.height) / 2;
+		let pieSlices = pie()(this.props.data);
 		let arcGenerator = arc();
-		for (let pieSlice in pieSlices) {
+		let arcPaths = [];
+		for (let i in pieSlices) {
 			// https://github.com/d3/d3-shape
-			console.log(
-				arc({
-					innerRadius: 0,
-					outerRadius: 100,
-					startAngle: 0,
-					endAngle: Math.PI / 2
-				})
+			let pieSlice = pieSlices[i]
+			let current_d = arcGenerator({
+				innerRadius: 0,
+				outerRadius: radius,
+				startAngle: pieSlice.startAngle,
+				endAngle: pieSlice.endAngle
+			});
+			arcPaths.push(
+				<path 
+					d={current_d}
+					key={`${pieSlice.startAngle},${pieSlice.endAngle}`}
+					fill={schemeCategory20[i]}>
+				</path>
 			);
 		}
-		console.log(pieSlices);
 		return(
-			<div>Piechart
-				<g className="arc">
+			<svg width={this.props.width} height={this.props.height}>
+				<g className="pie" transform={`translate(${this.props.width / 2}, ${this.props.height / 2})`}>
+					<g className="arc">
+						{arcPaths}
+					</g>
 				</g>
-			</div>
+			</svg>
 		);
 	}
 }
