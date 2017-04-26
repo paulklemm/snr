@@ -4,36 +4,42 @@ import {pie, arc} from 'd3-shape';
 import {schemeCategory20} from 'd3-scale';
 
 // Code adapted from https://bl.ocks.org/mbostock/3887235
-// TODO: Add labels
 
 class Piechart extends React.Component {
 	render() {
 		let radius = Math.min(this.props.width, this.props.height) / 2;
-		let pieSlices = pie()(this.props.data);
+		let pieGeneratorSlices = pie()(this.props.data);
 		let arcGenerator = arc();
-		let arcPaths = [];
-		for (let i in pieSlices) {
+		let pieSlices = [];
+		for (let i in pieGeneratorSlices) {
 			// https://github.com/d3/d3-shape
-			let pieSlice = pieSlices[i]
+			let pieSlice = pieGeneratorSlices[i]
 			let current_d = arcGenerator({
 				innerRadius: 0,
 				outerRadius: radius,
 				startAngle: pieSlice.startAngle,
 				endAngle: pieSlice.endAngle
 			});
-			arcPaths.push(
-				<path 
-					d={current_d}
-					key={`${pieSlice.startAngle},${pieSlice.endAngle}`}
-					fill={schemeCategory20[i]}>
-				</path>
+			let labelCentroid = arcGenerator.centroid({
+				innerRadius: radius - 20,
+				outerRadius: radius - 20,
+				startAngle: pieSlice.startAngle,
+				endAngle: pieSlice.endAngle
+			});
+			pieSlices.push(
+				<g className="pieSlice" key={`${pieSlice.startAngle},${pieSlice.endAngle}`}>
+					<path d={current_d} fill={schemeCategory20[i]}></path>
+					<text transform={`translate(${labelCentroid})`} dy="0.35em">
+						{this.props.data[i]}
+					</text>
+				</g>
 			);
 		}
 		return(
 			<svg width={this.props.width} height={this.props.height}>
 				<g className="pie" transform={`translate(${this.props.width / 2}, ${this.props.height / 2})`}>
 					<g className="arc">
-						{arcPaths}
+						{pieSlices}
 					</g>
 				</g>
 			</svg>

@@ -29,7 +29,7 @@ class App extends React.Component {
 				<div className="App">
 					{ /* <Hexplot width={200} height={200} data={Helper.getIris()} settings={Helper.getIrisSettingsScatterplot()} stressTest={{elementCount: 1000, milliseconds: 5000}} hexSize={10} hexMax={10} /> */}
 					{ /* <Scatterplot width={400} height={400} data={Helper.getIris()} settings={Helper.getIrisSettingsScatterplot()} stressTest={{elementCount: 1000, milliseconds: 5000000}} /> */ }
-					<Piechart width={100} height={100} data={[1, 1, 2, 3, 5, 8, 13, 21]}/>
+					<Piechart width={300} height={300} data={[1, 1, 2, 3, 5, 8, 13, 21]}/>
 				</div>
 			</MuiThemeProvider>
 		);
