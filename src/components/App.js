@@ -1,12 +1,16 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+// eslint-disable-next-line
 import BarChart from './BarChart';
 import Scatterplot from './Scatterplot';
 import Helper from './Helper';
+// eslint-disable-next-line
 import Hexplot from './Hexplot';
+// eslint-disable-next-line
 import Piechart from './Piechart';
+// eslint-disable-next-line
 import DynamicHexBin from './DynamicHexBin';
+import RNASeqData from './RNASeqData';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 injectTapEventPlugin();
@@ -23,13 +27,26 @@ injectTapEventPlugin();
 // 				<Scatterplot width={200} height={200} data={Helper.getIris()} settings={Helper.getIrisSettingsScatterplot()} stressTest={{elementCount: 100, milliseconds: 500}} />
 // <DynamicHexBin />
 class App extends React.Component {
+	constructor() {
+		super();
+		this.state = {};
+	}
+
+	componentWillMount() {
+		let rnaSeqData = new RNASeqData('./data/ncd_hfd.csv', ()=>{});
+		this.state = {
+			rnaSeqData: rnaSeqData
+		};
+	}
+
 	render() {
 		return (
 			<MuiThemeProvider>
 				<div className="App">
-					{ /* <Hexplot width={200} height={200} data={Helper.getIris()} settings={Helper.getIrisSettingsScatterplot()} stressTest={{elementCount: 1000, milliseconds: 5000}} hexSize={10} hexMax={10} /> */}
-					{ /* <Scatterplot width={400} height={400} data={Helper.getIris()} settings={Helper.getIrisSettingsScatterplot()} stressTest={{elementCount: 1000, milliseconds: 5000000}} /> */ }
-					<Piechart width={300} height={300} data={[1, 1, 2, 3, 5, 8, 13, 21]}/>
+					<BarChart width={200} height={200} />
+					<Hexplot width={200} height={200} data={Helper.getIris()} settings={Helper.getIrisSettingsScatterplot()} stressTest={{elementCount: 100, milliseconds: 2000}} hexSize={10} hexMax={10} />
+					<Scatterplot width={200} height={200} data={Helper.getIris()} settings={Helper.getIrisSettingsScatterplot()} stressTest={{elementCount: 100, milliseconds: 2000}} />
+					<Piechart width={200} height={200} data={[1, 1, 2, 3, 5, 8, 13, 21]}/>
 				</div>
 			</MuiThemeProvider>
 		);

@@ -26,7 +26,7 @@ class BarChart extends React.Component {
 	}
 
 	componentDidMount() {
-		this.handle = window.setInterval(() => { this._update(); }, 500);
+		this.handle = window.setInterval(() => { this._update(); }, 2000);
 	}
 
 	render() {
