@@ -33,7 +33,7 @@ class App extends React.Component {
 	}
 
 	componentWillMount() {
-		let rnaSeqData = new RNASeqData('./data/ncd_hfd.csv', ()=>{});
+		let rnaSeqData = new RNASeqData('./data/ncd_hfd_small.csv', 'default', 'default data set', ()=>{});
 		this.state = {
 			rnaSeqData: rnaSeqData
 		};
