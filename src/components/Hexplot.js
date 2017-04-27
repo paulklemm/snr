@@ -17,6 +17,8 @@ class Hexplot extends Scatterplot {
 		x.map((entry, i) => {
 			let point = [this.xScale(x[i]), this.yScale(y[i])];
 			pointArray.push(point);
+			// We do not need to return anything here, but 'map' expects a return
+			return point;
 		});
 		return pointArray;
 	}

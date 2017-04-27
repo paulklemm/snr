@@ -15,7 +15,7 @@ class Piechart extends React.Component {
 			// https://github.com/d3/d3-shape
 			let pieSlice = pieGeneratorSlices[i]
 			let current_d = arcGenerator({
-				innerRadius: 0,
+				innerRadius: radius - 40,
 				outerRadius: radius,
 				startAngle: pieSlice.startAngle,
 				endAngle: pieSlice.endAngle

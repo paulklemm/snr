@@ -5,7 +5,7 @@ import * as d3axis from 'd3-axis';
 import * as D3Selection from 'd3-selection';
 import {max} from 'd3-array';
 import Helper from './Helper';
-import * as D3Brush from 'd3-brush';
+// eslint-disable-next-line
 import {mouse, select} from 'd3-selection';
 
 const margin = {top: 20, right: 20, bottom: 30, left: 40};
@@ -169,10 +169,10 @@ class Scatterplot extends React.Component {
 		// 	//this.setState({ mouseX: x, mouseY: y });
 		// });
 		select('.scatterplot').on("mousemove", () => {
-			let {x, y} = mouse(this);
-			console.log(mouse(this));
+			// let {x, y} = mouse(this);
+			// console.log(mouse(this));
 			// D3 cannot access state
-			//this.setState({ mouseX: x, mouseY: y });
+			// this.setState({ mouseX: x, mouseY: y });
 		});
 	}
 

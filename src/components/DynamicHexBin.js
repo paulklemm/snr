@@ -39,7 +39,7 @@ export default class DynamicHexbin extends React.Component {
 
   _update() {
     theta += deltaTheta;
-    randomX = randomNormal(width / 2 + 80 * Math.cos(theta), 80),
+    randomX = randomNormal(width / 2 + 80 * Math.cos(theta), 80);
     randomY = randomNormal(height / 2 + 80 * Math.sin(theta), 80);
 
     for (let j = 0; j < k; ++j) {
