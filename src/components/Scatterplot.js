@@ -1,8 +1,7 @@
 import React from 'react';
 import * as ReactFauxDOM from 'react-faux-dom'
-import * as d3scale from 'd3-scale';
-import * as d3axis from 'd3-axis';
-import * as D3Selection from 'd3-selection';
+import {scaleLinear} from 'd3-scale';
+import {axisBottom, axisLeft} from 'd3-axis';
 import {max} from 'd3-array';
 import Helper from './Helper';
 // eslint-disable-next-line
@@ -30,11 +29,11 @@ class Scatterplot extends React.Component {
 	}
 
 	setScale(x, y) {
-		this.xScale = d3scale.scaleLinear()
+		this.xScale = scaleLinear()
 			.range([0, this.widthNoMargin])
 			.domain([0, max(x)]);
 
-		this.yScale = d3scale.scaleLinear()
+		this.yScale = scaleLinear()
 			.range([this.heightNoMargin, 0])
 			.domain([0, max(y)]);
 	}
@@ -74,19 +73,18 @@ class Scatterplot extends React.Component {
 //// End Stresstest //////////////////
 
 	renderAxes() {
-		let xAxis = d3axis.axisBottom()
+		let xAxis = axisBottom()
 			.scale(this.xScale);
 
-		let yAxis = d3axis.axisLeft()
+		let yAxis = axisLeft()
 			.scale(this.yScale);
 
-		// let faux = ReactFauxDOM.createElement("g");
 		let fauxAxes = new ReactFauxDOM.Element('g');
-		D3Selection.select(fauxAxes).append("g")
+		select(fauxAxes).append("g")
 			.attr("class", "x axis")
 			.attr("transform", `translate(0,${this.heightNoMargin})`)
 			.call(xAxis);
-		D3Selection.select(fauxAxes).append("g")
+		select(fauxAxes).append("g")
 			.attr("class", "y axis")
 			.call(yAxis);
 			return fauxAxes.toReact();

@@ -1,9 +1,6 @@
 import {range} from 'd3-array';
 
 class Helper {
-	constructor() {
-		console.log("Run Helper Functions Constructor");
-	}
 	static createDummyDataScatterplot(entryCount = 25) {
 		let xValues = range(entryCount).map(() => Math.random());
 		let yValues = range(entryCount).map(() => Math.random());
