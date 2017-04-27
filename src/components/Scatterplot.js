@@ -2,21 +2,28 @@ import React from 'react';
 import * as ReactFauxDOM from 'react-faux-dom'
 import {scaleLinear} from 'd3-scale';
 import {axisBottom, axisLeft} from 'd3-axis';
-import {max} from 'd3-array';
+import {max, min} from 'd3-array';
 import Helper from './Helper';
 // eslint-disable-next-line
 import {mouse, select} from 'd3-selection';
 
 const margin = {top: 20, right: 20, bottom: 30, left: 40};
-
+// Settings Example
+// {
+// 	x: 'pValue', 
+// 	y: 'fc'}
+// }
 class Scatterplot extends React.Component {
 	constructor(props){
 		super(props);
+		// DEBUG
+		let settings = { x: 'pValue', y: 'fc' };
 		this.state = {
 			width: props.width,
 			height: props.height,
-			data: props.data,
-			settings: props.settings,
+			rnaSeqData: props.data,
+			settings: settings,
+			// settings: props.settings,
 			tooltip: []
 		};
 		this.onMouseLeaveTooltip = this.onMouseLeaveTooltip.bind(this);
@@ -31,11 +38,15 @@ class Scatterplot extends React.Component {
 	setScale(x, y) {
 		this.xScale = scaleLinear()
 			.range([0, this.widthNoMargin])
-			.domain([0, max(x)]);
+			// TODO
+			.domain([-2, 2]);
+			// .domain([min(x), max(x)]);
 
 		this.yScale = scaleLinear()
 			.range([this.heightNoMargin, 0])
-			.domain([0, max(y)]);
+			// TODO
+			// .domain([min(y), max(y)]);
+			.domain([-2, 2]);
 	}
 
 //// Stresstest //////////////////
@@ -111,11 +122,13 @@ class Scatterplot extends React.Component {
 	}
 
 	// create array of circle SVG elements based on the input array
-	renderDots(x, y, size){
+	renderDots(size){
 		let dots = [];
-		for (let i = 0; i < x.length; i++) {
-			let currentX = x[i];
-			let currentY = y[i];
+		console.log(this.state.rnaSeqData.data);
+		console.log(this.state.settings.x);
+		for (let i in this.state.rnaSeqData.data) {
+			let currentX = this.state.rnaSeqData.data[i][this.state.settings.x];
+			let currentY = this.state.rnaSeqData.data[i][this.state.settings.y];
 			dots.push(
 				<circle 
 					className="dot" 
@@ -136,8 +149,8 @@ class Scatterplot extends React.Component {
 		let xLabel = this.state.settings.x.label;
 		let yLabel = this.state.settings.y.label;
 		let axisLabels = [];
-		axisLabels.push(<text className='label' transform="rotate(-90)" y={6} dy=".71em" style={{'textAnchor': 'end'}} key={yLabel}>{yLabel}</text>);
-		axisLabels.push(<text className='label' x={this.widthNoMargin} y={this.heightNoMargin - 6} style={{'textAnchor': 'end'}} key={xLabel}>{xLabel}</text>);
+		axisLabels.push(<text className='label' transform="rotate(-90)" y={6} dy=".71em" style={{'textAnchor': 'end'}} key={this.state.settings.y}>{this.state.settings.y}</text>);
+		axisLabels.push(<text className='label' x={this.widthNoMargin} y={this.heightNoMargin - 6} style={{'textAnchor': 'end'}} key={this.state.settings.x}>{this.state.settings.x}</text>);
 		return axisLabels;
 	}
 
@@ -176,15 +189,17 @@ class Scatterplot extends React.Component {
 
 	render() {
 
-		let xVariableName = this.state.settings.x.variableName;
-		let yVariableName = this.state.settings.y.variableName;
+		if (this.rnaSeqData == undefined) return (<div>no data</div>)
+
+		let xVariableName = this.state.settings.x;
+		let yVariableName = this.state.settings.y;
 
 		// reset margin and scale in case they changed
 		this.setMargin();
-		this.setScale(this.state.data[xVariableName], this.state.data[yVariableName]);
+		this.setScale(this.state.rnaSeqData.data[xVariableName], this.state.rnaSeqData.data[yVariableName]);
 
 		let axes = this.renderAxes();
-		let dots = this.renderDots(this.state.data[xVariableName], this.state.data[yVariableName], 3);
+		let dots = this.renderDots(3);
 		let axisLabels = this.renderAxisLabels();
 
 		return (

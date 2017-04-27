@@ -33,7 +33,11 @@ class App extends React.Component {
 	}
 
 	componentWillMount() {
-		let rnaSeqData = new RNASeqData('./data/ncd_hfd_small.csv', 'default', 'default data set', ()=>{});
+		let rnaSeqData = new RNASeqData('./data/ncd_hfd_small.csv', 'default', 'default data set', ()=>{
+			this.setState({
+				rnaSeqData: rnaSeqData
+			});
+		});
 		this.state = {
 			rnaSeqData: rnaSeqData
 		};
@@ -44,8 +48,9 @@ class App extends React.Component {
 			<MuiThemeProvider>
 				<div className="App">
 					<BarChart width={200} height={200} />
-					<Hexplot width={200} height={200} data={Helper.getIris()} settings={Helper.getIrisSettingsScatterplot()} stressTest={{elementCount: 100, milliseconds: 2000}} hexSize={10} hexMax={10} />
-					<Scatterplot width={200} height={200} data={Helper.getIris()} settings={Helper.getIrisSettingsScatterplot()} stressTest={{elementCount: 100, milliseconds: 2000}} />
+					{ /* <Hexplot width={200} height={200} data={Helper.getIris()} settings={Helper.getIrisSettingsScatterplot()} stressTest={{elementCount: 100, milliseconds: 2000}} hexSize={10} hexMax={10} /> */}
+					<Scatterplot width={200} height={200} data={this.state.rnaSeqData} />
+					{ /* <Scatterplot width={200} height={200} data={Helper.getIris()} settings={Helper.getIrisSettingsScatterplot()} stressTest={{elementCount: 100, milliseconds: 2000}} /> */ }
 					<Piechart width={200} height={200} data={[1, 1, 2, 3, 5, 8, 13, 21]}/>
 				</div>
 			</MuiThemeProvider>
