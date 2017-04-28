@@ -49,7 +49,8 @@ class App extends React.Component {
 				<div className="App">
 					<BarChart width={200} height={200} />
 					{ /* <Hexplot width={200} height={200} data={Helper.getIris()} settings={Helper.getIrisSettingsScatterplot()} stressTest={{elementCount: 100, milliseconds: 2000}} hexSize={10} hexMax={10} /> */}
-					<Scatterplot width={200} height={200} data={this.state.rnaSeqData} />
+					<Scatterplot width={600} height={400} data={this.state.rnaSeqData} settings={{ x: 'pValue', y: 'fc' }}/>
+					<Scatterplot width={400} height={200} data={Helper.getIrisNewFormat()} settings={{ x: 'sepalWidth', y: 'sepalLength' }}/>
 					{ /* <Scatterplot width={200} height={200} data={Helper.getIris()} settings={Helper.getIrisSettingsScatterplot()} stressTest={{elementCount: 100, milliseconds: 2000}} /> */ }
 					<Piechart width={200} height={200} data={[1, 1, 2, 3, 5, 8, 13, 21]}/>
 				</div>

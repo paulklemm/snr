@@ -13,6 +13,20 @@ class Helper {
 		});
 	}
 
+	static getIrisNewFormat() {
+		let iris = Helper.getIris();
+		let irisKeys = Object.keys(iris);
+		let irisNewFormat = [];
+		for (let i in iris[irisKeys[0]]) {
+			let newEntry = {};
+			for (let j in irisKeys) {
+				newEntry[irisKeys[j]] = iris[irisKeys[j]][i];
+			}
+			irisNewFormat.push(newEntry);
+		}
+		return {data: irisNewFormat};
+	}
+
 	static getIris() {
 		return ({
 			sepalLength: [5.1, 4.9, 4.7, 4.6, 5.0, 5.4, 4.6, 5.0, 4.4, 4.9, 5.4, 4.8, 4.8, 4.3, 5.8, 5.7, 5.4, 5.1, 5.7, 5.1, 5.4, 5.1, 4.6, 5.1, 4.8, 5.0, 5.0, 5.2, 5.2, 4.7, 4.8, 5.4, 5.2, 5.5, 4.9, 5.0, 5.5, 4.9, 4.4, 5.1, 5.0, 4.5, 4.4, 5.0, 5.1, 4.8, 5.1, 4.6, 5.3, 5.0, 7.0, 6.4, 6.9, 5.5, 6.5, 5.7, 6.3, 4.9, 6.6, 5.2, 5.0, 5.9, 6.0, 6.1, 5.6, 6.7, 5.6, 5.8, 6.2, 5.6, 5.9, 6.1, 6.3, 6.1, 6.4, 6.6, 6.8, 6.7, 6.0, 5.7, 5.5, 5.5, 5.8, 6.0, 5.4, 6.0, 6.7, 6.3, 5.6, 5.5, 5.5, 6.1, 5.8, 5.0, 5.6, 5.7, 5.7, 6.2, 5.1, 5.7, 6.3, 5.8, 7.1, 6.3, 6.5, 7.6, 4.9, 7.3, 6.7, 7.2, 6.5, 6.4, 6.8, 5.7, 5.8, 6.4, 6.5, 7.7, 7.7, 6.0, 6.9, 5.6, 7.7, 6.3, 6.7, 7.2, 6.2, 6.1, 6.4, 7.2, 7.4, 7.9, 6.4, 6.3, 6.1, 7.7, 6.3, 6.4, 6.0, 6.9, 6.7, 6.9, 5.8, 6.8, 6.7, 6.7, 6.3, 6.5, 6.2, 5.9],
@@ -26,6 +40,19 @@ class Helper {
 		return ({
 			'x': {'variableName': variableX, 'label': 'Sepal Width (cm)'}, 
 			'y': {'variableName': variableY, 'label': 'Sepal Length (cm)'}
+		});
+	}
+	// objectArray = fish, key = name
+	// fish[0].name = "Forelle"
+	// fish[1].name = "Barsh"
+	// to
+	// ["Forelle", "Barsh"]
+	static objectValueToArray(objectArray, key, convertNaN) {
+		return objectArray.map((value, i) => {
+			if (!convertNaN || !isNaN(value[key]))
+				return value[key];
+			else
+				return NaN;
 		});
 	}
 }

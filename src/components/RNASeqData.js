@@ -8,7 +8,13 @@ const columnsNameMappingDefault = {
 	fc: 'log2(fold_change)',
 	biotype: 'gene_biotype'
 };
-
+const dataType = {
+	pValue: 'float',
+	qValue: 'float',
+	name: 'string',
+	fc: 'float',
+	biotype: 'string'
+}
 class RNASeqData {
 	constructor(path, columnsNameMapping, name, callbackSuccess) {
 		console.log(`Reading RNASeq data ${path}`);
@@ -27,7 +33,7 @@ class RNASeqData {
 			if (error) {
 				this.error = true;
 			}
-			this.data = this.removeUnusedColumns(data);
+			this.data = this.removeUnusedColumnsAndFixDataTypes(data);
 			this.loading = false;
 			console.timeEnd('Loading and processing RNASeq Data');
 			// console.log(this.data.columns);
@@ -36,7 +42,10 @@ class RNASeqData {
 		})
 	}
 
-	removeUnusedColumns(data) {
+	// For efficiency reasons, two things are put here into one place for creating the data set:
+	// 1. Removing columns that are not requred, only ones that are in the mapping settings
+	// 2. Put variables into the proper format, e.g. converting strings to floats "123.456" => 123.456
+	removeUnusedColumnsAndFixDataTypes(data) {
 		let dataTidy = [];
 		// Get the array of valid columns so that we only have to define it in the constructor
 		let columnNames = Object.keys(this.columnsNameMapping);
@@ -46,8 +55,16 @@ class RNASeqData {
 			let entry = {};
 			// Iterate over the column names and add the values
 			for (let j in columnNames) {
-				// e.g. entry.pValue = data[i][columnsNameMapping.pValue]
-				entry[columnNames[j]] = data[i][this.columnsNameMapping[columnNames[j]]];
+				// Get the value - e.g. columnName: 'pValue' => value = data[i][columnsNameMapping.pValue]
+				let value = data[i][this.columnsNameMapping[columnNames[j]]]
+				// Check if data type conversion is required
+				if (dataType[columnNames[j]] == 'float')
+					// e.g. entry.pValue = parseFloat(value)
+					entry[columnNames[j]] = parseFloat(value);
+				else {
+					// e.g. entry.pValue = value
+					entry[columnNames[j]] = value;
+				}
 			}
 			dataTidy.push(entry);
 		}

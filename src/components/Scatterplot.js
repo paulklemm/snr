@@ -7,7 +7,7 @@ import Helper from './Helper';
 // eslint-disable-next-line
 import {mouse, select} from 'd3-selection';
 
-const margin = {top: 20, right: 20, bottom: 30, left: 40};
+const margin = {top: 20, right: 300, bottom: 30, left: 40};
 // Settings Example
 // {
 // 	x: 'pValue', 
@@ -16,14 +16,7 @@ const margin = {top: 20, right: 20, bottom: 30, left: 40};
 class Scatterplot extends React.Component {
 	constructor(props){
 		super(props);
-		// DEBUG
-		let settings = { x: 'pValue', y: 'fc' };
 		this.state = {
-			width: props.width,
-			height: props.height,
-			rnaSeqData: props.data,
-			settings: settings,
-			// settings: props.settings,
 			tooltip: []
 		};
 		this.onMouseLeaveTooltip = this.onMouseLeaveTooltip.bind(this);
@@ -31,22 +24,21 @@ class Scatterplot extends React.Component {
 
 	setMargin() {
 		this.margin = margin;
-		this.widthNoMargin = this.state.width - margin.left - margin.right;
-		this.heightNoMargin = this.state.height - margin.top - margin.bottom;
+		this.widthNoMargin = this.props.width - margin.left - margin.right;
+		this.heightNoMargin = this.props.height - margin.top - margin.bottom;
 	}
 
-	setScale(x, y) {
+	setScale() {
+		// First, get an array of both dimensions to allow for min/max calculation
+		let x = Helper.objectValueToArray(this.props.data.data, this.props.settings.x, true);
+		let y = Helper.objectValueToArray(this.props.data.data, this.props.settings.y, true);
 		this.xScale = scaleLinear()
 			.range([0, this.widthNoMargin])
-			// TODO
-			.domain([-2, 2]);
-			// .domain([min(x), max(x)]);
+			.domain([min(x), max(x)]);
 
 		this.yScale = scaleLinear()
 			.range([this.heightNoMargin, 0])
-			// TODO
-			// .domain([min(y), max(y)]);
-			.domain([-2, 2]);
+			.domain([min(y), max(y)]);
 	}
 
 //// Stresstest //////////////////
@@ -107,7 +99,7 @@ class Scatterplot extends React.Component {
 		let dy = this.yScale(y) + 5;
 		tooltip.push(
 			<text x={dx} y={dy} key={`${dx},${dy}`}>
-				Tooltip of awesomeness
+				{`${x}, ${y}`}
 			</text>
 		);
 		this.setState({
@@ -122,35 +114,43 @@ class Scatterplot extends React.Component {
 	}
 
 	// create array of circle SVG elements based on the input array
-	renderDots(size){
+	renderDots(size) {
+		// Keep track of the number of elements where one variable shows NaN
+		this.numberOfNaN = {x: 0, y: 0};
 		let dots = [];
-		console.log(this.state.rnaSeqData.data);
-		console.log(this.state.settings.x);
-		for (let i in this.state.rnaSeqData.data) {
-			let currentX = this.state.rnaSeqData.data[i][this.state.settings.x];
-			let currentY = this.state.rnaSeqData.data[i][this.state.settings.y];
-			dots.push(
-				<circle 
-					className="dot" 
-					r={size} 
-					cx={this.xScale(currentX)} 
-					cy={this.yScale(currentY)} 
-					key={`${currentX},${currentY},${i}`}
-					onClick={(e) => this.handleClick(e, currentX, currentY)}
-					onMouseEnter={(e) => this.onMouseEnterTooltip(e, currentX, currentY)}
-					onMouseLeave={this.onMouseLeaveTooltip}>
-				</circle>
-			);
+		for (let i in this.props.data.data) {
+			let currentX = this.props.data.data[i][this.props.settings.x];
+			let currentY = this.props.data.data[i][this.props.settings.y];
+			// Only create dot if x and y are numbers
+			if (!isNaN(currentX) && !isNaN(currentY)) {
+				dots.push(
+					<circle 
+						className="dot" 
+						r={size} 
+						cx={this.xScale(currentX)} 
+						cy={this.yScale(currentY)} 
+						key={`${currentX},${currentY},${i}`}
+						onClick={(e) => this.handleClick(e, currentX, currentY)}
+						onMouseEnter={(e) => this.onMouseEnterTooltip(e, currentX, currentY)}
+						onMouseLeave={this.onMouseLeaveTooltip}>
+					</circle>
+				);
+			}
+			else {
+				if (isNaN(currentX)) this.numberOfNaN.x++;
+				if (isNaN(currentY)) this.numberOfNaN.y++;
+			}
 		}
 		return dots;
 	}
 
 	renderAxisLabels(){
-		let xLabel = this.state.settings.x.label;
-		let yLabel = this.state.settings.y.label;
+		// Currently the name is the label
+		let xLabel = this.props.settings.x;
+		let yLabel = this.props.settings.y;
 		let axisLabels = [];
-		axisLabels.push(<text className='label' transform="rotate(-90)" y={6} dy=".71em" style={{'textAnchor': 'end'}} key={this.state.settings.y}>{this.state.settings.y}</text>);
-		axisLabels.push(<text className='label' x={this.widthNoMargin} y={this.heightNoMargin - 6} style={{'textAnchor': 'end'}} key={this.state.settings.x}>{this.state.settings.x}</text>);
+		axisLabels.push(<text className='label' transform="rotate(-90)" y={6} dy=".71em" style={{'textAnchor': 'end'}} key={this.props.settings.y}>{yLabel}</text>);
+		axisLabels.push(<text className='label' x={this.widthNoMargin} y={this.heightNoMargin - 6} style={{'textAnchor': 'end'}} key={this.props.settings.x}>{xLabel}</text>);
 		return axisLabels;
 	}
 
@@ -188,15 +188,15 @@ class Scatterplot extends React.Component {
 	}
 
 	render() {
-
-		if (this.rnaSeqData == undefined) return (<div>no data</div>)
-
-		let xVariableName = this.state.settings.x;
-		let yVariableName = this.state.settings.y;
+		if (this.props.data.data === undefined) {
+			return (<div>no data</div>);
+		}
+		let xVariableName = this.props.settings.x;
+		let yVariableName = this.props.settings.y;
 
 		// reset margin and scale in case they changed
 		this.setMargin();
-		this.setScale(this.state.rnaSeqData.data[xVariableName], this.state.rnaSeqData.data[yVariableName]);
+		this.setScale();
 
 		let axes = this.renderAxes();
 		let dots = this.renderDots(3);
@@ -205,6 +205,7 @@ class Scatterplot extends React.Component {
 		return (
 			<div>
 				<p>Mouse Position: {`${this.state.mouseX}, ${this.state.mouseY}`}</p>
+				<p>#Elements NaN: {`${this.props.settings.x}: ${this.numberOfNaN.x}`}, Y: {`${this.props.settings.y}: ${this.numberOfNaN.y}`}</p>
 				<svg 
 					className="scatterplot"
 					width={this.widthNoMargin + this.margin.left + this.margin.right} 
