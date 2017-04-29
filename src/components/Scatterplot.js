@@ -7,7 +7,7 @@ import Helper from './Helper';
 // eslint-disable-next-line
 import {mouse, select} from 'd3-selection';
 
-const margin = {top: 20, right: 300, bottom: 30, left: 40};
+const margin = {top: 20, right: 100, bottom: 30, left: 40};
 // Settings Example
 // {
 // 	x: 'pValue', 
@@ -29,16 +29,13 @@ class Scatterplot extends React.Component {
 	}
 
 	setScale() {
-		// First, get an array of both dimensions to allow for min/max calculation
-		let x = Helper.objectValueToArray(this.props.data.data, this.props.settings.x, true);
-		let y = Helper.objectValueToArray(this.props.data.data, this.props.settings.y, true);
 		this.xScale = scaleLinear()
 			.range([0, this.widthNoMargin])
-			.domain([min(x), max(x)]);
+			.domain([min(this.props.x), max(this.props.x)]);
 
 		this.yScale = scaleLinear()
 			.range([this.heightNoMargin, 0])
-			.domain([min(y), max(y)]);
+			.domain([min(this.props.y), max(this.props.y)]);
 	}
 
 //// Stresstest //////////////////
@@ -118,9 +115,9 @@ class Scatterplot extends React.Component {
 		// Keep track of the number of elements where one variable shows NaN
 		this.numberOfNaN = {x: 0, y: 0};
 		let dots = [];
-		for (let i in this.props.data.data) {
-			let currentX = this.props.data.data[i][this.props.settings.x];
-			let currentY = this.props.data.data[i][this.props.settings.y];
+		for (let i in this.props.x) {
+			let currentX = this.props.x[i];
+			let currentY = this.props.y[i];
 			// Only create dot if x and y are numbers
 			if (!isNaN(currentX) && !isNaN(currentY)) {
 				dots.push(
@@ -146,11 +143,11 @@ class Scatterplot extends React.Component {
 
 	renderAxisLabels(){
 		// Currently the name is the label
-		let xLabel = this.props.settings.x;
-		let yLabel = this.props.settings.y;
+		let xLabel = this.props.xLabel;
+		let yLabel = this.props.yLabel;
 		let axisLabels = [];
-		axisLabels.push(<text className='label' transform="rotate(-90)" y={6} dy=".71em" style={{'textAnchor': 'end'}} key={this.props.settings.y}>{yLabel}</text>);
-		axisLabels.push(<text className='label' x={this.widthNoMargin} y={this.heightNoMargin - 6} style={{'textAnchor': 'end'}} key={this.props.settings.x}>{xLabel}</text>);
+		axisLabels.push(<text className='label' transform="rotate(-90)" y={6} dy=".71em" style={{'textAnchor': 'end'}} key={this.props.yLabel}>{yLabel}</text>);
+		axisLabels.push(<text className='label' x={this.widthNoMargin} y={this.heightNoMargin - 6} style={{'textAnchor': 'end'}} key={this.props.xLabel}>{xLabel}</text>);
 		return axisLabels;
 	}
 
@@ -188,11 +185,11 @@ class Scatterplot extends React.Component {
 	}
 
 	render() {
-		if (this.props.data.data === undefined) {
+		if (this.props.x === undefined || this.props.y === undefined) {
 			return (<div>no data</div>);
 		}
-		let xVariableName = this.props.settings.x;
-		let yVariableName = this.props.settings.y;
+		let xVariableName = this.props.xLabel;
+		let yVariableName = this.props.yLabel;
 
 		// reset margin and scale in case they changed
 		this.setMargin();
@@ -205,7 +202,7 @@ class Scatterplot extends React.Component {
 		return (
 			<div>
 				<p>Mouse Position: {`${this.state.mouseX}, ${this.state.mouseY}`}</p>
-				<p>#Elements NaN: {`${this.props.settings.x}: ${this.numberOfNaN.x}`}, Y: {`${this.props.settings.y}: ${this.numberOfNaN.y}`}</p>
+				<p>#Elements NaN: {`${this.props.xLabel}: ${this.numberOfNaN.x}`}, Y: {`${this.props.yLabel}: ${this.numberOfNaN.y}`}</p>
 				<svg 
 					className="scatterplot"
 					width={this.widthNoMargin + this.margin.left + this.margin.right} 
