@@ -10,6 +10,8 @@ import Hexplot from './Hexplot';
 import Piechart from './Piechart';
 // eslint-disable-next-line
 import DynamicHexBin from './DynamicHexBin';
+// eslint-disable-next-line
+import ScatterplotRNASeqData from './ScatterplotRNASeqData';
 import RNASeqData from './RNASeqData';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import injectTapEventPlugin from 'react-tap-event-plugin';
@@ -48,10 +50,9 @@ class App extends React.Component {
 			<MuiThemeProvider>
 				<div className="App">
 					<BarChart width={200} height={200} />
-					{ /* <Hexplot width={200} height={200} data={Helper.getIris()} settings={Helper.getIrisSettingsScatterplot()} stressTest={{elementCount: 100, milliseconds: 2000}} hexSize={10} hexMax={10} /> */}
-					<Scatterplot width={600} height={400} data={this.state.rnaSeqData} settings={{ x: 'pValue', y: 'fc' }}/>
-					<Scatterplot width={400} height={200} data={Helper.getIrisNewFormat()} settings={{ x: 'sepalWidth', y: 'sepalLength' }}/>
-					{ /* <Scatterplot width={200} height={200} data={Helper.getIris()} settings={Helper.getIrisSettingsScatterplot()} stressTest={{elementCount: 100, milliseconds: 2000}} /> */ }
+					<Scatterplot width={200} height={200} x={Helper.getIris().sepalWidth} y={Helper.getIris().sepalLength} xLabel="Sepal Width" yLabel="Sepal Length" />
+					<ScatterplotRNASeqData width={200} height={200} rnaSeqData={Helper.getIrisNewFormat()} xName="sepalWidth" yName="sepalLength" />
+					<ScatterplotRNASeqData width={600} height={400} rnaSeqData={this.state.rnaSeqData} xName="pValue" yName="fc" />
 					<Piechart width={200} height={200} data={[1, 1, 2, 3, 5, 8, 13, 21]}/>
 				</div>
 			</MuiThemeProvider>

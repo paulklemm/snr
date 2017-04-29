@@ -47,12 +47,9 @@ class Helper {
 	// fish[1].name = "Barsh"
 	// to
 	// ["Forelle", "Barsh"]
-	static objectValueToArray(objectArray, key, convertNaN) {
+	static objectValueToArray(objectArray, key) {
 		return objectArray.map((value, i) => {
-			if (!convertNaN || !isNaN(value[key]))
 				return value[key];
-			else
-				return NaN;
 		});
 	}
 }

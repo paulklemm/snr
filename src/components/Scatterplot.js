@@ -28,14 +28,14 @@ class Scatterplot extends React.Component {
 		this.heightNoMargin = this.props.height - margin.top - margin.bottom;
 	}
 
-	setScale() {
+	setScale(x, y) {
 		this.xScale = scaleLinear()
 			.range([0, this.widthNoMargin])
-			.domain([min(this.props.x), max(this.props.x)]);
+			.domain([min(x), max(x)]);
 
 		this.yScale = scaleLinear()
 			.range([this.heightNoMargin, 0])
-			.domain([min(this.props.y), max(this.props.y)]);
+			.domain([min(y), max(y)]);
 	}
 
 //// Stresstest //////////////////
@@ -72,6 +72,7 @@ class Scatterplot extends React.Component {
 
 //// End Stresstest //////////////////
 
+	// renderAxes expects xScale and yScale to be set prior to this call using setScale
 	renderAxes() {
 		let xAxis = axisBottom()
 			.scale(this.xScale);
@@ -111,13 +112,13 @@ class Scatterplot extends React.Component {
 	}
 
 	// create array of circle SVG elements based on the input array
-	renderDots(size) {
+	renderDots(size, x, y) {
 		// Keep track of the number of elements where one variable shows NaN
 		this.numberOfNaN = {x: 0, y: 0};
 		let dots = [];
-		for (let i in this.props.x) {
-			let currentX = this.props.x[i];
-			let currentY = this.props.y[i];
+		for (let i in x) {
+			let currentX = x[i];
+			let currentY = y[i];
 			// Only create dot if x and y are numbers
 			if (!isNaN(currentX) && !isNaN(currentY)) {
 				dots.push(
@@ -141,47 +142,16 @@ class Scatterplot extends React.Component {
 		return dots;
 	}
 
-	renderAxisLabels(){
-		// Currently the name is the label
-		let xLabel = this.props.xLabel;
-		let yLabel = this.props.yLabel;
+	renderAxisLabels(xLabel, yLabel){
 		let axisLabels = [];
-		axisLabels.push(<text className='label' transform="rotate(-90)" y={6} dy=".71em" style={{'textAnchor': 'end'}} key={this.props.yLabel}>{yLabel}</text>);
-		axisLabels.push(<text className='label' x={this.widthNoMargin} y={this.heightNoMargin - 6} style={{'textAnchor': 'end'}} key={this.props.xLabel}>{xLabel}</text>);
+		axisLabels.push(<text className='label' transform="rotate(-90)" y={6} dy=".71em" style={{'textAnchor': 'end'}} key={yLabel}>{yLabel}</text>);
+		axisLabels.push(<text className='label' x={this.widthNoMargin} y={this.heightNoMargin - 6} style={{'textAnchor': 'end'}} key={xLabel}>{xLabel}</text>);
 		return axisLabels;
 	}
 
 	handleClick(event, x, y){
 		// https://stackoverflow.com/questions/42576198/get-object-data-and-target-element-from-onclick-event-in-react-js
 		console.log(`Click Event on ${x}, ${y}`);
-	}
-
-	onMouseMove(e) {
-		// let mySelect = select('.scatterplot');
-		// console.log(mySelect.node());
-		// console.log(mouse(mySelect.node()));
-		// let container = mySelect['_groups'][0][0]
-		// console.log(container);
-		// let [x, y] = mouse(container);
-		// this.setState({ mouseX: e.screenX, mouseY: e.screenY });
-		// this.setState({ mouseX: x, mouseY: y });
-	}
-
-	// Hack: Attach D3js Event listener
-	// https://swizec.com/blog/animating-with-react-redux-and-d3/swizec/6775
-	componentDidUpdate(){
-		// select('.scatterplot').on("mousemove", function() {
-		// 	let {x, y} = mouse(this);
-		// 	console.log(mouse(this));
-		// 	// D3 cannot access state
-		// 	//this.setState({ mouseX: x, mouseY: y });
-		// });
-		select('.scatterplot').on("mousemove", () => {
-			// let {x, y} = mouse(this);
-			// console.log(mouse(this));
-			// D3 cannot access state
-			// this.setState({ mouseX: x, mouseY: y });
-		});
 	}
 
 	render() {
@@ -193,21 +163,19 @@ class Scatterplot extends React.Component {
 
 		// reset margin and scale in case they changed
 		this.setMargin();
-		this.setScale();
+		this.setScale(this.props.x, this.props.y);
 
 		let axes = this.renderAxes();
-		let dots = this.renderDots(3);
-		let axisLabels = this.renderAxisLabels();
+		let dots = this.renderDots(3, this.props.x, this.props.y);
+		let axisLabels = this.renderAxisLabels(this.props.xLabel, this.props.yLabel);
 
 		return (
 			<div>
-				<p>Mouse Position: {`${this.state.mouseX}, ${this.state.mouseY}`}</p>
 				<p>#Elements NaN: {`${this.props.xLabel}: ${this.numberOfNaN.x}`}, Y: {`${this.props.yLabel}: ${this.numberOfNaN.y}`}</p>
 				<svg 
 					className="scatterplot"
 					width={this.widthNoMargin + this.margin.left + this.margin.right} 
-					height={this.heightNoMargin + this.margin.top + this.margin.bottom}
-					onMouseMove={this.onMouseMove.bind(this)}>
+					height={this.heightNoMargin + this.margin.top + this.margin.bottom}>
 					<g transform={`translate(${this.margin.left},${this.margin.top})`}>
 						{axes}
 						{dots}
