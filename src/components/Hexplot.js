@@ -1,8 +1,10 @@
 import React from 'react';
 import Scatterplot from './Scatterplot';
+import Helper from './Helper';
 import {hexbin as D3Hexbin} from 'd3-hexbin';
 import {interpolateLab} from 'd3-interpolate';
 import {scaleLinear} from 'd3-scale';
+import Toggle from 'material-ui/Toggle';
 
 // Important Links
 // https://github.com/d3/d3-hexbin
@@ -42,31 +44,38 @@ class Hexplot extends Scatterplot {
 	}
 
 	render() {
-
-		let xVariableName = this.state.settings.x.variableName;
-		let yVariableName = this.state.settings.y.variableName;
-
+		// Check if there is data available
+		if (this.props.rnaSeqData.data === undefined) return (<div>no data</div>);
 		// reset margin and scale in case they changed
 		this.setMargin();
-		this.setScale(this.state.data[xVariableName], this.state.data[yVariableName]);
+		// setScale requires an array of numeric values for each dimension
+		// therefore we have to convert it
+		let xArray = Helper.objectValueToArray(this.props.rnaSeqData.data, this.props.xName)
+		let yArray = Helper.objectValueToArray(this.props.rnaSeqData.data, this.props.yName)
+		this.setScale(xArray, yArray);
 
 		let axes = this.renderAxes();
-		let axisLabels = this.renderAxisLabels();
-		let dots = this.renderDots(this.state.data[xVariableName], this.state.data[yVariableName], 1);
-		let pointArray = this.createPointArray(this.state.data[xVariableName], this.state.data[yVariableName]);
+		// let dots = this.renderDots(3, xArray, yArray);
+		let axisLabels = this.renderAxisLabels(this.props.xName, this.props.yName);
+		let pointArray = this.createPointArray(xArray, yArray);
 
-		const hexagons = Hexplot.printHexagons(pointArray, this.props.hexSize, this.props.hexMax);
+		let hexagons = Hexplot.printHexagons(pointArray, this.props.hexSize, this.props.hexMax);
 
-		// <p>{`Hexplot Element 1: ${this.state.data[xVariableName][1]}`}</p>
 		return(
-			<svg width={this.widthNoMargin + this.margin.left + this.margin.right} height={this.heightNoMargin + this.margin.top + this.margin.bottom}>
-				<g className="hexagons" transform={`translate(${this.margin.left},${this.margin.top})`}>
+			<div>
+			<svg 
+					className="hexagons"
+					width={this.widthNoMargin + this.margin.left + this.margin.right} 
+					height={this.heightNoMargin + this.margin.top + this.margin.bottom}>
+				<g transform={`translate(${this.margin.left},${this.margin.top})`}>
 					{hexagons}
-					{dots}
+					{ /* dots */ }
 					{axes}
 					{axisLabels}
 				</g>
 			</svg>
+			<Toggle label="Toggle" style={{fontSize: 8, maxWidth: 10, height: 10}} />
+			</div>
 		);
 	}
 }

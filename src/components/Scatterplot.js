@@ -2,21 +2,21 @@ import React from 'react';
 import * as ReactFauxDOM from 'react-faux-dom'
 import {scaleLinear} from 'd3-scale';
 import {axisBottom, axisLeft} from 'd3-axis';
-import {max} from 'd3-array';
+import {max, min} from 'd3-array';
 import Helper from './Helper';
 // eslint-disable-next-line
 import {mouse, select} from 'd3-selection';
 
-const margin = {top: 20, right: 20, bottom: 30, left: 40};
-
+const margin = {top: 20, right: 100, bottom: 30, left: 40};
+// Settings Example
+// {
+// 	x: 'pValue', 
+// 	y: 'fc'}
+// }
 class Scatterplot extends React.Component {
 	constructor(props){
 		super(props);
 		this.state = {
-			width: props.width,
-			height: props.height,
-			data: props.data,
-			settings: props.settings,
 			tooltip: []
 		};
 		this.onMouseLeaveTooltip = this.onMouseLeaveTooltip.bind(this);
@@ -24,18 +24,18 @@ class Scatterplot extends React.Component {
 
 	setMargin() {
 		this.margin = margin;
-		this.widthNoMargin = this.state.width - margin.left - margin.right;
-		this.heightNoMargin = this.state.height - margin.top - margin.bottom;
+		this.widthNoMargin = this.props.width - margin.left - margin.right;
+		this.heightNoMargin = this.props.height - margin.top - margin.bottom;
 	}
 
 	setScale(x, y) {
 		this.xScale = scaleLinear()
 			.range([0, this.widthNoMargin])
-			.domain([0, max(x)]);
+			.domain([min(x), max(x)]);
 
 		this.yScale = scaleLinear()
 			.range([this.heightNoMargin, 0])
-			.domain([0, max(y)]);
+			.domain([min(y), max(y)]);
 	}
 
 //// Stresstest //////////////////
@@ -72,6 +72,7 @@ class Scatterplot extends React.Component {
 
 //// End Stresstest //////////////////
 
+	// renderAxes expects xScale and yScale to be set prior to this call using setScale
 	renderAxes() {
 		let xAxis = axisBottom()
 			.scale(this.xScale);
@@ -96,7 +97,7 @@ class Scatterplot extends React.Component {
 		let dy = this.yScale(y) + 5;
 		tooltip.push(
 			<text x={dx} y={dy} key={`${dx},${dy}`}>
-				Tooltip of awesomeness
+				{`${x}, ${y}`}
 			</text>
 		);
 		this.setState({
@@ -111,30 +112,37 @@ class Scatterplot extends React.Component {
 	}
 
 	// create array of circle SVG elements based on the input array
-	renderDots(x, y, size){
+	renderDots(size, x, y) {
+		// Keep track of the number of elements where one variable shows NaN
+		this.numberOfNaN = {x: 0, y: 0};
 		let dots = [];
-		for (let i = 0; i < x.length; i++) {
+		for (let i in x) {
 			let currentX = x[i];
 			let currentY = y[i];
-			dots.push(
-				<circle 
-					className="dot" 
-					r={size} 
-					cx={this.xScale(currentX)} 
-					cy={this.yScale(currentY)} 
-					key={`${currentX},${currentY},${i}`}
-					onClick={(e) => this.handleClick(e, currentX, currentY)}
-					onMouseEnter={(e) => this.onMouseEnterTooltip(e, currentX, currentY)}
-					onMouseLeave={this.onMouseLeaveTooltip}>
-				</circle>
-			);
+			// Only create dot if x and y are numbers
+			if (!isNaN(currentX) && !isNaN(currentY)) {
+				dots.push(
+					<circle 
+						className="dot" 
+						r={size} 
+						cx={this.xScale(currentX)} 
+						cy={this.yScale(currentY)} 
+						key={`${currentX},${currentY},${i}`}
+						onClick={(e) => this.handleClick(e, currentX, currentY)}
+						onMouseEnter={(e) => this.onMouseEnterTooltip(e, currentX, currentY)}
+						onMouseLeave={this.onMouseLeaveTooltip}>
+					</circle>
+				);
+			}
+			else {
+				if (isNaN(currentX)) this.numberOfNaN.x++;
+				if (isNaN(currentY)) this.numberOfNaN.y++;
+			}
 		}
 		return dots;
 	}
 
-	renderAxisLabels(){
-		let xLabel = this.state.settings.x.label;
-		let yLabel = this.state.settings.y.label;
+	renderAxisLabels(xLabel, yLabel){
 		let axisLabels = [];
 		axisLabels.push(<text className='label' transform="rotate(-90)" y={6} dy=".71em" style={{'textAnchor': 'end'}} key={yLabel}>{yLabel}</text>);
 		axisLabels.push(<text className='label' x={this.widthNoMargin} y={this.heightNoMargin - 6} style={{'textAnchor': 'end'}} key={xLabel}>{xLabel}</text>);
@@ -146,55 +154,26 @@ class Scatterplot extends React.Component {
 		console.log(`Click Event on ${x}, ${y}`);
 	}
 
-	onMouseMove(e) {
-		// let mySelect = select('.scatterplot');
-		// console.log(mySelect.node());
-		// console.log(mouse(mySelect.node()));
-		// let container = mySelect['_groups'][0][0]
-		// console.log(container);
-		// let [x, y] = mouse(container);
-		// this.setState({ mouseX: e.screenX, mouseY: e.screenY });
-		// this.setState({ mouseX: x, mouseY: y });
-	}
-
-	// Hack: Attach D3js Event listener
-	// https://swizec.com/blog/animating-with-react-redux-and-d3/swizec/6775
-	componentDidUpdate(){
-		// select('.scatterplot').on("mousemove", function() {
-		// 	let {x, y} = mouse(this);
-		// 	console.log(mouse(this));
-		// 	// D3 cannot access state
-		// 	//this.setState({ mouseX: x, mouseY: y });
-		// });
-		select('.scatterplot').on("mousemove", () => {
-			// let {x, y} = mouse(this);
-			// console.log(mouse(this));
-			// D3 cannot access state
-			// this.setState({ mouseX: x, mouseY: y });
-		});
-	}
-
 	render() {
-
-		let xVariableName = this.state.settings.x.variableName;
-		let yVariableName = this.state.settings.y.variableName;
+		if (this.props.x === undefined || this.props.y === undefined) {
+			return (<div>no data</div>);
+		}
 
 		// reset margin and scale in case they changed
 		this.setMargin();
-		this.setScale(this.state.data[xVariableName], this.state.data[yVariableName]);
+		this.setScale(this.props.x, this.props.y);
 
 		let axes = this.renderAxes();
-		let dots = this.renderDots(this.state.data[xVariableName], this.state.data[yVariableName], 3);
-		let axisLabels = this.renderAxisLabels();
+		let dots = this.renderDots(3, this.props.x, this.props.y);
+		let axisLabels = this.renderAxisLabels(this.props.xLabel, this.props.yLabel);
 
 		return (
 			<div>
-				<p>Mouse Position: {`${this.state.mouseX}, ${this.state.mouseY}`}</p>
+				<p>#Elements NaN: {`${this.props.xLabel}: ${this.numberOfNaN.x}`}, Y: {`${this.props.yLabel}: ${this.numberOfNaN.y}`}</p>
 				<svg 
 					className="scatterplot"
 					width={this.widthNoMargin + this.margin.left + this.margin.right} 
-					height={this.heightNoMargin + this.margin.top + this.margin.bottom}
-					onMouseMove={this.onMouseMove.bind(this)}>
+					height={this.heightNoMargin + this.margin.top + this.margin.bottom}>
 					<g transform={`translate(${this.margin.left},${this.margin.top})`}>
 						{axes}
 						{dots}

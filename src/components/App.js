@@ -10,6 +10,8 @@ import Hexplot from './Hexplot';
 import Piechart from './Piechart';
 // eslint-disable-next-line
 import DynamicHexBin from './DynamicHexBin';
+// eslint-disable-next-line
+import ScatterplotRNASeqData from './ScatterplotRNASeqData';
 import RNASeqData from './RNASeqData';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import injectTapEventPlugin from 'react-tap-event-plugin';
@@ -33,20 +35,29 @@ class App extends React.Component {
 	}
 
 	componentWillMount() {
-		let rnaSeqData = new RNASeqData('./data/ncd_hfd_small.csv', 'default', 'default data set', ()=>{});
+		let rnaSeqData = new RNASeqData('./data/ncd_hfd_small.csv', 'default', 'default data set', ()=>{
+		// let rnaSeqData = new RNASeqData('./data/ncd_hfd.csv', 'default', 'default data set', ()=>{
+			this.setState({
+				rnaSeqData: rnaSeqData
+			});
+		});
 		this.state = {
 			rnaSeqData: rnaSeqData
 		};
 	}
 
+	// TODO Fix stres test
 	render() {
 		return (
 			<MuiThemeProvider>
 				<div className="App">
-					<BarChart width={200} height={200} />
-					<Hexplot width={200} height={200} data={Helper.getIris()} settings={Helper.getIrisSettingsScatterplot()} stressTest={{elementCount: 100, milliseconds: 2000}} hexSize={10} hexMax={10} />
-					<Scatterplot width={200} height={200} data={Helper.getIris()} settings={Helper.getIrisSettingsScatterplot()} stressTest={{elementCount: 100, milliseconds: 2000}} />
-					<Piechart width={200} height={200} data={[1, 1, 2, 3, 5, 8, 13, 21]}/>
+					{ /* <BarChart width={200} height={200} /> */ }
+					{ /* <Scatterplot width={200} height={200} x={Helper.getIris().sepalWidth} y={Helper.getIris().sepalLength} xLabel="Sepal Width" yLabel="Sepal Length" /> */ }
+					{ /* <ScatterplotRNASeqData width={200} height={200} rnaSeqData={Helper.getIrisNewFormat()} xName="sepalWidth" yName="sepalLength" /> */ }
+					{ /* <ScatterplotRNASeqData width={600} height={400} rnaSeqData={this.state.rnaSeqData} xName="pValue" yName="fc" /> */ }
+					{ /* <Hexplot width={600} height={400} rnaSeqData={Helper.getIrisNewFormat()} xName="sepalWidth" yName="sepalLength" hexSize={10} hexMax={10} /> */ }
+				{ /* <Piechart width={200} height={200} data={[1, 1, 2, 3, 5, 8, 13, 21]}/> */ }
+					<Hexplot width={300} height={200} rnaSeqData={this.state.rnaSeqData} xName="pValue" yName="fc" hexSize={10} hexMax={10} />
 				</div>
 			</MuiThemeProvider>
 		);
