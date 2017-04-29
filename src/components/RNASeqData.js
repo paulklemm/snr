@@ -58,7 +58,7 @@ class RNASeqData {
 				// Get the value - e.g. columnName: 'pValue' => value = data[i][columnsNameMapping.pValue]
 				let value = data[i][this.columnsNameMapping[columnNames[j]]]
 				// Check if data type conversion is required
-				if (dataType[columnNames[j]] == 'float')
+				if (dataType[columnNames[j]] === 'float')
 					// e.g. entry.pValue = parseFloat(value)
 					entry[columnNames[j]] = parseFloat(value);
 				else {

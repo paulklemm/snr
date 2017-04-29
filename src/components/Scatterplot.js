@@ -158,8 +158,6 @@ class Scatterplot extends React.Component {
 		if (this.props.x === undefined || this.props.y === undefined) {
 			return (<div>no data</div>);
 		}
-		let xVariableName = this.props.xLabel;
-		let yVariableName = this.props.yLabel;
 
 		// reset margin and scale in case they changed
 		this.setMargin();
