@@ -16,26 +16,27 @@ const dataType = {
 	biotype: 'string'
 }
 class RNASeqData {
-	constructor(path, columnsNameMapping, name, callbackSuccess) {
-		console.log(`Reading RNASeq data ${path}`);
+	constructor(path, columnsNameMapping, name, callbackSuccess, debug = false) {
 		this.path = path;
 		this.error = false;
 		this.loading = true;
 		this.name = name;
+		this.debug = debug;
+		if (this.debug) console.log(`Reading RNASeq data ${path}`);
 		// Set columnsmapping to default if default is specified, otherwise set it as the object it is
 		columnsNameMapping === 'default' ? this.columnsNameMapping = columnsNameMappingDefault : this.columnsNameMapping = columnsNameMapping;
 		this.read(callbackSuccess);
 	}
 
 	read(callbackSuccess){
-		console.time('Loading and processing RNASeq Data');
+		if (this.debug) console.time('Loading and processing RNASeq Data');
 		csv(this.path, (error, data) => {
 			if (error) {
 				this.error = true;
 			}
 			this.data = this.removeUnusedColumnsAndFixDataTypes(data);
 			this.loading = false;
-			console.timeEnd('Loading and processing RNASeq Data');
+			if (this.debug) console.timeEnd('Loading and processing RNASeq Data');
 			// console.log(this.data.columns);
 			// console.log(this.data);
 			callbackSuccess(this.data);

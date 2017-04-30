@@ -2,7 +2,9 @@ import React from 'react';
 import './App.css';
 // eslint-disable-next-line
 import BarChart from './BarChart';
+// eslint-disable-next-line
 import Scatterplot from './Scatterplot';
+// eslint-disable-next-line
 import Helper from './Helper';
 // eslint-disable-next-line
 import Hexplot from './Hexplot';
@@ -12,10 +14,9 @@ import Piechart from './Piechart';
 import DynamicHexBin from './DynamicHexBin';
 // eslint-disable-next-line
 import ScatterplotRNASeqData from './ScatterplotRNASeqData';
+// eslint-disable-next-line
 import RNASeqData from './RNASeqData';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import injectTapEventPlugin from 'react-tap-event-plugin';
-injectTapEventPlugin();
 
 // <Scatterplot width={200} height={200} data={data} settings={{'x': {'variableName': 'sepalWidth', 'label': 'Sepal Width (cm)'}, 'y': {'variableName': 'sepalLength', 'label': 'Sepal Length (cm)'}}}/>
 // <Scatterplot width={600} height={600} data={Helper.getIris()} settings={Helper.getIrisSettingsScatterplot()} stressTest={{elementCount: 60000, milliseconds: 8000}} />

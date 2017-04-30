@@ -4,7 +4,8 @@ import Helper from './Helper';
 import {hexbin as D3Hexbin} from 'd3-hexbin';
 import {interpolateLab} from 'd3-interpolate';
 import {scaleLinear} from 'd3-scale';
-import Toggle from 'material-ui/Toggle';
+import Checkbox from 'material-ui/Checkbox';
+import Switch from 'material-ui/Switch';
 
 // Important Links
 // https://github.com/d3/d3-hexbin
@@ -61,8 +62,14 @@ class Hexplot extends Scatterplot {
 
 		let hexagons = Hexplot.printHexagons(pointArray, this.props.hexSize, this.props.hexMax);
 
+		let style = {
+			width: this.widthNoMargin + this.margin.left + this.margin.right,
+			height: this.heightNoMargin + this.margin.top + this.margin.bottom
+		};
+
 		return(
-			<div>
+			<div
+				style={style}>
 			<svg 
 					className="hexagons"
 					width={this.widthNoMargin + this.margin.left + this.margin.right} 
@@ -74,7 +81,8 @@ class Hexplot extends Scatterplot {
 					{axisLabels}
 				</g>
 			</svg>
-			<Toggle label="Toggle" style={{fontSize: 8, maxWidth: 10, height: 10}} />
+			<Checkbox />
+			<Switch />
 			</div>
 		);
 	}
