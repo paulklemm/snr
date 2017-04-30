@@ -4,8 +4,7 @@ import Helper from './Helper';
 import {hexbin as D3Hexbin} from 'd3-hexbin';
 import {interpolateLab} from 'd3-interpolate';
 import {scaleLinear} from 'd3-scale';
-import Checkbox from 'material-ui/Checkbox';
-import Switch from 'material-ui/Switch';
+import { LabelSwitch } from 'material-ui/Switch';
 import Paper from 'material-ui/Paper';
 import Layout from 'material-ui/Layout';
 
@@ -16,6 +15,12 @@ import Layout from 'material-ui/Layout';
 // https://github.com/d3/d3-hexbin#_hexbin
 // TODO: Add Colormap Legend
 class Hexplot extends Scatterplot {
+	constructor() {
+		super();
+		this.state = {
+			renderDots: false
+		}
+	}
 
 	createPointArray(x, y) {
 		let pointArray = [];
@@ -58,7 +63,8 @@ class Hexplot extends Scatterplot {
 		this.setScale(xArray, yArray);
 
 		let axes = this.renderAxes();
-		// let dots = this.renderDots(3, xArray, yArray);
+		let dots = [];
+		if (this.state.renderDots) dots = this.renderDots(3, xArray, yArray);
 		let axisLabels = this.renderAxisLabels(this.props.xName, this.props.yName);
 		let pointArray = this.createPointArray(xArray, yArray);
 
@@ -73,13 +79,16 @@ class Hexplot extends Scatterplot {
 							height={this.heightNoMargin + this.margin.top + this.margin.bottom}>
 						<g transform={`translate(${this.margin.left},${this.margin.top})`}>
 							{hexagons}
-							{ /* dots */ }
+							{dots}
 							{axes}
 							{axisLabels}
 						</g>
 					</svg>
-					<Checkbox />
-					<Switch />
+					<LabelSwitch 
+						checked={this.state.renderDots} 
+						onChange={(event, checked) => this.setState({ renderDots: checked })}
+						label="Render Genes"
+					/>
 				</Paper>
 			</Layout>
 		);
