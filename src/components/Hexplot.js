@@ -6,6 +6,8 @@ import {interpolateLab} from 'd3-interpolate';
 import {scaleLinear} from 'd3-scale';
 import Checkbox from 'material-ui/Checkbox';
 import Switch from 'material-ui/Switch';
+import Paper from 'material-ui/Paper';
+import Layout from 'material-ui/Layout';
 
 // Important Links
 // https://github.com/d3/d3-hexbin
@@ -62,28 +64,24 @@ class Hexplot extends Scatterplot {
 
 		let hexagons = Hexplot.printHexagons(pointArray, this.props.hexSize, this.props.hexMax);
 
-		let style = {
-			width: this.widthNoMargin + this.margin.left + this.margin.right,
-			height: this.heightNoMargin + this.margin.top + this.margin.bottom
-		};
-
 		return(
-			<div
-				style={style}>
-			<svg 
-					className="hexagons"
-					width={this.widthNoMargin + this.margin.left + this.margin.right} 
-					height={this.heightNoMargin + this.margin.top + this.margin.bottom}>
-				<g transform={`translate(${this.margin.left},${this.margin.top})`}>
-					{hexagons}
-					{ /* dots */ }
-					{axes}
-					{axisLabels}
-				</g>
-			</svg>
-			<Checkbox />
-			<Switch />
-			</div>
+			<Layout item xs>
+				<Paper>
+					<svg 
+							className="hexagons"
+							width={this.widthNoMargin + this.margin.left + this.margin.right} 
+							height={this.heightNoMargin + this.margin.top + this.margin.bottom}>
+						<g transform={`translate(${this.margin.left},${this.margin.top})`}>
+							{hexagons}
+							{ /* dots */ }
+							{axes}
+							{axisLabels}
+						</g>
+					</svg>
+					<Checkbox />
+					<Switch />
+				</Paper>
+			</Layout>
 		);
 	}
 }

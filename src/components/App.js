@@ -17,6 +17,7 @@ import ScatterplotRNASeqData from './ScatterplotRNASeqData';
 // eslint-disable-next-line
 import RNASeqData from './RNASeqData';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import Layout from 'material-ui/Layout';
 
 // <Scatterplot width={200} height={200} data={data} settings={{'x': {'variableName': 'sepalWidth', 'label': 'Sepal Width (cm)'}, 'y': {'variableName': 'sepalLength', 'label': 'Sepal Length (cm)'}}}/>
 // <Scatterplot width={600} height={600} data={Helper.getIris()} settings={Helper.getIrisSettingsScatterplot()} stressTest={{elementCount: 60000, milliseconds: 8000}} />
@@ -51,7 +52,7 @@ class App extends React.Component {
 	render() {
 		return (
 			<MuiThemeProvider>
-				<div className="App">
+				<Layout container gutter={16}>
 					{ /* <BarChart width={200} height={200} /> */ }
 					{ /* <Scatterplot width={200} height={200} x={Helper.getIris().sepalWidth} y={Helper.getIris().sepalLength} xLabel="Sepal Width" yLabel="Sepal Length" /> */ }
 					{ /* <ScatterplotRNASeqData width={200} height={200} rnaSeqData={Helper.getIrisNewFormat()} xName="sepalWidth" yName="sepalLength" /> */ }
@@ -59,7 +60,13 @@ class App extends React.Component {
 					{ /* <Hexplot width={600} height={400} rnaSeqData={Helper.getIrisNewFormat()} xName="sepalWidth" yName="sepalLength" hexSize={10} hexMax={10} /> */ }
 				{ /* <Piechart width={200} height={200} data={[1, 1, 2, 3, 5, 8, 13, 21]}/> */ }
 					<Hexplot width={300} height={200} rnaSeqData={this.state.rnaSeqData} xName="pValue" yName="fc" hexSize={10} hexMax={10} />
-				</div>
+					<Hexplot width={300} height={200} rnaSeqData={this.state.rnaSeqData} xName="pValue" yName="fc" hexSize={10} hexMax={10} />
+					<Hexplot width={300} height={200} rnaSeqData={this.state.rnaSeqData} xName="pValue" yName="fc" hexSize={10} hexMax={10} />
+					<Hexplot width={300} height={200} rnaSeqData={this.state.rnaSeqData} xName="pValue" yName="fc" hexSize={10} hexMax={10} />
+					<Hexplot width={300} height={200} rnaSeqData={this.state.rnaSeqData} xName="pValue" yName="fc" hexSize={10} hexMax={10} />
+					<Hexplot width={300} height={200} rnaSeqData={this.state.rnaSeqData} xName="pValue" yName="fc" hexSize={10} hexMax={10} />
+					<Hexplot width={300} height={200} rnaSeqData={this.state.rnaSeqData} xName="pValue" yName="fc" hexSize={10} hexMax={10} />
+				</Layout>
 			</MuiThemeProvider>
 		);
 	}
