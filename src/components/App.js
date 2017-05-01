@@ -19,6 +19,7 @@ import RNASeqData from './RNASeqData';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Layout from 'material-ui/Layout';
 import Paper from 'material-ui/Paper';
+import Navbar from './Navbar';
 
 class App extends React.Component {
 	constructor() {
@@ -42,35 +43,38 @@ class App extends React.Component {
 	render() {
 		return (
 			<MuiThemeProvider>
-				<Layout container gutter={16}>
-					{ /* <BarChart width={200} height={200} /> */ }
-					{ /* <Scatterplot width={200} height={200} x={Helper.getIris().sepalWidth} y={Helper.getIris().sepalLength} xLabel="Sepal Width" yLabel="Sepal Length" /> */ }
-					{ /* <ScatterplotRNASeqData width={200} height={200} rnaSeqData={Helper.getIrisNewFormat()} xName="sepalWidth" yName="sepalLength" /> */ }
-					{ /* <ScatterplotRNASeqData width={600} height={400} rnaSeqData={this.state.rnaSeqData} xName="pValue" yName="fc" /> */ }
-					{ /* <Hexplot width={600} height={400} rnaSeqData={Helper.getIrisNewFormat()} xName="sepalWidth" yName="sepalLength" hexSize={10} hexMax={10} /> */ }
-				{ /* <Piechart width={200} height={200} data={[1, 1, 2, 3, 5, 8, 13, 21]}/> */ }
-					{ /* <Hexplot width={500} height={400} rnaSeqData={this.state.rnaSeqData} xName="pValue" yName="fc" hexSize={10} hexMax={10} /> */ }
-					<Layout item xs>
-						<Paper>
-							<Scatterplot width={400} height={200} x={Helper.getIris().sepalWidth} y={Helper.getIris().sepalLength} xLabel="Sepal Width" yLabel="Sepal Length" />
-						</Paper>
+				<div>
+					<Navbar />
+					<Layout container gutter={16}>
+						{ /* <BarChart width={200} height={200} /> */ }
+						{ /* <Scatterplot width={200} height={200} x={Helper.getIris().sepalWidth} y={Helper.getIris().sepalLength} xLabel="Sepal Width" yLabel="Sepal Length" /> */ }
+						{ /* <ScatterplotRNASeqData width={200} height={200} rnaSeqData={Helper.getIrisNewFormat()} xName="sepalWidth" yName="sepalLength" /> */ }
+						{ /* <ScatterplotRNASeqData width={600} height={400} rnaSeqData={this.state.rnaSeqData} xName="pValue" yName="fc" /> */ }
+						{ /* <Hexplot width={600} height={400} rnaSeqData={Helper.getIrisNewFormat()} xName="sepalWidth" yName="sepalLength" hexSize={10} hexMax={10} /> */ }
+					{ /* <Piechart width={200} height={200} data={[1, 1, 2, 3, 5, 8, 13, 21]}/> */ }
+						{ /* <Hexplot width={500} height={400} rnaSeqData={this.state.rnaSeqData} xName="pValue" yName="fc" hexSize={10} hexMax={10} /> */ }
+						<Layout item xs>
+							<Paper>
+								<Scatterplot width={400} height={200} x={Helper.getIris().sepalWidth} y={Helper.getIris().sepalLength} xLabel="Sepal Width" yLabel="Sepal Length" />
+							</Paper>
+						</Layout>
+						<Layout item xs>
+							<Paper>
+								<Scatterplot width={400} height={200} x={Helper.getIris().sepalWidth} y={Helper.getIris().sepalLength} xLabel="Sepal Width" yLabel="Sepal Length" />
+							</Paper>
+						</Layout>
+						<Layout item xs>
+							<Paper>
+								<Scatterplot width={400} height={200} x={Helper.getIris().sepalWidth} y={Helper.getIris().sepalLength} xLabel="Sepal Width" yLabel="Sepal Length" />
+							</Paper>
+						</Layout>
+						<Layout item xs>
+							<Paper>
+								<Hexplot width={400} height={200} rnaSeqData={this.state.rnaSeqData} xName="pValue" yName="fc" hexSize={10} hexMax={10} />
+							</Paper>
+						</Layout>
 					</Layout>
-					<Layout item xs>
-						<Paper>
-							<Scatterplot width={400} height={200} x={Helper.getIris().sepalWidth} y={Helper.getIris().sepalLength} xLabel="Sepal Width" yLabel="Sepal Length" />
-						</Paper>
-					</Layout>
-					<Layout item xs>
-						<Paper>
-							<Scatterplot width={400} height={200} x={Helper.getIris().sepalWidth} y={Helper.getIris().sepalLength} xLabel="Sepal Width" yLabel="Sepal Length" />
-						</Paper>
-					</Layout>
-					<Layout item xs>
-						<Paper>
-							<Hexplot width={400} height={200} rnaSeqData={this.state.rnaSeqData} xName="pValue" yName="fc" hexSize={10} hexMax={10} />
-						</Paper>
-					</Layout>
-				</Layout>
+				</div>
 			</MuiThemeProvider>
 		);
 	}

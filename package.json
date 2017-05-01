@@ -5,7 +5,7 @@
   "dependencies": {
     "d3": "^4.7.4",
     "d3-hexbin": "^0.2.2",
-    "material-ui": "^1.0.0-alpha.11",
+    "material-ui": "^1.0.0-alpha.12",
     "react": "^15.5.3",
     "react-dom": "^15.5.3",
     "react-faux-dom": "^3.0.1",
