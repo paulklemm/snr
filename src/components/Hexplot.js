@@ -5,8 +5,6 @@ import {hexbin as D3Hexbin} from 'd3-hexbin';
 import {interpolateLab} from 'd3-interpolate';
 import {scaleLinear} from 'd3-scale';
 import { LabelSwitch } from 'material-ui/Switch';
-import Paper from 'material-ui/Paper';
-import Layout from 'material-ui/Layout';
 
 // Important Links
 // https://github.com/d3/d3-hexbin
@@ -51,6 +49,10 @@ class Hexplot extends Scatterplot {
 		return hexagons;
 	}
 
+	reactOnMeasure(width) {
+		console.log(width);
+	}
+
 	render() {
 		// Check if there is data available
 		if (this.props.rnaSeqData.data === undefined) return (<div>no data</div>);
@@ -71,26 +73,24 @@ class Hexplot extends Scatterplot {
 		let hexagons = Hexplot.printHexagons(pointArray, this.props.hexSize, this.props.hexMax);
 
 		return(
-			<Layout item xs>
-				<Paper>
-					<svg 
-							className="hexagons"
-							width={this.widthNoMargin + this.margin.left + this.margin.right} 
-							height={this.heightNoMargin + this.margin.top + this.margin.bottom}>
-						<g transform={`translate(${this.margin.left},${this.margin.top})`}>
-							{hexagons}
-							{dots}
-							{axes}
-							{axisLabels}
-						</g>
-					</svg>
-					<LabelSwitch 
-						checked={this.state.renderDots} 
-						onChange={(event, checked) => this.setState({ renderDots: checked })}
-						label="Render Genes"
-					/>
-				</Paper>
-			</Layout>
+			<div>
+				<svg 
+						className="hexagons"
+						width={this.widthNoMargin + this.margin.left + this.margin.right} 
+						height={this.heightNoMargin + this.margin.top + this.margin.bottom}>
+					<g transform={`translate(${this.margin.left},${this.margin.top})`}>
+						{hexagons}
+						{dots}
+						{axes}
+						{axisLabels}
+					</g>
+				</svg>
+				<LabelSwitch 
+					checked={this.state.renderDots} 
+					onChange={(event, checked) => this.setState({ renderDots: checked })}
+					label="Render Genes"
+				/>
+			</div>
 		);
 	}
 }

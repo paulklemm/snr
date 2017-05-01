@@ -6,6 +6,8 @@ import {max, min} from 'd3-array';
 import Helper from './Helper';
 // eslint-disable-next-line
 import {mouse, select} from 'd3-selection';
+// Measure DOM Element in React: https://stackoverflow.com/questions/25371926/how-can-i-respond-to-the-width-of-an-auto-sized-dom-element-in-react
+import Measure from 'react-measure';
 
 const margin = {top: 20, right: 100, bottom: 30, left: 40};
 // Settings Example
@@ -167,8 +169,15 @@ class Scatterplot extends React.Component {
 		let dots = this.renderDots(3, this.props.x, this.props.y);
 		let axisLabels = this.renderAxisLabels(this.props.xLabel, this.props.yLabel);
 
+		const MeasuredComp = () => (
+		  <Measure onMeasure={({width}) => this.setState({width: width})}>
+		    {({width}) => <div>My width is {width}</div>}
+		  </Measure>
+		)
+
 		return (
 			<div>
+				{MeasuredComp()}
 				<p>#Elements NaN: {`${this.props.xLabel}: ${this.numberOfNaN.x}`}, Y: {`${this.props.yLabel}: ${this.numberOfNaN.y}`}</p>
 				<svg 
 					className="scatterplot"
