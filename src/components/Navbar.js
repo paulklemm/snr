@@ -9,7 +9,8 @@ import Typography from 'material-ui/Typography';
 const styleSheet = createStyleSheet('Navbar', () => ({
   root: {
     position: 'relative',
-    marginTop: 30,
+    marginTop: 0,
+    marginBottom: 20,
     width: '100%',
   },
   appBar: {

@@ -83,6 +83,7 @@ class Hexplot extends Scatterplot {
 						{dots}
 						{axes}
 						{axisLabels}
+						{this.state.tooltip}
 					</g>
 				</svg>
 				<LabelSwitch 

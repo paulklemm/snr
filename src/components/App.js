@@ -28,12 +28,14 @@ class App extends React.Component {
 	}
 
 	componentWillMount() {
-		let rnaSeqData = new RNASeqData('./data/ncd_hfd_small.csv', 'default', 'default data set', ()=>{
+		// let rnaSeqData = new RNASeqData('./data/ncd_hfd_small.csv', 'default', 'default data set', ()=>{
 		// let rnaSeqData = new RNASeqData('./data/ncd_hfd.csv', 'default', 'default data set', ()=>{
-			this.setState({
-				rnaSeqData: rnaSeqData
-			});
+		let rnaSeqData = new RNASeqData('./data/ncd_hfd_medium.csv', 'default', 'default data set', ()=>{
+			// We have to force the update since react will not recognize on it's own that the state object
+			// RNASeqData has changed. https://facebook.github.io/react/docs/react-component.html#forceupdate
+			this.forceUpdate();
 		});
+		// Add the rnaSeqData to the state, but it could probably be also a class member
 		this.state = {
 			rnaSeqData: rnaSeqData
 		};
@@ -43,7 +45,7 @@ class App extends React.Component {
 	render() {
 		return (
 			<MuiThemeProvider>
-				<div>
+				<div className="app_body">
 					<Navbar />
 					<Layout container gutter={16}>
 						{ /* <BarChart width={200} height={200} /> */ }
