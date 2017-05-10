@@ -5,12 +5,12 @@ class OpenCPUBridge {
 	constructor(address) {
 		this.address = address;
 		this.isOnline = false;
-		this.checkServer();
+		this.isOnlinePromise = this.checkServer();
 		this.test();
 	}
 
 	checkServer() {
-		this.isOnlinePromise = get(`${this.address}/ocpu`)
+		return get(`${this.address}/ocpu`)
 			.then((response) => {
 				// If status is 200, everything is fine, otherwise return error
 				response.status === 200 ? this.isOnline = true : console.error(`OpenCPU returns status ${response.status}, connection cannot be established`);
@@ -20,21 +20,27 @@ class OpenCPUBridge {
 				console.error(`OpenCPU Server ${this.address} cannot be reached`);
 				console.error(error);
 				this.isOnline = false;
-			})
+			});
 	}
 
 	test() {
 		let that = this;
+		console.time('openCPURequest');
 		this.isOnlinePromise.then(() => {
-			post('http://localhost:8004/ocpu/library/stats/R/rnorm?', {
+			post('http://localhost:8004/ocpu/library/stats/R/rnorm', {
 				n: 10,
 				mean: 5
 			})
 			.then(function (response) {
 				// console.log(response);
-				if (response.status === 201)
-					// console.log(response.data);
-					that.getOutput(response.data)
+				if (response.status === 201) {
+					let openCpuOutput = that.getOcpuOutput(response.data);
+					// Only output the object after all promises are resolved
+					Promise.all(openCpuOutput.promises).then(() => {
+						console.log(openCpuOutput);
+						console.timeEnd('openCPURequest');
+					})
+				}
 			})
 			.catch(function (error) {
 				console.log(error);
@@ -59,7 +65,7 @@ class OpenCPUBridge {
 	 *   DESCRIPTION: ..GET URL..
 	 * }
 	 */
-	getOutput(data) {
+	getOcpuOutput(data) {
 		// Data is provided as relative URLs divided by newlines
 		data = data.split('\n');
 		// prepare empty result as well as the associated promises
@@ -78,7 +84,6 @@ class OpenCPUBridge {
 				result.promises.push(promise);
 			}
 		}
-		console.log(result);
 		return result;
 	}
 }
