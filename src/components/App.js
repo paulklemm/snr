@@ -37,7 +37,7 @@ class App extends React.Component {
 
 	componentWillMount() {
 		// Debug RNASeq connection
-		let openCPU = new OpenCPUBridge('http://localhost:8004/ocpu');
+		let openCPU = new OpenCPUBridge('http://localhost:8004');
 		// let rnaSeqData = new RNASeqData('./data/ncd_hfd_small.csv', 'default', 'default data set', ()=>{
 		// let rnaSeqData = new RNASeqData('./data/ncd_hfd.csv', 'default', 'default data set', ()=>{
 		// let rnaSeqData = new RNASeqData('./data/ncd_hfd_medium.csv', 'default', 'default data set', ()=>{
