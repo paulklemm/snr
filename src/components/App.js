@@ -16,6 +16,7 @@ import DynamicHexBin from './DynamicHexBin';
 import ScatterplotRNASeqData from './ScatterplotRNASeqData';
 // eslint-disable-next-line
 import RNASeqData from './RNASeqData';
+import OpenCPUBridge from './OpenCPUBridge';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Layout from 'material-ui/Layout';
 import Paper from 'material-ui/Paper';
@@ -35,9 +36,12 @@ class App extends React.Component {
 	}
 
 	componentWillMount() {
+		// Debug RNASeq connection
+		let openCPU = new OpenCPUBridge('http://localhost:8004/ocpu');
 		// let rnaSeqData = new RNASeqData('./data/ncd_hfd_small.csv', 'default', 'default data set', ()=>{
 		// let rnaSeqData = new RNASeqData('./data/ncd_hfd.csv', 'default', 'default data set', ()=>{
-		let rnaSeqData = new RNASeqData('./data/ncd_hfd_medium.csv', 'default', 'default data set', ()=>{
+		// let rnaSeqData = new RNASeqData('./data/ncd_hfd_medium.csv', 'default', 'default data set', ()=>{
+		let rnaSeqData = new RNASeqData('./data/ncd_hfd_edited.csv', 'default', 'default data set', ()=>{
 			// We have to force the update since react will not recognize on it's own that the state object
 			// RNASeqData has changed. https://facebook.github.io/react/docs/react-component.html#forceupdate
 			this.forceUpdate();
@@ -61,7 +65,7 @@ class App extends React.Component {
 							{ /* <ScatterplotRNASeqData width={200} height={200} rnaSeqData={Helper.getIrisNewFormat()} xName="sepalWidth" yName="sepalLength" /> */ }
 							{ /* <ScatterplotRNASeqData width={600} height={400} rnaSeqData={this.state.rnaSeqData} xName="pValue" yName="fc" /> */ }
 							{ /* <Hexplot width={600} height={400} rnaSeqData={Helper.getIrisNewFormat()} xName="sepalWidth" yName="sepalLength" hexSize={10} hexMax={10} /> */ }
-						{ /* <Piechart width={200} height={200} data={[1, 1, 2, 3, 5, 8, 13, 21]}/> */ }
+							{ /* <Piechart width={200} height={200} data={[1, 1, 2, 3, 5, 8, 13, 21]}/> */ }
 							{ /* <Hexplot width={500} height={400} rnaSeqData={this.state.rnaSeqData} xName="pValue" yName="fc" hexSize={10} hexMax={10} /> */ }
 							<Layout item xs>
 								<Paper>

@@ -177,8 +177,8 @@ class Scatterplot extends React.Component {
 
 		return (
 			<div>
-				{MeasuredComp()}
-				<p>#Elements NaN: {`${this.props.xLabel}: ${this.numberOfNaN.x}`}, Y: {`${this.props.yLabel}: ${this.numberOfNaN.y}`}</p>
+				{ MeasuredComp() }
+				{ /* <p>#Elements NaN: {`${this.props.xLabel}: ${this.numberOfNaN.x}`}, Y: {`${this.props.yLabel}: ${this.numberOfNaN.y}`}</p> */ }
 				<svg 
 					className="scatterplot"
 					width={this.widthNoMargin + this.margin.left + this.margin.right} 

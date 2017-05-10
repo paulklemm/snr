@@ -2,7 +2,7 @@ import {csv} from 'd3-request';
 
 // Default Mapping for NCD/HFD data set
 const columnsNameMappingDefault = {
-	pValue: 'p_value',
+	pValue: 'p_value_log2',
 	qValue: 'q_value',
 	name: 'gene_short_name',
 	fc: 'log2(fold_change)',
