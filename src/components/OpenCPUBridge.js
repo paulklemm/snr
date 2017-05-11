@@ -1,6 +1,9 @@
 import {get, post} from 'axios';
 
 // http://mediatemple.net/blog/tips/loading-and-using-external-data-in-react/
+/**
+ * 
+ */
 class OpenCPUBridge {
 	constructor(address) {
 		this.address = address;
@@ -9,6 +12,10 @@ class OpenCPUBridge {
 		this.test();
 	}
 
+	/**
+	/* Checks availability of the OpenCPU server and returns a promise
+	/* @return: {Promise} isOnline
+	**/ 
 	checkServer() {
 		return get(`${this.address}/ocpu`)
 			.then((response) => {
@@ -47,7 +54,7 @@ class OpenCPUBridge {
 			});
 		});
 	}
-	/*
+	/**
 	 * The output of a successfull OpenCPU POST looks like this:
 	 * /ocpu/tmp/x028712f57c/R/.val
 	 * /ocpu/tmp/x028712f57c/stdout
@@ -64,7 +71,9 @@ class OpenCPUBridge {
 	 *   info: ..GET URL..
 	 *   DESCRIPTION: ..GET URL..
 	 * }
-	 */
+	 * @param  {Object} Answer from OpenCPU request
+	 * @return {Object} Data from OpenCPU request as well as associated promises
+	 **/
 	getOcpuOutput(data) {
 		// Data is provided as relative URLs divided by newlines
 		data = data.split('\n');
