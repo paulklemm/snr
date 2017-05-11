@@ -77,6 +77,7 @@ class OpenCPUBridge {
 	 *   info: ..GET URL..
 	 *   DESCRIPTION: ..GET URL..
 	 * }
+	 * Note: Images are stored in the array 'graphics', contain only their URL and are not fetched from the server
 	 * @param  {Object} Answer from OpenCPU request
 	 * @return {Object} Data from OpenCPU request as well as associated promises
 	 **/
@@ -92,6 +93,15 @@ class OpenCPUBridge {
 				// Split at forward slashes and get the last element as key /ocpu/tmp/x028712f57c/R/.val => .val
 				let key = url.split('/');
 				key = key[key.length - 1];
+				// We have to handle graphics output separately
+				if (/graphics/.test(url)) {
+					// If we find a graphics object we only store the URL in a separate "graphics" object
+					if (!('graphics' in result))
+						result.graphics = [];
+					result.graphics.push(this.address + url);
+					// Do not perform the `get` on this URL, so continue with the next item in data
+					continue;
+				}
 				// Initiate the get for the current key
 				const promise = get(this.address + url)
 					.then((response) => { result[key] = response.data; })

@@ -42,11 +42,12 @@ class App extends React.Component {
 		openCPU.runRCommand("stats", "rnorm", { n: 10, mean: 5 }).then(output => { 
 			console.log(output);
 		});
-		for (let i = 0; i < 101; i++) {
-			openCPU.runRCommand("graphics", "hist", { x: [2,3,2,3,4,3,3], breaks: 10}).then(output => {
-				console.log(output);
+		openCPU.runRCommand("graphics", "hist", { x: [2,3,2,3,4,3,3], breaks: 10}).then(output => {
+			this.setState({
+				image: `${output.graphics[0]}/png`
 			});
-		}
+			console.log(output);
+		});
 		// let rnaSeqData = new RNASeqData('./data/ncd_hfd_small.csv', 'default', 'default data set', ()=>{
 		// let rnaSeqData = new RNASeqData('./data/ncd_hfd.csv', 'default', 'default data set', ()=>{
 		// let rnaSeqData = new RNASeqData('./data/ncd_hfd_medium.csv', 'default', 'default data set', ()=>{
@@ -94,6 +95,11 @@ class App extends React.Component {
 							<Layout item xs>
 								<Paper>
 									<Hexplot width={400} height={200} rnaSeqData={this.state.rnaSeqData} xName="pValue" yName="fc" hexSize={6} hexMax={10} />
+								</Paper>
+							</Layout>
+							<Layout item xs>
+								<Paper>
+									<img src={this.state.image} width={400} height={200}/>
 								</Paper>
 							</Layout>
 						</Layout>
