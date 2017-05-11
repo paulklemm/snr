@@ -44,7 +44,7 @@ class App extends React.Component {
 		});
 		openCPU.runRCommand("graphics", "hist", { x: [2,3,2,3,4,3,3], breaks: 10}).then(output => {
 			this.setState({
-				image: `${output.graphics[0]}/png`
+				image: `${output.graphics[0]}/svg`
 			});
 			console.log(output);
 		});
@@ -80,7 +80,7 @@ class App extends React.Component {
 							{ /* <Hexplot width={500} height={400} rnaSeqData={this.state.rnaSeqData} xName="pValue" yName="fc" hexSize={10} hexMax={10} /> */ }
 							<Layout item xs>
 								<Paper>
-									<Scatterplot width={400} height={200} x={Helper.getIris().sepalWidth} y={Helper.getIris().sepalLength} xLabel="Sepal Width" yLabel="Sepal Length" />
+									<img src={`${this.state.image}?width=7&height=5`} width={400} height={200} alt="R test"/>
 								</Paper>
 							</Layout>
 							<Layout item xs>
@@ -96,11 +96,6 @@ class App extends React.Component {
 							<Layout item xs>
 								<Paper>
 									<Hexplot width={400} height={200} rnaSeqData={this.state.rnaSeqData} xName="pValue" yName="fc" hexSize={6} hexMax={10} />
-								</Paper>
-							</Layout>
-							<Layout item xs>
-								<Paper>
-									<img src={this.state.image} width={400} height={200} alt="R test"/>
 								</Paper>
 							</Layout>
 						</Layout>
