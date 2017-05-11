@@ -38,21 +38,18 @@ class App extends React.Component {
 	componentWillMount() {
 		// Debug RNASeq connection
 		let openCPU = new OpenCPUBridge('http://localhost:8004');
-		
-		openCPU.runRCommand("stats", "rnorm", { n: 10, mean: 5 }).then(output => { 
-			console.log(output);
-		});
-		openCPU.runRCommand("graphics", "hist", { x: [2,3,2,3,4,3,3], breaks: 10}).then(output => {
-			this.setState({
-				image: `${output.graphics[0]}/svg`
-			});
-			console.log(output);
-		});
+		// let openCPU = new OpenCPUBridge('https://public.opencpu.org');
 		// let rnaSeqData = new RNASeqData('./data/ncd_hfd_small.csv', 'default', 'default data set', ()=>{
 		// let rnaSeqData = new RNASeqData('./data/ncd_hfd.csv', 'default', 'default data set', ()=>{
 		// let rnaSeqData = new RNASeqData('./data/ncd_hfd_medium.csv', 'default', 'default data set', ()=>{
 		let rnaSeqData = new RNASeqData('./data/ncd_hfd_edited.csv', 'default', 'default data set');
 		rnaSeqData.readPromise.then(() => {
+			openCPU.runRCommand("graphics", "hist", { x: Helper.objectValueToArray(rnaSeqData.data, 'pValue'), breaks: 10}, false).then(output => {
+				this.setState({
+					image: `${output.graphics[0]}/svg`
+				});
+				// console.log(output);
+			});
 			// We have to force the update since react will not recognize on it's own that the state object
 			// RNASeqData has changed. https://facebook.github.io/react/docs/react-component.html#forceupdate
 			this.forceUpdate();

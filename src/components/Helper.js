@@ -42,11 +42,16 @@ class Helper {
 			'y': {'variableName': variableY, 'label': 'Sepal Length (cm)'}
 		});
 	}
-	// objectArray = fish, key = name
-	// fish[0].name = "Forelle"
-	// fish[1].name = "Barsh"
-	// to
-	// ["Forelle", "Barsh"]
+	/**
+	 * objectArray = fish, key = name
+	 *   fish[0].name = "Forelle"
+	 *   fish[1].name = "Barsh"
+	 * to
+	 *   ["Forelle", "Barsh"]
+	 * @param  {Array} objectArray: Objects containing elements of `key`
+	 * @param  {String} key: String of `key`
+	 * @return {Array} keyArray: Values of `key` in objectArray
+	 */
 	static objectValueToArray(objectArray, key) {
 		return objectArray.map((value, i) => {
 				return value[key];
