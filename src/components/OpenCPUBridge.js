@@ -9,31 +9,37 @@ class OpenCPUBridge {
 		this.address = address;
 		this.isOnline = false;
 		this.isOnlinePromise = this.checkServer();
-		// this.test();
-		this.runRCommand("stats", "rnorm", { n: 10, mean: 5 });
-		this.runRCommand("graphics", "hist", { x: [2,3,2,3,4,3,3], breaks: 10});
 	}
 
-	async runRCommand(rpackage, rfunction, params) {
-		// I guess as long as there are callback and promises we will always have to deal with `this` shit
-		let thisObj = this;
-		console.time('openCPURequest');
+	/**
+	 * Usage:
+	 * runRCommand("stats", "rnorm", { n: 10, mean: 5 }).then(output => { 
+	 *  console.log(output);
+	 * });
+	 * @param  {string} rpackage: Name of the `R` package ("stats")
+	 * @param  {string} rfunction: Name of the `R` function ("rnorm")
+	 * @param  {Object} params: JSON object of the parameters ("{ n: 10, mean: 5 }"")
+	 * @param  {Boolean} measureTime: Measure execution time of command and output it in the console
+	 * @return {Object} openCPU output
+	 */
+	async runRCommand(rpackage, rfunction, params, measureTime = true) {
+		if (measureTime) console.time(`Measure Time: openCPURequest${rpackage}${rfunction}${JSON.stringify(params)}`);
 		// Only proceed with the request when the OpenCPU server is online
 		await this.isOnlinePromise;
-		// post('http://localhost:8004/ocpu/library/stats/R/rnorm', {
-		post(`${thisObj.address}/ocpu/library/${rpackage}/R/${rfunction}`, params)
-		.then(async function (response) {
-			if (response.status === 201) {
-				let openCpuOutput = thisObj.getOcpuOutput(response.data);
-				// Only output the object after all promises are resolved
-				await Promise.all(openCpuOutput.promises);
-				console.log(openCpuOutput);
-				console.timeEnd('openCPURequest');
-			}
-		})
-		.catch(function (error) {
-			console.log(error);
-		});
+		let response = await post(`${this.address}/ocpu/library/${rpackage}/R/${rfunction}`, params);
+		// Check if we have the proper error code
+		if (response.status !== 201)
+			throw new Error(`openCPURequest${rpackage}${rfunction}${JSON.stringify(params)} gave response status ${response.status}, expected '201'`);
+		let openCpuOutput = this.getOcpuOutput(response.data);
+		// Now we have URLs for the output of the openCPU command, we get the output of those
+		try	{
+			await Promise.all(openCpuOutput.promises);
+		} catch (error) { console.log(error); }
+		
+		// Remove the promises array since it is not needed anymore
+		delete openCpuOutput.promises;
+		if (measureTime) console.timeEnd(`Measure Time: openCPURequest${rpackage}${rfunction}${JSON.stringify(params)}`);
+		return(openCpuOutput);
 	}
 
 	/**

@@ -38,6 +38,15 @@ class App extends React.Component {
 	componentWillMount() {
 		// Debug RNASeq connection
 		let openCPU = new OpenCPUBridge('http://localhost:8004');
+		
+		openCPU.runRCommand("stats", "rnorm", { n: 10, mean: 5 }).then(output => { 
+			console.log(output);
+		});
+		for (let i = 0; i < 101; i++) {
+			openCPU.runRCommand("graphics", "hist", { x: [2,3,2,3,4,3,3], breaks: 10}).then(output => {
+				console.log(output);
+			});
+		}
 		// let rnaSeqData = new RNASeqData('./data/ncd_hfd_small.csv', 'default', 'default data set', ()=>{
 		// let rnaSeqData = new RNASeqData('./data/ncd_hfd.csv', 'default', 'default data set', ()=>{
 		// let rnaSeqData = new RNASeqData('./data/ncd_hfd_medium.csv', 'default', 'default data set', ()=>{
