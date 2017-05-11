@@ -15,37 +15,46 @@ const dataType = {
 	fc: 'float',
 	biotype: 'string'
 }
+
 class RNASeqData {
-	constructor(path, columnsNameMapping, name, callbackSuccess, debug = false) {
+	constructor(path, columnsNameMapping, name, debug = false) {
 		this.path = path;
-		this.error = false;
-		this.loading = true;
 		this.name = name;
 		this.debug = debug;
 		if (this.debug) console.log(`Reading RNASeq data ${path}`);
 		// Set columnsmapping to default if default is specified, otherwise set it as the object it is
 		columnsNameMapping === 'default' ? this.columnsNameMapping = columnsNameMappingDefault : this.columnsNameMapping = columnsNameMapping;
-		this.read(callbackSuccess);
+		this.readPromise = this.read();
 	}
 
-	read(callbackSuccess){
+	/**
+	 * Read the provided RNASeq data using D3 `csv` function and returning a promise of the read.
+	 * If the read is successfull, the data will be stored in `data` member
+	 * @return {Promise} fulfilling after csv read is done
+	 */
+	read(){
 		if (this.debug) console.time('Loading and processing RNASeq Data');
-		csv(this.path, (error, data) => {
-			if (error) {
-				this.error = true;
-			}
-			this.data = this.removeUnusedColumnsAndFixDataTypes(data);
-			this.loading = false;
-			if (this.debug) console.timeEnd('Loading and processing RNASeq Data');
-			// console.log(this.data.columns);
-			// console.log(this.data);
-			callbackSuccess(this.data);
-		})
+		let readPromise = new Promise((resolve, reject) => {
+			csv(this.path, (error, data) => {
+				if (error) {
+					reject(error);
+				}
+				data = this.removeUnusedColumnsAndFixDataTypes(data);
+				if (this.debug) console.timeEnd('Loading and processing RNASeq Data');
+				this.data = data;
+				resolve();
+			})
+		});
+		return readPromise;
 	}
 
-	// For efficiency reasons, two things are put here into one place for creating the data set:
-	// 1. Removing columns that are not requred, only ones that are in the mapping settings
-	// 2. Put variables into the proper format, e.g. converting strings to floats "123.456" => 123.456
+	/**
+	 * For efficiency reasons, two things are put here into one place for creating the data set:
+	 *   1. Removing columns that are not requred, only ones that are in the mapping settings
+	 *   2. Put variables into the proper format, e.g. converting strings to floats "123.456" => 123.456
+	 * @param  {Object} result from D3 `csv`
+	 * @return {Object} processed result from D3 `csv`
+	 */
 	removeUnusedColumnsAndFixDataTypes(data) {
 		let dataTidy = [];
 		// Get the array of valid columns so that we only have to define it in the constructor

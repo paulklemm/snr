@@ -51,7 +51,8 @@ class App extends React.Component {
 		// let rnaSeqData = new RNASeqData('./data/ncd_hfd_small.csv', 'default', 'default data set', ()=>{
 		// let rnaSeqData = new RNASeqData('./data/ncd_hfd.csv', 'default', 'default data set', ()=>{
 		// let rnaSeqData = new RNASeqData('./data/ncd_hfd_medium.csv', 'default', 'default data set', ()=>{
-		let rnaSeqData = new RNASeqData('./data/ncd_hfd_edited.csv', 'default', 'default data set', ()=>{
+		let rnaSeqData = new RNASeqData('./data/ncd_hfd_edited.csv', 'default', 'default data set');
+		rnaSeqData.readPromise.then(() => {
 			// We have to force the update since react will not recognize on it's own that the state object
 			// RNASeqData has changed. https://facebook.github.io/react/docs/react-component.html#forceupdate
 			this.forceUpdate();
@@ -99,7 +100,7 @@ class App extends React.Component {
 							</Layout>
 							<Layout item xs>
 								<Paper>
-									<img src={this.state.image} width={400} height={200}/>
+									<img src={this.state.image} width={400} height={200} alt="R test"/>
 								</Paper>
 							</Layout>
 						</Layout>
