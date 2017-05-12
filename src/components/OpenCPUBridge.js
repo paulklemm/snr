@@ -5,6 +5,11 @@ import {get, post} from 'axios';
  * @param {string} address: Address of OpenCPU format without trailing '/ocpu', e.g. `http://localhost:8004`
  */
 class OpenCPUBridge {
+	/**
+	 * Checks status of server
+	 * @param  {String} address of OpenCPU server without tailing `/ocpu`
+	 * @return {undefined}
+	 */
 	constructor(address) {
 		this.address = address;
 		this.isOnline = false;
