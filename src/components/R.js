@@ -1,4 +1,4 @@
-class RFunctions {
+class R {
 	constructor(openCPUBridge) {
 		this.openCPUBridge = openCPUBridge;
 	}
@@ -10,9 +10,10 @@ class RFunctions {
 			{
 				x: dimensions,
 				'na.action': 'na.omit'
-			}
+			},
+			'ascii'
 		));
 	}
 }
 
-export default RFunctions;
+export default R;

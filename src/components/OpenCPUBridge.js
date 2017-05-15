@@ -21,21 +21,22 @@ class OpenCPUBridge {
 	 * runRCommand("stats", "rnorm", { n: 10, mean: 5 }).then(output => { 
 	 *  console.log(output);
 	 * });
-	 * @param  {string} rpackage: Name of the `R` package ("stats")
-	 * @param  {string} rfunction: Name of the `R` function ("rnorm")
+	 * @param  {String} rpackage: Name of the `R` package ("stats")
+	 * @param  {String} rfunction: Name of the `R` function ("rnorm")
 	 * @param  {Object} params: JSON object of the parameters ("{ n: 10, mean: 5 }"")
+	 * @param  {String} valFormat: Format of .val attribute (ascii, json, tsv), refer to `https://opencpu.github.io/server-manual/opencpu-server.pdf`
 	 * @param  {Boolean} measureTime: Measure execution time of command and output it in the console
 	 * @return {Object} openCPU output
 	 */
-	async runRCommand(rpackage, rfunction, params, measureTime = true) {
-		if (measureTime) console.time(`Measure Time: openCPURequest${rpackage}${rfunction}${JSON.stringify(params)}`);
+	async runRCommand(rpackage, rfunction, params, valFormat = 'json', measureTime = true) {
+		if (measureTime) console.time(`Measure Time: openCPURequest ${rpackage}:${rfunction}:${new Date().toLocaleString()}`);
 		// Only proceed with the request when the OpenCPU server is online
 		await this.isOnlinePromise;
 		let response = await post(`${this.address}/ocpu/library/${rpackage}/R/${rfunction}`, params);
 		// Check if we have the proper error code
 		if (response.status !== 201)
 			throw new Error(`openCPURequest${rpackage}${rfunction}${JSON.stringify(params)} gave response status ${response.status}, expected '201'`);
-		let openCpuOutput = this.getOcpuOutput(response.data);
+		let openCpuOutput = this.getOcpuOutput(response.data, valFormat);
 		// Now we have URLs for the output of the openCPU command, we get the output of those
 		try	{
 			await Promise.all(openCpuOutput.promises);
@@ -43,7 +44,7 @@ class OpenCPUBridge {
 		
 		// Remove the promises array since it is not needed anymore
 		delete openCpuOutput.promises;
-		if (measureTime) console.timeEnd(`Measure Time: openCPURequest${rpackage}${rfunction}${JSON.stringify(params)}`);
+		if (measureTime) console.timeEnd(`Measure Time: openCPURequest ${rpackage}:${rfunction}:${new Date().toLocaleString()}`);
 		return(openCpuOutput);
 	}
 
@@ -84,15 +85,16 @@ class OpenCPUBridge {
 	 * }
 	 * Note: Images are stored in the array 'graphics', contain only their URL and are not fetched from the server
 	 * @param  {Object} Answer from OpenCPU request
+	 * @param  {String} valFormat: Format of .val attribute (ascii, json, tsv), refer to `https://opencpu.github.io/server-manual/opencpu-server.pdf`
 	 * @return {Object} Data from OpenCPU request as well as associated promises
 	 **/
-	getOcpuOutput(data) {
+	getOcpuOutput(data, valFormat) {
 		// Data is provided as relative URLs divided by newlines
 		data = data.split('\n');
 		// prepare empty result as well as the associated promises
 		let result = {promises: []};
 		for (let i in data) {
-			const url = data[i];
+			let url = data[i];
 			// Only proceed if the URL contains non-whitespaces
 			if (/\S/.test(url)) {
 				// Split at forward slashes and get the last element as key /ocpu/tmp/x028712f57c/R/.val => .val
@@ -107,6 +109,8 @@ class OpenCPUBridge {
 					// Do not perform the `get` on this URL, so continue with the next item in data
 					continue;
 				}
+				// When we query the .val element, get it as required format, e.g. `json` or `ascii`
+				if (/\.val/.test(url)) url = `${url}/${valFormat}`;
 				// Initiate the get for the current key
 				const promise = get(this.address + url)
 					.then((response) => { result[key] = response.data; })

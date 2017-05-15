@@ -17,7 +17,7 @@ import ScatterplotRNASeqData from './ScatterplotRNASeqData';
 // eslint-disable-next-line
 import RNASeqData from './RNASeqData';
 import OpenCPUBridge from './OpenCPUBridge';
-import RFunctions from './RFunctions';
+import R from './R';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Grid from 'material-ui/Grid';
 import Paper from 'material-ui/Paper';
@@ -39,7 +39,7 @@ class App extends React.Component {
 	componentWillMount() {
 		// Debug RNASeq connection
 		let openCPU = new OpenCPUBridge('http://localhost:8004');
-		let rFunctions = new RFunctions(openCPU);
+		let r = new R(openCPU);
 		// let openCPU = new OpenCPUBridge('https://public.opencpu.org');
 		// let rnaSeqData = new RNASeqData('./data/ncd_hfd_small.csv', 'default', 'default data set', ()=>{
 		// let rnaSeqData = new RNASeqData('./data/ncd_hfd.csv', 'default', 'default data set', ()=>{
@@ -52,18 +52,18 @@ class App extends React.Component {
 			testArray.push(Helper.objectValueToArray(rnaSeqData.data, 'pValue'));
 			testArray.push(Helper.objectValueToArray(rnaSeqData.data, 'qValue'));
 			testArray[0] = testArray[0].slice(0, testArray[0].length - 2);
-			testArray[1] = testArray[1].slice(1, testArray[1].length - 2);
+			testArray[1] = testArray[1].slice(1, testArray[1].length - 1);
 			console.log(testArray);
 			console.log([[6,7,8,9,10],[1,2,3,4,5]]);
-			// rFunctions.PCA([[6,7,8,9,10],[1,2,3,4,5]]).then(output => {
-			rFunctions.PCA(testArray).then(output => {
+			// R.PCA([[6,7,8,9,10],[1,2,3,4,5]]).then(output => {
+			r.PCA(testArray).then(output => {
 				console.log(output);
 			});
 		});
 
 		rnaSeqData.readPromise.then(() => {
 
-			openCPU.runRCommand("graphics", "hist", { x: Helper.objectValueToArray(rnaSeqData.data, 'pValue'), breaks: 10}, false).then(output => {
+			openCPU.runRCommand("graphics", "hist", { x: Helper.objectValueToArray(rnaSeqData.data, 'pValue'), breaks: 10}, 'ascii', false).then(output => {
 				this.setState({
 					image: `${output.graphics[0]}/svg`
 				});
