@@ -3,15 +3,18 @@ class R {
 		this.openCPUBridge = openCPUBridge;
 	}
 
+	PcaAsciiToJson(pcaAscii) {
+
+	}
+
 	PCA(dimensions) {
 		return (this.openCPUBridge.runRCommand(
-			'stats',
-			'prcomp',
+			'sonaR',
+			'PCA',
 			{
-				x: dimensions,
-				'na.action': 'na.omit'
+				data: dimensions
 			},
-			'ascii'
+			'json'
 		));
 	}
 }

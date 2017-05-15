@@ -45,25 +45,38 @@ class App extends React.Component {
 		// let rnaSeqData = new RNASeqData('./data/ncd_hfd.csv', 'default', 'default data set', ()=>{
 		// let rnaSeqData = new RNASeqData('./data/ncd_hfd_medium.csv', 'default', 'default data set', ()=>{
 		// let rnaSeqData = new RNASeqData('./data/ncd_hfd_edited.csv', 'default', 'default data set');
-		let rnaSeqData = new RNASeqData('./data/ncd_hfd_small_edited.csv', 'default', 'default data set');
+		// let rnaSeqData = new RNASeqData('./data/ncd_hfd_small_edited.csv', 'default', 'default data set');
 
-		rnaSeqData.readPromise.then(() => {
+		let rnaSeqData = {};
+		let promises = [];
+		rnaSeqData.default = new RNASeqData('./data/dieterich-pipeline_ncd_hfd.csv', 'default', 'default data set');
+		rnaSeqData.dbdb_ncd = new RNASeqData('./data/dieterich-pipeline_dbdb_ncd.csv', 'default', 'dbdb_ncd');
+		rnaSeqData.insulin_pbs = new RNASeqData('./data/dieterich-pipeline_insulin_pbs.csv', 'default', 'insulin_pbs');
+		rnaSeqData.ldlr_wt = new RNASeqData('./data/dieterich-pipeline_LDLR_wt.csv', 'default', 'LDLR_wt');
+		rnaSeqData.misty_dbdb = new RNASeqData('./data/dieterich-pipeline_misty_dbdb.csv', 'default', 'misty_dbdb');
+		for (let i in Object.keys(rnaSeqData)) {
+			promises.push(rnaSeqData[Object.keys(rnaSeqData)[i]].readPromise);
+		}
+		Promise.all(promises).then(() => {
+			console.log(`${new Date().toLocaleString()}: All data loaded`);
 			let testArray = [];
-			testArray.push(Helper.objectValueToArray(rnaSeqData.data, 'pValue'));
-			testArray.push(Helper.objectValueToArray(rnaSeqData.data, 'qValue'));
-			testArray[0] = testArray[0].slice(0, testArray[0].length - 2);
-			testArray[1] = testArray[1].slice(1, testArray[1].length - 1);
+			testArray.push(Helper.objectValueToArray(rnaSeqData.default.data, 'pValue'));
+			testArray.push(Helper.objectValueToArray(rnaSeqData.dbdb_ncd.data, 'pValue'));
+			testArray.push(Helper.objectValueToArray(rnaSeqData.insulin_pbs.data, 'pValue'));
+			testArray.push(Helper.objectValueToArray(rnaSeqData.ldlr_wt.data, 'pValue'));
+			testArray.push(Helper.objectValueToArray(rnaSeqData.misty_dbdb.data, 'pValue'));
+			// testArray[0] = testArray[0].slice(0, testArray[0].length - 2);
+			// testArray[1] = testArray[1].slice(1, testArray[1].length - 1);
 			console.log(testArray);
-			console.log([[6,7,8,9,10],[1,2,3,4,5]]);
 			// R.PCA([[6,7,8,9,10],[1,2,3,4,5]]).then(output => {
 			r.PCA(testArray).then(output => {
 				console.log(output);
 			});
 		});
 
-		rnaSeqData.readPromise.then(() => {
+		Promise.all(promises).then(() => {
 
-			openCPU.runRCommand("graphics", "hist", { x: Helper.objectValueToArray(rnaSeqData.data, 'pValue'), breaks: 10}, 'ascii', false).then(output => {
+			openCPU.runRCommand("graphics", "hist", { x: Helper.objectValueToArray(rnaSeqData.default.data, 'pValue'), breaks: 10}, 'ascii', false).then(output => {
 				this.setState({
 					image: `${output.graphics[0]}/svg`
 				});
@@ -75,7 +88,7 @@ class App extends React.Component {
 		});
 		// Add the rnaSeqData to the state, but it could probably be also a class member
 		this.state = {
-			rnaSeqData: rnaSeqData
+			rnaSeqData: rnaSeqData.default
 		};
 	}
 
