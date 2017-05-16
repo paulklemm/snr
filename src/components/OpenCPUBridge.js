@@ -1,4 +1,6 @@
-import {get, post} from 'axios';
+import {get} from 'axios';
+// Because the post from axios is not able to properly submit `R` code, which cost me far too many hours of my life
+import {post} from 'jquery';
 
 // http://mediatemple.net/blog/tips/loading-and-using-external-data-in-react/
 /**
@@ -33,10 +35,7 @@ class OpenCPUBridge {
 		// Only proceed with the request when the OpenCPU server is online
 		await this.isOnlinePromise;
 		let response = await post(`${this.address}/ocpu/library/${rpackage}/R/${rfunction}`, params);
-		// Check if we have the proper error code
-		if (response.status !== 201)
-			throw new Error(`openCPURequest${rpackage}${rfunction}${JSON.stringify(params)} gave response status ${response.status}, expected '201'`);
-		let openCpuOutput = this.getOcpuOutput(response.data, valFormat);
+		let openCpuOutput = this.getOcpuOutput(response, valFormat);
 		// Now we have URLs for the output of the openCPU command, we get the output of those
 		try	{
 			await Promise.all(openCpuOutput.promises);
