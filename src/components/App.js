@@ -18,6 +18,7 @@ import ScatterplotRNASeqData from './ScatterplotRNASeqData';
 import RNASeqData from './RNASeqData';
 import OpenCPUBridge from './OpenCPUBridge';
 import R from './R';
+import DatasetSelect from './DatasetSelect';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Grid from 'material-ui/Grid';
 import Paper from 'material-ui/Paper';
@@ -40,9 +41,12 @@ class App extends React.Component {
 		// Debug RNASeq connection
 		let openCPU = new OpenCPUBridge('http://localhost:8004');
 		let r = new R(openCPU);
-		openCPU.runRCommand("sonaR", "get_data_names", { x: "x0f2853db6b"}, 'ascii', false).then(output => {
-				console.log(output);
+		openCPU.runRCommand("sonaR", "get_data_names", { x: "x0f2853db6b"}, 'json', false).then(output => {
+			console.log(output);
+			this.setState({
+				rnaSeqDatasetNames: output['.val']
 			});
+		});
 		let rnaSeqData = {};
 		let promises = [];
 		rnaSeqData.default = new RNASeqData('./data/dieterich-pipeline_ncd_hfd.csv', 'default', 'default data set');
@@ -104,6 +108,11 @@ class App extends React.Component {
 							{ /* <Hexplot width={600} height={400} rnaSeqData={Helper.getIrisNewFormat()} xName="sepalWidth" yName="sepalLength" hexSize={10} hexMax={10} /> */ }
 							{ /* <Piechart width={200} height={200} data={[1, 1, 2, 3, 5, 8, 13, 21]}/> */ }
 							{ /* <Hexplot width={500} height={400} rnaSeqData={this.state.rnaSeqData} xName="pValue" yName="fc" hexSize={10} hexMax={10} /> */ }
+							<Grid item xs>
+								<Paper>
+									<DatasetSelect datasets={this.state.rnaSeqDatasetNames}/>
+								</Paper>
+							</Grid>
 							<Grid item xs>
 								<Paper>
 									<img src={`${this.state.image}?width=7&height=5`} width={400} height={200} alt="R test"/>
