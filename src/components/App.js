@@ -40,43 +40,40 @@ class App extends React.Component {
 		// Debug RNASeq connection
 		let openCPU = new OpenCPUBridge('http://localhost:8004');
 		let r = new R(openCPU);
-		// let openCPU = new OpenCPUBridge('https://public.opencpu.org');
-		// let rnaSeqData = new RNASeqData('./data/ncd_hfd_small.csv', 'default', 'default data set', ()=>{
-		// let rnaSeqData = new RNASeqData('./data/ncd_hfd.csv', 'default', 'default data set', ()=>{
-		// let rnaSeqData = new RNASeqData('./data/ncd_hfd_medium.csv', 'default', 'default data set', ()=>{
-		// let rnaSeqData = new RNASeqData('./data/ncd_hfd_edited.csv', 'default', 'default data set');
-		// let rnaSeqData = new RNASeqData('./data/ncd_hfd_small_edited.csv', 'default', 'default data set');
-
+		openCPU.runRCommand("sonaR", "get_data_names", { x: "x0f2853db6b"}, 'ascii', false).then(output => {
+				console.log(output);
+			});
 		let rnaSeqData = {};
 		let promises = [];
 		rnaSeqData.default = new RNASeqData('./data/dieterich-pipeline_ncd_hfd.csv', 'default', 'default data set');
-		rnaSeqData.dbdb_ncd = new RNASeqData('./data/dieterich-pipeline_dbdb_ncd.csv', 'default', 'dbdb_ncd');
-		rnaSeqData.insulin_pbs = new RNASeqData('./data/dieterich-pipeline_insulin_pbs.csv', 'default', 'insulin_pbs');
-		rnaSeqData.ldlr_wt = new RNASeqData('./data/dieterich-pipeline_LDLR_wt.csv', 'default', 'LDLR_wt');
-		rnaSeqData.misty_dbdb = new RNASeqData('./data/dieterich-pipeline_misty_dbdb.csv', 'default', 'misty_dbdb');
+		// rnaSeqData.dbdb_ncd = new RNASeqData('./data/dieterich-pipeline_dbdb_ncd.csv', 'default', 'dbdb_ncd');
+		// rnaSeqData.insulin_pbs = new RNASeqData('./data/dieterich-pipeline_insulin_pbs.csv', 'default', 'insulin_pbs');
+		// rnaSeqData.ldlr_wt = new RNASeqData('./data/dieterich-pipeline_LDLR_wt.csv', 'default', 'LDLR_wt');
+		// rnaSeqData.misty_dbdb = new RNASeqData('./data/dieterich-pipeline_misty_dbdb.csv', 'default', 'misty_dbdb');
 		for (let i in Object.keys(rnaSeqData)) {
 			promises.push(rnaSeqData[Object.keys(rnaSeqData)[i]].readPromise);
 		}
-		Promise.all(promises).then(() => {
-			console.log(`${new Date().toLocaleString()}: All data loaded`);
-			let testArray = [];
-			testArray.push(Helper.objectValueToArray(rnaSeqData.default.data, 'pValue'));
-			testArray.push(Helper.objectValueToArray(rnaSeqData.dbdb_ncd.data, 'pValue'));
-			testArray.push(Helper.objectValueToArray(rnaSeqData.insulin_pbs.data, 'pValue'));
-			testArray.push(Helper.objectValueToArray(rnaSeqData.ldlr_wt.data, 'pValue'));
-			testArray.push(Helper.objectValueToArray(rnaSeqData.misty_dbdb.data, 'pValue'));
-			// testArray[0] = testArray[0].slice(0, testArray[0].length - 2);
-			// testArray[1] = testArray[1].slice(1, testArray[1].length - 1);
-			console.log(testArray);
-			// R.PCA([[6,7,8,9,10],[1,2,3,4,5]]).then(output => {
-			r.PCA(testArray).then(output => {
-				console.log(output);
-			});
-		});
+		// Promise.all(promises).then(() => {
+		// 	console.log(`${new Date().toLocaleString()}: All data loaded`);
+		// 	let testArray = [];
+		// 	testArray.push(Helper.objectValueToArray(rnaSeqData.default.data, 'pValue'));
+		// 	testArray.push(Helper.objectValueToArray(rnaSeqData.dbdb_ncd.data, 'pValue'));
+		// 	testArray.push(Helper.objectValueToArray(rnaSeqData.insulin_pbs.data, 'pValue'));
+		// 	testArray.push(Helper.objectValueToArray(rnaSeqData.ldlr_wt.data, 'pValue'));
+		// 	testArray.push(Helper.objectValueToArray(rnaSeqData.misty_dbdb.data, 'pValue'));
+		// 	// testArray[0] = testArray[0].slice(0, testArray[0].length - 2);
+		// 	// testArray[1] = testArray[1].slice(1, testArray[1].length - 1);
+		// 	// console.log(testArray);
+		// 	// R.PCA([[6,7,8,9,10],[1,2,3,4,5]]).then(output => {
+		// 	// r.PCA(testArray).then(output => {
+		// 	// 	console.log(output);
+		// 	// });
+		// });
 
 		Promise.all(promises).then(() => {
 
-			openCPU.runRCommand("graphics", "hist", { x: Helper.objectValueToArray(rnaSeqData.default.data, 'pValue'), breaks: 10}, 'ascii', false).then(output => {
+			// openCPU.runRCommand("graphics", "hist", { x: Helper.objectValueToArray(rnaSeqData.default.data, 'pValue'), breaks: 10}, 'ascii', false).then(output => {
+			openCPU.runRCommand("graphics", "hist", { x: "[1,2,2,2,3,4,5,6,6,7]", breaks: 10}, 'ascii', false).then(output => {
 				this.setState({
 					image: `${output.graphics[0]}/svg`
 				});
