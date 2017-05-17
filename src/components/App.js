@@ -39,7 +39,9 @@ class App extends React.Component {
 		this.setEnableDataset = this.setEnableDataset.bind(this);
 		this.state = {
 			datasets: {},
-			datasetEnabled: {}
+			datasetEnabled: {},
+			// Debug
+			hexplotData: {}
 		};
 		// let datasetHub = new DatasetHub();
 		// this.state = {datasetHub: datasetHub};
@@ -51,13 +53,31 @@ class App extends React.Component {
 		this.setState({
 			datasetEnabled: datasetEnabled
 		});
+		// Set enabled of the dataset
+		this.state.datasets[name].enabled = enabled;
+		// Check if we have to initialize loading of the data set
+		if (this.state.datasets[name].loaded === false && enabled) {
+			console.log("Loading required");
+			this.loadDataset(name);
+		}
+	}
+
+	async loadDataset(name) {
+		console.log(`Loading ${name} ...`);
+		let dataset = await this.openCPU.runRCommand("sonaR", "get_dataset", { datasets: "x0f2853db6b", name: `'${name}'`}, 'json', true);
+		console.log(`Loading ${name} done!`);
+		this.state.datasets[name].setData(dataset['.val']);
+		console.log(this.state.datasets[name]);
+		// DEBUG
+		this.setState({hexplotData: this.state.datasets[name]});
+		this.forceUpdate();
 	}
 
 	componentWillMount() {
 		// Debug RNASeq connection
-		let openCPU = new OpenCPUBridge('http://localhost:8004');
+		this.openCPU = new OpenCPUBridge('http://localhost:8004');
 		// let r = new R(openCPU);
-		openCPU.runRCommand("sonaR", "get_data_names", { x: "x0f2853db6b"}, 'json', false).then(output => {
+		this.openCPU.runRCommand("sonaR", "get_data_names", { x: "x0f2853db6b"}, 'json', false).then(output => {
 			console.log(output);
 			let datasets = {...this.state.datasets};
 			let datasetEnabled = {...this.state.datasetEnabled};
@@ -66,21 +86,20 @@ class App extends React.Component {
 				let datasetName = output['.val'][i];
 				// datasetHub.push(new Dataset(datasetName));
 				datasets[datasetName] = new Dataset(datasetName);
-				// Default add value to data set, this should later be derived from firebase
-				datasetEnabled[datasetName] = false;
+				// datasetEnabled[datasetName] = false;
 			}
 			this.setState({
 				// datasetHub: datasetHub
 				datasets: datasets,
-				datasetNames: Object.keys(datasets),
-				datasetEnabled: datasetEnabled
+				datasetNames: Object.keys(datasets)
 			});
-			console.log(this.state.datasetHub.names);
 
-			openCPU.runRCommand("sonaR", "get_dataset", { datasets: "x0f2853db6b", name: `'${this.state.rnaSeqDatasetNames[0]}'`}, 'json', true).then(response => {
-				console.log(`get ${this.state.rnaSeqDatasetNames[0]}`);
-				console.log(response);
-			});
+			// Load setEnambled Status
+			for (let i in output['.val']) {
+				let datasetName = output['.val'][i];
+				// Default add value to data set, this should later be derived from firebase
+				this.setEnableDataset(datasetName, false);
+			}
 		});
 		// let rnaSeqData = {};
 		// let promises = [];
@@ -110,7 +129,7 @@ class App extends React.Component {
 		// });
 
 			// openCPU.runRCommand("graphics", "hist", { x: Helper.objectValueToArray(rnaSeqData.default.data, 'pValue'), breaks: 10}, 'ascii', false).then(output => {
-			openCPU.runRCommand("graphics", "hist", { x: "[1,2,2,2,3,4,5,6,6,7]", breaks: 10}, 'ascii', false).then(output => {
+			this.openCPU.runRCommand("graphics", "hist", { x: "[1,2,2,2,3,4,5,6,6,7]", breaks: 10}, 'ascii', false).then(output => {
 				this.setState({
 					image: `${output.graphics[0]}/svg`
 				});
@@ -162,6 +181,7 @@ class App extends React.Component {
 							</Grid>
 							<Grid item xs>
 								<Paper>
+									<Hexplot width={400} height={200} rnaSeqData={ this.state.hexplotData } xName="pValue" yName="fc" hexSize={5} hexMax={30} />
 									{ /* <Hexplot width={400} height={200} rnaSeqData={this.state.rnaSeqData} xName="pValue" yName="fc" hexSize={6} hexMax={10} /> */}
 								</Paper>
 							</Grid>
