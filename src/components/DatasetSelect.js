@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { LabelCheckbox } from 'material-ui/Checkbox';
 import { FormGroup } from 'material-ui/Form';
 import { CircularProgress } from 'material-ui/Progress';
@@ -42,6 +43,12 @@ class DatasetSelect extends React.Component {
 			</FormGroup>
 		);
 	}
+}
+
+DatasetSelect.propTypes = {
+	datasetEnabled: PropTypes.object,
+	datasetLoading: PropTypes.object,
+	setEnableDataset: PropTypes.func
 }
 
 export default DatasetSelect;
