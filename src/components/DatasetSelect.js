@@ -5,12 +5,12 @@ import { CircularProgress } from 'material-ui/Progress';
 
 const styleSheet = {
 	progress: {
-		['margin-left']:'auto',
-		['margin-right']:'auto',
-		['margin-top']: '10',
-		['margin-bottom']: '10',
-		width: '40px',
-		height: '40px'
+		marginLeft:'auto',
+		marginRight:'auto',
+		marginTop: 10,
+		marginBottom: 10,
+		width: 40,
+		height: 40
 	}
 };
 // https://material-ui-1dab0.firebaseapp.com/component-demos/selection-controls
@@ -42,9 +42,9 @@ class DatasetSelect extends React.Component {
 				/>
 			);
 		}
-		if (datasetCheckboxes.length == 0)
-			datasetCheckboxes.push(<CircularProgress style={styleSheet.progress} />)
-		
+		if (datasetCheckboxes.length === 0)
+			datasetCheckboxes.push(<CircularProgress style={styleSheet.progress} key="CircularProgress_getCheckboxes" />)
+
 		return(datasetCheckboxes);
 	}
 	render() {

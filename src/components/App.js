@@ -17,6 +17,7 @@ import ScatterplotRNASeqData from './ScatterplotRNASeqData';
 // eslint-disable-next-line
 import RNASeqData from './RNASeqData';
 import OpenCPUBridge from './OpenCPUBridge';
+// eslint-disable-next-line
 import R from './R';
 import DatasetSelect from './DatasetSelect';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
@@ -45,6 +46,10 @@ class App extends React.Component {
 			console.log(output);
 			this.setState({
 				rnaSeqDatasetNames: output['.val']
+			});
+			openCPU.runRCommand("sonaR", "get_dataset", { datasets: "x0f2853db6b", name: `'${this.state.rnaSeqDatasetNames[0]}'`}, 'json', true).then(response => {
+				console.log(`get ${this.state.rnaSeqDatasetNames[0]}`);
+				console.log(response);
 			});
 		});
 		let rnaSeqData = {};
