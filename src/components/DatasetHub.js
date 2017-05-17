@@ -3,6 +3,7 @@ class DatasetHub {
 		this.datasets = {};
 		this.names = [];
 		this.enabled = {};
+		this.loading = {};
 	}
 	push(dataset) {
 		this.datasets[dataset.name] = dataset;
@@ -10,6 +11,13 @@ class DatasetHub {
 	}
 	setData(name, data) {
 		this.datasets[name].setData(data);
+		// 'Loading' changes, so update
+		this.update();
+	}
+
+	setLoading(name) {
+		this.datasets[name].loading = true;
+		this.update();
 	}
 
 	setEnable(datasetName, enabled) {
@@ -20,13 +28,16 @@ class DatasetHub {
 	update() {
 		let names = Object.keys(this.datasets);
 		let enabled = {};
+		let loading = {};
 		// Iterate over all data sets and update information
 		for (let i in names) {
 			let name = names[i];
 			enabled[name] = this.datasets[name].enabled;
+			loading[name] = this.datasets[name].loading;
 		}
 		this.names = names;
 		this.enabled = enabled;
+		this.loading = loading;
 	}
 }
 

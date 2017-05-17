@@ -3,10 +3,12 @@ class Dataset {
 		this.name = name;
 		this.enabled = enabled;
 		this.loaded = false;
+		this.loading = false;
 	}
 	setData(data) {
 		this.data = data;
 		this.loaded = true;
+		this.loading = false;
 	}
 }
 

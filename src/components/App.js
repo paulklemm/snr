@@ -41,6 +41,7 @@ class App extends React.Component {
 		
 		this.state = {
 			datasetEnabled: {},
+			datasetLoading: {},
 			// Debug
 			hexplotData: {}
 		};
@@ -59,8 +60,13 @@ class App extends React.Component {
 	async loadDataset(name, verbose = false) {
 		if (verbose) console.log(`Loading ${name} ...`);
 
+		// Set dataset to loading
+		this.datasetHub.setLoading(name)
+		this.setState({datasetLoading: this.datasetHub.loading});
 		let dataset = await this.openCPU.runRCommand("sonaR", "get_dataset", { datasets: "x0183afbc16", name: `'${name}'`}, 'json', false);
 		this.datasetHub.setData(name, dataset['.val']);
+		// Loading is done, so update it again
+		this.setState({datasetLoading: this.datasetHub.loading});
 		// DEBUG
 		this.setState({hexplotData: this.datasetHub.datasets[name]});
 		this.forceUpdate();
@@ -110,7 +116,7 @@ class App extends React.Component {
 							{ /* <Hexplot width={500} height={400} rnaSeqData={this.state.rnaSeqData} xName="pValue" yName="fc" hexSize={10} hexMax={10} /> */ }
 							<Grid item xs>
 								<Paper>
-									<DatasetSelect datasetEnabled={ this.state.datasetEnabled } setEnableDataset={ this.setEnableDataset }/>
+									<DatasetSelect datasetEnabled={ this.state.datasetEnabled } datasetLoading={ this.state.datasetLoading } setEnableDataset={ this.setEnableDataset }/>
 								</Paper>
 							</Grid>
 							<Grid item xs>

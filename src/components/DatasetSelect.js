@@ -25,6 +25,7 @@ class DatasetSelect extends React.Component {
 					label={datasetName}
 					key={datasetName}
 					checked={this.props.datasetEnabled[datasetName]}
+					disabled={this.props.datasetLoading[datasetName]}
 				/>
 			);
 		}
