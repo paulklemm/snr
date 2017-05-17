@@ -37,39 +37,53 @@ class App extends React.Component {
 	constructor() {
 		super();
 		this.setEnableDataset = this.setEnableDataset.bind(this);
+		this.datasetHub = new DatasetHub();
+		
 		this.state = {
-			datasets: {},
+			// datasets: {},
 			datasetEnabled: {},
 			// Debug
 			hexplotData: {}
 		};
-		// let datasetHub = new DatasetHub();
-		// this.state = {datasetHub: datasetHub};
 	}
 
 	setEnableDataset(name, enabled) {
-		let datasetEnabled = {...this.state.datasetEnabled};
-		datasetEnabled[name] = enabled;
+		let requiresLoading = this.datasetHub.setEnable(name, enabled);
 		this.setState({
-			datasetEnabled: datasetEnabled
+			datasetEnabled: this.datasetHub.enabled
 		});
-		// Set enabled of the dataset
-		this.state.datasets[name].enabled = enabled;
-		// Check if we have to initialize loading of the data set
-		if (this.state.datasets[name].loaded === false && enabled) {
+		if (requiresLoading) {
 			console.log("Loading required");
 			this.loadDataset(name);
 		}
+
+
+
+		// let datasetEnabled = {...this.state.datasetEnabled};
+		// datasetEnabled[name] = enabled;
+		// this.setState({
+		// 	datasetEnabled: datasetEnabled
+		// });
+		// // Set enabled of the dataset
+		// this.state.datasets[name].enabled = enabled;
+		// // Check if we have to initialize loading of the data set
+		// if (this.state.datasets[name].loaded === false && enabled) {
+		// 	console.log("Loading required");
+		// 	this.loadDataset(name);
+		// }
 	}
 
 	async loadDataset(name) {
 		console.log(`Loading ${name} ...`);
 		let dataset = await this.openCPU.runRCommand("sonaR", "get_dataset", { datasets: "x0f2853db6b", name: `'${name}'`}, 'json', true);
 		console.log(`Loading ${name} done!`);
-		this.state.datasets[name].setData(dataset['.val']);
-		console.log(this.state.datasets[name]);
+		// this.state.datasets[name].setData(dataset['.val']);
+		this.datasetHub.setData(name, dataset['.val']);
+		console.log(this.datasetHub.datasets);
+		// console.log(this.state.datasets[name]);
 		// DEBUG
-		this.setState({hexplotData: this.state.datasets[name]});
+		// this.setState({hexplotData: this.state.datasets[name]});
+		this.setState({hexplotData: this.datasetHub.datasets[name]});
 		this.forceUpdate();
 	}
 
@@ -79,20 +93,19 @@ class App extends React.Component {
 		// let r = new R(openCPU);
 		this.openCPU.runRCommand("sonaR", "get_data_names", { x: "x0f2853db6b"}, 'json', false).then(output => {
 			console.log(output);
-			let datasets = {...this.state.datasets};
-			let datasetEnabled = {...this.state.datasetEnabled};
+			// let datasets = {...this.state.datasets};
+			// let datasetEnabled = {...this.state.datasetEnabled};
 			// let datasetHub = {...this.state.dataHub};
 			for (let i in output['.val']) {
 				let datasetName = output['.val'][i];
-				// datasetHub.push(new Dataset(datasetName));
-				datasets[datasetName] = new Dataset(datasetName);
+				this.datasetHub.push(new Dataset(datasetName));
+				// datasets[datasetName] = new Dataset(datasetName);
 				// datasetEnabled[datasetName] = false;
 			}
-			this.setState({
-				// datasetHub: datasetHub
-				datasets: datasets,
-				datasetNames: Object.keys(datasets)
-			});
+			// this.setState({
+			// 	// datasetHub: datasetHub
+			// 	datasets: datasets,
+			// });
 
 			// Load setEnambled Status
 			for (let i in output['.val']) {
