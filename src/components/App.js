@@ -15,8 +15,9 @@ import DynamicHexBin from './DynamicHexBin';
 // eslint-disable-next-line
 import ScatterplotRNASeqData from './ScatterplotRNASeqData';
 // eslint-disable-next-line
-import RNASeqData from './RNASeqData';
 import OpenCPUBridge from './OpenCPUBridge';
+import Dataset from './Dataset';
+import DatasetHub from './DatasetHub';
 // eslint-disable-next-line
 import R from './R';
 import DatasetSelect from './DatasetSelect';
@@ -35,33 +36,62 @@ const styleSheet = {
 class App extends React.Component {
 	constructor() {
 		super();
-		this.state = {};
+		this.setEnableDataset = this.setEnableDataset.bind(this);
+		this.state = {
+			datasets: {},
+			datasetEnabled: {}
+		};
+		// let datasetHub = new DatasetHub();
+		// this.state = {datasetHub: datasetHub};
+	}
+
+	setEnableDataset(name, enabled) {
+		let datasetEnabled = {...this.state.datasetEnabled};
+		datasetEnabled[name] = enabled;
+		this.setState({
+			datasetEnabled: datasetEnabled
+		});
 	}
 
 	componentWillMount() {
 		// Debug RNASeq connection
 		let openCPU = new OpenCPUBridge('http://localhost:8004');
-		let r = new R(openCPU);
+		// let r = new R(openCPU);
 		openCPU.runRCommand("sonaR", "get_data_names", { x: "x0f2853db6b"}, 'json', false).then(output => {
 			console.log(output);
+			let datasets = {...this.state.datasets};
+			let datasetEnabled = {...this.state.datasetEnabled};
+			// let datasetHub = {...this.state.dataHub};
+			for (let i in output['.val']) {
+				let datasetName = output['.val'][i];
+				// datasetHub.push(new Dataset(datasetName));
+				datasets[datasetName] = new Dataset(datasetName);
+				// Default add value to data set, this should later be derived from firebase
+				datasetEnabled[datasetName] = false;
+			}
 			this.setState({
-				rnaSeqDatasetNames: output['.val']
+				// datasetHub: datasetHub
+				datasets: datasets,
+				datasetNames: Object.keys(datasets),
+				datasetEnabled: datasetEnabled
 			});
+			console.log(this.state.datasetHub.names);
+
 			openCPU.runRCommand("sonaR", "get_dataset", { datasets: "x0f2853db6b", name: `'${this.state.rnaSeqDatasetNames[0]}'`}, 'json', true).then(response => {
 				console.log(`get ${this.state.rnaSeqDatasetNames[0]}`);
 				console.log(response);
 			});
 		});
-		let rnaSeqData = {};
-		let promises = [];
-		rnaSeqData.default = new RNASeqData('./data/dieterich-pipeline_ncd_hfd.csv', 'default', 'default data set');
-		// rnaSeqData.dbdb_ncd = new RNASeqData('./data/dieterich-pipeline_dbdb_ncd.csv', 'default', 'dbdb_ncd');
-		// rnaSeqData.insulin_pbs = new RNASeqData('./data/dieterich-pipeline_insulin_pbs.csv', 'default', 'insulin_pbs');
-		// rnaSeqData.ldlr_wt = new RNASeqData('./data/dieterich-pipeline_LDLR_wt.csv', 'default', 'LDLR_wt');
-		// rnaSeqData.misty_dbdb = new RNASeqData('./data/dieterich-pipeline_misty_dbdb.csv', 'default', 'misty_dbdb');
-		for (let i in Object.keys(rnaSeqData)) {
-			promises.push(rnaSeqData[Object.keys(rnaSeqData)[i]].readPromise);
-		}
+		// let rnaSeqData = {};
+		// let promises = [];
+		// rnaSeqData.default = new RNASeqData('./data/dieterich-pipeline_ncd_hfd.csv', 'default', 'default data set');
+		// // rnaSeqData.dbdb_ncd = new RNASeqData('./data/dieterich-pipeline_dbdb_ncd.csv', 'default', 'dbdb_ncd');
+		// // rnaSeqData.insulin_pbs = new RNASeqData('./data/dieterich-pipeline_insulin_pbs.csv', 'default', 'insulin_pbs');
+		// // rnaSeqData.ldlr_wt = new RNASeqData('./data/dieterich-pipeline_LDLR_wt.csv', 'default', 'LDLR_wt');
+		// // rnaSeqData.misty_dbdb = new RNASeqData('./data/dieterich-pipeline_misty_dbdb.csv', 'default', 'misty_dbdb');
+		// for (let i in Object.keys(rnaSeqData)) {
+		// 	promises.push(rnaSeqData[Object.keys(rnaSeqData)[i]].readPromise);
+		// }
 		// Promise.all(promises).then(() => {
 		// 	console.log(`${new Date().toLocaleString()}: All data loaded`);
 		// 	let testArray = [];
@@ -79,23 +109,20 @@ class App extends React.Component {
 		// 	// });
 		// });
 
-		Promise.all(promises).then(() => {
-
 			// openCPU.runRCommand("graphics", "hist", { x: Helper.objectValueToArray(rnaSeqData.default.data, 'pValue'), breaks: 10}, 'ascii', false).then(output => {
 			openCPU.runRCommand("graphics", "hist", { x: "[1,2,2,2,3,4,5,6,6,7]", breaks: 10}, 'ascii', false).then(output => {
 				this.setState({
 					image: `${output.graphics[0]}/svg`
 				});
 				// console.log(output);
-			});
 			// We have to force the update since react will not recognize on it's own that the state object
 			// RNASeqData has changed. https://facebook.github.io/react/docs/react-component.html#forceupdate
 			this.forceUpdate();
 		});
 		// Add the rnaSeqData to the state, but it could probably be also a class member
-		this.state = {
-			rnaSeqData: rnaSeqData.default
-		};
+		// this.state = {
+		// 	rnaSeqData: undefined
+		// };
 	}
 
 	// TODO Fix stres test
@@ -115,7 +142,7 @@ class App extends React.Component {
 							{ /* <Hexplot width={500} height={400} rnaSeqData={this.state.rnaSeqData} xName="pValue" yName="fc" hexSize={10} hexMax={10} /> */ }
 							<Grid item xs>
 								<Paper>
-									<DatasetSelect datasets={this.state.rnaSeqDatasetNames}/>
+									<DatasetSelect datasetEnabled={ this.state.datasetEnabled } setEnableDataset={ this.setEnableDataset }/>
 								</Paper>
 							</Grid>
 							<Grid item xs>
@@ -135,7 +162,7 @@ class App extends React.Component {
 							</Grid>
 							<Grid item xs>
 								<Paper>
-									<Hexplot width={400} height={200} rnaSeqData={this.state.rnaSeqData} xName="pValue" yName="fc" hexSize={6} hexMax={10} />
+									{ /* <Hexplot width={400} height={200} rnaSeqData={this.state.rnaSeqData} xName="pValue" yName="fc" hexSize={6} hexMax={10} /> */}
 								</Paper>
 							</Grid>
 						</Grid>

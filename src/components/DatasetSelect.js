@@ -16,29 +16,30 @@ const styleSheet = {
 // https://material-ui-1dab0.firebaseapp.com/component-demos/selection-controls
 class DatasetSelect extends React.Component {
 	componentWillReceiveProps(nextProps) {
-		let selectStatus = {};
-		for (let i in nextProps.datasets) {
-			selectStatus[nextProps.datasets[i]] = true;
-		}
-		this.setState({
-			selectStatus: selectStatus
-		});
+		// let selectStatus = {};
+		// for (let i in nextProps.datasets) {
+		// 	selectStatus[nextProps.datasets[i]] = true;
+		// }
+		// this.setState({
+		// 	selectStatus: selectStatus
+		// });
 	}
 
 	getCheckboxes() {
 		let datasetCheckboxes = [];
-		for (let i in this.props.datasets) {
-			let datasetName = this.props.datasets[i];
+		for (let i in Object.keys(this.props.datasetEnabled)) {
+			let datasetName = Object.keys(this.props.datasetEnabled)[i];
 			datasetCheckboxes.push(
 				<LabelCheckbox
 					onChange={(event, checked) => { 
-						let selectStatus = {...this.state.selectStatus};
-						selectStatus[datasetName] = checked;
-						this.setState({ selectStatus: selectStatus });
+						this.props.setEnableDataset(datasetName, checked);
+						// let selectStatus = {...this.state.selectStatus};
+						// selectStatus[datasetName] = checked;
+						// this.setState({ selectStatus: selectStatus });
 					}}
 					label={datasetName}
 					key={datasetName}
-					checked={this.state.selectStatus[datasetName]}
+					checked={this.props.datasetEnabled[datasetName]}
 				/>
 			);
 		}
