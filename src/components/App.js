@@ -59,7 +59,7 @@ class App extends React.Component {
 	async loadDataset(name, verbose = false) {
 		if (verbose) console.log(`Loading ${name} ...`);
 
-		let dataset = await this.openCPU.runRCommand("sonaR", "get_dataset", { datasets: "x0f2853db6b", name: `'${name}'`}, 'json', false);
+		let dataset = await this.openCPU.runRCommand("sonaR", "get_dataset", { datasets: "x0183afbc16", name: `'${name}'`}, 'json', false);
 		this.datasetHub.setData(name, dataset['.val']);
 		// DEBUG
 		this.setState({hexplotData: this.datasetHub.datasets[name]});
@@ -73,7 +73,7 @@ class App extends React.Component {
 		// Debug RNASeq connection
 		this.openCPU = new OpenCPUBridge('http://localhost:8004');
 		// let r = new R(openCPU);
-		this.openCPU.runRCommand("sonaR", "get_data_names", { x: "x0f2853db6b"}, 'json', false).then(output => {
+		this.openCPU.runRCommand("sonaR", "get_data_names", { x: "x0183afbc16"}, 'json', false).then(output => {
 			for (let i in output['.val']) {
 				let datasetName = output['.val'][i];
 				this.datasetHub.push(new Dataset(datasetName));
