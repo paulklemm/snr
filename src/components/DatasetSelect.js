@@ -4,17 +4,30 @@ import { FormGroup } from 'material-ui/Form';
 
 // https://material-ui-1dab0.firebaseapp.com/component-demos/selection-controls
 class DatasetSelect extends React.Component {
+	componentWillReceiveProps(nextProps) {
+		let selectStatus = {};
+		for (let i in nextProps.datasets) {
+			selectStatus[nextProps.datasets[i]] = true;
+		}
+		this.setState({
+			selectStatus: selectStatus
+		});
+	}
+
 	getCheckboxes() {
 		let datasetCheckboxes = [];
-		console.log(`getCheckboxes`);
-		console.log(this.props.datasets);
 		for (let i in this.props.datasets) {
+			let datasetName = this.props.datasets[i];
 			datasetCheckboxes.push(
 				<LabelCheckbox
-					// onChange={(event, checked) => this.setState({ checkedA: checked })}
-					label={this.props.datasets[i]}
-					key={this.props.datasets[i]}
-					// value= "checkedA"
+					onChange={(event, checked) => { 
+						let selectStatus = {...this.state.selectStatus};
+						selectStatus[datasetName] = checked;
+						this.setState({ selectStatus: selectStatus });
+					}}
+					label={datasetName}
+					key={datasetName}
+					checked={this.state.selectStatus[datasetName]}
 				/>
 			);
 		}
