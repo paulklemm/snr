@@ -63,13 +63,13 @@ class App extends React.Component {
 		// Set dataset to loading
 		this.datasetHub.setLoading(name)
 		this.setState({datasetLoading: this.datasetHub.loading});
-		let dataset = await this.openCPU.runRCommand("sonaR", "get_dataset", { datasets: "x0183afbc16", name: `'${name}'`}, 'json', false);
+		let dataset = await this.openCPU.runRCommand("sonaR", "get_dataset", { datasets: "x085f08d09d", name: `'${name}'`}, 'json', false);
 		this.datasetHub.setData(name, dataset['.val']);
 		// Loading is done, so update it again
 		this.setState({datasetLoading: this.datasetHub.loading});
 		// DEBUG
+		this.datasetHub.filterFPKM(10);
 		this.setState({hexplotData: this.datasetHub.datasets[name]});
-		this.forceUpdate();
 
 		if (verbose) console.log(`Loading ${name} done!`);
 		if (verbose) console.log(this.datasetHub.datasets);
@@ -79,7 +79,7 @@ class App extends React.Component {
 		// Debug RNASeq connection
 		this.openCPU = new OpenCPUBridge('http://localhost:8004');
 		// let r = new R(openCPU);
-		this.openCPU.runRCommand("sonaR", "get_data_names", { x: "x0183afbc16"}, 'json', false).then(output => {
+		this.openCPU.runRCommand("sonaR", "get_data_names", { x: "x085f08d09d"}, 'json', false).then(output => {
 			for (let i in output['.val']) {
 				let datasetName = output['.val'][i];
 				this.datasetHub.push(new Dataset(datasetName));
@@ -136,7 +136,7 @@ class App extends React.Component {
 							</Grid>
 							<Grid item xs>
 								<Paper>
-									<Hexplot width={400} height={200} rnaSeqData={ this.state.hexplotData } xName="pValue" yName="fc" hexSize={5} hexMax={30} />
+									<Hexplot width={400} height={200} rnaSeqData={ this.state.hexplotData } xName="negLog10_p_value" yName="fc" hexSize={5} hexMax={30} />
 								</Paper>
 							</Grid>
 						</Grid>
