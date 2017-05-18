@@ -38,7 +38,7 @@ class App extends React.Component {
 		super();
 		this.setEnableDataset = this.setEnableDataset.bind(this);
 		this.datasetHub = new DatasetHub();
-		
+
 		this.state = {
 			datasetEnabled: {},
 			datasetLoading: {},
@@ -101,6 +101,21 @@ class App extends React.Component {
 
 	// TODO Fix stres test
 	render() {
+		// Create Hexplot dynamic from inbox data
+		let hexplots = [];
+		for (let i in this.datasetHub.names) {
+			let name = this.datasetHub.names[i];
+			let dataset = this.datasetHub.datasets[name];
+			if (dataset.loaded) {
+				hexplots.push(
+					<Grid item xs key={ name }>
+						<Paper>
+							<Hexplot width={300} height={200} rnaSeqData={ dataset } xName="negLog10_p_value" yName="fc" hexSize={4} hexMax={20} />
+						</Paper>
+					</Grid>
+				);
+			}
+		}
 		return (
 			<MuiThemeProvider>
 				<div>
@@ -134,11 +149,7 @@ class App extends React.Component {
 									<Scatterplot width={400} height={200} x={Helper.getIris().sepalWidth} y={Helper.getIris().sepalLength} xLabel="Sepal Width" yLabel="Sepal Length" />
 								</Paper>
 							</Grid>
-							<Grid item xs>
-								<Paper>
-									<Hexplot width={400} height={200} rnaSeqData={ this.state.hexplotData } xName="negLog10_p_value" yName="fc" hexSize={5} hexMax={30} />
-								</Paper>
-							</Grid>
+							{ hexplots }
 						</Grid>
 					</div>
 				</div>

@@ -27,7 +27,6 @@ class Dataset {
 		}
 	}
 	filterFPKM(val) {
-		console.log(`Filter FPKM below ${val}`);
 		for (let i in this.data) {
 			if (this.data[i].fpkm_1 < val || this.data[i].fpkm_2 < val)
 				this.filtered[i] = true;
