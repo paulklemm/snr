@@ -110,7 +110,7 @@ class App extends React.Component {
 				hexplots.push(
 					<Grid item xs key={ name }>
 						<Paper>
-							<Hexplot width={300} height={200} rnaSeqData={ dataset } xName="negLog10_p_value" yName="fc" hexSize={4} hexMax={20} />
+							<Hexplot height={200} width={300} rnaSeqData={ dataset } xName="negLog10_p_value" yName="fc" hexSize={4} hexMax={20} />
 						</Paper>
 					</Grid>
 				);
@@ -122,13 +122,13 @@ class App extends React.Component {
 					<Navbar />
 					<div style={styleSheet.appBody}>
 						<Grid container gutter={16}>
-							{ /* <BarChart width={200} height={200} /> */ }
-							{ /* <Scatterplot width={200} height={200} x={Helper.getIris().sepalWidth} y={Helper.getIris().sepalLength} xLabel="Sepal Width" yLabel="Sepal Length" /> */ }
-							{ /* <ScatterplotRNASeqData width={200} height={200} rnaSeqData={Helper.getIrisNewFormat()} xName="sepalWidth" yName="sepalLength" /> */ }
-							{ /* <ScatterplotRNASeqData width={600} height={400} rnaSeqData={this.state.rnaSeqData} xName="pValue" yName="fc" /> */ }
-							{ /* <Hexplot width={600} height={400} rnaSeqData={Helper.getIrisNewFormat()} xName="sepalWidth" yName="sepalLength" hexSize={10} hexMax={10} /> */ }
-							{ /* <Piechart width={200} height={200} data={[1, 1, 2, 3, 5, 8, 13, 21]}/> */ }
-							{ /* <Hexplot width={500} height={400} rnaSeqData={this.state.rnaSeqData} xName="pValue" yName="fc" hexSize={10} hexMax={10} /> */ }
+							{/* <BarChart width={200} height={200} /> */}
+							{/* <Scatterplot width={200} height={200} x={Helper.getIris().sepalWidth} y={Helper.getIris().sepalLength} xLabel="Sepal Width" yLabel="Sepal Length" /> */}
+							{/* <ScatterplotRNASeqData width={200} height={200} rnaSeqData={Helper.getIrisNewFormat()} xName="sepalWidth" yName="sepalLength" /> */}
+							{/* <ScatterplotRNASeqData width={600} height={400} rnaSeqData={this.state.rnaSeqData} xName="pValue" yName="fc" /> */}
+							{/* <Hexplot width={600} height={400} rnaSeqData={Helper.getIrisNewFormat()} xName="sepalWidth" yName="sepalLength" hexSize={10} hexMax={10} /> */}
+							{/* <Piechart width={200} height={200} data={[1, 1, 2, 3, 5, 8, 13, 21]}/> */}
+							{/* <Hexplot width={500} height={400} rnaSeqData={this.state.rnaSeqData} xName="pValue" yName="fc" hexSize={10} hexMax={10} /> */}
 							<Grid item xs>
 								<Paper>
 									<DatasetSelect datasetEnabled={ this.state.datasetEnabled } datasetLoading={ this.state.datasetLoading } setEnableDataset={ this.setEnableDataset }/>
