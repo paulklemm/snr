@@ -21,6 +21,7 @@ import DatasetHub from './DatasetHub';
 // eslint-disable-next-line
 import R from './R';
 import DatasetSelect from './DatasetSelect';
+import Table from './Table';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Grid from 'material-ui/Grid';
 import Paper from 'material-ui/Paper';
@@ -150,6 +151,11 @@ class App extends React.Component {
 								</Paper>
 							</Grid>
 							{ hexplots }
+							<Grid item xs>
+								<Paper>
+									<Table data={this.state.hexplotData.data}/>
+								</Paper>
+							</Grid>
 						</Grid>
 					</div>
 				</div>
