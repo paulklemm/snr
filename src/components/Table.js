@@ -17,7 +17,7 @@ class Table extends React.Component{
 		let table = [];
 		console.log("------------------------");
 		for (let i = this.state.row_top; i <= this.state.row_bottom; i++) {
-			console.log(`Render Row ${i}`);
+			// console.log(`Render Row ${i}`);
 			let row = [];
 			for (let j in dimensions) {
 				const dimension = dimensions[j];
@@ -25,12 +25,17 @@ class Table extends React.Component{
 			}
 			table.push(<tr>{row}</tr>);
 		}
+		// if (this.refs.parentDiff !== undefined) console.log(`Hoehe Parent: ${this.refs.parentDiff.clientHeight}`);
+		if (this.refs.parentDiff !== undefined) console.log(`Elemen_oben:${this.state.row_top}, Element_unten: ${this.state.row_bottom}`);
 		let aboveSpacer = [<div style={{height: this.state.row_top * 34}}></div>];
 		let belowSpacer = [<div style={{height: (this.props.data.length - (this.state.row_bottom + 1)) * 34}}></div>];
+		// console.log(`Hoehe: ${this.props.data.length}, Elemen_oben:${this.state.row_top}, Element_unten: ${this.state.row_bottom}`);
+		// console.log(`Box_Oben: ${this.state.row_top * 34}`);
+		// console.log(`Box_Unten: ${(this.props.data.length - (this.state.row_bottom + 1)) * 34}`);
 		// let belowSpacer = [<div style={{height: 2000 * 34}}></div>];
 		
 		return(
-			<div>
+			<div ref="parentDiff">
 			{aboveSpacer}
 			<table>
 				{table}
