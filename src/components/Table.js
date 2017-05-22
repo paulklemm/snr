@@ -17,19 +17,18 @@ class Table extends React.Component{
 		let table = [];
 		console.log("------------------------");
 		for (let i = this.state.row_top; i <= this.state.row_bottom; i++) {
-			// console.log(`Render Row ${i}`);
 			let row = [];
 			for (let j in dimensions) {
 				const dimension = dimensions[j];
 				row.push(<th key={`row_${i}${j}`}>{`${i}+${this.props.data[i][dimension]}`}</th>);
 			}
-			table.push(<tr>{row}</tr>);
+			table.push(<tr key={`tr_${i}`}>{row}</tr>);
 		}
 		// if (this.refs.parentDiff !== undefined) console.log(`Hoehe Parent: ${this.refs.parentDiff.clientHeight}`);
 		if (this.refs.parentDiff !== undefined) console.log(`Elemen_oben:${this.state.row_top}, Element_unten: ${this.state.row_bottom}`);
-		let aboveSpacer = [<div style={{height: this.state.row_top * 34}}></div>];
-		let belowSpacer = [<div style={{height: (this.props.data.length - (this.state.row_bottom + 1)) * 34}}></div>];
-		// console.log(`Hoehe: ${this.props.data.length}, Elemen_oben:${this.state.row_top}, Element_unten: ${this.state.row_bottom}`);
+		let aboveSpacer = [<div key={`aboveSpacer`} style={{height: this.state.row_top * 34}}></div>];
+		let belowSpacer = [<div key={`belowSpacer`} style={{height: (this.props.data.length - (this.state.row_bottom + 1)) * 34}}></div>];
+		console.log(`Hoehe: ${this.props.data.length}, Elemen_oben:${this.state.row_top}, Element_unten: ${this.state.row_bottom}`);
 		// console.log(`Box_Oben: ${this.state.row_top * 34}`);
 		// console.log(`Box_Unten: ${(this.props.data.length - (this.state.row_bottom + 1)) * 34}`);
 		// let belowSpacer = [<div style={{height: 2000 * 34}}></div>];
@@ -71,6 +70,14 @@ class Table extends React.Component{
 		return table;
 	}
 
+	renderRequired() {
+		if (Math.floor(this.refs.scrollable.scrollTop / 34) === this.state.row_top && 
+			  Math.floor((this.refs.scrollable.scrollTop + this.refs.scrollable.clientHeight) / 34) === this.state.row_bottom)
+			return false;
+		else
+			return true;
+	}
+
 	render() {
 		if (this.props.data === undefined) return (<div>no data</div>);
 		return (
@@ -80,10 +87,12 @@ class Table extends React.Component{
 				onScroll={(event) => { 
 					// console.log(event); 
 					// console.log(this.refs.scrollable.scrollTop);
-					this.setState({
-						row_top: Math.floor(this.refs.scrollable.scrollTop / 34),
-						row_bottom: Math.floor((this.refs.scrollable.scrollTop + this.refs.scrollable.clientHeight) / 34)
-					});
+					if (this.renderRequired()) {
+						this.setState({
+							row_top: Math.floor(this.refs.scrollable.scrollTop / 34),
+							row_bottom: Math.floor((this.refs.scrollable.scrollTop + this.refs.scrollable.clientHeight) / 34)
+						});
+					}
 					// let row_top = Math.floor(this.refs.scrollable.scrollTop / 34)
 					// let row_bottom = Math.floor((this.refs.scrollable.scrollTop + this.refs.scrollable.clientHeight) / 34)
 					// console.log(`Element Top: ${row_top}, Element Bottom: ${row_bottom}`);
