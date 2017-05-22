@@ -1,5 +1,12 @@
 import React from 'react';
 
+const styleSheet = {
+	th: {
+		textAlign: 'left',
+		height: 30
+	}
+}
+
 // https://www.youtube.com/watch?v=Bx5JB2FcSnk
 // https://jsfiddle.net/vjeux/KbWJ2/9/
 class Table extends React.Component{
@@ -8,7 +15,7 @@ class Table extends React.Component{
 		this.debug = false;
 		this.state = {
 			rowTop: 0,
-			rowBottom: 5
+			rowBottom: 20
 		};
 	}
 
@@ -23,16 +30,16 @@ class Table extends React.Component{
 			// Iterate through all dimensions (columns) in the data
 			for (let j in dimensions) {
 				const dimension = dimensions[j];
-				row.push(<th key={`row_${i}${j}`}>{`${i}+${this.props.data[i][dimension]}`}</th>);
+				row.push(<th key={`row_${i}${j}`}>{this.props.data[i][dimension]}</th>);
 			}
 			// Push the columns as new row to the table
-			table.push(<tr key={`tr_${i}`}>{row}</tr>);
+			table.push(<tr style={styleSheet.th} key={`tr_${i}`}>{row}</tr>);
 		}
 		// The top spacer must not exceed the maximum length of the table minus the visible table window
-		const topSpacerHeight = (this.state.rowBottom < this.props.data.length ? this.state.rowTop * 34 : (this.props.data.length - 1 - (this.state.rowBottom - this.state.rowTop)) * 34);
+		const topSpacerHeight = (this.state.rowBottom < this.props.data.length ? this.state.rowTop * styleSheet.th.height : (this.props.data.length - 1 - (this.state.rowBottom - this.state.rowTop)) * styleSheet.th.height);
 		const topSpacer = [<div key={`topSpacer`} style={{height: topSpacerHeight}}></div>];
 		// Bottom spacer is set to 0 when the bottom end is reached
-		const bottomSpacerHeight = (this.state.rowBottom < this.props.data.length - 1 ? (this.props.data.length - (this.state.rowBottom + 2)) * 34 : 0);
+		const bottomSpacerHeight = (this.state.rowBottom < this.props.data.length - 1 ? (this.props.data.length - (this.state.rowBottom + 2)) * styleSheet.th.height : 0);
 		const bottomSpacer = (bottomSpacerHeight === 0 ? [] : [<div key={`bottomSpacer`} style={{height: bottomSpacerHeight}}></div>])
 		
 		if (this.debug) {
@@ -69,10 +76,10 @@ class Table extends React.Component{
 		return (
 			<div 
 				ref="scrollable" 
-				style={{height:200, top: 26, 'overflowX': 'hidden', 'overflowY': 'auto'}} 
-				onScroll={(event) => {
-					const rowTop = Math.floor(this.refs.scrollable.scrollTop / 34);
-					const rowBottom = Math.floor((this.refs.scrollable.scrollTop + this.refs.scrollable.clientHeight) / 34);
+				style={{height:this.props.height, 'overflowX': 'hidden', 'overflowY': 'auto'}} 
+				onScroll={() => {
+					const rowTop = Math.floor(this.refs.scrollable.scrollTop / styleSheet.th.height);
+					const rowBottom = Math.floor((this.refs.scrollable.scrollTop + this.refs.scrollable.clientHeight) / styleSheet.th.height);
 					// Only change state if re-rendering is required
 					if (this.renderRequired(rowTop, rowBottom)) {
 						this.setState({

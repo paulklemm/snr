@@ -153,7 +153,7 @@ class App extends React.Component {
 							{ hexplots }
 							<Grid item xs>
 								<Paper>
-									<Table data={this.state.hexplotData.data}/>
+									<Table data={this.state.hexplotData.data} height={400} />
 								</Paper>
 							</Grid>
 						</Grid>
