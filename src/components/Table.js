@@ -5,9 +5,10 @@ import React from 'react';
 class Table extends React.Component{
 	constructor() {
 		super();
+		this.debug = false;
 		this.state = {
-			row_top: 0,
-			row_bottom: 5
+			rowTop: 0,
+			rowBottom: 5
 		};
 	}
 
@@ -15,42 +16,39 @@ class Table extends React.Component{
 		// Getting the dimensions like this is still a little hacky
 		let dimensions = Object.keys(this.props.data[1]);
 		let table = [];
-		console.log("------------------------");
-		for (let i = this.state.row_top; i <= this.state.row_bottom; i++) {
+		// Iterate over the top and bottom element
+		for (let i = this.state.rowTop; i <= this.state.rowBottom; i++) {
+			// Initialize an empty row element
 			let row = [];
+			// Iterate through all dimensions (columns) in the data
 			for (let j in dimensions) {
 				const dimension = dimensions[j];
-				if (i < this.props.data.length) 
-					row.push(<th key={`row_${i}${j}`}>{`${i}+${this.props.data[i][dimension]}`}</th>);
-				else
-					row.push(<th key={`row_${i}${j}`}>{`Nothing to see here!`}</th>);
+				row.push(<th key={`row_${i}${j}`}>{`${i}+${this.props.data[i][dimension]}`}</th>);
 			}
+			// Push the columns as new row to the table
 			table.push(<tr key={`tr_${i}`}>{row}</tr>);
 		}
-		// if (this.refs.parentDiff !== undefined) console.log(`Hoehe Parent: ${this.refs.parentDiff.clientHeight}`);
-		if (this.refs.parentDiff !== undefined) console.log(`Elemen_oben:${this.state.row_top}, Element_unten: ${this.state.row_bottom}`);
-		// ToDo: Limit Above Spacer to maximum size!
-		let topspace = (this.state.row_bottom < this.props.data.length ? this.state.row_top * 34 : (this.props.data.length - 1 - (this.state.row_bottom - this.state.row_top)) * 34);
-		// let aboveSpacer = [<div key={`aboveSpacer`} style={{height: this.state.row_top * 34}}></div>];
-		let aboveSpacer = [<div key={`aboveSpacer`} style={{height: topspace}}></div>];
-		let belowspace = (this.state.row_bottom < this.props.data.length - 1 ? (this.props.data.length - (this.state.row_bottom + 1)) * 34 - 34 : 0);
-		let belowSpacer = (belowspace === 0 ? [] : [<div key={`belowSpacer`} style={{height: belowspace}}></div>])
-		// let belowSpacer = [<div key={`belowSpacer`} style={{height: belowspace}}></div>];
-		console.log(`Hoehe: ${this.props.data.length}, Elemen_oben:${this.state.row_top}, Element_unten: ${this.state.row_bottom}`);
-		console.log(`BelowSpace: ${belowspace}, aboveSpace: ${topspace}`);
-		// console.log(`Box_Oben: ${this.state.row_top * 34}`);
-		// console.log(`Box_Unten: ${(this.props.data.length - (this.state.row_bottom + 1)) * 34}`);
-		// let belowSpacer = [<div style={{height: 2000 * 34}}></div>];
+		// The top spacer must not exceed the maximum length of the table minus the visible table window
+		const topSpacerHeight = (this.state.rowBottom < this.props.data.length ? this.state.rowTop * 34 : (this.props.data.length - 1 - (this.state.rowBottom - this.state.rowTop)) * 34);
+		const topSpacer = [<div key={`topSpacer`} style={{height: topSpacerHeight}}></div>];
+		// Bottom spacer is set to 0 when the bottom end is reached
+		const bottomSpacerHeight = (this.state.rowBottom < this.props.data.length - 1 ? (this.props.data.length - (this.state.rowBottom + 2)) * 34 : 0);
+		const bottomSpacer = (bottomSpacerHeight === 0 ? [] : [<div key={`bottomSpacer`} style={{height: bottomSpacerHeight}}></div>])
 		
+		if (this.debug) {
+			console.log("------------------------");
+			console.log(`Data length: ${this.props.data.length}, Topmost element:${this.state.rowTop}, Bottom element: ${this.state.rowBottom}, Bottom spacer height: ${bottomSpacerHeight}, Top spacer height: ${topSpacerHeight}`);
+		}
+
 		return(
 			<div ref="parentDiff">
-			{aboveSpacer}
+			{topSpacer}
 			<table>
 				<tbody>
 					{table}
 				</tbody>
 			</table>
-			{belowSpacer}
+			{bottomSpacer}
 			</div>
 		);
 	}
@@ -81,13 +79,12 @@ class Table extends React.Component{
 		return table;
 	}
 
-	renderRequired() {
+	renderRequired(newRowTop, newRowBottom) {
 		// Prevent overflowing list
-		if (this.state.row_bottom >= this.props.data.length - 1 && Math.floor((this.refs.scrollable.scrollTop + this.refs.scrollable.clientHeight) / 34) >= this.props.data.length - 1)
+		if (this.state.rowBottom >= this.props.data.length - 1 && newRowBottom >= this.props.data.length - 1)
 			return false;
-
-		if (Math.floor(this.refs.scrollable.scrollTop / 34) === this.state.row_top && 
-			  Math.floor((this.refs.scrollable.scrollTop + this.refs.scrollable.clientHeight) / 34) === this.state.row_bottom)
+		// Only return true when the visible cells differ
+		if (newRowTop === this.state.rowTop && newRowBottom === this.state.rowBottom)
 			return false;
 		else
 			return true;
@@ -99,23 +96,18 @@ class Table extends React.Component{
 			<div 
 				ref="scrollable" 
 				style={{height:200, top: 26, 'overflowX': 'hidden', 'overflowY': 'auto'}} 
-				onScroll={(event) => { 
-					// console.log(event); 
-					// console.log(this.refs.scrollable.scrollTop);
-					if (this.renderRequired()) {
+				onScroll={(event) => {
+					const rowTop = Math.floor(this.refs.scrollable.scrollTop / 34);
+					const rowBottom = Math.floor((this.refs.scrollable.scrollTop + this.refs.scrollable.clientHeight) / 34);
+					// Only change state if re-rendering is required
+					if (this.renderRequired(rowTop, rowBottom)) {
 						this.setState({
-							row_top: Math.floor(this.refs.scrollable.scrollTop / 34),
-							row_bottom: Math.floor((this.refs.scrollable.scrollTop + this.refs.scrollable.clientHeight) / 34)
+							rowTop: rowTop,
+							rowBottom: rowBottom
 						});
 					}
-					// let row_top = Math.floor(this.refs.scrollable.scrollTop / 34)
-					// let row_bottom = Math.floor((this.refs.scrollable.scrollTop + this.refs.scrollable.clientHeight) / 34)
-					// console.log(`Element Top: ${row_top}, Element Bottom: ${row_bottom}`);
 				}}>
-				{/* <table> */}
-					{/*this.constructTable()*/}
-					{this.constructTableDynamic()}
-				{/* </table> */}
+				{this.constructTableDynamic()}
 			</div>
 		);
 	}
