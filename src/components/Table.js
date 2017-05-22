@@ -20,15 +20,24 @@ class Table extends React.Component{
 			let row = [];
 			for (let j in dimensions) {
 				const dimension = dimensions[j];
-				row.push(<th key={`row_${i}${j}`}>{`${i}+${this.props.data[i][dimension]}`}</th>);
+				if (i < this.props.data.length) 
+					row.push(<th key={`row_${i}${j}`}>{`${i}+${this.props.data[i][dimension]}`}</th>);
+				else
+					row.push(<th key={`row_${i}${j}`}>{`Nothing to see here!`}</th>);
 			}
 			table.push(<tr key={`tr_${i}`}>{row}</tr>);
 		}
 		// if (this.refs.parentDiff !== undefined) console.log(`Hoehe Parent: ${this.refs.parentDiff.clientHeight}`);
 		if (this.refs.parentDiff !== undefined) console.log(`Elemen_oben:${this.state.row_top}, Element_unten: ${this.state.row_bottom}`);
-		let aboveSpacer = [<div key={`aboveSpacer`} style={{height: this.state.row_top * 34}}></div>];
-		let belowSpacer = [<div key={`belowSpacer`} style={{height: (this.props.data.length - (this.state.row_bottom + 1)) * 34}}></div>];
+		// ToDo: Limit Above Spacer to maximum size!
+		let topspace = (this.state.row_bottom < this.props.data.length ? this.state.row_top * 34 : (this.props.data.length - 1 - (this.state.row_bottom - this.state.row_top)) * 34);
+		// let aboveSpacer = [<div key={`aboveSpacer`} style={{height: this.state.row_top * 34}}></div>];
+		let aboveSpacer = [<div key={`aboveSpacer`} style={{height: topspace}}></div>];
+		let belowspace = (this.state.row_bottom < this.props.data.length - 1 ? (this.props.data.length - (this.state.row_bottom + 1)) * 34 - 34 : 0);
+		let belowSpacer = (belowspace === 0 ? [] : [<div key={`belowSpacer`} style={{height: belowspace}}></div>])
+		// let belowSpacer = [<div key={`belowSpacer`} style={{height: belowspace}}></div>];
 		console.log(`Hoehe: ${this.props.data.length}, Elemen_oben:${this.state.row_top}, Element_unten: ${this.state.row_bottom}`);
+		console.log(`BelowSpace: ${belowspace}, aboveSpace: ${topspace}`);
 		// console.log(`Box_Oben: ${this.state.row_top * 34}`);
 		// console.log(`Box_Unten: ${(this.props.data.length - (this.state.row_bottom + 1)) * 34}`);
 		// let belowSpacer = [<div style={{height: 2000 * 34}}></div>];
@@ -37,7 +46,9 @@ class Table extends React.Component{
 			<div ref="parentDiff">
 			{aboveSpacer}
 			<table>
-				{table}
+				<tbody>
+					{table}
+				</tbody>
 			</table>
 			{belowSpacer}
 			</div>
@@ -71,6 +82,10 @@ class Table extends React.Component{
 	}
 
 	renderRequired() {
+		// Prevent overflowing list
+		if (this.state.row_bottom >= this.props.data.length - 1 && Math.floor((this.refs.scrollable.scrollTop + this.refs.scrollable.clientHeight) / 34) >= this.props.data.length - 1)
+			return false;
+
 		if (Math.floor(this.refs.scrollable.scrollTop / 34) === this.state.row_top && 
 			  Math.floor((this.refs.scrollable.scrollTop + this.refs.scrollable.clientHeight) / 34) === this.state.row_bottom)
 			return false;
