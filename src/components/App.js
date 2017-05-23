@@ -39,7 +39,7 @@ class App extends React.Component {
 		super();
 		this.setEnableDataset = this.setEnableDataset.bind(this);
 		this.datasetHub = new DatasetHub();
-
+		this.debug = true;
 		this.state = {
 			datasetEnabled: {},
 			datasetLoading: {},
@@ -48,6 +48,11 @@ class App extends React.Component {
 		};
 	}
 
+	/**
+	 * Enable a dataset means downloading the data
+	 * @param {String} name Filename of the dataset on the server
+	 * @param {Boolean} enabled Status whether the data should be treated as active or not
+	 */
 	setEnableDataset(name, enabled) {
 		let requiresLoading = this.datasetHub.setEnable(name, enabled);
 		this.setState({
@@ -80,18 +85,24 @@ class App extends React.Component {
 		// Debug RNASeq connection
 		this.openCPU = new OpenCPUBridge('http://localhost:8004');
 		// let r = new R(openCPU);
-		this.openCPU.runRCommand("sonaR", "get_data_names", { x: "x085f08d09d"}, 'json', false).then(output => {
-			for (let i in output['.val']) {
-				let datasetName = output['.val'][i];
-				this.datasetHub.push(new Dataset(datasetName));
-			}
-			// Load setEnambled Status
-			for (let i in output['.val']) {
-				let datasetName = output['.val'][i];
-				// Default add value to data set, this should later be derived from firebase
-				this.setEnableDataset(datasetName, false);
-			}
-		});
+		if (!this.debug) {
+			this.openCPU.runRCommand("sonaR", "get_data_names", { x: "x085f08d09d"}, 'json', false).then(output => {
+				for (let i in output['.val']) {
+					let datasetName = output['.val'][i];
+					this.datasetHub.push(new Dataset(datasetName));
+				}
+				// Load setEnambled Status
+				for (let i in output['.val']) {
+					let datasetName = output['.val'][i];
+					// Default add value to data set, this should later be derived from firebase
+					this.setEnableDataset(datasetName, false);
+				}
+			});
+		} else {
+			console.log("DEBUG");
+			this.datasetHub.push(new Dataset('dieterich-pipeline_ncd_hfd.csv'));
+			this.setEnableDataset('dieterich-pipeline_ncd_hfd.csv', true);
+		}
 			// openCPU.runRCommand("graphics", "hist", { x: Helper.objectValueToArray(rnaSeqData.default.data, 'pValue'), breaks: 10}, 'ascii', false).then(output => {
 			this.openCPU.runRCommand("graphics", "hist", { x: "[1,2,2,2,3,4,5,6,6,7]", breaks: 10}, 'ascii', false).then(output => {
 				this.setState({
