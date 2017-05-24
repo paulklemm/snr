@@ -141,6 +141,11 @@ class App extends React.Component {
 							{/* <Hexplot width={600} height={400} rnaSeqData={Helper.getIrisNewFormat()} xName="sepalWidth" yName="sepalLength" hexSize={10} hexMax={10} /> */}
 							{/* <Piechart width={200} height={200} data={[1, 1, 2, 3, 5, 8, 13, 21]}/> */}
 							{/* <Hexplot width={500} height={400} rnaSeqData={this.state.rnaSeqData} xName="pValue" yName="fc" hexSize={10} hexMax={10} /> */}
+							<Grid item xs={12}>
+								<Paper>
+									<Table data={this.state.hexplotData.data} height={400} />
+								</Paper>
+							</Grid>
 							<Grid item xs>
 								<Paper>
 									<DatasetSelect datasetEnabled={ this.state.datasetEnabled } datasetLoading={ this.state.datasetLoading } setEnableDataset={ this.setEnableDataset }/>
@@ -162,11 +167,6 @@ class App extends React.Component {
 								</Paper>
 							</Grid>
 							{ hexplots }
-							<Grid item xs>
-								<Paper>
-									<Table data={this.state.hexplotData.data} height={400} />
-								</Paper>
-							</Grid>
 						</Grid>
 					</div>
 				</div>
