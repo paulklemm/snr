@@ -5,9 +5,13 @@ import Typography from 'material-ui/Typography';
 import TextField from 'material-ui/TextField';
 
 const styleSheet = {
+	headerTR: {
+		borderBottom: '2px solid #3e51b8',
+		backgroundColor: '#d7ddf1'
+	},
 	headerTH: {
 		textAlign: 'left',
-		height: 60,
+		height: 63,
 		overflow: 'hidden'
 	},
 	th: {
@@ -30,7 +34,6 @@ class Table extends React.Component{
 		this.debug = true;
 		// Somehow the height of the TH elements differ from the max-height. Therfore we have to update this as soon as the list is rendered the first time
 		this.rowHeight = styleSheet.th.height;
-		this.headerHeight = styleSheet.headerTH.height + 2;
 		this.state = {
 			rowTop: 0,
 			rowBottom: 20
@@ -55,7 +58,7 @@ class Table extends React.Component{
 		return(
 			<table style={styleSheet.table}>
 				<tbody>
-					<tr key="header-tr">{header}</tr>
+					<tr key="header-tr" style={styleSheet.headerTR}>{header}</tr>
 				</tbody>
 			</table>
 		);
@@ -85,7 +88,8 @@ class Table extends React.Component{
 			}
 			// Push the columns as new row to the table
 			// table.push(<tr style={styleSheet.th} key={`tr_${i}`}>{row}</tr>);
-			table.push(<tr key={`tr_${i}`}>{row}</tr>);
+			const evenClass = (i % 2 == 0) ? 'odd' : '';
+			table.push(<tr key={`tr_${i}`} className={evenClass}>{row}</tr>);
 		}
 		// The top spacer must not exceed the maximum length of the table minus the visible table window
 		const topSpacerHeight = (this.state.rowBottom < this.props.data.length ? this.state.rowTop * this.rowHeight : (this.props.data.length - 1 - (this.state.rowBottom - this.state.rowTop)) * this.rowHeight);
@@ -130,7 +134,8 @@ class Table extends React.Component{
 		if (this.tableBody !== undefined) this.rowHeight = this.tableBody.children[2].clientHeight;
 		if (this.debug) console.log(`Set rowHeight to ${this.rowHeight}`);
 		return (
-			<div>{this.constructTableHeader()}
+			<div>
+			{this.constructTableHeader()}
 			<div 
 				ref="scrollable" 
 				style={{height:this.props.height, 'overflowX': 'hidden', 'overflowY': 'auto'}} 
