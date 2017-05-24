@@ -31,7 +31,7 @@ const styleSheet = {
 class Table extends React.Component{
 	constructor() {
 		super();
-		this.debug = true;
+		this.debug = false;
 		// Somehow the height of the TH elements differ from the max-height. Therfore we have to update this as soon as the list is rendered the first time
 		this.rowHeight = styleSheet.th.height;
 		this.state = {
@@ -49,7 +49,7 @@ class Table extends React.Component{
 			header.push(
 				<th key={`header-th-${i}`}>
 					<div style={styleSheet.headerTH}>
-						<Typography type="body2">{dimension}</Typography>
+						<Typography type="body2"><Icon name="sort-desc" style={{fontSize:'100%'}} /> {dimension}</Typography>
 						<TextField id="filter" label="Filter"/>
 					</div>
 				</th>
@@ -87,8 +87,7 @@ class Table extends React.Component{
 				);
 			}
 			// Push the columns as new row to the table
-			// table.push(<tr style={styleSheet.th} key={`tr_${i}`}>{row}</tr>);
-			const evenClass = (i % 2 == 0) ? 'odd' : '';
+			const evenClass = (i % 2 === 0) ? 'odd' : '';
 			table.push(<tr key={`tr_${i}`} className={evenClass}>{row}</tr>);
 		}
 		// The top spacer must not exceed the maximum length of the table minus the visible table window
