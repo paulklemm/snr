@@ -6,13 +6,19 @@ import TextField from 'material-ui/TextField';
 
 const styleSheet = {
 	headerTH: {
-		height: 40,
+		textAlign: 'left',
+		height: 60,
 		overflow: 'hidden'
 	},
 	th: {
 		textAlign: 'left',
 		height: 25,
 		overflow: 'hidden'
+	},
+	table: {
+		borderCollapse: 'collapse',
+		width: '100%',
+		tableLayout:'fixed'
 	}
 }
 
@@ -21,23 +27,38 @@ const styleSheet = {
 class Table extends React.Component{
 	constructor() {
 		super();
-		this.debug = false;
+		this.debug = true;
 		// Somehow the height of the TH elements differ from the max-height. Therfore we have to update this as soon as the list is rendered the first time
 		this.rowHeight = styleSheet.th.height;
+		this.headerHeight = styleSheet.headerTH.height + 2;
 		this.state = {
 			rowTop: 0,
 			rowBottom: 20
 		};
 	}
 
-	constructTableHeader(dimensions) {
+	constructTableHeader() {
+		let dimensions = Object.keys(this.props.data[1]);
 		// Add header table
 		let header = [];
 		for (let i in dimensions) {
 			const dimension = dimensions[i];
-			header.push(<th key={`header-th-${i}`}><div style={styleSheet.headerTH}><Typography type="body1">{dimension}<TextField id="filter" label="Filter"/></Typography></div></th>);
+			header.push(
+				<th key={`header-th-${i}`}>
+					<div style={styleSheet.headerTH}>
+						<Typography type="body2">{dimension}</Typography>
+						<TextField id="filter" label="Filter"/>
+					</div>
+				</th>
+			);
 		}
-		return(<tr key="header-tr">{header}</tr>);
+		return(
+			<table style={styleSheet.table}>
+				<tbody>
+					<tr key="header-tr">{header}</tr>
+				</tbody>
+			</table>
+		);
 	}
 
 	constructTableDynamic() {
@@ -59,7 +80,8 @@ class Table extends React.Component{
 								{this.props.data[i][dimension]}
 							</Typography>
 						</div>
-					</th>);
+					</th>
+				);
 			}
 			// Push the columns as new row to the table
 			// table.push(<tr style={styleSheet.th} key={`tr_${i}`}>{row}</tr>);
@@ -79,14 +101,14 @@ class Table extends React.Component{
 
 		return(
 			<div>
-			{topSpacer}
-			<table>
-				<tbody ref={(body) => { this.tableBody = body; }}>
-					{/* this.constructTableHeader(dimensions) */}
-					{table}
-				</tbody>
-			</table>
-			{bottomSpacer}
+				{topSpacer}
+				<table style={styleSheet.table}>
+					<tbody ref={(body) => { this.tableBody = body; }}>
+						{/* {this.constructTableHeader(dimensions)} */}
+						{table}
+					</tbody>
+				</table>
+				{bottomSpacer}
 			</div>
 		);
 	}
@@ -105,16 +127,17 @@ class Table extends React.Component{
 	render() {
 		if (this.props.data === undefined) return (<div>no data</div>);
 		// Update the default height of the row to have precise calculations on the table and not rely on the style sheet
-		if (this.tableBody !== undefined) this.rowHeight = this.tableBody.children[0].clientHeight;
-
+		if (this.tableBody !== undefined) this.rowHeight = this.tableBody.children[2].clientHeight;
 		if (this.debug) console.log(`Set rowHeight to ${this.rowHeight}`);
 		return (
+			<div>{this.constructTableHeader()}
 			<div 
 				ref="scrollable" 
 				style={{height:this.props.height, 'overflowX': 'hidden', 'overflowY': 'auto'}} 
 				onScroll={() => {
 					const rowTop = Math.floor(this.refs.scrollable.scrollTop / this.rowHeight);
 					const rowBottom = Math.floor((this.refs.scrollable.scrollTop + this.refs.scrollable.clientHeight) / this.rowHeight);
+					// const rowBottom = Math.floor((this.refs.scrollable.scrollTop + this.refs.scrollable.clientHeight - this.headerHeight) / this.rowHeight);
 					// Only change state if re-rendering is required
 					if (this.renderRequired(rowTop, rowBottom)) {
 						this.setState({
@@ -124,6 +147,7 @@ class Table extends React.Component{
 					}
 				}}>
 				{this.constructTableDynamic()}
+			</div>
 			</div>
 		);
 	}
