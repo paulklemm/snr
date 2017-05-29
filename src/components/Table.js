@@ -3,6 +3,7 @@ import {Icon} from 'react-fa';
 import IconButton from 'material-ui/IconButton';
 import Typography from 'material-ui/Typography';
 import TextField from 'material-ui/TextField';
+import PropTypes from 'prop-types';
 
 const styleSheet = {
 	headerTR: {
@@ -50,7 +51,12 @@ class Table extends React.Component{
 				<th key={`header-th-${i}`}>
 					<div style={styleSheet.headerTH}>
 						<Typography type="body2"><Icon name="sort-desc" style={{fontSize:'100%'}} /> {dimension}</Typography>
-						<TextField id="filter" label="Filter"/>
+						<TextField 
+							id="filter" 
+							label="Filter" 
+							onChange={(event) => {
+								this.props.onFilter(dimension, event.target.value)
+							}}/>
 					</div>
 				</th>
 			);
@@ -156,4 +162,10 @@ class Table extends React.Component{
 		);
 	}
 }
+
+Table.propTypes = { 
+	data: PropTypes.array, 
+	height: PropTypes.number, 
+	onFilter: PropTypes.func 
+} 
 export default Table;

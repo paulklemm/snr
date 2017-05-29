@@ -1,9 +1,42 @@
+const dimensionTypes = {
+	fc: "number",
+	pValue: "number",
+	negLog10_p_value: "number",
+	qValue: "number",
+	fpkm_1: "number",
+	fpkm_2: "number",
+	name: "string",
+	biotype: "string"
+};
+
 class DatasetHub {
 	constructor() {
 		this.datasets = {};
 		this.names = [];
 		this.enabled = {};
 		this.loading = {};
+		this.onFilter = this.onFilter.bind(this);
+	}
+
+	filterIsValid(name, val) {
+		// Get type from the static object
+		const type = dimensionTypes[name];
+		let isValid = (type === "number") ? !isNaN(val) : true;
+		return isValid;
+	}
+
+	parseFilterValue(name, val) {
+		return (dimensionTypes[name] === "number") ? parseFloat(val) : val;
+	}
+
+	onFilter(name, val) {
+		console.log(`Set filter ${val} for ${name}`);
+		const val_filter = this.parseFilterValue(name, val);
+		if (this.filterIsValid(name, val_filter)) {
+			console.log("is Valid");
+		} else {
+			console.log("is not valid");
+		}
 	}
 
 	filterFPKM(val) {

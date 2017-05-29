@@ -143,7 +143,7 @@ class App extends React.Component {
 							{/* <Hexplot width={500} height={400} rnaSeqData={this.state.rnaSeqData} xName="pValue" yName="fc" hexSize={10} hexMax={10} /> */}
 							<Grid item xs={12}>
 								<Paper>
-									<Table data={this.state.hexplotData.data} height={400} />
+									<Table data={this.state.hexplotData.data} height={400} onFilter={ this.datasetHub.onFilter }/>
 								</Paper>
 							</Grid>
 							<Grid item xs>
