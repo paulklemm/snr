@@ -79,11 +79,13 @@ class Table extends React.Component{
 			// Initialize an empty row element
 			let row = [];
 			// Iterate through all dimensions (columns) in the data
+			let dimensionKey = "";
 			for (let j in dimensions) {
 				const dimension = dimensions[j];
+				dimensionKey += this.props.data[i][dimension];
 				// row.push(<th key={`row_${i}${j}`}><div style={styleSheet.th}>{this.props.data[i][dimension]}</div></th>);
 				row.push(
-					<th key={`row_${i}${j}`}>
+					<th key={`row_${this.props.data[i][dimension]}-${i}-${j}`}>
 						<div style={styleSheet.th}>
 							<Typography type="body1">
 								{this.props.data[i][dimension]}
@@ -94,7 +96,7 @@ class Table extends React.Component{
 			}
 			// Push the columns as new row to the table
 			const evenClass = (i % 2 === 0) ? 'odd' : '';
-			table.push(<tr key={`tr_${i}`} className={evenClass}>{row}</tr>);
+			table.push(<tr key={`tr_${dimensionKey}_${i}`} className={evenClass}>{row}</tr>);
 		}
 		// The top spacer must not exceed the maximum length of the table minus the visible table window
 		const topSpacerHeight = (this.state.rowBottom < this.props.data.length ? this.state.rowTop * this.rowHeight : (this.props.data.length - 1 - (this.state.rowBottom - this.state.rowTop)) * this.rowHeight);
@@ -140,6 +142,7 @@ class Table extends React.Component{
 		if (this.debug) console.log(`Set rowHeight to ${this.rowHeight}`);
 		return (
 			<div>
+			<div><p>{`Rendering ${this.props.data.length} rows`}</p></div>
 			{this.constructTableHeader()}
 			<div 
 				ref="scrollable" 

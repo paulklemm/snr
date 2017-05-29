@@ -38,6 +38,7 @@ class App extends React.Component {
 	constructor() {
 		super();
 		this.setEnableDataset = this.setEnableDataset.bind(this);
+		this.onFilter = this.onFilter.bind(this);
 		this.datasetHub = new DatasetHub();
 		this.debug = true;
 		this.state = {
@@ -61,6 +62,11 @@ class App extends React.Component {
 		if (requiresLoading) {
 			this.loadDataset(name);
 		}
+	}
+
+	onFilter(name, val) {
+		this.datasetHub.onFilter(name, val);
+		this.forceUpdate();
 	}
 
 	async loadDataset(name, verbose = false) {
@@ -113,6 +119,7 @@ class App extends React.Component {
 
 	// TODO Fix stres test
 	render() {
+		console.log("Redraw");
 		// Create Hexplot dynamic from inbox data
 		let hexplots = [];
 		for (let i in this.datasetHub.names) {
@@ -128,6 +135,7 @@ class App extends React.Component {
 				);
 			}
 		}
+		let hexplotDataData = (this.state.hexplotData.data === undefined) ? undefined : this.state.hexplotData.getData();
 		return (
 			<MuiThemeProvider>
 				<div>
@@ -143,7 +151,7 @@ class App extends React.Component {
 							{/* <Hexplot width={500} height={400} rnaSeqData={this.state.rnaSeqData} xName="pValue" yName="fc" hexSize={10} hexMax={10} /> */}
 							<Grid item xs={12}>
 								<Paper>
-									<Table data={this.state.hexplotData.data} height={400} onFilter={ this.datasetHub.onFilter }/>
+									<Table data={hexplotDataData} height={400} onFilter={ this.onFilter }/>
 								</Paper>
 							</Grid>
 							<Grid item xs>
