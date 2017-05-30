@@ -119,7 +119,6 @@ class App extends React.Component {
 
 	// TODO Fix stres test
 	render() {
-		console.log("Redraw");
 		// Create Hexplot dynamic from inbox data
 		let hexplots = [];
 		for (let i in this.datasetHub.names) {

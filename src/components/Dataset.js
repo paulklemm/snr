@@ -40,7 +40,7 @@ class Dataset {
 					if (this.data[i][filterKey] > filter[filterKey])
 						this.filtered[i] = true;
 				} else {
-					if (this.data[i][filterKey] !== undefined && this.data[i][filterKey].indexOf(filter[filterKey]) === -1)
+					if (this.data[i][filterKey] === undefined || this.data[i][filterKey].indexOf(filter[filterKey]) === -1)
 						this.filtered[i] = true;
 					// console.log(`Dataset ${this.name}, setting filter`);
 				}

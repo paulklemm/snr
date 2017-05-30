@@ -103,7 +103,9 @@ class Table extends React.Component{
 			table.push(<tr key={`tr_${dimensionKey}_${i}`} className={evenClass}>{row}</tr>);
 		}
 		// The top spacer must not exceed the maximum length of the table minus the visible table window
-		const topSpacerHeight = (this.state.rowBottom < this.props.data.length ? this.state.rowTop * this.rowHeight : (this.props.data.length - 1 - (this.state.rowBottom - this.state.rowTop)) * this.rowHeight);
+		let topSpacerHeight = (this.state.rowBottom < this.props.data.length ? this.state.rowTop * this.rowHeight : (this.props.data.length - 1 - (this.state.rowBottom - this.state.rowTop)) * this.rowHeight);
+		// When the elements do not fill the entire height the spacer height would get negative. Fix this by setting it to 0
+		if (topSpacerHeight < 0) topSpacerHeight = 0;
 		const topSpacer = [<div key={`topSpacer`} style={{height: topSpacerHeight}}></div>];
 		// Bottom spacer is set to 0 when the bottom end is reached
 		const bottomSpacerHeight = (this.state.rowBottom < this.props.data.length - 1 ? (this.props.data.length - (this.state.rowBottom + 2)) * this.rowHeight : 0);
@@ -139,6 +141,19 @@ class Table extends React.Component{
 			return true;
 	}
 
+	setScrollState() {
+		const rowTop = Math.floor(this.refs.scrollable.scrollTop / this.rowHeight);
+		const rowBottom = Math.floor((this.refs.scrollable.scrollTop + this.refs.scrollable.clientHeight) / this.rowHeight);
+		console.log(`SetRowTop: ${rowTop}, SetRowBottom: ${rowBottom}`);
+		// Only change state if re-rendering is required
+		if (this.renderRequired(rowTop, rowBottom)) {
+			this.setState({
+				rowTop: rowTop,
+				rowBottom: rowBottom
+			});
+		}
+	}
+
 	render() {
 		if (this.props.data === undefined) return (<div>no data</div>);
 		// Update the default height of the row to have precise calculations on the table and not rely on the style sheet
@@ -152,15 +167,7 @@ class Table extends React.Component{
 				ref="scrollable" 
 				style={{height:this.props.height, 'overflowX': 'hidden', 'overflowY': 'auto'}} 
 				onScroll={() => {
-					const rowTop = Math.floor(this.refs.scrollable.scrollTop / this.rowHeight);
-					const rowBottom = Math.floor((this.refs.scrollable.scrollTop + this.refs.scrollable.clientHeight) / this.rowHeight);
-					// Only change state if re-rendering is required
-					if (this.renderRequired(rowTop, rowBottom)) {
-						this.setState({
-							rowTop: rowTop,
-							rowBottom: rowBottom
-						});
-					}
+					this.setScrollState();
 				}}>
 				{this.constructTableDynamic()}
 			</div>
