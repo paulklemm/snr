@@ -64,8 +64,8 @@ class App extends React.Component {
 		}
 	}
 
-	onFilter(name, val) {
-		this.datasetHub.onFilter(name, val);
+	onFilter(name, val, operator) {
+		this.datasetHub.onFilter(name, val, operator);
 		this.forceUpdate();
 	}
 

@@ -41,16 +41,13 @@ class DatasetHub {
 		}
 	}
 
-	onFilter(name, val) {
+	onFilter(name, val, operator) {
 		console.log(`Set filter ${val} for ${name}`);
 		const val_filter = this.parseFilterValue(name, val);
 		if (this.filterIsValid(name, val_filter)) {
-			this.filter[name] = val_filter;
-			console.log("is Valid, broadcasting filter");
+			this.filter[name] = {value: val_filter, operator: operator};
 		} else {
 			delete this.filter[name];
-			console.log(`Delete Filter ${name}`);
-			console.log(this.filter);
 		}
 		this.broadcastFilter();
 	}

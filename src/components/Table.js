@@ -68,7 +68,7 @@ class Table extends React.Component{
 							label="Filter" 
 							onChange={(event) => {
 								this.refs.scrollable.scrollTop = 0;
-								this.props.onFilter(dimension, event.target.value)
+								this.props.onFilter(dimension, event.target.value, this.state.filterSetting[dimension])
 							}}
 						/>
 						</div>
@@ -157,7 +157,6 @@ class Table extends React.Component{
 	setScrollState() {
 		const rowTop = Math.floor(this.refs.scrollable.scrollTop / this.rowHeight);
 		const rowBottom = Math.floor((this.refs.scrollable.scrollTop + this.refs.scrollable.clientHeight) / this.rowHeight);
-		console.log(`SetRowTop: ${rowTop}, SetRowBottom: ${rowBottom}`);
 		// Only change state if re-rendering is required
 		if (this.renderRequired(rowTop, rowBottom)) {
 			this.setState({
