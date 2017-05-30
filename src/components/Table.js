@@ -4,6 +4,7 @@ import IconButton from 'material-ui/IconButton';
 import Typography from 'material-ui/Typography';
 import TextField from 'material-ui/TextField';
 import PropTypes from 'prop-types';
+import DimensionTypes from './DimensionTypes.js';
 
 const styleSheet = {
 	headerTR: {
@@ -42,7 +43,7 @@ class Table extends React.Component{
 	}
 
 	constructTableHeader() {
-		let dimensions = Object.keys(this.props.data[1]);
+		let dimensions = Object.keys(DimensionTypes);
 		// Add header table
 		let header = [];
 		for (let i in dimensions) {
@@ -55,6 +56,7 @@ class Table extends React.Component{
 							id="filter" 
 							label="Filter" 
 							onChange={(event) => {
+								this.refs.scrollable.scrollTop = 0;
 								this.props.onFilter(dimension, event.target.value)
 							}}/>
 					</div>
@@ -71,11 +73,13 @@ class Table extends React.Component{
 	}
 
 	constructTableDynamic() {
-		// Getting the dimensions like this is still a little hacky
-		let dimensions = Object.keys(this.props.data[1]);
+		let dimensions = Object.keys(DimensionTypes);
 		let table = [];
 		// Iterate over the top and bottom element
 		for (let i = this.state.rowTop; i <= this.state.rowBottom; i++) {
+			// Avoid rendering empty rows (can happen in small lists or filters yielding empty lists)
+			if (i > this.props.data.length - 1)
+				break;
 			// Initialize an empty row element
 			let row = [];
 			// Iterate through all dimensions (columns) in the data
@@ -126,8 +130,8 @@ class Table extends React.Component{
 
 	renderRequired(newRowTop, newRowBottom) {
 		// Prevent overflowing list
-		if (this.state.rowBottom >= this.props.data.length - 1 && newRowBottom >= this.props.data.length - 1)
-			return false;
+		// if (this.state.rowBottom >= this.props.data.length - 1 && newRowBottom >= this.props.data.length - 1)
+		// 	return false;
 		// Only return true when the visible cells differ
 		if (newRowTop === this.state.rowTop && newRowBottom === this.state.rowBottom)
 			return false;
@@ -138,7 +142,7 @@ class Table extends React.Component{
 	render() {
 		if (this.props.data === undefined) return (<div>no data</div>);
 		// Update the default height of the row to have precise calculations on the table and not rely on the style sheet
-		if (this.tableBody !== undefined) this.rowHeight = this.tableBody.children[2].clientHeight;
+		if (this.tableBody !== undefined && this.tableBody.children[0] !== undefined) this.rowHeight = this.tableBody.children[0].clientHeight;
 		if (this.debug) console.log(`Set rowHeight to ${this.rowHeight}`);
 		return (
 			<div>
@@ -150,7 +154,6 @@ class Table extends React.Component{
 				onScroll={() => {
 					const rowTop = Math.floor(this.refs.scrollable.scrollTop / this.rowHeight);
 					const rowBottom = Math.floor((this.refs.scrollable.scrollTop + this.refs.scrollable.clientHeight) / this.rowHeight);
-					// const rowBottom = Math.floor((this.refs.scrollable.scrollTop + this.refs.scrollable.clientHeight - this.headerHeight) / this.rowHeight);
 					// Only change state if re-rendering is required
 					if (this.renderRequired(rowTop, rowBottom)) {
 						this.setState({
