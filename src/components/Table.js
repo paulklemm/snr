@@ -4,7 +4,7 @@ import IconButton from 'material-ui/IconButton';
 import Typography from 'material-ui/Typography';
 import TextField from 'material-ui/TextField';
 import PropTypes from 'prop-types';
-import DimensionTypes from './DimensionTypes.js';
+import {DimensionTypes, DefaultFilterSetting} from './DimensionTypes.js';
 
 const styleSheet = {
 	headerTR: {
@@ -38,7 +38,8 @@ class Table extends React.Component{
 		this.rowHeight = styleSheet.th.height;
 		this.state = {
 			rowTop: 0,
-			rowBottom: 20
+			rowBottom: 20,
+			filterSetting: DefaultFilterSetting
 		};
 	}
 
@@ -52,13 +53,25 @@ class Table extends React.Component{
 				<th key={`header-th-${i}`}>
 					<div style={styleSheet.headerTH}>
 						<Typography type="body2"><Icon name="sort-desc" style={{fontSize:'100%'}} /> {dimension}</Typography>
+						<div style={{display: 'flex'}}>
+						<IconButton 
+							style={{marginTop:'-2px', width:'25px'}}
+							onClick={(event) => {
+								console.log(event.target.textContent);
+							}}
+						>
+							{this.state.filterSetting[dimension]}
+							</IconButton>
 						<TextField 
+							style={{maxWidth: 100}}
 							id="filter" 
 							label="Filter" 
 							onChange={(event) => {
 								this.refs.scrollable.scrollTop = 0;
 								this.props.onFilter(dimension, event.target.value)
-							}}/>
+							}}
+						/>
+						</div>
 					</div>
 				</th>
 			);
