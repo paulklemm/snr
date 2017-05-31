@@ -30,9 +30,10 @@ class Dataset {
 	}
 
 	setFilter(filter) {
+		const debug = false;
 		const filterKeys = Object.keys(filter);
-		console.log(`Setfilter for ${this.name}`);
-		console.log(filter);
+		if (debug) console.log(`Setfilter for ${this.name}`);
+		if (debug) console.log(filter);
 		for (let i in this.data) {
 			// Init value with 'false' statement
 			this.filtered[i] = false;
@@ -51,11 +52,8 @@ class Dataset {
 				} else {
 					if (this.data[i][filterKey] === undefined || this.data[i][filterKey].indexOf(filter[filterKey].value) === -1)
 						this.filtered[i] = true;
-					// console.log(`Dataset ${this.name}, setting filter`);
 				}
 			}
-			// if (this.data[i].fpkm_1 < val || this.data[i].fpkm_2 < val)
-			// 	this.filtered[i] = true;
 		}
 	}
 

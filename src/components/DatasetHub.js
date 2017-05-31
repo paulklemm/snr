@@ -42,7 +42,7 @@ class DatasetHub {
 	}
 
 	onFilter(name, val, operator) {
-		console.log(`Set filter ${val} for ${name}`);
+		//console.log(`Set filter ${val} for ${name}`);
 		const val_filter = this.parseFilterValue(name, val);
 		if (this.filterIsValid(name, val_filter)) {
 			this.filter[name] = {value: val_filter, operator: operator};

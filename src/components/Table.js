@@ -36,11 +36,21 @@ class Table extends React.Component{
 		this.debug = false;
 		// Somehow the height of the TH elements differ from the max-height. Therfore we have to update this as soon as the list is rendered the first time
 		this.rowHeight = styleSheet.th.height;
+		// We store the textFieldValues of the filter as class attribute since we need it when the operator changes
+		this.textFieldValues = {};
 		this.state = {
 			rowTop: 0,
 			rowBottom: 20,
 			filterSetting: DefaultFilterSetting
 		};
+	}
+
+	handleFilter(dimension) {
+		// Scroll back to the top of the list
+		this.refs.scrollable.scrollTop = 0;
+		// Only proceed if both input values are valid
+		if (this.textFieldValues[dimension] !== undefined && this.state.filterSetting[dimension] !== undefined)
+			this.props.onFilter(dimension, this.textFieldValues[dimension], this.state.filterSetting[dimension]);
 	}
 
 	constructTableHeader() {
@@ -54,23 +64,38 @@ class Table extends React.Component{
 					<div style={styleSheet.headerTH}>
 						<Typography type="body2"><Icon name="sort-desc" style={{fontSize:'100%'}} /> {dimension}</Typography>
 						<div style={{display: 'flex'}}>
-						<IconButton 
-							style={{marginTop:'-2px', width:'25px'}}
-							onClick={(event) => {
-								console.log(event.target.textContent);
-							}}
-						>
-							{this.state.filterSetting[dimension]}
-							</IconButton>
-						<TextField 
-							style={{maxWidth: 100}}
-							id="filter" 
-							label="Filter" 
-							onChange={(event) => {
-								this.refs.scrollable.scrollTop = 0;
-								this.props.onFilter(dimension, event.target.value, this.state.filterSetting[dimension])
-							}}
-						/>
+							<IconButton 
+								style={{marginTop:'-2px', width:'25px'}}
+								onClick={(event) => {
+									// Update filter
+									const currentOperator = event.target.textContent;
+									let filterSetting = this.state.filterSetting;
+									// Switch signs
+									if (currentOperator === '<') {
+										filterSetting[dimension] = '>';
+										this.setState({filterSetting: filterSetting});
+										this.handleFilter(dimension);
+									} else if (currentOperator === '>') {
+										filterSetting[dimension] = '<';
+										this.setState({filterSetting: filterSetting});
+										this.handleFilter(dimension);
+									} 
+								}}
+							>
+								{this.state.filterSetting[dimension]}
+								</IconButton>
+							<div>
+								<TextField 
+									style={{maxWidth: 100}}
+									id="filter" 
+									label="Filter" 
+									onChange={(event) => {
+										// Update the textfieldValue object with the newly changed value
+										this.textFieldValues[dimension] = event.target.value;
+										this.handleFilter(dimension);
+									}}
+								/>
+							</div>
 						</div>
 					</div>
 				</th>
