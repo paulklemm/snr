@@ -40,7 +40,7 @@ class App extends React.Component {
 		this.setEnableDataset = this.setEnableDataset.bind(this);
 		this.onFilter = this.onFilter.bind(this);
 		this.datasetHub = new DatasetHub();
-		this.debug = true;
+		this.debug = false;
 		this.state = {
 			datasetEnabled: {},
 			datasetLoading: {},
@@ -75,12 +75,13 @@ class App extends React.Component {
 		// Set dataset to loading
 		this.datasetHub.setLoading(name)
 		this.setState({datasetLoading: this.datasetHub.loading});
-		let dataset = await this.openCPU.runRCommand("sonaR", "get_dataset", { datasets: "x085f08d09d", name: `'${name}'`}, 'json', false);
+		// let dataset = await this.openCPU.runRCommand("sonaR", "get_dataset", { datasets: "x085f08d09d", name: `'${name}'`}, 'json', false);
+		let dataset = await this.openCPU.runRCommand("sonaR", "get_dataset", { datasets: "x0bb28ec8cc", name: `'${name}'`}, 'json', false);
 		this.datasetHub.setData(name, dataset['.val']);
 		// Loading is done, so update it again
 		this.setState({datasetLoading: this.datasetHub.loading});
 		// DEBUG
-		this.datasetHub.filterFPKM(10);
+		// this.datasetHub.filterFPKM(10);
 		this.setState({hexplotData: this.datasetHub.datasets[name]});
 
 		if (verbose) console.log(`Loading ${name} done!`);
@@ -92,7 +93,8 @@ class App extends React.Component {
 		this.openCPU = new OpenCPUBridge('http://localhost:8004');
 		// let r = new R(openCPU);
 		if (!this.debug) {
-			this.openCPU.runRCommand("sonaR", "get_data_names", { x: "x085f08d09d"}, 'json', false).then(output => {
+			// this.openCPU.runRCommand("sonaR", "get_data_names", { x: "x085f08d09d"}, 'json', false).then(output => {
+			this.openCPU.runRCommand("sonaR", "get_data_names", { x: "x0bb28ec8cc"}, 'json', false).then(output => {
 				for (let i in output['.val']) {
 					let datasetName = output['.val'][i];
 					this.datasetHub.push(new Dataset(datasetName));
@@ -128,7 +130,7 @@ class App extends React.Component {
 				hexplots.push(
 					<Grid item xs key={ name }>
 						<Paper>
-							<Hexplot height={200} width={300} rnaSeqData={ dataset } xName="negLog10_p_value" yName="fc" hexSize={4} hexMax={20} />
+							<Hexplot height={200} width={300} rnaSeqData={ dataset } xName="pValue" yName="fc" hexSize={4} hexMax={20} />
 						</Paper>
 					</Grid>
 				);
