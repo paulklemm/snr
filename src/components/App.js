@@ -111,11 +111,17 @@ class App extends React.Component {
 			this.datasetHub.push(new Dataset('dieterich-pipeline_ncd_hfd.csv'));
 			this.setEnableDataset('dieterich-pipeline_ncd_hfd.csv', true);
 		}
-			// openCPU.runRCommand("graphics", "hist", { x: Helper.objectValueToArray(rnaSeqData.default.data, 'pValue'), breaks: 10}, 'ascii', false).then(output => {
-			this.openCPU.runRCommand("graphics", "hist", { x: "[1,2,2,2,3,4,5,6,6,7]", breaks: 10}, 'ascii', false).then(output => {
-				this.setState({
-					image: `${output.graphics[0]}/svg`
-				});
+		// openCPU.runRCommand("graphics", "hist", { x: Helper.objectValueToArray(rnaSeqData.default.data, 'pValue'), breaks: 10}, 'ascii', false).then(output => {
+		this.openCPU.runRCommand("graphics", "hist", { x: "[1,2,2,2,3,4,5,6,6,7]", breaks: 10}, 'ascii', false).then(output => {
+			this.setState({
+				image: `${output.graphics[0]}/svg`
+			});
+		});
+		// PCA plot
+		this.openCPU.runRCommand("sonaR", "plot_pca", { x: "x0bb28ec8cc"}, 'ascii', false).then(output => {
+			this.setState({
+				pcaImage: `${output.graphics[0]}/svg`
+			});
 		});
 	}
 
@@ -163,6 +169,11 @@ class App extends React.Component {
 							<Grid item xs>
 								<Paper>
 									<img src={`${this.state.image}?width=7&height=5`} width={400} height={200} alt="R test"/>
+								</Paper>
+							</Grid>
+							<Grid item xs>
+								<Paper>
+									<img src={`${this.state.pcaImage}?width=7&height=5`} width={800} height={400} alt="R test PCA"/>
 								</Paper>
 							</Grid>
 							<Grid item xs>
