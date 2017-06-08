@@ -92,6 +92,8 @@ class OpenCPUBridge {
 		data = data.split('\n');
 		// prepare empty result as well as the associated promises
 		let result = {promises: []};
+		// First, add the OpenCPU session ID
+		result.sessionID = (data.length > 0) ? data[0].match(/\/ocpu\/tmp\/(.*)\/R/)[1] : undefined;
 		for (let i in data) {
 			let url = data[i];
 			// Only proceed if the URL contains non-whitespaces
