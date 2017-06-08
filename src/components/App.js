@@ -95,13 +95,13 @@ class App extends React.Component {
 		// let r = new R(openCPU);
 		if (!this.debug) {
 			// get the personal folder
-			this.openCPU.runRCommand("sonaR", "getUserFolder", {user: "'paul'"}, "json", "false").then(output => {
+			this.openCPU.runRCommand("sonaR", "getUserFolder", {user: "'paul'"}, "json", true).then(output => {
 				let userFolder = output['.val'][0];
 				// this.openCPU.runRCommand("sonaR", "load_data", {data_folder: userFolder}, "json", "false").then(output => {
-				this.openCPU.runRCommand("sonaR", "load_data", {data_folder: `'${userFolder}'`}, "json", "false").then(outputLoadData => {
+				this.openCPU.runRCommand("sonaR", "load_data", {data_folder: `'${userFolder}'`}, "json", true).then(outputLoadData => {
 					// console.log(outputLoadData.sessionID);
 					this.setState({openCPULoadDataSessionID: outputLoadData.sessionID});
-					this.openCPU.runRCommand("sonaR", "get_data_names", { x: `${outputLoadData.sessionID}`}, 'json', false).then(outputGetDataNames => {
+					this.openCPU.runRCommand("sonaR", "get_data_names", { x: `${outputLoadData.sessionID}`}, 'json', true).then(outputGetDataNames => {
 						for (let i in outputGetDataNames['.val']) {
 							let datasetName = outputGetDataNames['.val'][i];
 							this.datasetHub.push(new Dataset(datasetName));
@@ -112,6 +112,12 @@ class App extends React.Component {
 							// Default add value to data set, this should later be derived from firebase
 							this.setEnableDataset(datasetName, false);
 						}
+						// PCA plot
+						this.openCPU.runRCommand("sonaR", "plot_pca", { x: this.state.openCPULoadDataSessionID}, 'ascii', true).then(output => {
+							this.setState({
+								pcaImage: `${output.graphics[0]}/svg`
+							});
+						});
 					});
 				});
 			});
@@ -137,12 +143,6 @@ class App extends React.Component {
 		this.openCPU.runRCommand("graphics", "hist", { x: "[1,2,2,2,3,4,5,6,6,7]", breaks: 10}, 'ascii', false).then(output => {
 			this.setState({
 				image: `${output.graphics[0]}/svg`
-			});
-		});
-		// PCA plot
-		this.openCPU.runRCommand("sonaR", "plot_pca", { x: "x0bb28ec8cc"}, 'ascii', false).then(output => {
-			this.setState({
-				pcaImage: `${output.graphics[0]}/svg`
 			});
 		});
 	}
