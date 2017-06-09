@@ -45,8 +45,8 @@ class App extends React.Component {
 			datasetEnabled: {},
 			datasetLoading: {},
 			openCPULoadDataSessionID: "",
-			// Debug
-			hexplotData: {}
+			// TODO: This is now still set to the last loaded dataset, should be set using the DatasetSelect Element
+			primaryDataset: {}
 		};
 	}
 
@@ -135,8 +135,7 @@ class App extends React.Component {
 		this.setState({datasetLoading: this.datasetHub.loading});
 		// DEBUG
 		// this.datasetHub.filterFPKM(10);
-		
-		this.setState({hexplotData: this.datasetHub.datasets[name]});
+		this.setState({primaryDataset: this.datasetHub.datasets[name]});
 
 		if (verbose) console.log(`Loading ${name} done!`);
 		if (verbose) console.log(this.datasetHub.datasets);
@@ -176,7 +175,8 @@ class App extends React.Component {
 				);
 			}
 		}
-		let hexplotDataData = (this.state.hexplotData.data === undefined) ? undefined : this.state.hexplotData.getData();
+		let primaryDatasetData = (this.state.primaryDataset.data === undefined) ? undefined : this.state.primaryDataset.getData();
+		let primaryDatasetDimNames = this.state.primaryDataset.dimNames;
 		return (
 			<MuiThemeProvider>
 				<div>
@@ -185,7 +185,7 @@ class App extends React.Component {
 						<Grid container gutter={16}>
 							<Grid item xs={12}>
 								<Paper>
-									<Table data={hexplotDataData} height={400} onFilter={ this.onFilter }/>
+									<Table data={primaryDatasetData} dimNames={primaryDatasetDimNames} height={400} onFilter={ this.onFilter }/>
 								</Paper>
 							</Grid>
 							<Grid item xs>

@@ -3,10 +3,10 @@ export const DimensionTypes = {
 	fc: "number",
 	pValue: "number",
 	pValueNegLog10: "number",
-	fpkm_1: "number",
-	fpkm_2: "number",
 	name: "string",
 	biotype: "string",
+	sampleMean: "number",
+	controlMean: "number",
 	strand: "string"
 };
 
@@ -16,8 +16,8 @@ export const DefaultFilterSetting = {
 	pValue: "<",
 	pValueNegLog10: "<",
 	qValue: "<",
-	fpkm_1: ">",
-	fpkm_2: ">",
+	sampleMean: ">",
+	controlMean: ">",
 	name: "=",
 	biotype: "=",
 	strand: "="

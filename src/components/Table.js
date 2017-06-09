@@ -4,7 +4,7 @@ import IconButton from 'material-ui/IconButton';
 import Typography from 'material-ui/Typography';
 import TextField from 'material-ui/TextField';
 import PropTypes from 'prop-types';
-import {DimensionTypes, DefaultFilterSetting} from './DimensionTypes.js';
+import {DefaultFilterSetting} from './DimensionTypes.js';
 
 const styleSheet = {
 	headerTR: {
@@ -54,7 +54,8 @@ class Table extends React.Component{
 	}
 
 	constructTableHeader() {
-		let dimensions = Object.keys(DimensionTypes);
+		// let dimensions = Object.keys(DimensionTypes);
+		let dimensions = this.props.dimNames;
 		// Add header table
 		let header = [];
 		for (let i in dimensions) {
@@ -82,7 +83,10 @@ class Table extends React.Component{
 									} 
 								}}
 							>
-								{this.state.filterSetting[dimension]}
+								{
+									// TODO: Check if the value is inside the filterSettings, otherwise set the type
+									(Object.keys(this.state.filterSetting).indexOf(dimension) !== -1) ? this.state.filterSetting[dimension] : '>'
+								}
 								</IconButton>
 							<div>
 								<TextField 
@@ -111,7 +115,8 @@ class Table extends React.Component{
 	}
 
 	constructTableDynamic() {
-		let dimensions = Object.keys(DimensionTypes);
+		// let dimensions = Object.keys(DimensionTypes);
+		let dimensions = this.props.dimNames;
 		let table = [];
 		// Iterate over the top and bottom element
 		for (let i = this.state.rowTop; i <= this.state.rowBottom; i++) {
@@ -193,6 +198,8 @@ class Table extends React.Component{
 
 	render() {
 		if (this.props.data === undefined) return (<div>no data</div>);
+		// console.log(this.props.data);
+		// console.log(this.props.dimNames);
 		// Update the default height of the row to have precise calculations on the table and not rely on the style sheet
 		if (this.tableBody !== undefined && this.tableBody.children[0] !== undefined) this.rowHeight = this.tableBody.children[0].clientHeight;
 		if (this.debug) console.log(`Set rowHeight to ${this.rowHeight}`);
@@ -215,6 +222,7 @@ class Table extends React.Component{
 
 Table.propTypes = { 
 	data: PropTypes.array, 
+	dimNames: PropTypes.array, 
 	height: PropTypes.number, 
 	onFilter: PropTypes.func 
 } 
