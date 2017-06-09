@@ -72,18 +72,18 @@ class App extends React.Component {
 
 	async initSession() {
 		// get the personal folder
-		const output = await this.openCPU.runRCommand("sonaR", "getUserFolder", { user: "'paul'" }, "json", true);
+		const output = await this.openCPU.runRCommand("sonaR", "getUserFolder", { user: "'paul'" }, "json", false);
 		// Output is array containing a string, therefore this looks a bit ugly here
 		let userFolder = output['.val'][0];
 
 		// Load Data from userFolder and get Session ID for the associated object
-		const outputLoadData = await this.openCPU.runRCommand("sonaR", "load_data", { data_folder: `'${userFolder}'` }, "json", true);
+		const outputLoadData = await this.openCPU.runRCommand("sonaR", "load_data", { data_folder: `'${userFolder}'` }, "json", false);
 		console.log(`LoadData Session ID: ${outputLoadData.sessionID}`);
 		// Update state with sessionID
 		this.setState({ openCPULoadDataSessionID: outputLoadData.sessionID });
 
 		// Get dataset list as array
-		const outputGetDataNames = await this.openCPU.runRCommand("sonaR", "get_data_names", { x: `${outputLoadData.sessionID}` }, 'json', true);
+		const outputGetDataNames = await this.openCPU.runRCommand("sonaR", "get_data_names", { x: `${outputLoadData.sessionID}` }, 'json', false);
 		// Attach the dataset array to the datasetHub
 		for (let i in outputGetDataNames['.val']) {
 			let datasetName = outputGetDataNames['.val'][i];
@@ -97,7 +97,7 @@ class App extends React.Component {
 		}
 		
 		// PCA plot
-		const outputPCA = await this.openCPU.runRCommand("sonaR", "plot_pca", { x: outputLoadData.sessionID }, 'ascii', true);
+		const outputPCA = await this.openCPU.runRCommand("sonaR", "plot_pca", { x: outputLoadData.sessionID }, 'ascii', false);
 		this.setState({
 			pcaImage: `${outputPCA.graphics[0]}/svg`
 		});
@@ -106,7 +106,7 @@ class App extends React.Component {
 	async getPCA() {
 		// console.log(`OpenCPU Session ID for getPCA: ${this.state.openCPULoadDataSessionID}`);
 		console.log(`OpenCPU Session ID for getPCA: 'x0f3a774e81'`);
-		const pcaOutput = await this.openCPU.runRCommand("sonaR", "getPCALoadings", { x: 'x0f3a774e81' }, 'json', true);
+		const pcaOutput = await this.openCPU.runRCommand("sonaR", "getPCALoadings", { x: 'x0f3a774e81' }, 'json', false);
 		console.log(pcaOutput);
 		// Old plotting logic, ths should be removed later on
 		this.openCPU.runRCommand("sonaR", "plot_pca", { x: 'x0f3a774e81' }, 'ascii', true).then(output => {
@@ -145,7 +145,7 @@ class App extends React.Component {
 			console.log("DEBUG");
 			this.setState({ openCPULoadDataSessionID: 'x0f3a774e81' });
 			this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6952_DATASET10020.csv'));
-			this.setEnableDataset('DIFFEXPR_EXPORT6952_DATASET10020.csv', true);
+			this.setEnableDataset('DIFFEXPR_EXPORT6952_DATASET10020.csv', false);
 			// Run PCA
 			this.getPCA();
 		}
@@ -187,16 +187,6 @@ class App extends React.Component {
 							<Grid item xs>
 								<Paper>
 									<img src={`${this.state.pcaImage}?width=7&height=5`} width={800} height={400} alt="R test PCA"/>
-								</Paper>
-							</Grid>
-							<Grid item xs>
-								<Paper>
-									<Scatterplot width={400} height={200} x={Helper.getIris().sepalWidth} y={Helper.getIris().sepalLength} xLabel="Sepal Width" yLabel="Sepal Length" />
-								</Paper>
-							</Grid>
-							<Grid item xs>
-								<Paper>
-									<Scatterplot width={400} height={200} x={Helper.getIris().sepalWidth} y={Helper.getIris().sepalLength} xLabel="Sepal Width" yLabel="Sepal Length" />
 								</Paper>
 							</Grid>
 							{ hexplots }
