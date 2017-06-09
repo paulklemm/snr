@@ -66,8 +66,8 @@ class DatasetHub {
 		this.datasets[dataset.name] = dataset;
 		this.update();
 	}
-	setData(name, data) {
-		this.datasets[name].setData(data);
+	setData(name, data, dimNames) {
+		this.datasets[name].setData(data, dimNames);
 		// 'Loading' changes, so update
 		this.update();
 	}

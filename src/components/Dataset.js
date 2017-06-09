@@ -6,11 +6,13 @@ class Dataset {
 		this.enabled = enabled;
 		this.loaded = false;
 		this.loading = false;
+		this.dimNames = [];
 	}
-	setData(data) {
+	setData(data, dimNames) {
 		this.data = data;
 		this.loaded = true;
 		this.loading = false;
+		this.dimNames = dimNames;
 		// Attach 'filtered' element
 		this.filtered = [];
 		for (let i in this.data)

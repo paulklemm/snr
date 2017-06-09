@@ -65,6 +65,12 @@ class App extends React.Component {
 		}
 	}
 
+	/**
+	 * Filter bridge function usable by elements that provide a filter for data
+	 * @param  {String} name: Dimension name to be filtered
+	 * @param  {Object} val: Filter value can be anything depending on the dimension type
+	 * @param  {Object} operator: Filter operator, either `=`, `<` or `>`. Strings should always use `=`
+	 */
 	onFilter(name, val, operator) {
 		this.datasetHub.onFilter(name, val, operator);
 		this.forceUpdate();
@@ -122,13 +128,14 @@ class App extends React.Component {
 		// Set dataset to loading
 		this.datasetHub.setLoading(name)
 		this.setState({datasetLoading: this.datasetHub.loading});
-		// let dataset = await this.openCPU.runRCommand("sonaR", "get_dataset", { datasets: "x0c2297be2f", name: `'${name}'`}, 'json', false);
-		let dataset = await this.openCPU.runRCommand("sonaR", "get_dataset", { datasets: this.state.openCPULoadDataSessionID, name: `'${name}'`}, 'json', false);
-		this.datasetHub.setData(name, dataset['.val']);
+		// let dataset = await this.openCPU.runRCommand("sonaR", "getDataset", { datasets: "x0c2297be2f", name: `'${name}'`}, 'json', false);
+		let dataset = await this.openCPU.runRCommand("sonaR", "getDataset", { datasets: this.state.openCPULoadDataSessionID, name: `'${name}'`}, 'json', true);
+		this.datasetHub.setData(name, dataset['.val'].dataset, dataset['.val'].dimNames);
 		// Loading is done, so update it again
 		this.setState({datasetLoading: this.datasetHub.loading});
 		// DEBUG
 		// this.datasetHub.filterFPKM(10);
+		
 		this.setState({hexplotData: this.datasetHub.datasets[name]});
 
 		if (verbose) console.log(`Loading ${name} done!`);
