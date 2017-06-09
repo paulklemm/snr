@@ -21,3 +21,6 @@ yarn-error.log*
 
 # data
 data/
+
+# VS Code
+.vscode
