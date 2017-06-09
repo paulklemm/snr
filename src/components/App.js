@@ -104,16 +104,16 @@ class App extends React.Component {
 	}
 
 	async getPCA() {
-		// console.log(`OpenCPU Session ID for getPCA: ${this.state.openCPULoadDataSessionID}`);
-		console.log(`OpenCPU Session ID for getPCA: 'x0f3a774e81'`);
-		const pcaOutput = await this.openCPU.runRCommand("sonaR", "getPCALoadings", { x: 'x0f3a774e81' }, 'json', false);
-		console.log(pcaOutput);
-		// Old plotting logic, ths should be removed later on
-		this.openCPU.runRCommand("sonaR", "plot_pca", { x: 'x0f3a774e81' }, 'ascii', true).then(output => {
-			this.setState({
-				pcaImage: `${output.graphics[0]}/svg`
-			});
-		});
+		// TODO: Implement PCA
+		// console.log(`OpenCPU Session ID for getPCA: 'x0c2297be2f'`);
+		// const pcaOutput = await this.openCPU.runRCommand("sonaR", "getPCALoadings", { x: 'x0c2297be2f' }, 'json', false);
+		// console.log(pcaOutput);
+		// // Old plotting logic, ths should be removed later on
+		// this.openCPU.runRCommand("sonaR", "plot_pca", { x: 'x0c2297be2f' }, 'ascii', true).then(output => {
+		// 	this.setState({
+		// 		pcaImage: `${output.graphics[0]}/svg`
+		// 	});
+		// });
 	}
 
 	async loadDataset(name, verbose = false) {
@@ -122,8 +122,8 @@ class App extends React.Component {
 		// Set dataset to loading
 		this.datasetHub.setLoading(name)
 		this.setState({datasetLoading: this.datasetHub.loading});
-		let dataset = await this.openCPU.runRCommand("sonaR", "get_dataset", { datasets: "x0f3a774e81", name: `'${name}'`}, 'json', false);
-		// let dataset = await this.openCPU.runRCommand("sonaR", "get_dataset", { datasets: this.state.openCPULoadDataSessionID, name: `'${name}'`}, 'json', false);
+		// let dataset = await this.openCPU.runRCommand("sonaR", "get_dataset", { datasets: "x0c2297be2f", name: `'${name}'`}, 'json', false);
+		let dataset = await this.openCPU.runRCommand("sonaR", "get_dataset", { datasets: this.state.openCPULoadDataSessionID, name: `'${name}'`}, 'json', false);
 		this.datasetHub.setData(name, dataset['.val']);
 		// Loading is done, so update it again
 		this.setState({datasetLoading: this.datasetHub.loading});
@@ -143,9 +143,11 @@ class App extends React.Component {
 			this.initSession()
 		} else {
 			console.log("DEBUG");
-			this.setState({ openCPULoadDataSessionID: 'x0f3a774e81' });
+			// Using setState is not fast enough for the async loading function
+			this.state['openCPULoadDataSessionID'] = 'x0c2297be2f';
+			// this.setState({ openCPULoadDataSessionID: 'x0c2297be2f' });
 			this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6952_DATASET10020.csv'));
-			this.setEnableDataset('DIFFEXPR_EXPORT6952_DATASET10020.csv', false);
+			this.setEnableDataset('DIFFEXPR_EXPORT6952_DATASET10020.csv', true);
 			// Run PCA
 			this.getPCA();
 		}

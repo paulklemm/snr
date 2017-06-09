@@ -1,23 +1,26 @@
 export const DimensionTypes = {
+	EnsemblID: "string",
 	fc: "number",
 	pValue: "number",
-	negLog10_p_value: "number",
-	qValue: "number",
+	pValueNegLog10: "number",
 	fpkm_1: "number",
 	fpkm_2: "number",
 	name: "string",
-	biotype: "string"
+	biotype: "string",
+	strand: "string"
 };
 
 export const DefaultFilterSetting = {
+	EnsemblID: "=",
 	fc: ">",
 	pValue: "<",
-	negLog10_p_value: "<",
+	pValueNegLog10: "<",
 	qValue: "<",
 	fpkm_1: ">",
 	fpkm_2: ">",
 	name: "=",
-	biotype: "="
+	biotype: "=",
+	strand: "="
 };
 
 export default DimensionTypes;
