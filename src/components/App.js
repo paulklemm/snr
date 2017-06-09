@@ -70,6 +70,52 @@ class App extends React.Component {
 		this.forceUpdate();
 	}
 
+	async initSession() {
+		// get the personal folder
+		const output = await this.openCPU.runRCommand("sonaR", "getUserFolder", { user: "'paul'" }, "json", true);
+		// Output is array containing a string, therefore this looks a bit ugly here
+		let userFolder = output['.val'][0];
+
+		// Load Data from userFolder and get Session ID for the associated object
+		const outputLoadData = await this.openCPU.runRCommand("sonaR", "load_data", { data_folder: `'${userFolder}'` }, "json", true);
+		console.log(`LoadData Session ID: ${outputLoadData.sessionID}`);
+		// Update state with sessionID
+		this.setState({ openCPULoadDataSessionID: outputLoadData.sessionID });
+
+		// Get dataset list as array
+		const outputGetDataNames = await this.openCPU.runRCommand("sonaR", "get_data_names", { x: `${outputLoadData.sessionID}` }, 'json', true);
+		// Attach the dataset array to the datasetHub
+		for (let i in outputGetDataNames['.val']) {
+			let datasetName = outputGetDataNames['.val'][i];
+			this.datasetHub.push(new Dataset(datasetName));
+		}
+		// Load setEnambled Status
+		for (let i in outputGetDataNames['.val']) {
+			let datasetName = outputGetDataNames['.val'][i];
+			// Default add value to data set, this should later be derived from firebase
+			this.setEnableDataset(datasetName, false);
+		}
+		
+		// PCA plot
+		const outputPCA = await this.openCPU.runRCommand("sonaR", "plot_pca", { x: outputLoadData.sessionID }, 'ascii', true);
+		this.setState({
+			pcaImage: `${outputPCA.graphics[0]}/svg`
+		});
+	}
+
+	async getPCA() {
+		// console.log(`OpenCPU Session ID for getPCA: ${this.state.openCPULoadDataSessionID}`);
+		console.log(`OpenCPU Session ID for getPCA: 'x0f3a774e81'`);
+		const pcaOutput = await this.openCPU.runRCommand("sonaR", "getPCALoadings", { x: 'x0f3a774e81' }, 'json', true);
+		console.log(pcaOutput);
+		
+		// .then(output => {
+		// 	this.setState({
+		// 		pcaImage: `${output.graphics[0]}/svg`
+		// 	});
+		// });
+	}
+
 	async loadDataset(name, verbose = false) {
 		if (verbose) console.log(`Loading ${name} ...`);
 
@@ -94,44 +140,19 @@ class App extends React.Component {
 		this.openCPU = new OpenCPUBridge('http://localhost:8004');
 		// let r = new R(openCPU);
 		if (!this.debug) {
-			// get the personal folder
-			this.openCPU.runRCommand("sonaR", "getUserFolder", {user: "'paul'"}, "json", true).then(output => {
-				let userFolder = output['.val'][0];
-				// this.openCPU.runRCommand("sonaR", "load_data", {data_folder: userFolder}, "json", "false").then(output => {
-				this.openCPU.runRCommand("sonaR", "load_data", {data_folder: `'${userFolder}'`}, "json", true).then(outputLoadData => {
-					console.log(outputLoadData.sessionID);
-					this.setState({openCPULoadDataSessionID: outputLoadData.sessionID});
-					this.openCPU.runRCommand("sonaR", "get_data_names", { x: `${outputLoadData.sessionID}`}, 'json', true).then(outputGetDataNames => {
-						for (let i in outputGetDataNames['.val']) {
-							let datasetName = outputGetDataNames['.val'][i];
-							this.datasetHub.push(new Dataset(datasetName));
-						}
-						// Load setEnambled Status
-						for (let i in outputGetDataNames['.val']) {
-							let datasetName = outputGetDataNames['.val'][i];
-							// Default add value to data set, this should later be derived from firebase
-							this.setEnableDataset(datasetName, false);
-						}
-						// PCA plot
-						this.openCPU.runRCommand("sonaR", "plot_pca", { x: this.state.openCPULoadDataSessionID}, 'ascii', true).then(output => {
-							this.setState({
-								pcaImage: `${output.graphics[0]}/svg`
-							});
-						});
-					});
-				});
-			});
+			this.initSession()
 		} else {
 			console.log("DEBUG");
 			this.setState({ openCPULoadDataSessionID: 'x0f3a774e81' });
 			this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6952_DATASET10020.csv'));
 			this.setEnableDataset('DIFFEXPR_EXPORT6952_DATASET10020.csv', true);
 			// Run PCA
-			this.openCPU.runRCommand("sonaR", "plot_pca", { x: 'x0f3a774e81' }, 'ascii', true).then(output => {
-				this.setState({
-					pcaImage: `${output.graphics[0]}/svg`
-				});
-			});
+			this.getPCA();
+			// this.openCPU.runRCommand("sonaR", "plot_pca", { x: 'x0f3a774e81' }, 'ascii', true).then(output => {
+			// 	this.setState({
+			// 		pcaImage: `${output.graphics[0]}/svg`
+			// 	});
+			// });
 		}
 		// openCPU.runRCommand("graphics", "hist", { x: Helper.objectValueToArray(rnaSeqData.default.data, 'pValue'), breaks: 10}, 'ascii', false).then(output => {
 		this.openCPU.runRCommand("graphics", "hist", { x: "[1,2,2,2,3,4,5,6,6,7]", breaks: 10}, 'ascii', false).then(output => {
@@ -141,7 +162,6 @@ class App extends React.Component {
 		});
 	}
 
-	// TODO Fix stres test
 	render() {
 		// Create Hexplot dynamic from inbox data
 		let hexplots = [];
