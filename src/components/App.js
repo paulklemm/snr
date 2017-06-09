@@ -108,12 +108,12 @@ class App extends React.Component {
 		console.log(`OpenCPU Session ID for getPCA: 'x0f3a774e81'`);
 		const pcaOutput = await this.openCPU.runRCommand("sonaR", "getPCALoadings", { x: 'x0f3a774e81' }, 'json', true);
 		console.log(pcaOutput);
-		
-		// .then(output => {
-		// 	this.setState({
-		// 		pcaImage: `${output.graphics[0]}/svg`
-		// 	});
-		// });
+		// Old plotting logic, ths should be removed later on
+		this.openCPU.runRCommand("sonaR", "plot_pca", { x: 'x0f3a774e81' }, 'ascii', true).then(output => {
+			this.setState({
+				pcaImage: `${output.graphics[0]}/svg`
+			});
+		});
 	}
 
 	async loadDataset(name, verbose = false) {
@@ -148,18 +148,7 @@ class App extends React.Component {
 			this.setEnableDataset('DIFFEXPR_EXPORT6952_DATASET10020.csv', true);
 			// Run PCA
 			this.getPCA();
-			// this.openCPU.runRCommand("sonaR", "plot_pca", { x: 'x0f3a774e81' }, 'ascii', true).then(output => {
-			// 	this.setState({
-			// 		pcaImage: `${output.graphics[0]}/svg`
-			// 	});
-			// });
 		}
-		// openCPU.runRCommand("graphics", "hist", { x: Helper.objectValueToArray(rnaSeqData.default.data, 'pValue'), breaks: 10}, 'ascii', false).then(output => {
-		this.openCPU.runRCommand("graphics", "hist", { x: "[1,2,2,2,3,4,5,6,6,7]", breaks: 10}, 'ascii', false).then(output => {
-			this.setState({
-				image: `${output.graphics[0]}/svg`
-			});
-		});
 	}
 
 	render() {
@@ -185,13 +174,6 @@ class App extends React.Component {
 					<Navbar />
 					<div style={styleSheet.appBody}>
 						<Grid container gutter={16}>
-							{/* <BarChart width={200} height={200} /> */}
-							{/* <Scatterplot width={200} height={200} x={Helper.getIris().sepalWidth} y={Helper.getIris().sepalLength} xLabel="Sepal Width" yLabel="Sepal Length" /> */}
-							{/* <ScatterplotRNASeqData width={200} height={200} rnaSeqData={Helper.getIrisNewFormat()} xName="sepalWidth" yName="sepalLength" /> */}
-							{/* <ScatterplotRNASeqData width={600} height={400} rnaSeqData={this.state.rnaSeqData} xName="pValue" yName="fc" /> */}
-							{/* <Hexplot width={600} height={400} rnaSeqData={Helper.getIrisNewFormat()} xName="sepalWidth" yName="sepalLength" hexSize={10} hexMax={10} /> */}
-							{/* <Piechart width={200} height={200} data={[1, 1, 2, 3, 5, 8, 13, 21]}/> */}
-							{/* <Hexplot width={500} height={400} rnaSeqData={this.state.rnaSeqData} xName="pValue" yName="fc" hexSize={10} hexMax={10} /> */}
 							<Grid item xs={12}>
 								<Paper>
 									<Table data={hexplotDataData} height={400} onFilter={ this.onFilter }/>
@@ -200,11 +182,6 @@ class App extends React.Component {
 							<Grid item xs>
 								<Paper>
 									<DatasetSelect datasetEnabled={ this.state.datasetEnabled } datasetLoading={ this.state.datasetLoading } setEnableDataset={ this.setEnableDataset }/>
-								</Paper>
-							</Grid>
-							<Grid item xs>
-								<Paper>
-									<img src={`${this.state.image}?width=7&height=5`} width={400} height={200} alt="R test"/>
 								</Paper>
 							</Grid>
 							<Grid item xs>

@@ -1,3 +1,40 @@
+# Sonar Readme
+
+## Implementation Examples
+
+### Rendering Graphics from `R` in `Sonar`
+
+
+Get a graphic from `R`
+
+```javascript
+this.openCPU.runRCommand("graphics", "hist", { x: "[1,2,2,2,3,4,5,6,6,7]", breaks: 10}, 'ascii', false).then(output => {
+  this.setState({
+    image: `${output.graphics[0]}/svg`
+  });
+});
+```
+
+Include the image in HTML using
+
+```html
+<img src={`${this.state.image}?width=7&height=5`} width={400} height={200} alt="R test"/>
+```
+
+### Rendering `Sonar` Components
+
+```html
+<BarChart width={200} height={200} />
+<Scatterplot width={200} height={200} x={Helper.getIris().sepalWidth} y={Helper.getIris().sepalLength} xLabel="Sepal Width" yLabel="Sepal Length" />
+<ScatterplotRNASeqData width={200} height={200} rnaSeqData={Helper.getIrisNewFormat()} xName="sepalWidth" yName="sepalLength" />
+<ScatterplotRNASeqData width={600} height={400} rnaSeqData={this.state.rnaSeqData} xName="pValue" yName="fc" />
+<Hexplot width={600} height={400} rnaSeqData={Helper.getIrisNewFormat()} xName="sepalWidth" yName="sepalLength" hexSize={10} hexMax={10} />
+<Piechart width={200} height={200} data={[1, 1, 2, 3, 5, 8, 13, 21]}/>
+<Hexplot width={500} height={400} rnaSeqData={this.state.rnaSeqData} xName="pValue" yName="fc" hexSize={10} hexMax={10} />
+```
+
+# Create React App Readme
+
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 
 Below you will find some information on how to perform common tasks.<br>
