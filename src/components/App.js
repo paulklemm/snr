@@ -40,7 +40,7 @@ class App extends React.Component {
 		this.setEnableDataset = this.setEnableDataset.bind(this);
 		this.onFilter = this.onFilter.bind(this);
 		this.datasetHub = new DatasetHub();
-		this.debug = false;
+		this.debug = true;
 		this.state = {
 			datasetEnabled: {},
 			datasetLoading: {},
@@ -76,8 +76,8 @@ class App extends React.Component {
 		// Set dataset to loading
 		this.datasetHub.setLoading(name)
 		this.setState({datasetLoading: this.datasetHub.loading});
-		// let dataset = await this.openCPU.runRCommand("sonaR", "get_dataset", { datasets: "x085f08d09d", name: `'${name}'`}, 'json', false);
-		let dataset = await this.openCPU.runRCommand("sonaR", "get_dataset", { datasets: this.state.openCPULoadDataSessionID, name: `'${name}'`}, 'json', false);
+		let dataset = await this.openCPU.runRCommand("sonaR", "get_dataset", { datasets: "x0f3a774e81", name: `'${name}'`}, 'json', false);
+		// let dataset = await this.openCPU.runRCommand("sonaR", "get_dataset", { datasets: this.state.openCPULoadDataSessionID, name: `'${name}'`}, 'json', false);
 		this.datasetHub.setData(name, dataset['.val']);
 		// Loading is done, so update it again
 		this.setState({datasetLoading: this.datasetHub.loading});
@@ -99,7 +99,7 @@ class App extends React.Component {
 				let userFolder = output['.val'][0];
 				// this.openCPU.runRCommand("sonaR", "load_data", {data_folder: userFolder}, "json", "false").then(output => {
 				this.openCPU.runRCommand("sonaR", "load_data", {data_folder: `'${userFolder}'`}, "json", true).then(outputLoadData => {
-					// console.log(outputLoadData.sessionID);
+					console.log(outputLoadData.sessionID);
 					this.setState({openCPULoadDataSessionID: outputLoadData.sessionID});
 					this.openCPU.runRCommand("sonaR", "get_data_names", { x: `${outputLoadData.sessionID}`}, 'json', true).then(outputGetDataNames => {
 						for (let i in outputGetDataNames['.val']) {
@@ -121,23 +121,17 @@ class App extends React.Component {
 					});
 				});
 			});
-			// // this.openCPU.runRCommand("sonaR", "get_data_names", { x: "x085f08d09d"}, 'json', false).then(output => {
-			// this.openCPU.runRCommand("sonaR", "get_data_names", { x: "x0bb28ec8cc"}, 'json', false).then(output => {
-			// 	for (let i in output['.val']) {
-			// 		let datasetName = output['.val'][i];
-			// 		this.datasetHub.push(new Dataset(datasetName));
-			// 	}
-			// 	// Load setEnambled Status
-			// 	for (let i in output['.val']) {
-			// 		let datasetName = output['.val'][i];
-			// 		// Default add value to data set, this should later be derived from firebase
-			// 		this.setEnableDataset(datasetName, false);
-			// 	}
-			// });
 		} else {
 			console.log("DEBUG");
-			this.datasetHub.push(new Dataset('dieterich-pipeline_ncd_hfd.csv'));
-			this.setEnableDataset('dieterich-pipeline_ncd_hfd.csv', true);
+			this.setState({ openCPULoadDataSessionID: 'x0f3a774e81' });
+			this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6952_DATASET10020.csv'));
+			this.setEnableDataset('DIFFEXPR_EXPORT6952_DATASET10020.csv', true);
+			// Run PCA
+			this.openCPU.runRCommand("sonaR", "plot_pca", { x: 'x0f3a774e81' }, 'ascii', true).then(output => {
+				this.setState({
+					pcaImage: `${output.graphics[0]}/svg`
+				});
+			});
 		}
 		// openCPU.runRCommand("graphics", "hist", { x: Helper.objectValueToArray(rnaSeqData.default.data, 'pValue'), breaks: 10}, 'ascii', false).then(output => {
 		this.openCPU.runRCommand("graphics", "hist", { x: "[1,2,2,2,3,4,5,6,6,7]", breaks: 10}, 'ascii', false).then(output => {
