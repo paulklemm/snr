@@ -1,19 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Loading from './Loading';
 import { LabelCheckbox } from 'material-ui/Checkbox';
 import { FormGroup } from 'material-ui/Form';
 import { CircularProgress } from 'material-ui/Progress';
 
-const styleSheet = {
-	progress: {
-		marginLeft:'auto',
-		marginRight:'auto',
-		marginTop: 10,
-		marginBottom: 10,
-		width: 40,
-		height: 40
-	}
-};
 // https://material-ui-1dab0.firebaseapp.com/component-demos/selection-controls
 class DatasetSelect extends React.Component {
 	getCheckboxes() {
@@ -31,7 +22,7 @@ class DatasetSelect extends React.Component {
 			);
 		}
 		if (datasetCheckboxes.length === 0)
-			datasetCheckboxes.push(<CircularProgress style={styleSheet.progress} key="CircularProgress_getCheckboxes" />)
+			datasetCheckboxes.push(<Loading key="CircularProgress_getCheckboxes" />)
 
 		return(datasetCheckboxes);
 	}

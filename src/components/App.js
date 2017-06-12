@@ -26,6 +26,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Grid from 'material-ui/Grid';
 import Paper from 'material-ui/Paper';
 import Navbar from './Navbar';
+import Loading from './Loading';
 
 const styleSheet = {
 	appBody: {
@@ -40,7 +41,7 @@ class App extends React.Component {
 		this.setEnableDataset = this.setEnableDataset.bind(this);
 		this.onFilter = this.onFilter.bind(this);
 		this.datasetHub = new DatasetHub();
-		this.debug = true;
+		this.debug = false;
 		this.state = {
 			datasetEnabled: {},
 			datasetLoading: {},
@@ -111,15 +112,13 @@ class App extends React.Component {
 
 	async getPCA() {
 		// TODO: Implement PCA
-		// console.log(`OpenCPU Session ID for getPCA: 'x0c2297be2f'`);
-		// const pcaOutput = await this.openCPU.runRCommand("sonaR", "getPCALoadings", { x: 'x0c2297be2f' }, 'json', false);
-		// console.log(pcaOutput);
-		// // Old plotting logic, ths should be removed later on
-		// this.openCPU.runRCommand("sonaR", "plot_pca", { x: 'x0c2297be2f' }, 'ascii', true).then(output => {
-		// 	this.setState({
-		// 		pcaImage: `${output.graphics[0]}/svg`
-		// 	});
-		// });
+		const pcaOutput = await this.openCPU.runRCommand("sonaR", "getPCALoadings", { x: 'x0c2297be2f' }, 'json', false);
+		// Old plotting logic, ths should be removed later on
+		this.openCPU.runRCommand("sonaR", "plot_pca", { x: 'x0c2297be2f' }, 'ascii', true).then(output => {
+			this.setState({
+				pcaImage: `${output.graphics[0]}/svg`
+			});
+		});
 	}
 
 	async loadDataset(name, verbose = false) {
@@ -177,6 +176,9 @@ class App extends React.Component {
 		}
 		let primaryDatasetData = (this.state.primaryDataset.data === undefined) ? undefined : this.state.primaryDataset.getData();
 		let primaryDatasetDimNames = this.state.primaryDataset.dimNames;
+		// Add PCA
+		let pcaImage = (typeof this.state.pcaImage === "undefined") ? pcaImage = <Loading width={800} height={400} /> : <img src={`${this.state.pcaImage}?width=7&height=5`} width={800} height={400} alt="R test PCA" />;
+
 		return (
 			<MuiThemeProvider>
 				<div>
@@ -195,7 +197,7 @@ class App extends React.Component {
 							</Grid>
 							<Grid item xs>
 								<Paper>
-									<img src={`${this.state.pcaImage}?width=7&height=5`} width={800} height={400} alt="R test PCA"/>
+									{pcaImage}
 								</Paper>
 							</Grid>
 							{ hexplots }
