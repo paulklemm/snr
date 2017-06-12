@@ -63,43 +63,41 @@ class Table extends React.Component{
 			header.push(
 				<th key={`header-th-${i}`}>
 					<div style={styleSheet.headerTH}>
-						<Typography type="body2"><Icon name="sort-desc" style={{fontSize:'100%'}} /> {dimension}</Typography>
-						<div style={{display: 'flex'}}>
-							<IconButton 
-								style={{marginTop:'-2px', width:'25px'}}
-								onClick={(event) => {
-									// Update filter
-									const currentOperator = event.target.textContent;
-									let filterSetting = this.state.filterSetting;
-									// Switch signs
-									if (currentOperator === '<') {
-										filterSetting[dimension] = '>';
-										this.setState({filterSetting: filterSetting});
-										this.handleFilter(dimension);
-									} else if (currentOperator === '>') {
-										filterSetting[dimension] = '<';
-										this.setState({filterSetting: filterSetting});
-										this.handleFilter(dimension);
-									} 
-								}}
-							>
-								{
-									// TODO: Check if the value is inside the filterSettings, otherwise set the type
-									(Object.keys(this.state.filterSetting).indexOf(dimension) !== -1) ? this.state.filterSetting[dimension] : '>'
+						<Typography noWrap type="body1"><Icon name="sort-desc" style={{fontSize:'100%'}} /> {dimension}</Typography>
+						<div style={{ display: 'flex', whiteSpace: 'nowrap' }}>
+						<IconButton
+							style={{ marginTop: '-2px', width: '10px' }}
+							onClick={(event) => {
+								// Update filter
+								const currentOperator = event.target.textContent;
+								let filterSetting = this.state.filterSetting;
+								// Switch signs
+								if (currentOperator === '<') {
+									filterSetting[dimension] = '>';
+									this.setState({ filterSetting: filterSetting });
+									this.handleFilter(dimension);
+								} else if (currentOperator === '>') {
+									filterSetting[dimension] = '<';
+									this.setState({ filterSetting: filterSetting });
+									this.handleFilter(dimension);
 								}
-								</IconButton>
-							<div>
-								<TextField 
-									style={{maxWidth: 100}}
-									id="filter" 
-									label="Filter" 
-									onChange={(event) => {
-										// Update the textfieldValue object with the newly changed value
-										this.textFieldValues[dimension] = event.target.value;
-										this.handleFilter(dimension);
-									}}
-								/>
-							</div>
+							}}
+						>
+							{
+								// TODO: Check if the value is inside the filterSettings, otherwise set the type
+								(Object.keys(this.state.filterSetting).indexOf(dimension) !== -1) ? this.state.filterSetting[dimension] : '>'
+							}
+						</IconButton>
+							<TextField 
+							style={{ width: '100% important!', marginTop: '-21px', marginLeft: '5px'}}
+								id="filter" 
+								label="Filter" 
+								onChange={(event) => {
+									// Update the textfieldValue object with the newly changed value
+									this.textFieldValues[dimension] = event.target.value;
+									this.handleFilter(dimension);
+								}}
+							/>
 						</div>
 					</div>
 				</th>
