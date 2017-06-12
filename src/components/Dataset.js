@@ -41,7 +41,8 @@ class Dataset {
 			this.filtered[i] = false;
 			for (let j in filterKeys) {
 				let filterKey = filterKeys[j];
-				if (DimensionTypes[filterKey] === 'number') {
+				// Added a dirty check on FPKM value names. Every variable with `FPKM` in it will be classified as number
+				if (DimensionTypes[filterKey] === 'number' || /FPKM/i.test(filterKey)) {
 					// Process Numbers
 					if (filter[filterKey].operator === '<') {
 						if (this.data[i][filterKey] > filter[filterKey].value)
@@ -51,8 +52,8 @@ class Dataset {
 							this.filtered[i] = true;
 					}
 				// Not a number
-				} else {
-					if (this.data[i][filterKey] === undefined || this.data[i][filterKey].indexOf(filter[filterKey].value) === -1)
+			} else {
+					if (typeof this.data[i][filterKey] === "undefined" || this.data[i][filterKey].indexOf(filter[filterKey].value) === -1)
 						this.filtered[i] = true;
 				}
 			}

@@ -40,9 +40,32 @@ class Table extends React.Component{
 		this.textFieldValues = {};
 		this.state = {
 			rowTop: 0,
-			rowBottom: 20,
-			filterSetting: DefaultFilterSetting
+			rowBottom: 20
 		};
+	}
+
+	componentWillReceiveProps(nextProps) {
+		// If we receive dimNames and the filtersettings are not initialized, go ahead and initialize them
+		if (typeof nextProps.dimNames !== "undefined" && typeof this.state.filterSetting === "undefined") {
+			console.log("Setting filterValues for FPKMs");
+			this.setState({
+				filterSetting: this.getDefaultFilterSettings(nextProps.dimNames)
+			});
+		}
+	}
+
+	/** Since the FPKM value names differ, they need to be derived from the dimension names */
+	getDefaultFilterSettings(dimNames) {
+		let filterSetting = DefaultFilterSetting;
+		// Iterate through the values and look for FPKM values
+		for (let i in dimNames) {
+			const dim = dimNames[i];
+			// Check if the dim name contains FPKM and if so, add the FPKM settings
+			if (/FPKM/i.test(dim)) {
+				filterSetting[dim] = filterSetting.FPKM;
+			}
+		}
+		return(filterSetting);
 	}
 
 	handleFilter(dimension) {
@@ -85,7 +108,8 @@ class Table extends React.Component{
 						>
 							{
 								// TODO: Check if the value is inside the filterSettings, otherwise set the type
-								(Object.keys(this.state.filterSetting).indexOf(dimension) !== -1) ? this.state.filterSetting[dimension] : '>'
+								//(Object.keys(this.state.filterSetting).indexOf(dimension) !== -1) ? this.state.filterSetting[dimension] : '>'
+								this.state.filterSetting[dimension]
 							}
 						</IconButton>
 							<TextField 
