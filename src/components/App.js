@@ -1,5 +1,6 @@
 import React from 'react';
 import './App.css';
+// Sonar components
 // eslint-disable-next-line
 import BarChart from './BarChart';
 // eslint-disable-next-line
@@ -12,25 +13,25 @@ import Hexplot from './Hexplot';
 import Piechart from './Piechart';
 // eslint-disable-next-line
 import DynamicHexBin from './DynamicHexBin';
-// eslint-disable-next-line
 import ScatterplotRNASeqData from './ScatterplotRNASeqData';
-// eslint-disable-next-line
 import OpenCPUBridge from './OpenCPUBridge';
 import Dataset from './Dataset';
 import DatasetHub from './DatasetHub';
-// eslint-disable-next-line
-import R from './R';
 import DatasetSelect from './DatasetSelect';
 import Table from './Table';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import Grid from 'material-ui/Grid';
-import Paper from 'material-ui/Paper';
 import Navbar from './Navbar';
 import Loading from './Loading';
+// Material-UI components
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import Drawer from 'material-ui/Drawer';
+import Grid from 'material-ui/Grid';
+import Paper from 'material-ui/Paper';
+import Button from 'material-ui/Button';
+import Card, { CardActions, CardContent } from 'material-ui/Card';
 
 const styleSheet = {
 	appBody: {
-		marginLeft: 10,
+		marginRight: 10,
 		marginRight: 10
 	}
 };
@@ -41,13 +42,14 @@ class App extends React.Component {
 		this.setEnableDataset = this.setEnableDataset.bind(this);
 		this.onFilter = this.onFilter.bind(this);
 		this.datasetHub = new DatasetHub();
-		this.debug = false;
+		this.debug = true;
 		this.state = {
 			datasetEnabled: {},
 			datasetLoading: {},
 			openCPULoadDataSessionID: "",
 			// TODO: This is now still set to the last loaded dataset, should be set using the DatasetSelect Element
-			primaryDataset: {}
+			primaryDataset: {},
+			openDrawer: {right: false}
 		};
 	}
 
@@ -112,9 +114,9 @@ class App extends React.Component {
 
 	async getPCA() {
 		// TODO: Implement PCA
-		const pcaOutput = await this.openCPU.runRCommand("sonaR", "getPCALoadings", { x: 'x0c2297be2f' }, 'json', false);
+		const pcaOutput = await this.openCPU.runRCommand("sonaR", "getPCALoadings", { x: 'x0b9b422490' }, 'json', false);
 		// Old plotting logic, ths should be removed later on
-		this.openCPU.runRCommand("sonaR", "plot_pca", { x: 'x0c2297be2f' }, 'ascii', true).then(output => {
+		this.openCPU.runRCommand("sonaR", "plot_pca", { x: 'x0b9b422490' }, 'ascii', true).then(output => {
 			this.setState({
 				pcaImage: `${output.graphics[0]}/svg`
 			});
@@ -127,7 +129,7 @@ class App extends React.Component {
 		// Set dataset to loading
 		this.datasetHub.setLoading(name)
 		this.setState({datasetLoading: this.datasetHub.loading});
-		// let dataset = await this.openCPU.runRCommand("sonaR", "getDataset", { datasets: "x0c2297be2f", name: `'${name}'`}, 'json', false);
+		// let dataset = await this.openCPU.runRCommand("sonaR", "getDataset", { datasets: "x0b9b422490", name: `'${name}'`}, 'json', false);
 		let dataset = await this.openCPU.runRCommand("sonaR", "getDataset", { datasets: this.state.openCPULoadDataSessionID, name: `'${name}'`}, 'json', true);
 		this.datasetHub.setData(name, dataset['.val'].dataset, dataset['.val'].dimNames);
 		// Loading is done, so update it again
@@ -149,14 +151,21 @@ class App extends React.Component {
 		} else {
 			console.log("DEBUG");
 			// Using setState is not fast enough for the async loading function
-			this.state['openCPULoadDataSessionID'] = 'x0c2297be2f';
-			// this.setState({ openCPULoadDataSessionID: 'x0c2297be2f' });
-			this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6952_DATASET10020.csv'));
-			this.setEnableDataset('DIFFEXPR_EXPORT6952_DATASET10020.csv', true);
-			// Run PCA
-			this.getPCA();
+			this.state['openCPULoadDataSessionID'] = 'x0b9b422490';
+			// this.setState({ openCPULoadDataSessionID: 'x0b9b422490' });
+			// this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6952_DATASET10020.csv'));
+			// this.setEnableDataset('DIFFEXPR_EXPORT6952_DATASET10020.csv', true);
+			// // Run PCA
+			// this.getPCA();
 		}
 	}
+
+	toggleRightDrawer = () => this.toggleDrawer('right', !this.state.openDrawer.right)
+	toggleDrawer = (side, open) => {
+		const drawerState = {};
+		drawerState[side] = open;
+		this.setState({ openDrawer: drawerState });
+	};
 
 	render() {
 		// Create Hexplot dynamic from inbox data
@@ -182,17 +191,26 @@ class App extends React.Component {
 		return (
 			<MuiThemeProvider>
 				<div>
-					<Navbar />
+					<Drawer
+						anchor="right"
+						open={this.state.openDrawer.right}
+						onRequestClose={this.handleRightClose}
+						onClick={this.handleRightClose}
+						docked={true}
+					>
+						<Card>
+							<CardContent>
+								{<DatasetSelect datasetEnabled={this.state.datasetEnabled} datasetLoading={this.state.datasetLoading} setEnableDataset={this.setEnableDataset} />}
+								<Button raised color="primary" onClick={this.toggleRightDrawer}>Close</Button>
+							</CardContent>
+						</Card>
+					</Drawer>
+					<Navbar toggleRightDrawer={this.toggleRightDrawer} />
 					<div style={styleSheet.appBody}>
 						<Grid container gutter={16}>
 							<Grid item xs={12}>
 								<Paper>
 									<Table data={primaryDatasetData} dimNames={primaryDatasetDimNames} height={400} onFilter={ this.onFilter }/>
-								</Paper>
-							</Grid>
-							<Grid item xs>
-								<Paper>
-									<DatasetSelect datasetEnabled={ this.state.datasetEnabled } datasetLoading={ this.state.datasetLoading } setEnableDataset={ this.setEnableDataset }/>
 								</Paper>
 							</Grid>
 							<Grid item xs>
