@@ -1,9 +1,11 @@
 import React from 'react';
 import * as ReactFauxDOM from 'react-faux-dom'
+import PropTypes from 'prop-types';
 import {scaleLinear} from 'd3-scale';
 import {axisBottom, axisLeft} from 'd3-axis';
 import {max, min} from 'd3-array';
 import Helper from './Helper';
+
 // eslint-disable-next-line
 import {mouse, select} from 'd3-selection';
 // Measure DOM Element in React: https://stackoverflow.com/questions/25371926/how-can-i-respond-to-the-width-of-an-auto-sized-dom-element-in-react
@@ -207,6 +209,15 @@ class Scatterplot extends React.Component {
 			</Measure>
 		);
 	}
+}
+
+Scatterplot.propTypes = {
+	responsiveWidth: PropTypes.bool,
+	responsiveHeight: PropTypes.bool.isRequired,
+	xLabel: PropTypes.string.isRequired,
+	yLabel: PropTypes.string.isRequired,
+	x: PropTypes.array.isRequired,
+	y: PropTypes.array.isRequired,
 }
 
 export default Scatterplot;

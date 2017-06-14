@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Scatterplot from './Scatterplot';
 import Helper from './Helper';
 import {hexbin as D3Hexbin} from 'd3-hexbin';
@@ -101,6 +102,18 @@ class Hexplot extends Scatterplot {
 			</Measure>
 		);
 	}
+}
+
+Scatterplot.propTypes = {
+	responsiveWidth: PropTypes.bool,
+	responsiveHeight: PropTypes.bool,
+	xLabel: PropTypes.string,
+	yLabel: PropTypes.string,
+	x: PropTypes.array.isRequired,
+	y: PropTypes.array.isRequired,
+	hexSize: PropTypes.number.isRequired,
+	hexMax: PropTypes.number.isRequired,
+	showRenderGenesOption: PropTypes.bool.isRequired
 }
 
 export default Hexplot;
