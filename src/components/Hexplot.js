@@ -104,13 +104,12 @@ class Hexplot extends Scatterplot {
 	}
 }
 
-Scatterplot.propTypes = {
+Hexplot.propTypes = {
 	responsiveWidth: PropTypes.bool,
 	responsiveHeight: PropTypes.bool,
 	xLabel: PropTypes.string,
 	yLabel: PropTypes.string,
-	x: PropTypes.array.isRequired,
-	y: PropTypes.array.isRequired,
+	rnaSeqData: PropTypes.object.isRequired,
 	hexSize: PropTypes.number.isRequired,
 	hexMax: PropTypes.number.isRequired,
 	showRenderGenesOption: PropTypes.bool.isRequired
