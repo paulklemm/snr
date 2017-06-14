@@ -12,7 +12,7 @@
     "react-dom": "^15.5.3",
     "react-fa": "^4.2.0",
     "react-faux-dom": "^3.0.1",
-    "react-measure": "^1.4.7",
+    "react-measure": "^2.0.2",
     "react-tap-event-plugin": "^2.0.1"
   },
   "devDependencies": {
