@@ -22,6 +22,7 @@ import DatasetSelect from './DatasetSelect';
 import Table from './Table';
 import Navbar from './Navbar';
 import Loading from './Loading';
+import LayoutFactory from './LayoutFactory';
 // Material-UI components
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Drawer from 'material-ui/Drawer';
@@ -42,8 +43,10 @@ class App extends React.Component {
 		super();
 		this.setEnableDataset = this.setEnableDataset.bind(this);
 		this.onFilter = this.onFilter.bind(this);
+		this.handleResize = this.handleResize.bind(this);
 		this.datasetHub = new DatasetHub();
 		this.debug = true;
+		this.layoutFactory = new LayoutFactory();
 		this.state = {
 			datasetEnabled: {},
 			datasetLoading: {},
@@ -60,6 +63,9 @@ class App extends React.Component {
 	 * @param {Boolean} enabled Status whether the data should be treated as active or not
 	 */
 	setEnableDataset(name, enabled) {
+		// Update the count of the small multiples
+		// TODO: Handle removal of 'enabled'
+		this.layoutFactory.increaseSmallMultiplesCount();
 		let requiresLoading = this.datasetHub.setEnable(name, enabled);
 		this.setState({
 			datasetEnabled: this.datasetHub.enabled
@@ -143,7 +149,15 @@ class App extends React.Component {
 		if (verbose) console.log(this.datasetHub.datasets);
 	}
 
+	/** https://stackoverflow.com/questions/19014250/reactjs-rerender-on-browser-resize */
+	handleResize(debug = true) {
+		if (debug) console.log(`Resize Window, width: ${window.innerWidth}, height: ${window.innerHeight}`);
+		this.layoutFactory.updateWindowSize(window.innerWidth, window.innerHeight);
+		this.forceUpdate();
+	}
+
 	componentWillMount() {
+		this.handleResize();
 		// Debug RNASeq connection
 		this.openCPU = new OpenCPUBridge('http://localhost:8004');
 		// let r = new R(openCPU);
@@ -158,10 +172,10 @@ class App extends React.Component {
 			this.setEnableDataset('DIFFEXPR_EXPORT6952_DATASET10020.csv', true);
 			this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6938_DATASET10016.csv'));
 			this.setEnableDataset('DIFFEXPR_EXPORT6938_DATASET10016.csv', true);
-			// this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6945_DATASET10018.csv'));
-			// this.setEnableDataset('DIFFEXPR_EXPORT6945_DATASET10018.csv', true);
-			// this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6957_DATASET10022.csv'));
-			// this.setEnableDataset('DIFFEXPR_EXPORT6957_DATASET10022.csv', true);
+			this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6945_DATASET10018.csv'));
+			this.setEnableDataset('DIFFEXPR_EXPORT6945_DATASET10018.csv', true);
+			this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6957_DATASET10022.csv'));
+			this.setEnableDataset('DIFFEXPR_EXPORT6957_DATASET10022.csv', true);
 			// this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6964_DATASET10024.csv'));
 			// this.setEnableDataset('DIFFEXPR_EXPORT6964_DATASET10024.csv', true);
 			// Run PCA
@@ -169,6 +183,14 @@ class App extends React.Component {
 		}
 	}
 
+	componentDidMount() {
+		window.addEventListener("resize", this.handleResize);
+	}
+
+	componentWillUnmount() {
+		window.removeEventListener("resize", this.handleResize);
+	}
+ 
 	toggleRightDrawer = () => this.toggleDrawer('right', !this.state.openDrawer.right)
 	toggleDrawer = (side, open) => {
 		const drawerState = {};
@@ -186,7 +208,7 @@ class App extends React.Component {
 				hexplots.push(
 					<Grid item xs={6} key={ name }>
 						<Paper>
-							<Hexplot responsiveWidth={true} height={200} width={0} rnaSeqData={dataset} xName="pValue" yName="fc" hexSize={2} hexMax={10} showRenderGenesOption={false}/>
+							<Hexplot responsiveWidth={true} height={this.layoutFactory.heights.smallMultiples} width={0} rnaSeqData={dataset} xName="pValue" yName="fc" hexSize={2} hexMax={10} showRenderGenesOption={false}/>
 						</Paper>
 					</Grid>
 				);
@@ -196,7 +218,6 @@ class App extends React.Component {
 		let primaryDatasetDimNames = this.state.primaryDataset.dimNames;
 		// Add PCA
 		let pcaImage = (typeof this.state.pcaImage === "undefined") ? pcaImage = <Loading width={800} height={400} /> : <img src={`${this.state.pcaImage}?width=7&height=5`} width={800} height={400} alt="R test PCA" />;
-
 		return (
 			<MuiThemeProvider>
 				<div>
@@ -220,12 +241,12 @@ class App extends React.Component {
 						<Grid container gutter={16}>
 							<Grid item xs={8}>
 								<Paper>
-									<center><p>{this.state.primaryDataset.name}</p></center>
-									<Hexplot height={400} width={600} rnaSeqData={this.state.primaryDataset} xName="pValue" yName="fc" hexSize={4} hexMax={20} showRenderGenesOption={true} />
+									{/*<center><p>{this.state.primaryDataset.name}</p></center>*/}
+									<Hexplot height={this.layoutFactory.heights.mainView} width={600} responsiveWidth={true} rnaSeqData={this.state.primaryDataset} xName="pValue" yName="fc" hexSize={4} hexMax={20} showRenderGenesOption={false}/>
 								</Paper>
 							</Grid>
 							<Grid item xs={4}>
-								<Grid container gutter={8}>
+								<Grid container gutter={16}>
 									{hexplots}
 								</Grid>
 							</Grid>

@@ -66,8 +66,6 @@ class Table extends React.Component{
 				filterSetting[dim] = filterSetting.FPKM;
 			}
 		}
-		console.log(`getDefaultFilterSettings`);
-		console.log(filterSetting);
 		return(filterSetting);
 	}
 

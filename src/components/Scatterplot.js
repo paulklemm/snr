@@ -11,7 +11,7 @@ import {mouse, select} from 'd3-selection';
 // Measure DOM Element in React: https://stackoverflow.com/questions/25371926/how-can-i-respond-to-the-width-of-an-auto-sized-dom-element-in-react
 import Measure from 'react-measure';
 
-const margin = {top: 10, right: 70, bottom: 30, left: 40};
+const margin = {top: 10, right: 15, bottom: 20, left: 30};
 // const margin = {top: 0, right: 0, bottom: 0, left: 0};
 // Settings Example
 // {

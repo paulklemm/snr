@@ -84,6 +84,7 @@ class Hexplot extends Scatterplot {
 			>
 				{({ measureRef }) =>
 				<div ref={measureRef}>
+					{this.props.showRenderGenesOption ? renderGenesOption : ''}
 					<svg 
 							className="hexagons"
 							width={this.widthNoMargin + this.margin.left + this.margin.right} 
@@ -96,7 +97,6 @@ class Hexplot extends Scatterplot {
 							{this.state.tooltip}
 						</g>
 					</svg>
-					{this.props.showRenderGenesOption ? renderGenesOption : ''}
 				</div>
 				}
 			</Measure>
