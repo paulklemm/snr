@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import Loading from './Loading';
 import { LabelCheckbox } from 'material-ui/Checkbox';
 import { FormGroup } from 'material-ui/Form';
-import { CircularProgress } from 'material-ui/Progress';
 
 // https://material-ui-1dab0.firebaseapp.com/component-demos/selection-controls
 class DatasetSelect extends React.Component {

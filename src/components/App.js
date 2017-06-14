@@ -13,6 +13,7 @@ import Hexplot from './Hexplot';
 import Piechart from './Piechart';
 // eslint-disable-next-line
 import DynamicHexBin from './DynamicHexBin';
+// eslint-disable-next-line
 import ScatterplotRNASeqData from './ScatterplotRNASeqData';
 import OpenCPUBridge from './OpenCPUBridge';
 import Dataset from './Dataset';
@@ -27,12 +28,12 @@ import Drawer from 'material-ui/Drawer';
 import Grid from 'material-ui/Grid';
 import Paper from 'material-ui/Paper';
 import Button from 'material-ui/Button';
-import Card, { CardActions, CardContent } from 'material-ui/Card';
+import Card, { CardContent } from 'material-ui/Card';
 
 const styleSheet = {
 	appBody: {
 		marginRight: 10,
-		marginRight: 10
+		marginLeft: 10
 	}
 };
 
@@ -153,9 +154,17 @@ class App extends React.Component {
 			// Using setState is not fast enough for the async loading function
 			this.state['openCPULoadDataSessionID'] = 'x0b9b422490';
 			// this.setState({ openCPULoadDataSessionID: 'x0b9b422490' });
-			// this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6952_DATASET10020.csv'));
-			// this.setEnableDataset('DIFFEXPR_EXPORT6952_DATASET10020.csv', true);
-			// // Run PCA
+			this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6952_DATASET10020.csv'));
+			this.setEnableDataset('DIFFEXPR_EXPORT6952_DATASET10020.csv', true);
+			this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6938_DATASET10016.csv'));
+			this.setEnableDataset('DIFFEXPR_EXPORT6938_DATASET10016.csv', true);
+			this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6945_DATASET10018.csv'));
+			this.setEnableDataset('DIFFEXPR_EXPORT6945_DATASET10018.csv', true);
+			this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6957_DATASET10022.csv'));
+			this.setEnableDataset('DIFFEXPR_EXPORT6957_DATASET10022.csv', true);
+			this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6964_DATASET10024.csv'));
+			this.setEnableDataset('DIFFEXPR_EXPORT6964_DATASET10024.csv', true);
+			// Run PCA
 			// this.getPCA();
 		}
 	}
@@ -175,9 +184,9 @@ class App extends React.Component {
 			let dataset = this.datasetHub.datasets[name];
 			if (dataset.loaded) {
 				hexplots.push(
-					<Grid item xs key={ name }>
+					<Grid item xs={6} key={ name }>
 						<Paper>
-							<Hexplot height={200} width={300} rnaSeqData={ dataset } xName="pValue" yName="fc" hexSize={4} hexMax={20} />
+							<Hexplot responsiveWidth={true} height={200} width={0} rnaSeqData={dataset} xName="pValue" yName="fc" hexSize={2} hexMax={10} showRenderGenesOption={false}/>
 						</Paper>
 					</Grid>
 				);
@@ -207,19 +216,36 @@ class App extends React.Component {
 					</Drawer>
 					<Navbar toggleRightDrawer={this.toggleRightDrawer} />
 					<div style={styleSheet.appBody}>
+						{/* Main Plot for the interaction */}
 						<Grid container gutter={16}>
-							<Grid item xs={12}>
+							<Grid item xs={8}>
 								<Paper>
-									<Table data={primaryDatasetData} dimNames={primaryDatasetDimNames} height={400} onFilter={ this.onFilter }/>
+									<center><p>{this.state.primaryDataset.name}</p></center>
+									<Hexplot height={400} width={600} rnaSeqData={this.state.primaryDataset} xName="pValue" yName="fc" hexSize={4} hexMax={20} showRenderGenesOption={true} />
 								</Paper>
 							</Grid>
+							<Grid item xs={4}>
+								<Grid container gutter={8}>
+									{hexplots}
+								</Grid>
+							</Grid>
+							{/* Add Table on whole page length */}
+							<Grid item xs={12}>
+								<Paper>
+									<Table data={primaryDatasetData} dimNames={primaryDatasetDimNames} height={400} onFilter={this.onFilter} />
+								</Paper>
+							</Grid>
+						</Grid>
+							{/*<Paper>
+								<Table data={primaryDatasetData} dimNames={primaryDatasetDimNames} height={400} onFilter={this.onFilter} />
+							</Paper>
 							<Grid item xs>
 								<Paper>
 									{pcaImage}
 								</Paper>
 							</Grid>
-							{ hexplots }
-						</Grid>
+							{hexplots}*/}
+						
 					</div>
 				</div>
 			</MuiThemeProvider>

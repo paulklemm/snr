@@ -9,7 +9,8 @@ import {mouse, select} from 'd3-selection';
 // Measure DOM Element in React: https://stackoverflow.com/questions/25371926/how-can-i-respond-to-the-width-of-an-auto-sized-dom-element-in-react
 import Measure from 'react-measure';
 
-const margin = {top: 20, right: 100, bottom: 30, left: 40};
+const margin = {top: 10, right: 70, bottom: 30, left: 40};
+// const margin = {top: 0, right: 0, bottom: 0, left: 0};
 // Settings Example
 // {
 // 	x: 'pValue', 
@@ -22,12 +23,17 @@ class Scatterplot extends React.Component {
 			tooltip: []
 		};
 		this.onMouseLeaveTooltip = this.onMouseLeaveTooltip.bind(this);
+		this.onMeasure = this.onMeasure.bind(this);
 	}
 
 	setMargin() {
 		this.margin = margin;
-		this.widthNoMargin = this.props.width - margin.left - margin.right;
-		this.heightNoMargin = this.props.height - margin.top - margin.bottom;
+		// When the scatterplot is included in a responsive layout, setting the width
+		// by hard is a problem. Therefore check if we are in a responsive setting
+		const width = (this.props.responsiveWidth && typeof this.state.responsiveWidth !== 'undefined') ? this.state.responsiveWidth : this.props.width;
+		const height = (this.props.responsiveHeight && typeof this.state.responsiveHeight !== 'undefined') ? this.state.responsiveHeight : this.props.height;
+		this.widthNoMargin = width - margin.left - margin.right;
+		this.heightNoMargin = height - margin.top - margin.bottom;
 	}
 
 	setScale(x, y) {
@@ -156,6 +162,14 @@ class Scatterplot extends React.Component {
 		console.log(`Click Event on ${x}, ${y}`);
 	}
 
+	// When in a reactive context, the plot needs to get the width from the measure component
+	onMeasure(measure) {
+		if (this.props.responsiveWidth)
+			this.setState({ responsiveWidth: measure.width })
+		if (this.props.responsiveHeight)
+			this.setState({ responsiveHeight: measure.height })
+	}
+
 	render() {
 		if (this.props.x === undefined || this.props.y === undefined) {
 			return (<div>no data</div>);
@@ -169,28 +183,28 @@ class Scatterplot extends React.Component {
 		let dots = this.renderDots(3, this.props.x, this.props.y);
 		let axisLabels = this.renderAxisLabels(this.props.xLabel, this.props.yLabel);
 
-		const MeasuredComp = () => (
-		  <Measure onMeasure={({width}) => this.setState({width: width})}>
-		    {({width}) => <div>My width is {width}</div>}
-		  </Measure>
-		)
-
 		return (
-			<div>
-				{ MeasuredComp() }
-				{ /* <p>#Elements NaN: {`${this.props.xLabel}: ${this.numberOfNaN.x}`}, Y: {`${this.props.yLabel}: ${this.numberOfNaN.y}`}</p> */ }
-				<svg 
-					className="scatterplot"
-					width={this.widthNoMargin + this.margin.left + this.margin.right} 
-					height={this.heightNoMargin + this.margin.top + this.margin.bottom}>
-					<g transform={`translate(${this.margin.left},${this.margin.top})`}>
-						{axes}
-						{dots}
-						{axisLabels}
-						{this.state.tooltip}
-					</g>
-				</svg>
-			</div>
+			<Measure
+				bounds
+				onMeasure={this.onMeasure}
+			>
+				{({ measureRef }) =>
+				<div ref={measureRef}>
+					{ /* <p>#Elements NaN: {`${this.props.xLabel}: ${this.numberOfNaN.x}`}, Y: {`${this.props.yLabel}: ${this.numberOfNaN.y}`}</p> */ }
+					<svg 
+						className="scatterplot"
+						width={this.widthNoMargin + this.margin.left + this.margin.right} 
+						height={this.heightNoMargin + this.margin.top + this.margin.bottom}>
+						<g transform={`translate(${this.margin.left},${this.margin.top})`}>
+							{axes}
+							{dots}
+							{axisLabels}
+							{this.state.tooltip}
+						</g>
+					</svg>
+				</div>
+				}
+			</Measure>
 		);
 	}
 }
