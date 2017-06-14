@@ -164,7 +164,11 @@ class Scatterplot extends React.Component {
 		console.log(`Click Event on ${x}, ${y}`);
 	}
 
-	// When in a reactive context, the plot needs to get the width from the measure component
+	/**
+	 * When in a reactive context, the plot needs to get the width from the measure component.
+	 * This will set the state responsiveWidth and responsiveHeight
+	 * @param {object} measure Object created by react-measure component containing element width and height
+	 */
 	onMeasure(measure) {
 		if (this.props.responsiveWidth)
 			this.setState({ responsiveWidth: measure.width })

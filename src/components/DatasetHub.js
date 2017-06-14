@@ -1,14 +1,4 @@
 import DimensionTypes from './DimensionTypes';
-// const DimensionTypes = {
-// 	fc: "number",
-// 	pValue: "number",
-// 	negLog10_p_value: "number",
-// 	qValue: "number",
-// 	fpkm_1: "number",
-// 	fpkm_2: "number",
-// 	name: "string",
-// 	biotype: "string"
-// };
 
 class DatasetHub {
 	constructor() {
@@ -40,9 +30,15 @@ class DatasetHub {
 				this.datasets[name].setFilter(this.filter);
 		}
 	}
-
-	onFilter(name, val, operator) {
-		//console.log(`Set filter ${val} for ${name}`);
+	/**
+	 * Filter function usable by elements that provide a filter for data
+	 * @param  {String} name: Dimension name to be filtered
+	 * @param  {Object} val: Filter value can be anything depending on the dimension type
+	 * @param  {Object} operator: Filter operator, either `=`, `<` or `>`. Strings should always use `=`
+	 * @param  {Bool} verbose Get name and value of filter
+	 */
+	onFilter(name, val, operator, verbose = true) {
+		if (verbose) console.log(`Set filter ${val} for ${name}`);
 		const val_filter = this.parseFilterValue(name, val);
 		if (this.filterIsValid(name, val_filter)) {
 			this.filter[name] = {value: val_filter, operator: operator};

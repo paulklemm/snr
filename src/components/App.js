@@ -130,7 +130,7 @@ class App extends React.Component {
 		// Set dataset to loading
 		this.datasetHub.setLoading(name)
 		this.setState({datasetLoading: this.datasetHub.loading});
-		// let dataset = await this.openCPU.runRCommand("sonaR", "getDataset", { datasets: "x0b9b422490", name: `'${name}'`}, 'json', false);
+		// Load the dataset
 		let dataset = await this.openCPU.runRCommand("sonaR", "getDataset", { datasets: this.state.openCPULoadDataSessionID, name: `'${name}'`}, 'json', true);
 		this.datasetHub.setData(name, dataset['.val'].dataset, dataset['.val'].dimNames);
 		// Loading is done, so update it again
@@ -158,12 +158,12 @@ class App extends React.Component {
 			this.setEnableDataset('DIFFEXPR_EXPORT6952_DATASET10020.csv', true);
 			this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6938_DATASET10016.csv'));
 			this.setEnableDataset('DIFFEXPR_EXPORT6938_DATASET10016.csv', true);
-			this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6945_DATASET10018.csv'));
-			this.setEnableDataset('DIFFEXPR_EXPORT6945_DATASET10018.csv', true);
-			this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6957_DATASET10022.csv'));
-			this.setEnableDataset('DIFFEXPR_EXPORT6957_DATASET10022.csv', true);
-			this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6964_DATASET10024.csv'));
-			this.setEnableDataset('DIFFEXPR_EXPORT6964_DATASET10024.csv', true);
+			// this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6945_DATASET10018.csv'));
+			// this.setEnableDataset('DIFFEXPR_EXPORT6945_DATASET10018.csv', true);
+			// this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6957_DATASET10022.csv'));
+			// this.setEnableDataset('DIFFEXPR_EXPORT6957_DATASET10022.csv', true);
+			// this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6964_DATASET10024.csv'));
+			// this.setEnableDataset('DIFFEXPR_EXPORT6964_DATASET10024.csv', true);
 			// Run PCA
 			// this.getPCA();
 		}

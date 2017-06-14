@@ -45,16 +45,17 @@ class Table extends React.Component{
 	}
 
 	componentWillReceiveProps(nextProps) {
-		// If we receive dimNames and the filtersettings are not initialized, go ahead and initialize them
-		if (typeof nextProps.dimNames !== "undefined" && typeof this.state.filterSetting === "undefined") {
-			console.log("Setting filterValues for FPKMs");
+		// If we receive dimNames initialize them
+		if (typeof nextProps.dimNames !== "undefined") {
 			this.setState({
 				filterSetting: this.getDefaultFilterSettings(nextProps.dimNames)
 			});
 		}
 	}
 
-	/** Since the FPKM value names differ, they need to be derived from the dimension names */
+	/** Since the FPKM value names differ, they need to be derived from the dimension names
+	 * @param {Array} dimNames Array of dimension names
+	*/
 	getDefaultFilterSettings(dimNames) {
 		let filterSetting = DefaultFilterSetting;
 		// Iterate through the values and look for FPKM values
@@ -65,6 +66,8 @@ class Table extends React.Component{
 				filterSetting[dim] = filterSetting.FPKM;
 			}
 		}
+		console.log(`getDefaultFilterSettings`);
+		console.log(filterSetting);
 		return(filterSetting);
 	}
 
@@ -107,8 +110,6 @@ class Table extends React.Component{
 							}}
 						>
 							{
-								// TODO: Check if the value is inside the filterSettings, otherwise set the type
-								//(Object.keys(this.state.filterSetting).indexOf(dimension) !== -1) ? this.state.filterSetting[dimension] : '>'
 								this.state.filterSetting[dimension]
 							}
 						</IconButton>
