@@ -150,7 +150,7 @@ class App extends React.Component {
 	}
 
 	/** https://stackoverflow.com/questions/19014250/reactjs-rerender-on-browser-resize */
-	handleResize(debug = true) {
+	handleResize(debug = false) {
 		if (debug) console.log(`Resize Window, width: ${window.innerWidth}, height: ${window.innerHeight}`);
 		this.layoutFactory.updateWindowSize(window.innerWidth, window.innerHeight);
 		this.forceUpdate();
@@ -174,10 +174,10 @@ class App extends React.Component {
 			this.setEnableDataset('DIFFEXPR_EXPORT6938_DATASET10016.csv', true);
 			this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6945_DATASET10018.csv'));
 			this.setEnableDataset('DIFFEXPR_EXPORT6945_DATASET10018.csv', true);
-			// this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6957_DATASET10022.csv'));
-			// this.setEnableDataset('DIFFEXPR_EXPORT6957_DATASET10022.csv', true);
-			// this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6964_DATASET10024.csv'));
-			// this.setEnableDataset('DIFFEXPR_EXPORT6964_DATASET10024.csv', true);
+			this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6957_DATASET10022.csv'));
+			this.setEnableDataset('DIFFEXPR_EXPORT6957_DATASET10022.csv', true);
+			this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6964_DATASET10024.csv'));
+			this.setEnableDataset('DIFFEXPR_EXPORT6964_DATASET10024.csv', true);
 			// Run PCA
 			// this.getPCA();
 		}
