@@ -46,7 +46,7 @@ class App extends React.Component {
 		this.handleResize = this.handleResize.bind(this);
 		this.datasetHub = new DatasetHub();
 		this.debug = true;
-		this.layoutFactory = new LayoutFactory();
+		this.layoutFactory = new LayoutFactory(16);
 		this.state = {
 			datasetEnabled: {},
 			datasetLoading: {},
@@ -121,9 +121,9 @@ class App extends React.Component {
 
 	async getPCA() {
 		// TODO: Implement PCA
-		const pcaOutput = await this.openCPU.runRCommand("sonaR", "getPCALoadings", { x: 'x0b9b422490' }, 'json', false);
+		const pcaOutput = await this.openCPU.runRCommand("sonaR", "getPCALoadings", { x: 'x06140b307f' }, 'json', false);
 		// Old plotting logic, ths should be removed later on
-		this.openCPU.runRCommand("sonaR", "plot_pca", { x: 'x0b9b422490' }, 'ascii', true).then(output => {
+		this.openCPU.runRCommand("sonaR", "plot_pca", { x: 'x06140b307f' }, 'ascii', true).then(output => {
 			this.setState({
 				pcaImage: `${output.graphics[0]}/svg`
 			});
@@ -166,16 +166,16 @@ class App extends React.Component {
 		} else {
 			console.log("DEBUG");
 			// Using setState is not fast enough for the async loading function
-			this.state['openCPULoadDataSessionID'] = 'x0b9b422490';
-			// this.setState({ openCPULoadDataSessionID: 'x0b9b422490' });
+			this.state['openCPULoadDataSessionID'] = 'x06140b307f';
+			// this.setState({ openCPULoadDataSessionID: 'x06140b307f' });
 			this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6952_DATASET10020.csv'));
 			this.setEnableDataset('DIFFEXPR_EXPORT6952_DATASET10020.csv', true);
 			this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6938_DATASET10016.csv'));
 			this.setEnableDataset('DIFFEXPR_EXPORT6938_DATASET10016.csv', true);
 			this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6945_DATASET10018.csv'));
 			this.setEnableDataset('DIFFEXPR_EXPORT6945_DATASET10018.csv', true);
-			this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6957_DATASET10022.csv'));
-			this.setEnableDataset('DIFFEXPR_EXPORT6957_DATASET10022.csv', true);
+			// this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6957_DATASET10022.csv'));
+			// this.setEnableDataset('DIFFEXPR_EXPORT6957_DATASET10022.csv', true);
 			// this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6964_DATASET10024.csv'));
 			// this.setEnableDataset('DIFFEXPR_EXPORT6964_DATASET10024.csv', true);
 			// Run PCA

@@ -33,6 +33,7 @@ class Scatterplot extends React.Component {
 		// When the scatterplot is included in a responsive layout, setting the width
 		// by hard is a problem. Therefore check if we are in a responsive setting
 		const width = (this.props.responsiveWidth && typeof this.state.responsiveWidth !== 'undefined') ? this.state.responsiveWidth : this.props.width;
+		console.log(`Set Width to ${width}`);
 		const height = (this.props.responsiveHeight && typeof this.state.responsiveHeight !== 'undefined') ? this.state.responsiveHeight : this.props.height;
 		this.widthNoMargin = width - margin.left - margin.right;
 		this.heightNoMargin = height - margin.top - margin.bottom;
@@ -172,6 +173,7 @@ class Scatterplot extends React.Component {
 	onMeasure(measure) {
 		if (this.props.responsiveWidth)
 			this.setState({ responsiveWidth: measure.width })
+		console.log(`onMeasure Event: ${measure.width}`);
 		if (this.props.responsiveHeight)
 			this.setState({ responsiveHeight: measure.height })
 	}

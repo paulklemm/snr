@@ -20,6 +20,7 @@ class Hexplot extends Scatterplot {
 		this.state = {
 			renderDots: false
 		}
+		this.onMeasure = this.onMeasure.bind(this);
 	}
 
 	createPointArray(x, y) {
