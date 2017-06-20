@@ -5,3 +5,7 @@ tr.odd {
 tr:hover {
 	background-color: #d7ddf1;
 }
+
+body {
+	background-color: #fcfcfc;
+}
