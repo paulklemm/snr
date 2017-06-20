@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 // Material-UI Elements
 import { withStyles, createStyleSheet } from 'material-ui/styles';
-import List, { ListItem, ListItemText } from 'material-ui/List';
 import Menu, { MenuItem } from 'material-ui/Menu';
 import { Icon } from 'react-fa';
 import IconButton from 'material-ui/IconButton';

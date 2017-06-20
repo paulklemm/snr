@@ -3,8 +3,7 @@ import PropTypes from 'prop-types';
 import Loading from './Loading';
 import IconSelect from './IconSelect';
 import Checkbox from 'material-ui/Checkbox';
-import { FormGroup } from 'material-ui/Form';
-import List, { ListItem, ListItemSecondaryAction, ListItemText } from 'material-ui/List';
+import List, { ListItem, ListItemText } from 'material-ui/List';
 import Typography from 'material-ui/Typography';
 
 // https://material-ui-1dab0.firebaseapp.com/component-demos/selection-controls

@@ -30,7 +30,6 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Drawer from 'material-ui/Drawer';
 import Grid from 'material-ui/Grid';
 import Paper from 'material-ui/Paper';
-import Button from 'material-ui/Button';
 import IconButton from 'material-ui/IconButton';
 import Card, { CardContent } from 'material-ui/Card';
 
