@@ -1,5 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+// From https://material-ui-1dab0.firebaseapp.com/style/typography
+import 'typeface-roboto';
 import App from './components/App';
 import './index.css';
 
