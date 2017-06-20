@@ -5,6 +5,7 @@ import IconSelect from './IconSelect';
 import Checkbox from 'material-ui/Checkbox';
 import { FormGroup } from 'material-ui/Form';
 import List, { ListItem, ListItemSecondaryAction, ListItemText } from 'material-ui/List';
+import Typography from 'material-ui/Typography';
 
 // https://material-ui-1dab0.firebaseapp.com/component-demos/selection-controls
 class DatasetSelect extends React.Component {
@@ -20,8 +21,8 @@ class DatasetSelect extends React.Component {
 					checked={this.props.datasetEnabled[datasetName]}
 					disabled={this.props.datasetLoading[datasetName]}
 				/>
-				<IconSelect key={`IconSelect${i}`} />
 				<ListItemText primary={`Name: ${datasetName}`} />
+				<IconSelect key={`IconSelect${i}`} />
 				</ListItem>
 			);
 		}
@@ -33,11 +34,14 @@ class DatasetSelect extends React.Component {
 	render() {
 		let checkboxes = this.getCheckboxes();
 		return(
-			<FormGroup row>
+			<div>
+				<Typography type="display1" gutterBottom>Available Datasets</Typography>
 				<List>
 				{checkboxes}
 				</List>
-			</FormGroup>
+				<Typography type="display1" gutterBottom>Dataset Info</Typography>
+				<Typography type="body1" gutterBottom align="left">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eaque saepe quis veritatis tenetur corporis quaerat fuga deleniti, hic eius aperiam qui perspiciatis dolore laboriosam obcaecati earum magnam neque illum sed.</Typography>
+			</div>
 		);
 	}
 }

@@ -23,18 +23,21 @@ import Table from './Table';
 import Navbar from './Navbar';
 import Loading from './Loading';
 import LayoutFactory from './LayoutFactory';
+// Third party components
+import { Icon } from 'react-fa';
 // Material-UI components
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Drawer from 'material-ui/Drawer';
 import Grid from 'material-ui/Grid';
 import Paper from 'material-ui/Paper';
 import Button from 'material-ui/Button';
+import IconButton from 'material-ui/IconButton';
 import Card, { CardContent } from 'material-ui/Card';
 
 const styleSheet = {
 	appBody: {
 		marginRight: 10,
-		marginLeft: 10
+		marginLeft: 10,
 	}
 };
 
@@ -150,7 +153,7 @@ class App extends React.Component {
 	}
 
 	/** https://stackoverflow.com/questions/19014250/reactjs-rerender-on-browser-resize */
-	handleResize(debug = false) {
+	handleResize(event, debug = false) {
 		if (debug) console.log(`Resize Window, width: ${window.innerWidth}, height: ${window.innerHeight}`);
 		this.layoutFactory.updateWindowSize(window.innerWidth, window.innerHeight);
 		this.forceUpdate();
@@ -172,12 +175,12 @@ class App extends React.Component {
 			this.setEnableDataset('DIFFEXPR_EXPORT6952_DATASET10020.csv', true);
 			this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6938_DATASET10016.csv'));
 			this.setEnableDataset('DIFFEXPR_EXPORT6938_DATASET10016.csv', true);
-			this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6945_DATASET10018.csv'));
-			this.setEnableDataset('DIFFEXPR_EXPORT6945_DATASET10018.csv', true);
-			this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6957_DATASET10022.csv'));
-			this.setEnableDataset('DIFFEXPR_EXPORT6957_DATASET10022.csv', true);
-			this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6964_DATASET10024.csv'));
-			this.setEnableDataset('DIFFEXPR_EXPORT6964_DATASET10024.csv', true);
+			// this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6945_DATASET10018.csv'));
+			// this.setEnableDataset('DIFFEXPR_EXPORT6945_DATASET10018.csv', true);
+			// this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6957_DATASET10022.csv'));
+			// this.setEnableDataset('DIFFEXPR_EXPORT6957_DATASET10022.csv', true);
+			// this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6964_DATASET10024.csv'));
+			// this.setEnableDataset('DIFFEXPR_EXPORT6964_DATASET10024.csv', true);
 			// Run PCA
 			// this.getPCA();
 		}
@@ -228,10 +231,10 @@ class App extends React.Component {
 						onClick={this.handleRightClose}
 						docked={true}
 					>
-						<Card>
+						<Card style={{ maxWidth: `${this.layoutFactory.windowWidth / 2}px` }}>
 							<CardContent>
+								<IconButton style={{ float: 'right' }} onClick={this.toggleRightDrawer}><Icon name="times" /></IconButton>
 								{<DatasetSelect datasetEnabled={this.state.datasetEnabled} datasetLoading={this.state.datasetLoading} setEnableDataset={this.setEnableDataset} />}
-								<Button raised color="primary" onClick={this.toggleRightDrawer}>Close</Button>
 							</CardContent>
 						</Card>
 					</Drawer>
