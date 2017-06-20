@@ -4,16 +4,13 @@ import { withStyles, createStyleSheet } from 'material-ui/styles';
 import List, { ListItem, ListItemText } from 'material-ui/List';
 import Menu, { MenuItem } from 'material-ui/Menu';
 import { Icon } from 'react-fa';
+import IconButton from 'material-ui/IconButton';
 
-const styleSheet = createStyleSheet('SimpleListMenu', theme => ({
-  root: {
-    // width: '100%',
-    // maxWidth: '360px',
-    maxWidth: '50px',
-    // maxHeight: '45px',
-    // marginTop: '-10px',
-    background: theme.palette.background.paper,
-  },
+const styleSheet = createStyleSheet('IconSelect', theme => ({
+  root: { },
+  iconSelect: {
+    fontSize: '90%'
+  }
 }));
 
 const options = [
@@ -50,17 +47,12 @@ const options = [
   <Icon name="shower" />
 ];
 
-class SimpleListMenu extends Component {
+/** Adapted from [https://material-ui-1dab0.firebaseapp.com/component-demos/menus](https://material-ui-1dab0.firebaseapp.com/component-demos/menus) */
+class IconSelect extends Component {
   state = {
     anchorEl: undefined,
     open: false,
     selectedIndex: 1,
-  };
-
-  button = undefined;
-
-  handleClickListItem = event => {
-    this.setState({ open: true, anchorEl: event.currentTarget });
   };
 
   handleMenuItemClick = (event, index) => {
@@ -71,23 +63,17 @@ class SimpleListMenu extends Component {
     this.setState({ open: false });
   };
 
+  handleButtonClick = event => {
+    this.setState({ open: true, anchorEl: event.currentTarget });
+  };
+
   render() {
     const classes = this.props.classes;
     return (
-      <div className={classes.root}>
-        <List>
-          <ListItem
-            button
-            aria-haspopup="true"
-            aria-controls="lock-menu"
-            aria-label="When device is locked"
-            onClick={this.handleClickListItem}
-          >
-            <ListItemText
-              primary={options[this.state.selectedIndex]}
-            />
-          </ListItem>
-        </List>
+      <div>
+        <IconButton className={classes.iconSelect} aria-owns="simple-menu" aria-haspopup="true" onClick={this.handleButtonClick}>
+          {options[this.state.selectedIndex]}
+        </IconButton>
         <Menu
           id="lock-menu"
           anchorEl={this.state.anchorEl}
@@ -109,8 +95,8 @@ class SimpleListMenu extends Component {
   }
 }
 
-SimpleListMenu.propTypes = {
+IconSelect.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styleSheet)(SimpleListMenu);
+export default withStyles(styleSheet)(IconSelect);
