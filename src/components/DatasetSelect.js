@@ -14,15 +14,14 @@ class DatasetSelect extends React.Component {
 		for (let i in Object.keys(this.props.datasetEnabled)) {
 			let datasetName = Object.keys(this.props.datasetEnabled)[i];
 			datasetCheckboxes.push(
-				<ListItem dense button >
+				<ListItem dense button key={`DatasetSelect_${datasetName}`}>
 				<Checkbox
 					onChange={(event, checked) => this.props.setEnableDataset(datasetName, checked) }
-					key={datasetName}
 					checked={this.props.datasetEnabled[datasetName]}
 					disabled={this.props.datasetLoading[datasetName]}
 				/>
 				<ListItemText primary={`Name: ${datasetName}`} />
-				<IconSelect key={`IconSelect${i}`} />
+				<IconSelect />
 				</ListItem>
 			);
 		}
