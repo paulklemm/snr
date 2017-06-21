@@ -8,6 +8,7 @@ class DatasetHub {
 		this.loading = {};
 		this.filter = {};
 		this.onFilter = this.onFilter.bind(this);
+		this.getDatasetIcon = this.getDatasetIcon.bind(this);
 	}
 
 	filterIsValid(name, val) {
@@ -52,6 +53,27 @@ class DatasetHub {
 		this.datasets[dataset.name] = dataset;
 		this.update();
 	}
+
+	/**
+	 * Get dataset icon
+	 * @param {string} datasetName Name of the dataset to retreive
+	 */
+	getDatasetIcon(datasetName) {
+		if (Object.keys(this.datasets).indexOf(datasetName) === -1)
+			throw (new Error(`Could not get icon for ${datasetName}, dataset does not exist in DatasetHub`));
+		else
+			return (this.datasets[datasetName].icon);
+	}
+
+	/**
+	 * Set icon of dataset
+	 * @param {String} datasetName 
+	 * @param {String} icon name, get icon from DatasetIcons
+	 */
+	setDatasetIcon(datasetName, icon) {
+		this.datasets[datasetName].icon = icon;
+	}
+
 	setData(name, data, dimNames) {
 		this.datasets[name].setData(data, dimNames);
 		// 'Loading' changes, so update

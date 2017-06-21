@@ -6,7 +6,6 @@ import Checkbox from 'material-ui/Checkbox';
 import List, { ListItem, ListItemText } from 'material-ui/List';
 import Typography from 'material-ui/Typography';
 
-// https://material-ui-1dab0.firebaseapp.com/component-demos/selection-controls
 class DatasetSelect extends React.Component {
 	getCheckboxes() {
 		let datasetCheckboxes = [];
@@ -20,7 +19,7 @@ class DatasetSelect extends React.Component {
 					disabled={this.props.datasetLoading[datasetName]}
 				/>
 				<ListItemText primary={`Name: ${datasetName}`} />
-				<IconSelect />
+				<IconSelect defaultIconID={ i } datasetName={datasetName} setDatasetIcon={this.props.setDatasetIcon} getDatasetIcon={this.props.getDatasetIcon} />
 				</ListItem>
 			);
 		}
@@ -47,7 +46,9 @@ class DatasetSelect extends React.Component {
 DatasetSelect.propTypes = {
 	datasetEnabled: PropTypes.object,
 	datasetLoading: PropTypes.object,
-	setEnableDataset: PropTypes.func
+	setEnableDataset: PropTypes.func,
+	setDatasetIcon: PropTypes.func,
+	getDatasetIcon: PropTypes.func
 }
 
 export default DatasetSelect;

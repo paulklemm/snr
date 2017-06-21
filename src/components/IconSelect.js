@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+// SONAR Imports
+import DatasetIcons from './DatasetIcons';
 // Material-UI Elements
 import { withStyles, createStyleSheet } from 'material-ui/styles';
 import Menu, { MenuItem } from 'material-ui/Menu';
@@ -13,51 +15,33 @@ const styleSheet = createStyleSheet('IconSelect', theme => ({
 	}
 }));
 
-// Choosing Fontawesome-Icons that may fit our approach
-const options = [
-	<Icon name="paw" />,
-	<Icon name="moon-o" />,
-	<Icon name="bell" />,
-	<Icon name="coffee" />,
-	<Icon name="diamond" />,
-	<Icon name="flash" />,
-	<Icon name="gift" />,
-	<Icon name="life-bouy" />,
-	<Icon name="snowflake-o" />,
-	<Icon name="snowflake-o" />,
-	<Icon name="plane" />,
-	<Icon name="heartbeat" />,
-	<Icon name="anchor" />,
-	<Icon name="asterisk" />,
-	<Icon name="birthday-cake" />,
-	<Icon name="shield" />,
-	<Icon name="tree" />,
-	<Icon name="wheelchair" />,
-	<Icon name="umbrella" />,
-	<Icon name="trophy" />,
-	<Icon name="taxi" />,
-	<Icon name="music" />,
-	<Icon name="leaf" />,
-	<Icon name="key" />,
-	<Icon name="fire" />,
-	<Icon name="child" />,
-	<Icon name="blind" />,
-	<Icon name="ban" />,
-	<Icon name="archive" />,
-	<Icon name="bath" />,
-	<Icon name="shower" />
-];
-
 /** Adapted from [https://material-ui-1dab0.firebaseapp.com/component-demos/menus](https://material-ui-1dab0.firebaseapp.com/component-demos/menus) */
 class IconSelect extends Component {
-	state = {
-		anchorEl: undefined,
-		open: false,
-		selectedIndex: 1,
-	};
+	constructor(props) {
+		super(props);
+		// Convert DatasetIcons Object to array
+		this.iconsArray = Object.values(DatasetIcons);
+		// Contains the index of the icon names
+		this.iconNameToArrayIndex = {};
+		// Array index to icon name, used in handleManuItemClick to get the name of the icon from the array index
+		this.arrayIndexToIconName = [];
+		for (let i = 0; i < this.iconsArray.length; i++) {
+			this.iconNameToArrayIndex[Object.keys(DatasetIcons)[i]] = i;
+			this.arrayIndexToIconName.push(Object.keys(DatasetIcons)[i]);
+		}
+		// Get the icon associated with the data set. If there is none set, get the default one
+		const iconName = props.getDatasetIcon(props.datasetName);
+		const iconID = (iconName === '') ? props.defaultIconID : this.iconNameToArrayIndex[iconName];
+		this.state = {
+			anchorEl: undefined,
+			open: false,
+			selectedIndex: iconID
+		};
+	}
 
 	handleMenuItemClick = (event, index) => {
 		this.setState({ selectedIndex: index, open: false });
+		this.props.setDatasetIcon(this.props.datasetName, this.arrayIndexToIconName[index]);
 	};
 
 	handleRequestClose = () => {
@@ -73,7 +57,7 @@ class IconSelect extends Component {
 		return (
 			<div>
 				<IconButton className={classes.iconSelect} aria-owns="simple-menu" aria-haspopup="true" onClick={this.handleButtonClick}>
-					{options[this.state.selectedIndex]}
+					{this.iconsArray[this.state.selectedIndex]}
 				</IconButton>
 				<Menu
 					id="lock-menu"
@@ -81,7 +65,7 @@ class IconSelect extends Component {
 					open={this.state.open}
 					onRequestClose={this.handleRequestClose}
 				>
-					{options.map((option, index) =>
+					{this.iconsArray.map((option, index) =>
 						<MenuItem
 							key={`${option}+${index}`}
 							selected={index === this.state.selectedIndex}

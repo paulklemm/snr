@@ -7,6 +7,8 @@ class Dataset {
 		this.loaded = false;
 		this.loading = false;
 		this.dimNames = [];
+		// HTML Element representing the dataset icon
+		this.icon = "";
 	}
 	setData(data, dimNames) {
 		this.data = data;

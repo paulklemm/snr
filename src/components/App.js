@@ -46,6 +46,7 @@ class App extends React.Component {
 		this.setEnableDataset = this.setEnableDataset.bind(this);
 		this.onFilter = this.onFilter.bind(this);
 		this.handleResize = this.handleResize.bind(this);
+		this.setDatasetIcon = this.setDatasetIcon.bind(this);
 		this.datasetHub = new DatasetHub();
 		this.debug = true;
 		this.layoutFactory = new LayoutFactory(16);
@@ -65,7 +66,7 @@ class App extends React.Component {
 	 * @param {Boolean} enabled Status whether the data should be treated as active or not
 	 */
 	setEnableDataset(name, enabled) {
-		// Update the count of the small multiples
+		// Update the countf of the small multiples
 		// TODO: Handle removal of 'enabled'
 		this.layoutFactory.increaseSmallMultiplesCount();
 		let requiresLoading = this.datasetHub.setEnable(name, enabled);
@@ -85,6 +86,17 @@ class App extends React.Component {
 	 */
 	onFilter(name, val, operator) {
 		this.datasetHub.onFilter(name, val, operator);
+		this.forceUpdate();
+	}
+
+	/**
+	 * Wrapper function to set icon of dataset and to force update after it is set
+	 * @param {String} datasetName
+	 * @param {String} icon name, get icon from DatasetIcons
+	 */
+	setDatasetIcon(datasetName, icon) {
+		this.datasetHub.setDatasetIcon(datasetName, icon);
+		console.log(this.datasetHub);
 		this.forceUpdate();
 	}
 
@@ -231,7 +243,7 @@ class App extends React.Component {
 						<Card style={{ maxWidth: `${this.layoutFactory.windowWidth / 2}px` }}>
 							<CardContent>
 								<IconButton style={{ float: 'right' }} onClick={this.toggleRightDrawer}><Icon name="times" /></IconButton>
-								{<DatasetSelect datasetEnabled={this.state.datasetEnabled} datasetLoading={this.state.datasetLoading} setEnableDataset={this.setEnableDataset} />}
+								{<DatasetSelect getDatasetIcon={ this.datasetHub.getDatasetIcon } setDatasetIcon={ this.setDatasetIcon } datasetEnabled={this.state.datasetEnabled} datasetLoading={this.state.datasetLoading} setEnableDataset={this.setEnableDataset} />}
 							</CardContent>
 						</Card>
 					</Drawer>
