@@ -143,8 +143,6 @@ class App extends React.Component {
 		this.datasetHub.setData(name, dataset['.val'].dataset, dataset['.val'].dimNames);
 		// Loading is done, so update it again
 		this.setState({datasetLoading: this.datasetHub.loading});
-		// DEBUG
-		// this.datasetHub.filterFPKM(10);
 		this.setState({primaryDataset: this.datasetHub.datasets[name]});
 
 		if (verbose) console.log(`Loading ${name} done!`);

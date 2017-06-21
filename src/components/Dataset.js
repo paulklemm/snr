@@ -60,12 +60,6 @@ class Dataset {
 		}
 	}
 
-	filterFPKM(val) {
-		for (let i in this.data) {
-			if (this.data[i].fpkm_1 < val || this.data[i].fpkm_2 < val)
-				this.filtered[i] = true;
-		}
-	}
 	isFiltered() {
 		for (let i in this.filtered)
 			if (this.filtered[i] === true)

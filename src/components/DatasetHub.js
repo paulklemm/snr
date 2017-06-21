@@ -48,16 +48,6 @@ class DatasetHub {
 		this.broadcastFilter();
 	}
 
-	filterFPKM(val) {
-		for (let i in this.names) {
-			let name = this.names[i];
-			let dataset = this.datasets[name];
-			// Only apply filter if the data set is really loaded
-			if (dataset.loaded)
-				this.datasets[name].filterFPKM(val);
-		}
-	}
-
 	push(dataset) {
 		this.datasets[dataset.name] = dataset;
 		this.update();
