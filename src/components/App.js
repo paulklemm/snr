@@ -135,7 +135,9 @@ class App extends React.Component {
 
 	async getPCA() {
 		// TODO: Implement PCA
-		const pcaOutput = await this.openCPU.runRCommand("sonaR", "getPCALoadings", { x: 'x06140b307f' }, 'json', false);
+		const pcaOutput = await this.openCPU.runRCommand("sonaR", "get_pca_loadings", { x: 'x06140b307f' }, 'json', false);
+		console.log(`PCA Output`);
+		console.log(pcaOutput);
 		// Old plotting logic, ths should be removed later on
 		this.openCPU.runRCommand("sonaR", "plot_pca", { x: 'x06140b307f' }, 'ascii', true).then(output => {
 			this.setState({
@@ -151,7 +153,7 @@ class App extends React.Component {
 		this.datasetHub.setLoading(name)
 		this.setState({datasetLoading: this.datasetHub.loading});
 		// Load the dataset
-		let dataset = await this.openCPU.runRCommand("sonaR", "getDataset", { datasets: this.state.openCPULoadDataSessionID, name: `'${name}'`}, 'json', true);
+		let dataset = await this.openCPU.runRCommand("sonaR", "get_dataset", { datasets: this.state.openCPULoadDataSessionID, name: `'${name}'`}, 'json', true);
 		this.datasetHub.setData(name, dataset['.val'].dataset, dataset['.val'].dimNames);
 		// Loading is done, so update it again
 		this.setState({datasetLoading: this.datasetHub.loading});
