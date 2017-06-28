@@ -220,7 +220,7 @@ class App extends React.Component {
 				hexplots.push(
 					<Grid item xs={6} key={ name }>
 						<Paper>
-							<Hexplot responsiveWidth={true} height={this.layoutFactory.heights.smallMultiples} width={0} rnaSeqData={dataset} xName="pValue" yName="fc" hexSize={2} hexMax={10} showRenderGenesOption={false}/>
+							<Hexplot responsiveWidth={true} height={this.layoutFactory.heights.smallMultiples} width={0} rnaSeqData={dataset} xName="pValueNegLog10" yName="fc" hexSize={2} hexMax={10} showRenderGenesOption={false}/>
 						</Paper>
 					</Grid>
 				);
@@ -254,7 +254,7 @@ class App extends React.Component {
 							<Grid item xs={8}>
 								<Paper>
 									{/*<center><p>{this.state.primaryDataset.name}</p></center>*/}
-									<Hexplot height={this.layoutFactory.heights.mainView} width={600} responsiveWidth={true} rnaSeqData={this.state.primaryDataset} xName="pValue" yName="fc" hexSize={4} hexMax={20} showRenderGenesOption={false}/>
+									<Hexplot height={this.layoutFactory.heights.mainView} width={600} responsiveWidth={true} rnaSeqData={this.state.primaryDataset} xName="pValueNegLog10" yName="fc" hexSize={4} hexMax={20} showRenderGenesOption={false}/>
 								</Paper>
 							</Grid>
 							<Grid item xs={4}>
