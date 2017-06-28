@@ -1,5 +1,23 @@
 # Sonar Readme
 
+## Structure of Session
+
+With the login you receive select a session configuration file on the server. The session contains the QuickNGS datasets that are available for your Sonar session. 
+
+Example:
+
+```json
+{
+  quickNGSDataPath: "some_path",
+  primaryDataset: "DIFFEXPR_EXPORT6945_DATASET10018.csv",
+  publicDatasets: [
+    "link_1",
+    "link_2",
+    "link_3",
+  ]
+}
+```
+
 ## Implementation Examples
 
 ### Rendering Graphics from `R` in `Sonar`
