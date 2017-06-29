@@ -5,6 +5,19 @@ import IconSelect from './IconSelect';
 import Checkbox from 'material-ui/Checkbox';
 import List, { ListItem, ListItemText } from 'material-ui/List';
 import Typography from 'material-ui/Typography';
+import IconButton from 'material-ui/IconButton';
+import { Icon } from 'react-fa';
+
+const styleSheet = {
+	primaryDatasetIcon: {
+		fontSize: '130%',
+		color: 'red'
+	},
+	standardDatasetIcon: {
+		fontSize: '90%',
+		color: 'gray'
+	}
+};
 
 class DatasetSelect extends React.Component {
 	getCheckboxes() {
@@ -19,6 +32,12 @@ class DatasetSelect extends React.Component {
 					disabled={this.props.datasetLoading[datasetName]}
 				/>
 				<ListItemText primary={`Name: ${datasetName}`} />
+				{/* Icon to see whether the data set is primary on or not */}
+				{/* TODO: Get the status from the current session */}
+				<IconButton aria-owns="simple-menu" style={styleSheet.primaryDatasetIcon} onClick={this.handleButtonClick}>
+						<Icon name="check-circle-o" />
+				</IconButton>
+
 				<IconSelect defaultIconID={ i } datasetName={datasetName} setDatasetIcon={this.props.setDatasetIcon} getDatasetIcon={this.props.getDatasetIcon} />
 				</ListItem>
 			);
