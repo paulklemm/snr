@@ -18,6 +18,19 @@ Example:
 }
 ```
 
+## Node Server
+
+Implementation of Node server adapted from this repo: [https://github.com/fullstackreact/food-lookup-demo](https://github.com/fullstackreact/food-lookup-demo).
+
+The Node server lives in the root of the project folder. To make it work in the `create-react-app` environment that uses webpack we added it as proxy to the `client/package.json` (`"proxy": "http://localhost:3099/"`).
+
+To start the development environment run:
+
+```
+<Project_Root>$ node server
+<Project_Root/client>$ npm start
+```
+
 ## Implementation Examples
 
 ### Rendering Graphics from `R` in `Sonar`
