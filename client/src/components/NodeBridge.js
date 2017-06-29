@@ -17,7 +17,7 @@ class NodeBridge {
 
   sendEcho(query, cb) {
     return fetch(`api/echo?q=${query}`, {
-      // accept: "application/json"
+      accept: "application/json"
     })
       .then(this.parseJSON)
       .then(cb);

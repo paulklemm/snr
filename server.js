@@ -9,8 +9,17 @@ if (process.env.NODE_ENV === "production") {
   app.use(express.static("client/build"));
 }
 
+/**
+ * 
+ * @param {String} content: String to log with timestamp
+ */
+function timeStampLog (content) {
+  let currentdate = new Date();
+  console.log(`${currentdate.getDate()}/${currentdate.getMonth() + 1}/${currentdate.getFullYear()} @ ${currentdate.getHours()}:${currentdate.getMinutes()}:${currentdate.getSeconds()} ${content}`);
+}
+
 app.get("/api/isonline", (req, res) => {
-  console.log("Get Handshake request");
+  timeStampLog("Get Handshake request");
   res.json({ "isonline": true });
 });
 
