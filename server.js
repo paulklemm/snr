@@ -1,5 +1,6 @@
 const express = require("express");
-
+// Require bcrypt for authentication
+var bcrypt = require('bcryptjs');
 const app = express();
 
 app.set("port", process.env.PORT || 3099);
@@ -7,6 +8,24 @@ app.set("port", process.env.PORT || 3099);
 // Express only serves static assets in production
 if (process.env.NODE_ENV === "production") {
   app.use(express.static("client/build"));
+}
+
+/**
+   * Check if password and hash are matching
+   * @param {String} password to check
+   * @param {String} hash to check
+   * @return {Bool} result of check
+   */
+function checkPassword(password, hash) {
+  return (bcrypt.compareSync(password, hash));
+}
+
+/**
+ * Get the password hash for specified user
+ * @param {String} user to retreive the hash for
+ */
+function getPasswordHash(user) {
+  // TODO: Implement
 }
 
 /**
