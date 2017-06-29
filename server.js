@@ -10,7 +10,7 @@ if (process.env.NODE_ENV === "production") {
 }
 
 /**
- * 
+ * Log string with server time stamp
  * @param {String} content: String to log with timestamp
  */
 function timeStampLog (content) {
@@ -18,17 +18,23 @@ function timeStampLog (content) {
   console.log(`${currentdate.getDate()}/${currentdate.getMonth() + 1}/${currentdate.getFullYear()} @ ${currentdate.getHours()}:${currentdate.getMinutes()}:${currentdate.getSeconds()} ${content}`);
 }
 
+/**
+ * IsOnline is used as handshake function to see whether the server is online or not
+ */
 app.get("/api/isonline", (req, res) => {
   timeStampLog("Get Handshake request");
   res.json({ "isonline": true });
 });
 
+/**
+ * Simple echo function to see if the server works as expected
+ */
 app.get("/api/echo", (req, res) => {
   const param = req.query.q;
-  console.log(`Received request ${param}`);
+  timeStampLog(`Received request ${param}`);
   res.json({"echo": param});
 });
 
 app.listen(app.get("port"), () => {
-  console.log(`Find the server at: http://localhost:${app.get("port")}/`); // eslint-disable-line no-console
+  timeStampLog(`Find the server at: http://localhost:${app.get("port")}/`); // eslint-disable-line no-console
 });
