@@ -58,6 +58,27 @@ class App extends React.Component {
 			primaryDataset: {},
 			openDrawer: {right: false}
 		};
+		// Node Server Test
+		this.serverTestSearch('bla', response => {
+			console.log("Server Test Search Response Number one");
+			console.log(response);
+		});
+		this.serverTestSearch('', response => {
+			console.log("Server Test Search Response Number two");
+			console.log(response);
+		});
+	}
+	
+	serverTestSearch(query, cb) {
+		return fetch(`api/food?q=${query}`, {
+			// accept: "application/json"
+		})
+			.then(this.parseJSON)
+			.then(cb);
+	}
+
+	parseJSON(response) {
+		return response.json();
 	}
 
 	/**
@@ -182,10 +203,10 @@ class App extends React.Component {
 			// Using setState is not fast enough for the async loading function
 			this.state['openCPULoadDataSessionID'] = 'x06140b307f';
 			// this.setState({ openCPULoadDataSessionID: 'x06140b307f' });
-			this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6952_DATASET10020.csv'));
-			this.setEnableDataset('DIFFEXPR_EXPORT6952_DATASET10020.csv', true);
-			this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6938_DATASET10016.csv'));
-			this.setEnableDataset('DIFFEXPR_EXPORT6938_DATASET10016.csv', true);
+			// this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6952_DATASET10020.csv'));
+			// this.setEnableDataset('DIFFEXPR_EXPORT6952_DATASET10020.csv', true);
+			// this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6938_DATASET10016.csv'));
+			// this.setEnableDataset('DIFFEXPR_EXPORT6938_DATASET10016.csv', true);
 			// this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6945_DATASET10018.csv'));
 			// this.setEnableDataset('DIFFEXPR_EXPORT6945_DATASET10018.csv', true);
 			// this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6957_DATASET10022.csv'));
