@@ -3,6 +3,8 @@ const express = require("express");
 var bcrypt = require('bcryptjs');
 const app = express();
 
+// Conjunction with create-react-app from [https://github.com/fullstackreact/food-lookup-demo](https://github.com/fullstackreact/food-lookup-demo)
+
 app.set("port", process.env.PORT || 3099);
 
 // Express only serves static assets in production
