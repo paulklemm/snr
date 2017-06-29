@@ -5,6 +5,7 @@
   "proxy": "http://localhost:3099/",
   "dependencies": {
     "axios": "^0.16.1",
+    "bcryptjs": "^2.4.3",
     "d3": "^4.7.4",
     "d3-hexbin": "^0.2.2",
     "jquery": "^3.2.1",

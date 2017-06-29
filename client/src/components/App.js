@@ -17,6 +17,7 @@ import DynamicHexBin from './DynamicHexBin';
 import ScatterplotRNASeqData from './ScatterplotRNASeqData';
 import OpenCPUBridge from './OpenCPUBridge';
 import NodeBridge from './NodeBridge';
+import Authentication from './Authentication';
 import Dataset from './Dataset';
 import DatasetHub from './DatasetHub';
 import DatasetSelect from './DatasetSelect';
@@ -53,6 +54,8 @@ class App extends React.Component {
 		this.layoutFactory = new LayoutFactory(16);
 		// Init NodeBridge
 		this.nodeBridge = new NodeBridge();
+		this.authentication = new Authentication();
+		this.authentication.testHashing("bla");
 		this.state = {
 			datasetEnabled: {},
 			datasetLoading: {},
