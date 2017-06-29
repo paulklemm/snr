@@ -9,12 +9,15 @@ if (process.env.NODE_ENV === "production") {
   app.use(express.static("client/build"));
 }
 
-app.get("/api/food", (req, res) => {
+app.get("/api/isonline", (req, res) => {
+  console.log("Get Handshake request");
+  res.json({ "isonline": true });
+});
+
+app.get("/api/echo", (req, res) => {
   const param = req.query.q;
   console.log(`Received request ${param}`);
-
-  res.json({"param": param});
-
+  res.json({"echo": param});
 });
 
 app.listen(app.get("port"), () => {

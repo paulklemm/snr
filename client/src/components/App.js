@@ -16,6 +16,7 @@ import DynamicHexBin from './DynamicHexBin';
 // eslint-disable-next-line
 import ScatterplotRNASeqData from './ScatterplotRNASeqData';
 import OpenCPUBridge from './OpenCPUBridge';
+import NodeBridge from './NodeBridge';
 import Dataset from './Dataset';
 import DatasetHub from './DatasetHub';
 import DatasetSelect from './DatasetSelect';
@@ -50,6 +51,8 @@ class App extends React.Component {
 		this.datasetHub = new DatasetHub();
 		this.debug = true;
 		this.layoutFactory = new LayoutFactory(16);
+		// Init NodeBridge
+		this.nodeBridge = new NodeBridge();
 		this.state = {
 			datasetEnabled: {},
 			datasetLoading: {},
@@ -58,27 +61,6 @@ class App extends React.Component {
 			primaryDataset: {},
 			openDrawer: {right: false}
 		};
-		// Node Server Test
-		this.serverTestSearch('bla', response => {
-			console.log("Server Test Search Response Number one");
-			console.log(response);
-		});
-		this.serverTestSearch('', response => {
-			console.log("Server Test Search Response Number two");
-			console.log(response);
-		});
-	}
-	
-	serverTestSearch(query, cb) {
-		return fetch(`api/food?q=${query}`, {
-			// accept: "application/json"
-		})
-			.then(this.parseJSON)
-			.then(cb);
-	}
-
-	parseJSON(response) {
-		return response.json();
 	}
 
 	/**
