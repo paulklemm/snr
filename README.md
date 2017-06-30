@@ -8,9 +8,9 @@ Example:
 
 ```json
 {
-  quickNGSDataPath: "some_path",
-  primaryDataset: "DIFFEXPR_EXPORT6945_DATASET10018.csv",
-  publicDatasets: [
+  "quickNGSDataPath": "some_path",
+  "primaryDataset": "DIFFEXPR_EXPORT6945_DATASET10018.csv",
+  "publicDatasets": [
     "link_1",
     "link_2",
     "link_3",
