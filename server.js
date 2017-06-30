@@ -1,11 +1,43 @@
+// Conjunction with create-react-app from [https://github.com/fullstackreact/food-lookup-demo](https://github.com/fullstackreact/food-lookup-demo)
 const express = require("express");
 // Require bcrypt for authentication
-var bcrypt = require('bcryptjs');
+const bcrypt = require('bcryptjs');
+// Access to local file system
+const fs = require("fs");
 const app = express();
 
-// Conjunction with create-react-app from [https://github.com/fullstackreact/food-lookup-demo](https://github.com/fullstackreact/food-lookup-demo)
+/**
+ * Read settings from file. Settings should contain:
+ *  - Users: Path to users settings
+ *  - Port: Default port used by node
+ * @param {String} path to settings.json, default is set to "server_settings.json"
+ * @return {Object} settings object
+ */
+function getSettings(path="server_settings.json") {
+  const settings = readJSONFSSync(path);
+  if (typeof settings === "undefined") {
+    timeStampLog(`Cannot read settings at ${path}`, true);
+  }
+  return(settings);
+}
 
-app.set("port", process.env.PORT || 3099);
+/**
+ * Read file from local file system as JSON
+ * @param {String} path to file to read
+ * @return {Object} of file in path
+ */
+function readJSONFSSync(path) {
+  try {
+    const filebuffer = fs.readFileSync(path);
+    return(JSON.parse(filebuffer));
+  } catch (readOrJsonErr) {
+    timeStampLog(`readJSONFSSync: Cannot find file ${path}`);
+  }
+}
+// Read in the settings
+const settings = getSettings();
+
+app.set("port", process.env.PORT || settings.port);
 
 // Express only serves static assets in production
 if (process.env.NODE_ENV === "production") {
@@ -33,10 +65,15 @@ function getPasswordHash(user) {
 /**
  * Log string with server time stamp
  * @param {String} content: String to log with timestamp
+ * @param {Boolean} asError: Output message as error
  */
-function timeStampLog (content) {
+function timeStampLog (content, asError=false) {
   let currentdate = new Date();
-  console.log(`${currentdate.getDate()}/${currentdate.getMonth() + 1}/${currentdate.getFullYear()} @ ${currentdate.getHours()}:${currentdate.getMinutes()}:${currentdate.getSeconds()} ${content}`);
+  let output = `${currentdate.getDate()}/${currentdate.getMonth() + 1}/${currentdate.getFullYear()} @ ${currentdate.getHours()}:${currentdate.getMinutes()}:${currentdate.getSeconds()} ${content}`;
+  if (asError)
+    console.error(output);
+  else
+    console.log(output);
 }
 
 /**
