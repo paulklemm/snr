@@ -1,10 +1,10 @@
 // Conjunction with create-react-app from [https://github.com/fullstackreact/food-lookup-demo](https://github.com/fullstackreact/food-lookup-demo)
+// Node classes: https://stackoverflow.com/questions/42684177/node-js-es6-classes-with-require
 const express = require("express");
 // Require bcrypt for authentication
 const bcrypt = require('bcryptjs');
-// Access to local file system
-const fs = require("fs");
 // const UserManager = require("./UserManager");
+var { timeStampLog, readJSONFSSync } = require('./Helper')
 var { UserManager } = require('./UserManager');
 
 const userManager = new UserManager();
@@ -23,20 +23,6 @@ function getSettings(path="server_settings.json") {
     timeStampLog(`Cannot read settings at ${path}`, true);
   }
   return(settings);
-}
-
-/**
- * Read file from local file system as JSON
- * @param {String} path to file to read
- * @return {Object} of file in path
- */
-function readJSONFSSync(path) {
-  try {
-    const filebuffer = fs.readFileSync(path);
-    return(JSON.parse(filebuffer));
-  } catch (readOrJsonErr) {
-    timeStampLog(`readJSONFSSync: Cannot find file ${path}`);
-  }
 }
 
 /**
@@ -77,20 +63,6 @@ function getUserSettings(user, userFolderPath) {
     timeStampLog(`Cannot find user ${user}. Either user folder (${userFolderPath}) is wrong or user does not exist.`, true);
   // Return user Settings if everything works properly
   return(userSettings);
-}
-
-/**
- * Log string with server time stamp
- * @param {String} content: String to log with timestamp
- * @param {Boolean} asError: Output message as error
- */
-function timeStampLog (content, asError=false) {
-  let currentdate = new Date();
-  let output = `${currentdate.getDate()}/${currentdate.getMonth() + 1}/${currentdate.getFullYear()} @ ${currentdate.getHours()}:${currentdate.getMinutes()}:${currentdate.getSeconds()} ${content}`;
-  if (asError)
-    console.error(output);
-  else
-    console.log(output);
 }
 
 //////////// End of function declarations
