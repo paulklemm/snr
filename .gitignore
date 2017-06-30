@@ -22,6 +22,7 @@ package-lock.json
 
 # data
 data/
+users/
 
 # VS Code
 .vscode
