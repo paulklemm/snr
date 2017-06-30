@@ -4,7 +4,11 @@ const express = require("express");
 const bcrypt = require('bcryptjs');
 // Access to local file system
 const fs = require("fs");
-const app = express();
+// const UserManager = require("./UserManager");
+var { UserManager } = require('./UserManager');
+
+const userManager = new UserManager();
+userManager.makeNoise();
 
 /**
  * Read settings from file. Settings should contain:
@@ -48,9 +52,31 @@ function checkPassword(password, hash) {
 /**
  * Get the password hash for specified user
  * @param {String} user to retreive the hash for
+ * @return Password hash or empty string if password is not defined
  */
-function getPasswordHash(user) {
-  // TODO: Implement
+function getPasswordHash(user, userFolderPath) {
+  const userSettings = getUserSettings(user, userFolderPath);
+  if (typeof userSettings === "undefined" || typeof userSettings.passwd === "undefined") {
+    timeStampLog(`Password or user not defined for ${user}`, true);
+    return('');
+  } else 
+    return(userSettings.passwd);
+}
+
+/**
+ * Get users settings object from users name
+ * @param {String} user name
+ * @param {String} userFolderPath path to users folder
+ * @return {Object} users settings file
+ */
+function getUserSettings(user, userFolderPath) {
+  // Read the user settings
+  const userSettings = readJSONFSSync(`${userFolderPath}${user}`);
+  // If settings are empty, show error
+  if (typeof userSettings === "undefined")
+    timeStampLog(`Cannot find user ${user}. Either user folder (${userFolderPath}) is wrong or user does not exist.`, true);
+  // Return user Settings if everything works properly
+  return(userSettings);
 }
 
 /**
@@ -72,6 +98,7 @@ function timeStampLog (content, asError=false) {
 // Read in the settings
 const settings = getSettings();
 
+const app = express();
 app.set("port", process.env.PORT || settings.port);
 
 // Express only serves static assets in production
