@@ -16,6 +16,12 @@ class UserManager {
     return (bcrypt.compareSync(password, hash));
   }
 
+  /**
+   * Check if password and hash are matching
+   * @param {String} password to check. Password was already bcrypt hashed (usually on client side).
+   * @param {String} hash to check
+   * @return {Bool} result of check
+   */
   checkPassword(passwordHashed, user) {
     // Get user password
     const storedPassword = this.getPasswordHash(user);
