@@ -34,15 +34,6 @@ function readJSONFSSync(path) {
     timeStampLog(`readJSONFSSync: Cannot find file ${path}`);
   }
 }
-// Read in the settings
-const settings = getSettings();
-
-app.set("port", process.env.PORT || settings.port);
-
-// Express only serves static assets in production
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static("client/build"));
-}
 
 /**
    * Check if password and hash are matching
@@ -74,6 +65,18 @@ function timeStampLog (content, asError=false) {
     console.error(output);
   else
     console.log(output);
+}
+
+//////////// End of function declarations
+
+// Read in the settings
+const settings = getSettings();
+
+app.set("port", process.env.PORT || settings.port);
+
+// Express only serves static assets in production
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static("client/build"));
 }
 
 /**
