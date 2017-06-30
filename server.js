@@ -4,8 +4,8 @@ const express = require("express");
 // Require bcrypt for authentication
 const bcrypt = require('bcryptjs');
 // const UserManager = require("./UserManager");
-var { timeStampLog, readJSONFSSync } = require('./Helper')
-var { UserManager } = require('./UserManager');
+var { timeStampLog, readJSONFSSync } = require('./Components/Helper')
+var { UserManager } = require('./Components/UserManager');
 
 const userManager = new UserManager();
 userManager.makeNoise();
