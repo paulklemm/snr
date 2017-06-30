@@ -26,6 +26,9 @@ function getSettings(path="server_settings.json") {
 const settings = getSettings();
 // Create new usersManager object and pass path to users
 const userManager = new UserManager(settings.users);
+timeStampLog(userManager.getPasswordHash("paul"));
+timeStampLog(userManager.checkPassword('bla', 'paul'));
+timeStampLog(userManager.checkPassword('blaa', 'paul'));
 
 const app = express();
 app.set("port", process.env.PORT || settings.port);

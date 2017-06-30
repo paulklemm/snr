@@ -1,6 +1,6 @@
 // Require bcrypt for authentication
 const bcrypt = require('bcryptjs');
-const { timeStampLog } = require('./Helper')
+const { timeStampLog, readJSONFSSync } = require('./Helper')
 
 class UserManager {
   constructor(userPath) {
@@ -12,13 +12,19 @@ class UserManager {
    * @param {String} hash to check
    * @return {Bool} result of check
    */
-  checkPassword(password, hash) {
+  checkUnhashedPassword(password, hash) {
     return (bcrypt.compareSync(password, hash));
+  }
+
+  checkPassword(passwordHashed, user) {
+    // Get user password
+    const storedPassword = this.getPasswordHash(user);
+    return (storedPassword === passwordHashed);
   }
 
   /**
    * Get the password hash for specified user
-   * @param {String} user to retreive the hash for
+   * @param {String} user to retreive the hash for (do not append '.json', this function does this for you)
    * @return Password hash or empty string if password is not defined
    */
   getPasswordHash(user) {
@@ -37,7 +43,7 @@ class UserManager {
    */
   getUserSettings(user) {
     // Read the user settings
-    const userSettings = readJSONFSSync(`${this.userPath}${user}`);
+    const userSettings = readJSONFSSync(`${this.userPath}${user}.json`);
     // If settings are empty, show error
     if (typeof userSettings === "undefined")
       timeStampLog(`Cannot find user ${user}. Either user folder (${this.userPath}) is wrong or user does not exist.`, true);
