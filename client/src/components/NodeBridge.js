@@ -21,8 +21,8 @@ class NodeBridge {
     return fetch(`api/isonline`)
       .then(() => {
         console.log("CheckServer Done");
-        this.isOnline = true
-      })
+        this.isOnline = true;
+      });
   }
 
   /**

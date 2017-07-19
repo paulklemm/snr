@@ -34,7 +34,7 @@ class Authentication {
    * Testing function to see whether the hashing runs as expected
    * @param {String} password to run the test with
    */
-  testHashing(password) {
+  testLocalHashing(password) {
     const hash = this.getHash(password);
     const matchesShouldBeTrue = this.checkPassword(password, hash);
     const matchesShouldBeFalse = this.checkPassword(`${password}++`, hash);

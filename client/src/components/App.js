@@ -55,7 +55,7 @@ class App extends React.Component {
 		// Init NodeBridge
 		this.nodeBridge = new NodeBridge();
 		this.authentication = new Authentication();
-		this.authentication.testHashing("bla");
+		this.authentication.testLocalHashing("bla");
 		this.state = {
 			datasetEnabled: {},
 			datasetLoading: {},
