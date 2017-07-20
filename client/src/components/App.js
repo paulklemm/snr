@@ -25,6 +25,7 @@ import Table from './Table';
 import Navbar from './Navbar';
 import Loading from './Loading';
 import LayoutFactory from './LayoutFactory';
+import Logo from './Logo';
 // Third party components
 import { Icon } from 'react-fa';
 // Material-UI components
@@ -259,6 +260,7 @@ class App extends React.Component {
 					</Drawer>
 					<Navbar toggleRightDrawer={this.toggleRightDrawer} />
 					<div style={styleSheet.appBody}>
+						<Logo pulse={false}/>
 						{/* Main Plot for the interaction */}
 						<Grid container gutter={16}>
 							<Grid item xs={8}>
