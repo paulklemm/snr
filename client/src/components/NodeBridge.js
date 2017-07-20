@@ -96,9 +96,11 @@ class NodeBridge {
    * @param {String} hashedPassword 
    */
 	async login(user, hashedPassword) {
+		// TODO: Clean this up
 		console.log(`Send login with user ${user}, hashed password ${hashedPassword}`);
 		let response = await this.sendLogin(user, hashedPassword);
 		console.log(response);
+		return response;
 	}
 
 	/**

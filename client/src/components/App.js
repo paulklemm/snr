@@ -54,7 +54,8 @@ class App extends React.Component {
 		this.layoutFactory = new LayoutFactory(16);
 		// Init NodeBridge
 		this.nodeBridge = new NodeBridge();
-		this.authentication = new Authentication();
+		// Authenticator takes nodebridge as input
+		this.authentication = new Authentication(this.nodeBridge);
 		this.authentication.testLocalHashing("bla");
 		this.state = {
 			datasetEnabled: {},
@@ -185,6 +186,9 @@ class App extends React.Component {
 			this.initSession()
 		} else {
 			console.log("DEBUG");
+			// TODO: Debug Login
+			const loginSuccessful = this.authentication.login('paul', 'bla');
+			console.log(`Login Successful: ${loginSuccessful}`);
 			// Using setState is not fast enough for the async loading function
 			this.state['openCPULoadDataSessionID'] = 'x040fdf7f13';
 			// this.setState({ openCPULoadDataSessionID: 'x040fdf7f13' });
