@@ -26,9 +26,11 @@ function getSettings(path="server_settings.json") {
 const settings = getSettings();
 // Create new usersManager object and pass path to users
 const userManager = new UserManager(settings.users);
-timeStampLog(userManager.getPasswordHash("paul"));
-timeStampLog(userManager.checkPassword('bla', 'paul'));
-timeStampLog(userManager.checkPassword('blaa', 'paul'));
+// DEBUG: Tests for UserManager function
+timeStampLog("Checking password that should work")
+timeStampLog(userManager.checkUnhashedPassword('bla', userManager.getPasswordHash('paul')));
+timeStampLog("Checking password that should not work");
+timeStampLog(userManager.checkUnhashedPassword('blaa', userManager.getPasswordHash('paul')));
 
 const app = express();
 app.set("port", process.env.PORT || settings.port);
@@ -47,11 +49,29 @@ app.get("/api/isonline", (req, res) => {
 });
 
 /**
+ * Login takes user name and hashed password to compare the two.
+ * When the hashes match we'll create a token that will be send to the client
+ * and is used for verification on each request
+ */
+app.get("/api/login", (req, res) => {
+  // TODO: Finish this
+  const user = req.query.user;
+  const passwordHashed = req.query.hashedpw;
+  timeStampLog(`Login request User: ${user}, Hashed Password: ${passwordHashed}`);
+  // Check the password with the stored one
+  const loginSuccessful = userManager.checkPassword(passwordHashed, user);
+  if (loginSuccessful)
+    res.json({ success: true, token: userManager.createToken(user)});
+  else
+    res.json({ success: false });
+});
+
+/**
  * Simple echo function to see if the server works as expected
  */
 app.get("/api/echo", (req, res) => {
   const param = req.query.q;
-  timeStampLog(`Received request ${param}`);
+  timeStampLog(`Received echo of ${param}`);
   res.json({"echo": param});
 });
 

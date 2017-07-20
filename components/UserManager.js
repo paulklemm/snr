@@ -17,6 +17,16 @@ class UserManager {
   }
 
   /**
+   * Create a token for the user and store a hash of it in the users token database
+   * @param {String} user to create the token for
+   * @return {String} unhashed token
+   */
+  createToken(user) {
+    // TODO
+    return('token')
+  }
+
+  /**
    * Check if password and hash are matching
    * @param {String} password to check. Password was already bcrypt hashed (usually on client side).
    * @param {String} hash to check
@@ -31,7 +41,7 @@ class UserManager {
   /**
    * Get the password hash for specified user
    * @param {String} user to retreive the hash for (do not append '.json', this function does this for you)
-   * @return Password hash or empty string if password is not defined
+   * @return {String} Password hash or empty string if password is not defined
    */
   getPasswordHash(user) {
     const userSettings = this.getUserSettings(user);
