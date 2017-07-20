@@ -27,7 +27,7 @@ const settings = getSettings();
 // Create new usersManager object and pass path to users
 const userManager = new UserManager(settings.users);
 // DEBUG: Tests for UserManager function
-timeStampLog("Checking password that should work")
+timeStampLog("Checking password that should work");
 timeStampLog(userManager.checkUnhashedPassword('bla', userManager.getPasswordHash('paul')));
 timeStampLog("Checking password that should not work");
 timeStampLog(userManager.checkUnhashedPassword('blaa', userManager.getPasswordHash('paul')));
@@ -54,16 +54,25 @@ app.get("/api/isonline", (req, res) => {
  * and is used for verification on each request
  */
 app.get("/api/login", (req, res) => {
-  // TODO: Finish this
   const user = req.query.user;
   const passwordHashed = req.query.hashedpw;
+  // TODO: Debug statement, remove for production
   timeStampLog(`Login request User: ${user}, Hashed Password: ${passwordHashed}`);
   // Check the password with the stored one
   const loginSuccessful = userManager.checkPassword(passwordHashed, user);
-  if (loginSuccessful)
-    res.json({ success: true, token: userManager.createToken(user)});
+  if (loginSuccessful) {
+    // Create the token on disk
+    const token = userManager.createToken(user);
+    // When creating the token fails, token will be undefined
+    if (typeof token === 'undefined')
+       res.json({ success: false, reason: 'Access token cannot be created on server, please contact the admins'});
+    // If everything works fine, return result
+    else
+      res.json({ success: true, token: token});
+  }
+  // When login is not successfull
   else
-    res.json({ success: false });
+    res.json({ success: false, reason: "User and password do not match" });
 });
 
 /**

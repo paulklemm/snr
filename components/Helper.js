@@ -25,10 +25,27 @@ function readJSONFSSync (path) {
     const filebuffer = fs.readFileSync(path);
     return (JSON.parse(filebuffer));
   } catch (readOrJsonErr) {
-    timeStampLog(`readJSONFSSync: Cannot find file ${path}`);
+    timeStampLog(`readJSONFSSync: Cannot find file ${path}. Error: ${readOrJsonErr}`);
+  }
+}
+
+/**
+ * Try to write file to filesystem
+ * @param {String} path to file to write
+ * @param {Object} obj to write
+ * @return {Boolean} success of writing to disk
+ */
+function writeFSSync(path, obj) {
+  try {
+    fs.writeFileSync(path, obj);
+    return(true);
+  } catch (writeError) {
+    timeStampLog(`writeFSSync: Cannot write file ${path}. Error: ${writeError}`);
+    return(false);
   }
 }
 
 // Export functions
 exports.timeStampLog = timeStampLog;
 exports.readJSONFSSync = readJSONFSSync;
+exports.writeFSSync = writeFSSync;
