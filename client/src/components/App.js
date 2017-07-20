@@ -56,7 +56,6 @@ class App extends React.Component {
 		this.nodeBridge = new NodeBridge();
 		// Authenticator takes nodebridge as input
 		this.authentication = new Authentication(this.nodeBridge);
-		this.authentication.testLocalHashing("bla");
 		this.state = {
 			datasetEnabled: {},
 			datasetLoading: {},
