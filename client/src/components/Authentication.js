@@ -15,7 +15,7 @@ class Authentication {
 	}
 
 	async login(user, password) {
-		const response = await this.nodeBridge.login(user, this.getHash(password));
+		const response = await this.nodeBridge.login(user, password);
 		if (response.success) {
       localStorage.setItem(response.token, response.token);
       return true;
@@ -25,6 +25,7 @@ class Authentication {
 		}
 	}
 
+	// TODO: Remove unused hashing code and remove bcrypt dependency
 	/**
    * Create bcrypt hash from password
    * @param {String} password to hash

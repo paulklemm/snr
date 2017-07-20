@@ -28,9 +28,9 @@ const settings = getSettings();
 const userManager = new UserManager(settings.users);
 // DEBUG: Tests for UserManager function
 timeStampLog("Checking password that should work");
-timeStampLog(userManager.checkUnhashedPassword('bla', userManager.getPasswordHash('paul')));
+timeStampLog(userManager.checkPassword('bla', userManager.getPasswordHash('paul')));
 timeStampLog("Checking password that should not work");
-timeStampLog(userManager.checkUnhashedPassword('blaa', userManager.getPasswordHash('paul')));
+timeStampLog(userManager.checkPassword('blaa', userManager.getPasswordHash('paul')));
 
 const app = express();
 app.set("port", process.env.PORT || settings.port);
@@ -49,17 +49,17 @@ app.get("/api/isonline", (req, res) => {
 });
 
 /**
- * Login takes user name and hashed password to compare the two.
- * When the hashes match we'll create a token that will be send to the client
- * and is used for verification on each request
+ * Login takes user name and password.
+ * The password is hashed and compared to the stored hashed.
+ * If successful, create and return a token that is used for verification on each request
  */
 app.get("/api/login", (req, res) => {
   const user = req.query.user;
-  const passwordHashed = req.query.hashedpw;
+  const password = req.query.password;
   // TODO: Debug statement, remove for production
-  timeStampLog(`Login request User: ${user}, Hashed Password: ${passwordHashed}`);
+  timeStampLog(`Login request User: ${user}, Password: ${password}`);
   // Check the password with the stored one
-  const loginSuccessful = userManager.checkPassword(passwordHashed, user);
+  const loginSuccessful = userManager.checkPasswordUser(password, user);
   if (loginSuccessful) {
     // Create the token on disk
     const token = userManager.createToken(user);

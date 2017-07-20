@@ -25,18 +25,9 @@ class UserManager {
 		if (this.checkToken(user, token))
 			// Execute Api function
 			return apiFunction(req);
-		// If not, report failure
 		else
-			return ({success: false, message: 'Invalid token'});
-	}
-	/**
-	 * Check if password and hash are matching
-	 * @param {String} password to check
-	 * @param {String} hash to check
-	 * @return {Bool} result of check
-	 */
-	checkUnhashedPassword(password, hash) {
-		return bcrypt.compareSync(password, hash);
+			// If not, report failure
+			return { success: false, message: 'Invalid token' };
 	}
 
 	/**
@@ -60,20 +51,21 @@ class UserManager {
 		// Get settings for the user
 		const userSettings = this.getUserSettings(user);
 		// When there are no tokens added, return false
-		if (typeof userSettings.tokens !== 'object')
-			return false;
+		if (typeof userSettings.tokens !== 'object') return false;
 		// Get the token keys that represent the tokens as string
 		const tokens = Object.keys(userSettings.tokens);
 		// Check if the array of tokens is not larger than the size of maximumTokens which could indicate a token attack
 		if (tokens.length > this.maximumTokensPerUser) {
-			timeStampLog(`Error, tokens of user ${user} exceed the maximum number of allowed tokens (${this.maximumTokensPerUser})`, true)
+			timeStampLog(
+				`Error, tokens of user ${user} exceed the maximum number of allowed tokens (${this
+					.maximumTokensPerUser})`,
+				true
+			);
 			return false;
 		}
 		// Check if token is in the keys of users token object
-		if (tokens.indexOf(token) != -1)
-			return true;
-		else
-			return false;
+		if (tokens.indexOf(token) != -1) return true;
+		else return false;
 	}
 
 	/**
@@ -93,7 +85,7 @@ class UserManager {
 		// Create tokens object if it doesn't already exist
 		if (typeof userSettings.tokens !== 'object') userSettings.tokens = {};
 		// Remove oldest tokens until it is smaller than the number of valid tokens
-		while(Object.keys(userSettings.tokens).length >= this.maximumTokensPerUser)
+		while (Object.keys(userSettings.tokens).length >= this.maximumTokensPerUser)
 			userSettings.tokens = this.removeOldestToken(userSettings.tokens);
 		// Add the new token
 		userSettings.tokens[tokenHash] = token;
@@ -151,15 +143,25 @@ class UserManager {
 	}
 
 	/**
+	 * Check if password stored hash of user are matching
+	 * @param {String} password to check.
+	 * @param {String} user to check
+	 * @return {Bool} result of check
+	 */
+	checkPasswordUser(password, user) {
+		// Get user password
+		const storedPassword = this.getPasswordHash(user);
+		return this.checkPassword(password, storedPassword);
+	}
+
+	/**
 	 * Check if password and hash are matching
-	 * @param {String} password to check. Password was already bcrypt hashed (usually on client side).
+	 * @param {String} password to check
 	 * @param {String} hash to check
 	 * @return {Bool} result of check
 	 */
-	checkPassword(passwordHashed, user) {
-		// Get user password
-		const storedPassword = this.getPasswordHash(user);
-		return storedPassword === passwordHashed;
+	checkPassword(password, hash) {
+		return bcrypt.compareSync(password, hash);
 	}
 
 	/**
@@ -185,7 +187,11 @@ class UserManager {
 		const userSettings = readJSONFSSync(this.getUserConfigPath(user));
 		// If settings are empty, show error
 		if (typeof userSettings === 'undefined')
-			timeStampLog(`Cannot find user ${user} at ${this.getUserConfigPath(user)}. Either user folder (${this.userPath}) is wrong or user does not exist.`, true);
+			timeStampLog(
+				`Cannot find user ${user} at ${this.getUserConfigPath(user)}. Either user folder (${this
+					.userPath}) is wrong or user does not exist.`,
+				true
+			);
 		// Return user Settings if everything works properly
 		return userSettings;
 	}
@@ -196,7 +202,7 @@ class UserManager {
 	 * @return {String} path to user configuration file
 	 */
 	getUserConfigPath(user) {
-		return(`${this.userPath}${user}.json`);
+		return `${this.userPath}${user}.json`;
 	}
 };
 

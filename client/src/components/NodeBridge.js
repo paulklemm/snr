@@ -57,12 +57,12 @@ class NodeBridge {
 	/**
    * Private function to send login data to the server
    * @param {String} user for login
-   * @param {String} hashedPassword for login
+   * @param {String} password for login
    * @param {Function} cb callback after query
    * @return {Promise} of sendLogin fetch
    */
-	sendLogin(user, hashedPassword, cb) {
-		return fetch(`api/login?user=${user}&hashedpw=${hashedPassword}`, {
+	sendLogin(user, password, cb) {
+		return fetch(`api/login?user=${user}&password=${password}`, {
 			accept: 'application/json'
 		})
 			.then(this.parseJSON)
