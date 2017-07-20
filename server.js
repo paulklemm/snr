@@ -84,6 +84,18 @@ app.get("/api/echo", (req, res) => {
   res.json({"echo": param});
 });
 
+/**
+ * Simple echo function to see if the server works as expected with user providing a token
+ */
+app.get("/api/echotoken", (req, res) => {
+  const result = userManager.tokenApiFunction(req, (req) => {
+    const param = req.query.q;
+    timeStampLog(`Received echo Token of ${param}`);
+    return({success: true, echo: param});
+  });
+  res.json(result);
+});
+
 app.listen(app.get("port"), () => {
   timeStampLog(`Find the server at: http://localhost:${app.get("port")}/`); // eslint-disable-line no-console
 });

@@ -12,7 +12,9 @@ class NodeBridge {
 		console.log('IsOnlinePromise');
 		console.log(this.isOnlinePromise);
 		this.testEcho('Wohooooo');
-		this.login('paul', '$2a$10$GJl7RZ8xfKnLieVLPH3sMeAE/EM3Z2JVRI21/YDEaELMMbV3.XWhm');
+		// this.login('paul', '$2a$10$GJl7RZ8xfKnLieVLPH3sMeAE/EM3Z2JVRI21/YDEaELMMbV3.XWhm');
+		this.testEchoToken("Wohoo token", 'paul', 'fffe72deb80f6519f20b1ab9696c74a7d5c45e4b');
+		this.testEchoToken("Wohoo token should not work", 'paul', 'afffe72deb80f6519f20b1ab9696c74a7d5c45e4b');
 	}
 
 	/**
@@ -41,6 +43,18 @@ class NodeBridge {
 	}
 
 	/**
+   * Get echo from server to test availability
+   * @param {String} query term to echo
+   * @param {Function} cb callback after query
+   * @return {Promise} of sendEcho fetch
+   */
+	sendEchoToken(query, user, token, cb) {
+		return fetch(`api/echotoken?q=${query}&user=${user}&token=${token}`, { accept: 'application/json' })
+			.then(this.parseJSON)
+			.then(cb);
+	}
+
+	/**
    * Private function to send login data to the server
    * @param {String} user for login
    * @param {String} hashedPassword for login
@@ -62,6 +76,17 @@ class NodeBridge {
 	async testEcho(query) {
 		console.log(`Test Async Echo query ${query}`);
 		let response = await this.sendEcho(query);
+		console.log(response);
+	}
+
+	/**
+   * Test function for sendEcho with token
+   * @param {String} query to echo
+	 * @param {String} token to identify the client with
+	 */
+	async testEchoToken(query, user, token) {
+		console.log(`Test Async Echo Token query ${query}`);
+		let response = await this.sendEchoToken(query, user, token);
 		console.log(response);
 	}
 

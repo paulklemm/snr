@@ -9,6 +9,26 @@ class UserManager {
 		this.maximumTokensPerUser = 3;
 		this.userPath = userPath;
 	}
+
+	/**
+	 * Wrapper function for requests containing a token check for a user.
+	 * If the the provided token is available for the user, then the apifunction will be executed
+	 * @param {Object} req request containing `req.query.user` and `req.query.token`
+	 * @param {Function} apiFunction 
+	 * @return {Object} return object that indicated failure or return `apiFunction`
+	 */
+	tokenApiFunction(req, apiFunction) {
+		// Get user and token from the query
+		const user = req.query.user;
+		const token = req.query.token;
+		// Check if token is available for the user
+		if (this.checkToken(user, token))
+			// Execute Api function
+			return apiFunction(req);
+		// If not, report failure
+		else
+			return ({success: false, message: 'Invalid token'});
+	}
 	/**
 	 * Check if password and hash are matching
 	 * @param {String} password to check
@@ -30,9 +50,30 @@ class UserManager {
 		return result;
 	}
 
-	checkToken(user) {
-		// TODO: Implement
-		// TODO: Check if the array of tokens is not larger than the size of maximumTokens which could indicate a token attack
+	/**
+	 * Token is stored in the users list of tokens
+	 * @param {String} user to check
+	 * @param {String} token to compare
+	 * @return {Boolean} token is stored for user
+	 */
+	checkToken(user, token) {
+		// Get settings for the user
+		const userSettings = this.getUserSettings(user);
+		// When there are no tokens added, return false
+		if (typeof userSettings.tokens !== 'object')
+			return false;
+		// Get the token keys that represent the tokens as string
+		const tokens = Object.keys(userSettings.tokens);
+		// Check if the array of tokens is not larger than the size of maximumTokens which could indicate a token attack
+		if (tokens.length > this.maximumTokensPerUser) {
+			timeStampLog(`Error, tokens of user ${user} exceed the maximum number of allowed tokens (${this.maximumTokensPerUser})`, true)
+			return false;
+		}
+		// Check if token is in the keys of users token object
+		if (tokens.indexOf(token) != -1)
+			return true;
+		else
+			return false;
 	}
 
 	/**
