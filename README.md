@@ -63,3 +63,20 @@ Include the image in HTML using
 <Piechart width={200} height={200} data={[1, 1, 2, 3, 5, 8, 13, 21]}/>
 <Hexplot width={500} height={400} rnaSeqData={this.state.rnaSeqData} xName="pValue" yName="fc" hexSize={10} hexMax={10} />
 ```
+
+## Security
+
+The `serversettings_json` file contains the path to the users file. A user file must contain `path` and `passwd` keys as follows.
+
+```json
+{
+  "path": "/home/opencpu/sonar/data",
+  "passwd": "$2a$10$GJl7RZ8xfKnLieVLPH3sMeAE/EM3Z2JVRI21/YDEaELMMbV3.XWhm",
+}
+```
+
+On login, the password from the client side will be transmitted in clear text ([here is why](https://security.stackexchange.com/questions/93395/how-to-do-client-side-hashing-of-password-using-bcrypt)) to the server.
+
+The server then compares the password against the hash stored in the users configuration file using `bcrypt`. If they match, a token is generated and returned to the client. The client stores the token in the HTML `localStorage`. In order to successfully run commands on the server, the client needs to transfer the token with every command. The server then checks if the tokens match up in the users configuration file and performs the command if it matches.
+
+There is a maximum number of allowed tokens per user, which is per default set to `3`.
