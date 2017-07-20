@@ -13,11 +13,12 @@ class UserManager {
 	/**
 	 * Wrapper function for requests containing a token check for a user.
 	 * If the the provided token is available for the user, then the apifunction will be executed
+	 * @param {String} name name of the function so that errors can be traced properly
 	 * @param {Object} req request containing `req.query.user` and `req.query.token`
 	 * @param {Function} apiFunction 
 	 * @return {Object} return object that indicated failure or return `apiFunction`
 	 */
-	tokenApiFunction(req, apiFunction) {
+	tokenApiFunction(name, req, apiFunction) {
 		// Get user and token from the query
 		const user = req.query.user;
 		const token = req.query.token;
@@ -27,7 +28,7 @@ class UserManager {
 			return apiFunction(req);
 		else
 			// If not, report failure
-			return { success: false, message: 'Invalid token' };
+			return {name: name, success: false, message: 'Invalid token' };
 	}
 
 	/**

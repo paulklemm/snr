@@ -13,7 +13,7 @@ class NodeBridge {
 		console.log(this.isOnlinePromise);
 		this.testEcho('Wohooooo');
 		// this.login('paul', '$2a$10$GJl7RZ8xfKnLieVLPH3sMeAE/EM3Z2JVRI21/YDEaELMMbV3.XWhm');
-		this.testEchoToken("Wohoo token", 'paul', 'fffe72deb80f6519f20b1ab9696c74a7d5c45e4b');
+		this.testEchoToken("Wohoo token", 'paul', localStorage.getItem('sonarLoginToken'));
 		this.testEchoToken("Wohoo token should not work", 'paul', 'afffe72deb80f6519f20b1ab9696c74a7d5c45e4b');
 	}
 
@@ -96,10 +96,7 @@ class NodeBridge {
    * @param {String} hashedPassword 
    */
 	async login(user, hashedPassword) {
-		// TODO: Clean this up
-		console.log(`Send login with user ${user}, hashed password ${hashedPassword}`);
 		let response = await this.sendLogin(user, hashedPassword);
-		console.log(response);
 		return response;
 	}
 

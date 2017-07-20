@@ -65,14 +65,14 @@ app.get("/api/login", (req, res) => {
     const token = userManager.createToken(user);
     // When creating the token fails, token will be undefined
     if (typeof token === 'undefined')
-       res.json({ success: false, reason: 'Access token cannot be created on server, please contact the admins'});
+       res.json({ name: "login", success: false, reason: 'Access token cannot be created on server, please contact the admins'});
     // If everything works fine, return result
     else
-      res.json({ success: true, token: token});
+      res.json({ name: "login", success: true, token: token});
   }
   // When login is not successfull
   else
-    res.json({ success: false, reason: "User and password do not match" });
+    res.json({ name: "login", success: false, reason: "User and password do not match" });
 });
 
 /**
@@ -81,17 +81,17 @@ app.get("/api/login", (req, res) => {
 app.get("/api/echo", (req, res) => {
   const param = req.query.q;
   timeStampLog(`Received echo of ${param}`);
-  res.json({"echo": param});
+  res.json({ name: "echo", "echo": param});
 });
 
 /**
  * Simple echo function to see if the server works as expected with user providing a token
  */
 app.get("/api/echotoken", (req, res) => {
-  const result = userManager.tokenApiFunction(req, (req) => {
+  const result = userManager.tokenApiFunction('echotoken', req, (req) => {
     const param = req.query.q;
     timeStampLog(`Received echo Token of ${param}`);
-    return({success: true, echo: param});
+    return({name: 'echo', success: true, echo: param});
   });
   res.json(result);
 });

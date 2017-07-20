@@ -15,10 +15,10 @@ class Authentication {
 	async login(user, password) {
 		const response = await this.nodeBridge.login(user, password);
 		if (response.success) {
-      localStorage.setItem(response.token, response.token);
+      localStorage.setItem('sonarLoginToken', response.token);
       return true;
 		} else {
-      console.error(`Login failed`);
+			console.error(`Login failed, reason: ${response.reason}`);
       return false;
 		}
 	}

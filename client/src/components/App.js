@@ -187,7 +187,6 @@ class App extends React.Component {
 			console.log("DEBUG");
 			// TODO: Debug Login
 			const loginSuccessful = this.authentication.login('paul', 'bla');
-			console.log(`Login Successful: ${loginSuccessful}`);
 			// Using setState is not fast enough for the async loading function
 			this.state['openCPULoadDataSessionID'] = 'x040fdf7f13';
 			// this.setState({ openCPULoadDataSessionID: 'x040fdf7f13' });
