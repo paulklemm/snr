@@ -13,7 +13,7 @@ const styleSheet = {
   spinnerParent: {
     // margin: '5px',
     width: '100px',
-    height: '50px',
+    height: '25px',
     position: 'relative',
     fontSize: '30px',
     color: '#333',

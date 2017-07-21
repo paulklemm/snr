@@ -1,37 +1,40 @@
-// https://material-ui-1dab0.firebaseapp.com/component-demos/app-bar
 import React from 'react';
-import { createStyleSheet } from 'jss-theme-reactor';
-import customPropTypes from 'material-ui/utils/customPropTypes';
-import AppBar from 'material-ui/AppBar';
-import Toolbar from 'material-ui/Toolbar';
-import Typography from 'material-ui/Typography';
-import Button from 'material-ui/Button';
+import Logo from './Logo';
+import Grid from 'material-ui/Grid';
 
-const styleSheet = createStyleSheet('Navbar', () => ({
-  root: {
-    marginTop: 0,
-    marginBottom: 20,
-    width: '100%',
+const styleSheet = {
+  navbar: {
+    marginBottom: '50px',
+    marginTop: '50px',
   },
-  flex: {
-    flex: 1,
+  button: {
+    color: '#333',
+    fontFamily: "Helvetica Neue",
+    fontSize: '11pt',
+    cursor: 'pointer'
   },
-}));
+  buttons: {
+    textAlign: 'right'
+  }
+};
 
-export default function Navbar(props, context) {
-  const classes = context.styleManager.render(styleSheet);
-  return (
-    <div className={classes.root}>
-      <AppBar position="static">
-        <Toolbar>
-          <Typography type="title" className={classes.flex} color="inherit">Sonar</Typography>
-          <Button color="contrast" onClick={props.toggleRightDrawer}>Show datasets</Button>
-        </Toolbar>
-      </AppBar>
-    </div>
-  );
+class Navbar extends React.Component {
+	render() {
+		return(
+      <div style={styleSheet.navbar}>
+        <Grid container gutter={24}>
+          <Grid item xs={1}></Grid>
+          <Grid item xs={5}>
+            <Logo pulse={true}></Logo>
+          </Grid>
+          <Grid item xs={5} style={styleSheet.buttons}>
+            <a style={styleSheet.button} onClick={this.props.toggleRightDrawer}>Show datasets</a>
+          </Grid>
+          <Grid item xs={1}></Grid>
+        </Grid>
+      </div>
+		);
+	}
 }
 
-Navbar.contextTypes = {
-  styleManager: customPropTypes.muiRequired,
-};
+export default Navbar;
