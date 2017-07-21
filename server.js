@@ -27,11 +27,6 @@ function getSettings(path="server_settings.json") {
 const settings = getSettings();
 // Create new usersManager object and pass path to users
 const userManager = new UserManager(settings.users);
-// DEBUG: Tests for UserManager function
-timeStampLog("Checking password that should work");
-timeStampLog(userManager.checkPassword('bla', userManager.getPasswordHash('paul')));
-timeStampLog("Checking password that should not work");
-timeStampLog(userManager.checkPassword('blaa', userManager.getPasswordHash('paul')));
 
 this.openCPU = new OpenCPUBridge('http://localhost:8004');
 

@@ -55,7 +55,6 @@ class OpenCPUBridge {
 		return get(`${this.address}/ocpu`)
 			.then((response) => {
 				// If status is 200, everything is fine, otherwise return error
-				console.log(`Response is here, status= ${response.status}`);
 				response.status === 200 ? this.isOnline = true : console.error(`OpenCPU returns status ${response.status}, connection cannot be established`);
 			})
 			.catch((error) => {
