@@ -38,7 +38,7 @@ class Hexplot extends Scatterplot {
 		let hexbin = D3Hexbin().radius(hexRadius);
 		let color = scaleLinear()
 			.domain([0, maximum])
-			.range(["rgba(0, 0, 0, 0)", "steelblue"])
+			.range(["rgba(0, 0, 0, 0)", "#ee6351"])
 			.interpolate(interpolateLab);
 
 		const hexagons = hexbin(pointArray).map(point => (

@@ -5,7 +5,6 @@ import DatasetIcons from './DatasetIcons';
 // Material-UI Elements
 import { withStyles, createStyleSheet } from 'material-ui/styles';
 import Menu, { MenuItem } from 'material-ui/Menu';
-import { Icon } from 'react-fa';
 import IconButton from 'material-ui/IconButton';
 
 const styleSheet = createStyleSheet('IconSelect', theme => ({

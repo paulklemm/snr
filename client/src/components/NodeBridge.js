@@ -8,7 +8,13 @@ class NodeBridge {
 	constructor() {
 		this.isOnline = false;
 		this.isOnlinePromise = this.checkServer();
-		// TODO: Debug statements that should later only output stuff when there is a problem
+	}
+
+	/**
+	 * This is a debug function that can be removed later on. It contains code for checking the
+	 * Node server behavior
+	 */
+	debugTestServer() {
 		console.log('IsOnlinePromise');
 		console.log(this.isOnlinePromise);
 		this.testEcho('Wohooooo');
@@ -23,7 +29,6 @@ class NodeBridge {
    */
 	checkServer() {
 		return fetch(`api/isonline`).then(() => {
-			console.log('CheckServer Done');
 			this.isOnline = true;
 		});
 	}

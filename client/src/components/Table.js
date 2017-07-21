@@ -8,8 +8,8 @@ import {DefaultFilterSetting} from './DimensionTypes.js';
 
 const styleSheet = {
 	headerTR: {
-		borderBottom: '2px solid #3e51b8',
-		backgroundColor: '#d7ddf1'
+		borderBottom: '2px solid #ee6351',
+		backgroundColor: '#fdecea'
 	},
 	headerTH: {
 		textAlign: 'left',
