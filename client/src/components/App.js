@@ -184,7 +184,7 @@ class App extends React.Component {
 		if (!this.debug) {
 			this.initSession()
 		} else {
-			console.log("DEBUG");
+			console.log("Entering Debug mode. Data will be loaded automatically. To disable, set `App.debug` to `false`");
 			// TODO: Debug Login
 			const loginSuccessful = this.authentication.login('paul', 'bla');
 			// Using setState is not fast enough for the async loading function
@@ -229,9 +229,7 @@ class App extends React.Component {
 			if (dataset.loaded) {
 				hexplots.push(
 					<Grid item xs={6} key={ name }>
-						<Paper>
 							<Hexplot responsiveWidth={true} height={this.layoutFactory.heights.smallMultiples} width={0} rnaSeqData={dataset} xName="pValueNegLog10" yName="fc" hexSize={2} hexMax={10} showRenderGenesOption={false}/>
-						</Paper>
 					</Grid>
 				);
 			}
@@ -262,10 +260,8 @@ class App extends React.Component {
 						{/* Main Plot for the interaction */}
 						<Grid container gutter={16}>
 							<Grid item xs={8}>
-								<Paper>
 									{/*<center><p>{this.state.primaryDataset.name}</p></center>*/}
 									<Hexplot height={this.layoutFactory.heights.mainView} width={600} responsiveWidth={true} rnaSeqData={this.state.primaryDataset} xName="pValueNegLog10" yName="fc" hexSize={4} hexMax={20} showRenderGenesOption={false}/>
-								</Paper>
 							</Grid>
 							<Grid item xs={4}>
 								<Grid container gutter={16}>
@@ -274,9 +270,7 @@ class App extends React.Component {
 							</Grid>
 							{/* Add Table on whole page length */}
 							<Grid item xs={12}>
-								<Paper>
 									<Table data={primaryDatasetData} dimNames={primaryDatasetDimNames} height={400} onFilter={this.onFilter} />
-								</Paper>
 							</Grid>
 						</Grid>
 							{/*<Paper>
