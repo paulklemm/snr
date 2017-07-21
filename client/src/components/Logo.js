@@ -23,7 +23,8 @@ const styleSheet = {
   dot: {
     fontSize: '30px',
     marginLeft: '1px',
-    marginRight: '1px'
+    marginRight: '1px',
+    color: '#ee6351'
   },
   spinner: {
     left: '-0.9px',
@@ -32,7 +33,8 @@ const styleSheet = {
     height: '40px',
     display: 'inline-block',
     position: 'absolute',
-    backgroundColor: '#333',
+    // backgroundColor: '#333',
+    backgroundColor: '#ee6351',
     borderRadius: '100%',  
     WebkitAnimation: 'sk-scaleout 1.0s infinite ease-in-out',
     animation: 'sk-scaleout 1.0s infinite ease-in-out'
