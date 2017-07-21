@@ -95,6 +95,27 @@ class NodeBridge {
 		console.log(response);
 	}
 
+
+	/**
+   * Get echo from server to test availability
+   * @param {String} query term to echo
+   * @param {Function} cb callback after query
+   * @return {Promise} of sendEcho fetch
+   */
+	sendRCommand(rpackage, rfunction, params, valformat, user, token, cb) {
+		return fetch(`api/runrcommand?rpackage=${rpackage}&rfunction=${rfunction}&params=${params}&valformat=${valformat}&user=${user}&token=${token}`, { accept: 'application/json' })
+			.then(this.parseJSON)
+			.then(cb);
+	}
+	/**
+ * Run R command on node server
+ */
+	async testRCommand(rpackage, rfunction, params, valformat, user, token) {
+		console.log(`Run R command on node server ${rpackage}.${rfunction}(${JSON.stringify(params)}), valformat: ${valformat}`);
+		let response = await this.sendRCommand(rpackage, rfunction, params, valformat, user, token);
+		console.log(response);
+	}
+
 	/**
    * Send login credentials to server and receive success status and token
    * @param {String} user 

@@ -187,8 +187,12 @@ class App extends React.Component {
 			console.log("Entering Debug mode. Data will be loaded automatically. To disable, set `App.debug` to `false`");
 			// TODO: Debug Login
 			const loginSuccessful = this.authentication.login('paul', 'bla');
+			// TODO: Debug Run R command on Node server
+			this.nodeBridge.testRCommand("sonaR", "getUserFolder", { user: "'paul'" }, "json", 'paul', localStorage.getItem('sonarLoginToken'));
+			// this.nodeBridge.testRCommand("sonaR", "getUserFolder", { user: "'paul'" }, "json", 'paul', 'abv');
 			// Using setState is not fast enough for the async loading function
 			this.state['openCPULoadDataSessionID'] = 'x040fdf7f13';
+
 			// this.setState({ openCPULoadDataSessionID: 'x040fdf7f13' });
 			// this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6952_DATASET10020.csv'));
 			// this.setEnableDataset('DIFFEXPR_EXPORT6952_DATASET10020.csv', true);

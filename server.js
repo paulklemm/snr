@@ -27,8 +27,8 @@ function getSettings(path="server_settings.json") {
 const settings = getSettings();
 // Create new usersManager object and pass path to users
 const userManager = new UserManager(settings.users);
-
-this.openCPU = new OpenCPUBridge('http://localhost:8004');
+// Create the openCPU connection
+const openCPU = new OpenCPUBridge('http://localhost:8004');
 
 const app = express();
 app.set("port", process.env.PORT || settings.port);
@@ -44,6 +44,21 @@ if (process.env.NODE_ENV === "production") {
 app.get("/api/isonline", (req, res) => {
   timeStampLog("Get Handshake request");
   res.json({ "isonline": true });
+});
+
+/**
+ * Request R function to be executed on OpenCPU server
+ */
+app.get("/api/runrcommand", (req, res) => {
+  const result = userManager.tokenApiFunction('runrcommand', req, (req) => {
+    const rpackage = req.query.rpackage;
+    const rfunction = req.query.rfunction;
+    const params = req.query.params;
+    const valformat = req.query.valformat;
+    timeStampLog(`Received runRCommand: ${openCPU.address}/ocpu/library/${rpackage}/R/${rfunction}; params ${params}; valFormat ${valformat}`);
+    return ({ name: 'runrcommand', success: true });
+  });
+  res.json(result);
 });
 
 /**
