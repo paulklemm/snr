@@ -4,6 +4,7 @@ const express = require("express");
 // const UserManager = require("./UserManager");
 const { timeStampLog, readJSONFSSync } = require('./Components/Helper')
 const { UserManager } = require('./Components/UserManager');
+const { OpenCPUBridge } = require('./Components/OpenCPUBridge');
 
 /**
  * Read settings from file. Settings should contain:
@@ -31,6 +32,8 @@ timeStampLog("Checking password that should work");
 timeStampLog(userManager.checkPassword('bla', userManager.getPasswordHash('paul')));
 timeStampLog("Checking password that should not work");
 timeStampLog(userManager.checkPassword('blaa', userManager.getPasswordHash('paul')));
+
+this.openCPU = new OpenCPUBridge('http://localhost:8004');
 
 const app = express();
 app.set("port", process.env.PORT || settings.port);
