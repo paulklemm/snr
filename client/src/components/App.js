@@ -63,7 +63,7 @@ class App extends React.Component {
 			// TODO: This is now still set to the last loaded dataset, should be set using the DatasetSelect Element
 			primaryDataset: {},
 			loginRequired: true,
-			busy: false,
+			busy: {},
 			openDrawer: {right: false}
 		};
 	}
@@ -161,15 +161,24 @@ class App extends React.Component {
 	 */
 	async runRCommand(rpackage, rfunction, params, valformat, debug = false) {
 		// Set busy state
+		const runKey = `Run R command on node server ${rpackage}.${rfunction}(${JSON.stringify(params)}), valformat: ${valformat}`
 		// TODO: This should be done using a stack of operations that are still not done and only set busy to false if everything is done
-		this.setState({ busy: true });
-		if (debug) console.log(`Run R command on node server ${rpackage}.${rfunction}(${JSON.stringify(params)}), valformat: ${valformat}`);
+		let busy = this.state.busy;
+		busy[runKey] = true;
+		this.setState({ busy: busy });
+
+		// Run the command
+		if (debug) console.log(runKey);
 		let response = await this.nodeBridge.sendRCommand(rpackage, rfunction, params, valformat, this.authentication.getUser(), this.authentication.getToken());
 		if (debug) console.log(response);
+
 		// If Response is negative because of invalid token, invalidate login
 		if (typeof response.loginInvalid === 'undefined' && response.loginInvalid === true)
 			this.setState({ loginRequired: true });
-		this.setState({ busy: false });
+		// Delete the runKey from the busy array
+		busy = this.state.busy;
+		delete busy[runKey];
+		this.setState({ busy: busy });
 		// Return resulting object
 		return response.result;
 	}
@@ -305,7 +314,7 @@ class App extends React.Component {
 							</CardContent>
 						</Card>
 					</Drawer>
-					<Navbar busy={ this.state.busy } toggleRightDrawer={this.toggleRightDrawer} />
+					<Navbar busy={ Object.keys(this.state.busy).length !== 0 } toggleRightDrawer={this.toggleRightDrawer} />
 					<div style={styleSheet.appBody}>
 						{/* Main Plot for the interaction */}
 						<Grid container gutter={16}>
