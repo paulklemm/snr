@@ -19,8 +19,8 @@ class NodeBridge {
 		console.log(this.isOnlinePromise);
 		this.testEcho('Wohooooo');
 		// this.login('paul', '$2a$10$GJl7RZ8xfKnLieVLPH3sMeAE/EM3Z2JVRI21/YDEaELMMbV3.XWhm');
-		this.testEchoToken("Wohoo token", 'paul', localStorage.getItem('sonarLoginToken'));
-		this.testEchoToken("Wohoo token should not work", 'paul', 'afffe72deb80f6519f20b1ab9696c74a7d5c45e4b');
+		this.echoToken("Wohoo token", 'paul', localStorage.getItem('sonarLoginToken'));
+		this.echoToken("Wohoo token should not work", 'paul', 'afffe72deb80f6519f20b1ab9696c74a7d5c45e4b');
 	}
 
 	/**
@@ -85,14 +85,30 @@ class NodeBridge {
 	}
 
 	/**
-   * Test function for sendEcho with token
-   * @param {String} query to echo
-	 * @param {String} token to identify the client with
+   * Async Echo function with user and token.
+   * @param {String} query: String to echo
+	 * @param {String} user: User to login
+	 * @param {String} token: Token for user
+	 * @param {Boolean} debug: Print echo and server response to console
+	 * @return {Object} Response object of server
 	 */
-	async testEchoToken(query, user, token) {
-		console.log(`Test Async Echo Token query ${query}`);
+	async echoToken(query, user, token, debug = false) {
+		if (debug) console.log(`Test async echo token query ${query}`);
 		let response = await this.sendEchoToken(query, user, token);
-		console.log(response);
+		if (debug) console.log(response);
+		return response;
+	}
+
+	/**
+   * Get echo from server to test availability
+   * @param {String} query term to echo
+   * @param {Function} cb callback after query
+   * @return {Promise} of sendEcho fetch
+   */
+	sendRCommand(rpackage, rfunction, params, valformat, user, token, cb) {
+		return fetch(`api/runrcommand?rpackage=${rpackage}&rfunction=${rfunction}&params=${JSON.stringify(params)}&valformat=${valformat}&user=${user}&token=${token}`, { accept: 'application/json' })
+			.then(this.parseJSON)
+			.then(cb);
 	}
 
 	/**

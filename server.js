@@ -4,6 +4,7 @@ const express = require("express");
 // const UserManager = require("./UserManager");
 const { timeStampLog, readJSONFSSync } = require('./Components/Helper')
 const { UserManager } = require('./Components/UserManager');
+const { OpenCPUBridge } = require('./Components/OpenCPUBridge');
 
 /**
  * Read settings from file. Settings should contain:
@@ -26,11 +27,12 @@ function getSettings(path="server_settings.json") {
 const settings = getSettings();
 // Create new usersManager object and pass path to users
 const userManager = new UserManager(settings.users);
-// DEBUG: Tests for UserManager function
-timeStampLog("Checking password that should work");
-timeStampLog(userManager.checkPassword('bla', userManager.getPasswordHash('paul')));
-timeStampLog("Checking password that should not work");
-timeStampLog(userManager.checkPassword('blaa', userManager.getPasswordHash('paul')));
+// Create the openCPU connection
+const openCPU = new OpenCPUBridge('http://localhost:8004');
+// TODO: Debug code to test OpenCPU bridge
+// openCPU.runRCommand("sonaR", "getUserFolder", { user: "'paul'" }, "json").then((result) => {
+//   timeStampLog(JSON.stringify(result));
+// });
 
 const app = express();
 app.set("port", process.env.PORT || settings.port);
@@ -46,6 +48,28 @@ if (process.env.NODE_ENV === "production") {
 app.get("/api/isonline", (req, res) => {
   timeStampLog("Get Handshake request");
   res.json({ "isonline": true });
+});
+
+/**
+ * Request R function to be executed on OpenCPU server
+ */
+app.get("/api/runrcommand", (req, res) => {
+  const result = userManager.tokenApiFunction('runrcommand', req, (req) => {
+    const rpackage = req.query.rpackage;
+    const rfunction = req.query.rfunction;
+    // Params come as JSON strings
+    const params = JSON.parse(req.query.params);
+    const valformat = req.query.valformat;
+    // Log the command for debugging
+    timeStampLog(`${rpackage}.${rfunction}(${JSON.stringify(params)}), valformat: ${valformat }`);
+    // Run the command
+    openCPU.runRCommand(rpackage, rfunction, params, valformat).then((result) => {
+      res.json({ name: 'runrcommand', success: true, result: result });
+    });
+  });
+  // If the check for user and token fails, this will report the failure
+  if (typeof result != 'undefined')
+    res.json(result);
 });
 
 /**

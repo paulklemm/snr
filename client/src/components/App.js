@@ -62,6 +62,8 @@ class App extends React.Component {
 			openCPULoadDataSessionID: "",
 			// TODO: This is now still set to the last loaded dataset, should be set using the DatasetSelect Element
 			primaryDataset: {},
+			loginRequired: true,
+			busy: false,
 			openDrawer: {right: false}
 		};
 	}
@@ -107,19 +109,24 @@ class App extends React.Component {
 	}
 
 	async initSession() {
+		// Login Required
+		const loginRequired = await this.authentication.loginRequired();
+		this.setState({
+			loginRequired: loginRequired
+		});
 		// get the personal folder
-		const output = await this.openCPU.runRCommand("sonaR", "getUserFolder", { user: "'paul'" }, "json", false);
+		const output = await this.runRCommand("sonaR", "getUserFolder", { user: "'paul'" }, "json");
 		// Output is array containing a string, therefore this looks a bit ugly here
 		let userFolder = output['.val'][0];
 
 		// Load Data from userFolder and get Session ID for the associated object
-		const outputLoadData = await this.openCPU.runRCommand("sonaR", "load_data", { data_folder: `'${userFolder}'` }, "json", false);
+		const outputLoadData = await this.runRCommand("sonaR", "load_data", { data_folder: `'${userFolder}'` }, "json", false);
 		console.log(`LoadData Session ID: ${outputLoadData.sessionID}`);
 		// Update state with sessionID
 		this.setState({ openCPULoadDataSessionID: outputLoadData.sessionID });
 
 		// Get dataset list as array
-		const outputGetDataNames = await this.openCPU.runRCommand("sonaR", "get_data_names", { x: `${outputLoadData.sessionID}` }, 'json', false);
+		const outputGetDataNames = await this.runRCommand("sonaR", "get_data_names", { x: `${outputLoadData.sessionID}` }, 'json', false);
 		// Attach the dataset array to the datasetHub
 		for (let i in outputGetDataNames['.val']) {
 			let datasetName = outputGetDataNames['.val'][i];
@@ -133,19 +140,82 @@ class App extends React.Component {
 		}
 		
 		// PCA plot
-		const outputPCA = await this.openCPU.runRCommand("sonaR", "plot_pca", { x: outputLoadData.sessionID }, 'ascii', false);
+		const outputPCA = await this.runRCommand("sonaR", "plot_pca", { x: outputLoadData.sessionID }, 'ascii', false);
 		this.setState({
 			pcaImage: `${outputPCA.graphics[0]}/svg`
 		});
 	}
 
+	/**
+	 * Sends R command to node server. There it will be executed and return the result in the specified valformat
+	 * Example:
+	 * runRCommand("sonaR", "getUserFolder", { user: "'paul'" }, "json", 'paul', localStorage.getItem('sonarLoginToken'));
+	 * @param {String} rpackage: Name of the `R` package ("stats")
+	 * @param {String} rfunction: Name of the `R` function ("rnorm")
+	 * @param {Object} params: JSON object of the parameters ("{ n: 10, mean: 5 }"")
+	 * @param {String} valFormat: Format of .val attribute (ascii, json, tsv), refer to `https://opencpu.github.io/server-manual/opencpu-server.pdf`
+	 * @param {String} user: Name of the user
+	 * @param {String} token: Token of the user
+	 * @param {Boolean} debug: Print debug statements, defaults to false
+	 * @return {Object} result of command
+	 */
+	async runRCommand(rpackage, rfunction, params, valformat, debug = false) {
+		// Set busy state
+		// TODO: This should be done using a stack of operations that are still not done and only set busy to false if everything is done
+		this.setState({ busy: true });
+		if (debug) console.log(`Run R command on node server ${rpackage}.${rfunction}(${JSON.stringify(params)}), valformat: ${valformat}`);
+		let response = await this.nodeBridge.sendRCommand(rpackage, rfunction, params, valformat, this.authentication.getUser(), this.authentication.getToken());
+		if (debug) console.log(response);
+		// If Response is negative because of invalid token, invalidate login
+		if (typeof response.loginInvalid === 'undefined' && response.loginInvalid === true)
+			this.setState({ loginRequired: true });
+		this.setState({ busy: false });
+		// Return resulting object
+		return response.result;
+	}
+
+	/**
+	 * Start debug session to not require manual input
+	 */
+	async debugSession() {
+		console.log("Entering Debug mode. Data will be loaded automatically. To disable, set `App.debug` to `false`");
+		// Login Required
+		const loginRequired = await this.authentication.loginRequired();
+		if (loginRequired)
+			console.log("Login required");
+		this.setState({
+			loginRequired: loginRequired
+		});
+		// TODO: Debug Login
+		const loginSuccessful = await this.authentication.login('paul', 'bla');
+		this.setState({
+			loginRequired: !loginSuccessful
+		});
+		// Using setState is not fast enough for the async loading function
+		this.state['openCPULoadDataSessionID'] = 'x040fdf7f13';
+
+		// this.setState({ openCPULoadDataSessionID: 'x040fdf7f13' });
+		// this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6952_DATASET10020.csv'));
+		// this.setEnableDataset('DIFFEXPR_EXPORT6952_DATASET10020.csv', true);
+		// this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6938_DATASET10016.csv'));
+		// this.setEnableDataset('DIFFEXPR_EXPORT6938_DATASET10016.csv', true);
+		// this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6945_DATASET10018.csv'));
+		// this.setEnableDataset('DIFFEXPR_EXPORT6945_DATASET10018.csv', true);
+		// this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6957_DATASET10022.csv'));
+		// this.setEnableDataset('DIFFEXPR_EXPORT6957_DATASET10022.csv', true);
+		// this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6964_DATASET10024.csv'));
+		// this.setEnableDataset('DIFFEXPR_EXPORT6964_DATASET10024.csv', true);
+		// Run PCA
+		// this.getPCA();
+	}
+
 	async getPCA() {
 		// TODO: Implement PCA
-		const pcaOutput = await this.openCPU.runRCommand("sonaR", "get_pca_loadings", { x: 'x040fdf7f13' }, 'json', false);
+		const pcaOutput = await this.runRCommand("sonaR", "get_pca_loadings", { x: 'x040fdf7f13' }, 'json', false);
 		console.log(`PCA Output`);
 		console.log(pcaOutput);
 		// Old plotting logic, ths should be removed later on
-		this.openCPU.runRCommand("sonaR", "plot_pca", { x: 'x040fdf7f13' }, 'ascii', true).then(output => {
+		this.runRCommand("sonaR", "plot_pca", { x: 'x040fdf7f13' }, 'ascii', true).then(output => {
 			this.setState({
 				pcaImage: `${output.graphics[0]}/svg`
 			});
@@ -159,7 +229,7 @@ class App extends React.Component {
 		this.datasetHub.setLoading(name)
 		this.setState({datasetLoading: this.datasetHub.loading});
 		// Load the dataset
-		let dataset = await this.openCPU.runRCommand("sonaR", "get_dataset", { datasets: this.state.openCPULoadDataSessionID, name: `'${name}'`}, 'json', true);
+		let dataset = await this.runRCommand("sonaR", "get_dataset", { datasets: this.state.openCPULoadDataSessionID, name: `'${name}'`}, 'json', true);
 		this.datasetHub.setData(name, dataset['.val'].dataset, dataset['.val'].dimNames);
 		// Loading is done, so update it again
 		this.setState({datasetLoading: this.datasetHub.loading});
@@ -178,30 +248,10 @@ class App extends React.Component {
 
 	componentWillMount() {
 		this.handleResize();
-		// Debug RNASeq connection
-		this.openCPU = new OpenCPUBridge('http://localhost:8004');
-		// let r = new R(openCPU);
 		if (!this.debug) {
-			this.initSession()
+			this.initSession();
 		} else {
-			console.log("Entering Debug mode. Data will be loaded automatically. To disable, set `App.debug` to `false`");
-			// TODO: Debug Login
-			const loginSuccessful = this.authentication.login('paul', 'bla');
-			// Using setState is not fast enough for the async loading function
-			this.state['openCPULoadDataSessionID'] = 'x040fdf7f13';
-			// this.setState({ openCPULoadDataSessionID: 'x040fdf7f13' });
-			// this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6952_DATASET10020.csv'));
-			// this.setEnableDataset('DIFFEXPR_EXPORT6952_DATASET10020.csv', true);
-			// this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6938_DATASET10016.csv'));
-			// this.setEnableDataset('DIFFEXPR_EXPORT6938_DATASET10016.csv', true);
-			// this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6945_DATASET10018.csv'));
-			// this.setEnableDataset('DIFFEXPR_EXPORT6945_DATASET10018.csv', true);
-			// this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6957_DATASET10022.csv'));
-			// this.setEnableDataset('DIFFEXPR_EXPORT6957_DATASET10022.csv', true);
-			// this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6964_DATASET10024.csv'));
-			// this.setEnableDataset('DIFFEXPR_EXPORT6964_DATASET10024.csv', true);
-			// Run PCA
-			// this.getPCA();
+			this.debugSession();
 		}
 	}
 
@@ -255,7 +305,7 @@ class App extends React.Component {
 							</CardContent>
 						</Card>
 					</Drawer>
-					<Navbar toggleRightDrawer={this.toggleRightDrawer} />
+					<Navbar busy={ this.state.busy } toggleRightDrawer={this.toggleRightDrawer} />
 					<div style={styleSheet.appBody}>
 						{/* Main Plot for the interaction */}
 						<Grid container gutter={16}>

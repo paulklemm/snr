@@ -8,8 +8,22 @@ class UserManager {
 		// Store the number of maximum login tokens per user
 		this.maximumTokensPerUser = 3;
 		this.userPath = userPath;
+		this.debug = false;
+		if (this.debug)
+			this.debugTestUserPassword('paul', 'bla');
 	}
 
+	/**
+	 * This function can be deleted later on. It is used for debugging purposes to check 
+	 * aspects of the UserManager component to be working properly
+	 */
+	debugTestUserPassword(user, password) {
+		// Tests for UserManager function
+		timeStampLog("Checking password that should work");
+		timeStampLog(this.checkPassword(password, this.getPasswordHash(user)));
+		timeStampLog("Checking password that should not work");
+		timeStampLog(this.checkPassword(Math.random().toString(), this.getPasswordHash(user)));
+	}
 	/**
 	 * Wrapper function for requests containing a token check for a user.
 	 * If the the provided token is available for the user, then the apifunction will be executed
@@ -28,7 +42,7 @@ class UserManager {
 			return apiFunction(req);
 		else
 			// If not, report failure
-			return {name: name, success: false, message: 'Invalid token' };
+			return {name: name, success: false, loginInvalid: true, message: 'Invalid token or user' };
 	}
 
 	/**
@@ -51,6 +65,9 @@ class UserManager {
 	checkToken(user, token) {
 		// Get settings for the user
 		const userSettings = this.getUserSettings(user);
+		// If user settings are undefined, return false
+		if (typeof userSettings === 'undefined')
+			return false;
 		// When there are no tokens added, return false
 		if (typeof userSettings.tokens !== 'object') return false;
 		// Get the token keys that represent the tokens as string
