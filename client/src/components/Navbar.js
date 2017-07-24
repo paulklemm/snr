@@ -25,7 +25,7 @@ class Navbar extends React.Component {
         <Grid container gutter={24}>
           <Grid item xs={1}></Grid>
           <Grid item xs={5}>
-            <Logo pulse={true}></Logo>
+            <Logo pulse={false}></Logo>
           </Grid>
           <Grid item xs={5} style={styleSheet.buttons}>
             <a style={styleSheet.button} onClick={this.props.toggleRightDrawer}>Show datasets</a>

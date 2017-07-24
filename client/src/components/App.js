@@ -188,8 +188,8 @@ class App extends React.Component {
 			// TODO: Debug Login
 			const loginSuccessful = this.authentication.login('paul', 'bla');
 			// TODO: Debug Run R command on Node server
-			this.nodeBridge.testRCommand("sonaR", "getUserFolder", { user: "'paul'" }, "json", 'paul', localStorage.getItem('sonarLoginToken'));
-			// this.nodeBridge.testRCommand("sonaR", "getUserFolder", { user: "'paul'" }, "json", 'paul', 'abv');
+			this.nodeBridge.runRCommand("sonaR", "getUserFolder", { user: "'paul'" }, "json", 'paul', localStorage.getItem('sonarLoginToken'));
+			this.nodeBridge.runRCommand("sonaR", "getUserFolder", { user: "'paul'" }, "json", 'paul', 'a');
 			// Using setState is not fast enough for the async loading function
 			this.state['openCPULoadDataSessionID'] = 'x040fdf7f13';
 

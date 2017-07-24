@@ -29,6 +29,10 @@ const settings = getSettings();
 const userManager = new UserManager(settings.users);
 // Create the openCPU connection
 const openCPU = new OpenCPUBridge('http://localhost:8004');
+// TODO: Debug code to test OpenCPU bridge
+// openCPU.runRCommand("sonaR", "getUserFolder", { user: "'paul'" }, "json").then((result) => {
+//   timeStampLog(JSON.stringify(result));
+// });
 
 const app = express();
 app.set("port", process.env.PORT || settings.port);
@@ -53,12 +57,19 @@ app.get("/api/runrcommand", (req, res) => {
   const result = userManager.tokenApiFunction('runrcommand', req, (req) => {
     const rpackage = req.query.rpackage;
     const rfunction = req.query.rfunction;
-    const params = req.query.params;
+    // Params come as JSON strings
+    const params = JSON.parse(req.query.params);
     const valformat = req.query.valformat;
-    timeStampLog(`Received runRCommand: ${openCPU.address}/ocpu/library/${rpackage}/R/${rfunction}; params ${params}; valFormat ${valformat}`);
-    return ({ name: 'runrcommand', success: true });
+    // Log the command for debugging
+    timeStampLog(`${rpackage}.${rfunction}(${JSON.stringify(params)}), valformat: ${valformat }`);
+    // Run the command
+    openCPU.runRCommand(rpackage, rfunction, params, valformat).then((result) => {
+      res.json({ name: 'runrcommand', success: true, result: result });
+    });
   });
-  res.json(result);
+  // If the check for user and token fails, this will report the failure
+  if (typeof result != 'undefined')
+    res.json(result);
 });
 
 /**
