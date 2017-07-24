@@ -62,6 +62,7 @@ class App extends React.Component {
 			openCPULoadDataSessionID: "",
 			// TODO: This is now still set to the last loaded dataset, should be set using the DatasetSelect Element
 			primaryDataset: {},
+			loginRequired: true,
 			openDrawer: {right: false}
 		};
 	}
@@ -107,6 +108,11 @@ class App extends React.Component {
 	}
 
 	async initSession() {
+		// Login Required
+		const loginRequired = await this.authentication.loginRequired();
+		this.setState({
+			loginRequired: loginRequired
+		});
 		// get the personal folder
 		const output = await this.openCPU.runRCommand("sonaR", "getUserFolder", { user: "'paul'" }, "json", false);
 		// Output is array containing a string, therefore this looks a bit ugly here
@@ -137,6 +143,42 @@ class App extends React.Component {
 		this.setState({
 			pcaImage: `${outputPCA.graphics[0]}/svg`
 		});
+	}
+
+	/**
+	 * Start debug session to not require manual input
+	 */
+	async debugSession() {
+		console.log("Entering Debug mode. Data will be loaded automatically. To disable, set `App.debug` to `false`");
+		// Login Required
+		const loginRequired = await this.authentication.loginRequired();
+		this.setState({
+			loginRequired: loginRequired
+		});
+		// TODO: Debug Login
+		const loginSuccessful = this.authentication.login('paul', 'bla');
+		this.setState({
+			loginRequired: !loginSuccessful
+		});
+		// TODO: Debug Run R command on Node server
+		this.nodeBridge.runRCommand("sonaR", "getUserFolder", { user: "'paul'" }, "json", 'paul', localStorage.getItem('sonarLoginToken'));
+		this.nodeBridge.runRCommand("sonaR", "getUserFolder", { user: "'paul'" }, "json", 'paul', 'a');
+		// Using setState is not fast enough for the async loading function
+		this.state['openCPULoadDataSessionID'] = 'x040fdf7f13';
+
+		// this.setState({ openCPULoadDataSessionID: 'x040fdf7f13' });
+		// this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6952_DATASET10020.csv'));
+		// this.setEnableDataset('DIFFEXPR_EXPORT6952_DATASET10020.csv', true);
+		// this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6938_DATASET10016.csv'));
+		// this.setEnableDataset('DIFFEXPR_EXPORT6938_DATASET10016.csv', true);
+		// this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6945_DATASET10018.csv'));
+		// this.setEnableDataset('DIFFEXPR_EXPORT6945_DATASET10018.csv', true);
+		// this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6957_DATASET10022.csv'));
+		// this.setEnableDataset('DIFFEXPR_EXPORT6957_DATASET10022.csv', true);
+		// this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6964_DATASET10024.csv'));
+		// this.setEnableDataset('DIFFEXPR_EXPORT6964_DATASET10024.csv', true);
+		// Run PCA
+		// this.getPCA();
 	}
 
 	async getPCA() {
@@ -174,35 +216,6 @@ class App extends React.Component {
 		if (debug) console.log(`Resize Window, width: ${window.innerWidth}, height: ${window.innerHeight}`);
 		this.layoutFactory.updateWindowSize(window.innerWidth, window.innerHeight);
 		this.forceUpdate();
-	}
-
-	async debugSession() {
-		console.log("Entering Debug mode. Data will be loaded automatically. To disable, set `App.debug` to `false`");
-		// Login Required
-		const loginRequired = await this.authentication.loginRequired();
-		if (loginRequired)
-			console.log("Login required");
-		// TODO: Debug Login
-		const loginSuccessful = this.authentication.login('paul', 'bla');
-		// TODO: Debug Run R command on Node server
-		this.nodeBridge.runRCommand("sonaR", "getUserFolder", { user: "'paul'" }, "json", 'paul', localStorage.getItem('sonarLoginToken'));
-		this.nodeBridge.runRCommand("sonaR", "getUserFolder", { user: "'paul'" }, "json", 'paul', 'a');
-		// Using setState is not fast enough for the async loading function
-		this.state['openCPULoadDataSessionID'] = 'x040fdf7f13';
-
-			// this.setState({ openCPULoadDataSessionID: 'x040fdf7f13' });
-			// this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6952_DATASET10020.csv'));
-			// this.setEnableDataset('DIFFEXPR_EXPORT6952_DATASET10020.csv', true);
-			// this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6938_DATASET10016.csv'));
-			// this.setEnableDataset('DIFFEXPR_EXPORT6938_DATASET10016.csv', true);
-			// this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6945_DATASET10018.csv'));
-			// this.setEnableDataset('DIFFEXPR_EXPORT6945_DATASET10018.csv', true);
-			// this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6957_DATASET10022.csv'));
-			// this.setEnableDataset('DIFFEXPR_EXPORT6957_DATASET10022.csv', true);
-			// this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6964_DATASET10024.csv'));
-			// this.setEnableDataset('DIFFEXPR_EXPORT6964_DATASET10024.csv', true);
-			// Run PCA
-			// this.getPCA();
 	}
 
 	componentWillMount() {
