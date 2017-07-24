@@ -176,22 +176,19 @@ class App extends React.Component {
 		this.forceUpdate();
 	}
 
-	componentWillMount() {
-		this.handleResize();
-		// Debug RNASeq connection
-		this.openCPU = new OpenCPUBridge('http://localhost:8004');
-		// let r = new R(openCPU);
-		if (!this.debug) {
-			this.initSession()
-		} else {
-			console.log("Entering Debug mode. Data will be loaded automatically. To disable, set `App.debug` to `false`");
-			// TODO: Debug Login
-			const loginSuccessful = this.authentication.login('paul', 'bla');
-			// TODO: Debug Run R command on Node server
-			this.nodeBridge.runRCommand("sonaR", "getUserFolder", { user: "'paul'" }, "json", 'paul', localStorage.getItem('sonarLoginToken'));
-			this.nodeBridge.runRCommand("sonaR", "getUserFolder", { user: "'paul'" }, "json", 'paul', 'a');
-			// Using setState is not fast enough for the async loading function
-			this.state['openCPULoadDataSessionID'] = 'x040fdf7f13';
+	async debugSession() {
+		console.log("Entering Debug mode. Data will be loaded automatically. To disable, set `App.debug` to `false`");
+		// Login Required
+		const loginRequired = await this.authentication.loginRequired();
+		if (loginRequired)
+			console.log("Login required");
+		// TODO: Debug Login
+		const loginSuccessful = this.authentication.login('paul', 'bla');
+		// TODO: Debug Run R command on Node server
+		this.nodeBridge.runRCommand("sonaR", "getUserFolder", { user: "'paul'" }, "json", 'paul', localStorage.getItem('sonarLoginToken'));
+		this.nodeBridge.runRCommand("sonaR", "getUserFolder", { user: "'paul'" }, "json", 'paul', 'a');
+		// Using setState is not fast enough for the async loading function
+		this.state['openCPULoadDataSessionID'] = 'x040fdf7f13';
 
 			// this.setState({ openCPULoadDataSessionID: 'x040fdf7f13' });
 			// this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6952_DATASET10020.csv'));
@@ -206,6 +203,17 @@ class App extends React.Component {
 			// this.setEnableDataset('DIFFEXPR_EXPORT6964_DATASET10024.csv', true);
 			// Run PCA
 			// this.getPCA();
+	}
+
+	componentWillMount() {
+		this.handleResize();
+		// Debug RNASeq connection
+		this.openCPU = new OpenCPUBridge('http://localhost:8004');
+		// let r = new R(openCPU);
+		if (!this.debug) {
+			this.initSession();
+		} else {
+			this.debugSession();
 		}
 	}
 

@@ -12,10 +12,48 @@ class Authentication {
 		this.nodeBridge = nodeBridge;
 	}
 
+	/**
+	 * Get user of local storage
+	 */
+	getUser() {
+		return localStorage.getItem('sonarLoginUser');
+	}
+
+	/**
+	 * Get token of local storage
+	 */
+	getToken() {
+		return localStorage.getItem('sonarLoginToken');
+	}
+
+	/**
+	 * Checks if local storage items exist and whether you can login with them.
+	 * @return Boolean of success
+	 */
+	async loginRequired() {
+		// If there is no local storage for user or token, return true
+		if (localStorage.getItem('sonarLoginToken') == null || localStorage.getItem('sonarLoginUser') == null)
+			return true;
+		const token = localStorage.getItem('sonarLoginToken');
+		const user = localStorage.getItem('sonarLoginUser');
+		// Check if login works
+		const response = await this.nodeBridge.echoToken(`User and token handshake (${user}, ${token})`, user, token);
+		// Invert the success boolean and return it
+		return !response.success;
+	}
+
+	/**
+	 * Logs in user and returns boolean success. 
+	 * If successfull, set localStorage items `sonarLoginToken` and `sonarLoginUser`
+	 * @param {String} user: User to log in
+	 * @param {String} password: Password for user
+	 * @return {Boolean} Success of login
+	 */
 	async login(user, password) {
 		const response = await this.nodeBridge.login(user, password);
 		if (response.success) {
       localStorage.setItem('sonarLoginToken', response.token);
+      localStorage.setItem('sonarLoginUser', user);
       return true;
 		} else {
 			console.error(`Login failed, reason: ${response.reason}`);
