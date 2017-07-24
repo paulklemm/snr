@@ -42,7 +42,7 @@ class UserManager {
 			return apiFunction(req);
 		else
 			// If not, report failure
-			return {name: name, success: false, message: 'Invalid token or user' };
+			return {name: name, success: false, loginInvalid: true, message: 'Invalid token or user' };
 	}
 
 	/**

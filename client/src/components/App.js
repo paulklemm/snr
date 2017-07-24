@@ -114,7 +114,7 @@ class App extends React.Component {
 			loginRequired: loginRequired
 		});
 		// get the personal folder
-		const output = await this.openCPU.runRCommand("sonaR", "getUserFolder", { user: "'paul'" }, "json", false);
+		const output = await this.openCPU.runRCommand("sonaR", "getUserFolder", { user: "'paul'" }, "json");
 		// Output is array containing a string, therefore this looks a bit ugly here
 		let userFolder = output['.val'][0];
 
@@ -146,23 +146,48 @@ class App extends React.Component {
 	}
 
 	/**
+	 * Sends R command to node server. There it will be executed and return the result in the specified valformat
+	 * Example:
+	 * runRCommand("sonaR", "getUserFolder", { user: "'paul'" }, "json", 'paul', localStorage.getItem('sonarLoginToken'));
+	 * @param {String} rpackage: Name of the `R` package ("stats")
+	 * @param {String} rfunction: Name of the `R` function ("rnorm")
+	 * @param {Object} params: JSON object of the parameters ("{ n: 10, mean: 5 }"")
+	 * @param {String} valFormat: Format of .val attribute (ascii, json, tsv), refer to `https://opencpu.github.io/server-manual/opencpu-server.pdf`
+	 * @param {String} user: Name of the user
+	 * @param {String} token: Token of the user
+	 * @param {Boolean} debug: Print debug statements, defaults to false
+	 */
+	async runRCommand(rpackage, rfunction, params, valformat, debug = false) {
+		if (debug) console.log(`Run R command on node server ${rpackage}.${rfunction}(${JSON.stringify(params)}), valformat: ${valformat}`);
+		let response = await this.nodeBridge.sendRCommand(rpackage, rfunction, params, valformat, this.authentication.getUser(), this.authentication.getToken());
+		if (debug) console.log(response);
+		// If Response is negative because of invalid token, invalidate login
+		if (typeof response.loginInvalid === 'undefined' && response.loginInvalid === true) {
+			this.setState({
+				loginRequired: true
+			});
+		}
+	}
+
+	/**
 	 * Start debug session to not require manual input
 	 */
 	async debugSession() {
 		console.log("Entering Debug mode. Data will be loaded automatically. To disable, set `App.debug` to `false`");
 		// Login Required
 		const loginRequired = await this.authentication.loginRequired();
+		if (loginRequired)
+			console.log("Login required");
 		this.setState({
 			loginRequired: loginRequired
 		});
 		// TODO: Debug Login
-		const loginSuccessful = this.authentication.login('paul', 'bla');
+		const loginSuccessful = await this.authentication.login('paul', 'bla');
 		this.setState({
 			loginRequired: !loginSuccessful
 		});
 		// TODO: Debug Run R command on Node server
-		this.nodeBridge.runRCommand("sonaR", "getUserFolder", { user: "'paul'" }, "json", 'paul', localStorage.getItem('sonarLoginToken'));
-		this.nodeBridge.runRCommand("sonaR", "getUserFolder", { user: "'paul'" }, "json", 'paul', 'a');
+		this.runRCommand("sonaR", "getUserFolder", { user: "'paul'" }, "json", true);
 		// Using setState is not fast enough for the async loading function
 		this.state['openCPULoadDataSessionID'] = 'x040fdf7f13';
 

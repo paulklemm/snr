@@ -27,6 +27,22 @@ class Authentication {
 	}
 
 	/**
+	 * Set user for current session
+	 * @param {String} user: User name to set
+	 */
+	setUser(user) {
+		localStorage.setItem('sonarLoginUser', user);
+	}
+
+	/**
+	 * Set user for current session
+	 * @param {String} token: Token name to set
+	 */
+	setToken(token) {
+		localStorage.setItem('sonarLoginToken', token);
+	}
+
+	/**
 	 * Checks if local storage items exist and whether you can login with them.
 	 * @return Boolean of success
 	 */

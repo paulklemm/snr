@@ -99,7 +99,6 @@ class NodeBridge {
 		return response;
 	}
 
-
 	/**
    * Get echo from server to test availability
    * @param {String} query term to echo
@@ -110,23 +109,6 @@ class NodeBridge {
 		return fetch(`api/runrcommand?rpackage=${rpackage}&rfunction=${rfunction}&params=${JSON.stringify(params)}&valformat=${valformat}&user=${user}&token=${token}`, { accept: 'application/json' })
 			.then(this.parseJSON)
 			.then(cb);
-	}
-	/**
-	 * Sends R command to node server. There it will be executed and return the result in the specified valformat
-	 * Example:
-	 * runRCommand("sonaR", "getUserFolder", { user: "'paul'" }, "json", 'paul', localStorage.getItem('sonarLoginToken'));
-	 * @param {String} rpackage: Name of the `R` package ("stats")
-	 * @param {String} rfunction: Name of the `R` function ("rnorm")
-	 * @param {Object} params: JSON object of the parameters ("{ n: 10, mean: 5 }"")
-	 * @param {String} valFormat: Format of .val attribute (ascii, json, tsv), refer to `https://opencpu.github.io/server-manual/opencpu-server.pdf`
-	 * @param {String} user: Name of the user
-	 * @param {String} token: Token of the user
-	 * @param {Boolean} debug: Print debug statements, defaults to false
-	 */
-	async runRCommand(rpackage, rfunction, params, valformat, user, token, debug = false) {
-		if (debug) console.log(`Run R command on node server ${rpackage}.${rfunction}(${JSON.stringify(params)}), valformat: ${valformat}`);
-		let response = await this.sendRCommand(rpackage, rfunction, params, valformat, user, token);
-		if (debug) console.log(response);
 	}
 
 	/**
