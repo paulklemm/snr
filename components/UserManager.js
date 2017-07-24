@@ -42,7 +42,7 @@ class UserManager {
 			return apiFunction(req);
 		else
 			// If not, report failure
-			return {name: name, success: false, message: 'Invalid token' };
+			return {name: name, success: false, message: 'Invalid token or user' };
 	}
 
 	/**
@@ -65,6 +65,9 @@ class UserManager {
 	checkToken(user, token) {
 		// Get settings for the user
 		const userSettings = this.getUserSettings(user);
+		// If user settings are undefined, return false
+		if (typeof userSettings === 'undefined')
+			return false;
 		// When there are no tokens added, return false
 		if (typeof userSettings.tokens !== 'object') return false;
 		// Get the token keys that represent the tokens as string
