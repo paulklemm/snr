@@ -5,7 +5,8 @@ import Helper from './Helper';
 import {hexbin as D3Hexbin} from 'd3-hexbin';
 import {interpolateLab} from 'd3-interpolate';
 import {scaleLinear} from 'd3-scale';
-import { LabelSwitch } from 'material-ui/Switch';
+import { FormControlLabel } from 'material-ui/Form';
+import Switch from 'material-ui/Switch';
 import Measure from 'react-measure';
 
 // Important Links
@@ -71,10 +72,12 @@ class Hexplot extends Scatterplot {
 		let pointArray = this.createPointArray(xArray, yArray);
 
 		let hexagons = Hexplot.printHexagons(pointArray, this.props.hexSize, this.props.hexMax);
-		// UI Element for enabling LabelSwitch
-		let renderGenesOption = <LabelSwitch
-			checked={this.state.renderDots}
-			onChange={(event, checked) => this.setState({ renderDots: checked })}
+		// UI Element for enabling FormControlLabel
+		let renderGenesOption = <FormControlLabel
+			control={<Switch 
+				checked={this.state.renderDots}
+				onChange={(event, checked) => this.setState({ renderDots: checked })}
+			/>}
 			label="Render Genes"
 			/>;
 

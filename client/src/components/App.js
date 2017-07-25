@@ -28,7 +28,6 @@ import LayoutFactory from './LayoutFactory';
 // Third party components
 import { Icon } from 'react-fa';
 // Material-UI components
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Drawer from 'material-ui/Drawer';
 import Grid from 'material-ui/Grid';
 import Paper from 'material-ui/Paper';
@@ -162,7 +161,7 @@ class App extends React.Component {
 	async runRCommand(rpackage, rfunction, params, valformat, debug = false) {
 		// Set busy state
 		const runKey = `Run R command on node server ${rpackage}.${rfunction}(${JSON.stringify(params)}), valformat: ${valformat}`
-		// TODO: This should be done using a stack of operations that are still not done and only set busy to false if everything is done
+		// Busy is a stack of operations. At the beginning, add a unique key for the operation to the busyStack and then remove it after success
 		let busy = this.state.busy;
 		busy[runKey] = true;
 		this.setState({ busy: busy });
@@ -203,7 +202,7 @@ class App extends React.Component {
 		// Using setState is not fast enough for the async loading function
 		this.state['openCPULoadDataSessionID'] = 'x040fdf7f13';
 
-		// this.setState({ openCPULoadDataSessionID: 'x040fdf7f13' });
+		this.setState({ openCPULoadDataSessionID: 'x040fdf7f13' });
 		// this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6952_DATASET10020.csv'));
 		// this.setEnableDataset('DIFFEXPR_EXPORT6952_DATASET10020.csv', true);
 		// this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6938_DATASET10016.csv'));
@@ -298,53 +297,51 @@ class App extends React.Component {
 		// Add PCA
 		let pcaImage = (typeof this.state.pcaImage === "undefined") ? pcaImage = <Loading width={800} height={400} /> : <img src={`${this.state.pcaImage}?width=7&height=5`} width={800} height={400} alt="R test PCA" />;
 		return (
-			<MuiThemeProvider>
-				<div>
-					<Drawer
-						anchor="right"
-						open={this.state.openDrawer.right}
-						onRequestClose={this.handleRightClose}
-						onClick={this.handleRightClose}
-						docked={true}
-					>
-						<Card style={{ maxWidth: `${this.layoutFactory.windowWidth / 2}px` }}>
-							<CardContent>
-								<IconButton style={{ float: 'right' }} onClick={this.toggleRightDrawer}><Icon name="times" /></IconButton>
-								{<DatasetSelect getDatasetIcon={ this.datasetHub.getDatasetIcon } setDatasetIcon={ this.setDatasetIcon } datasetEnabled={this.state.datasetEnabled} datasetLoading={this.state.datasetLoading} setEnableDataset={this.setEnableDataset} />}
-							</CardContent>
-						</Card>
-					</Drawer>
-					<Navbar busy={ Object.keys(this.state.busy).length !== 0 } toggleRightDrawer={this.toggleRightDrawer} />
-					<div style={styleSheet.appBody}>
-						{/* Main Plot for the interaction */}
-						<Grid container gutter={16}>
-							<Grid item xs={8}>
-									{/*<center><p>{this.state.primaryDataset.name}</p></center>*/}
-									<Hexplot height={this.layoutFactory.heights.mainView} width={600} responsiveWidth={true} rnaSeqData={this.state.primaryDataset} xName="pValueNegLog10" yName="fc" hexSize={4} hexMax={20} showRenderGenesOption={false}/>
-							</Grid>
-							<Grid item xs={4}>
-								<Grid container gutter={16}>
-									{hexplots}
-								</Grid>
-							</Grid>
-							{/* Add Table on whole page length */}
-							<Grid item xs={12}>
-									<Table data={primaryDatasetData} dimNames={primaryDatasetDimNames} height={400} onFilter={this.onFilter} />
+			<div>
+				<Drawer
+					anchor="right"
+					open={this.state.openDrawer.right}
+					onRequestClose={this.handleRightClose}
+					onClick={this.handleRightClose}
+					docked={true}
+				>
+					<Card style={{ maxWidth: `${this.layoutFactory.windowWidth / 2}px` }}>
+						<CardContent>
+							<IconButton style={{ float: 'right' }} onClick={this.toggleRightDrawer}><Icon name="times" /></IconButton>
+							{<DatasetSelect getDatasetIcon={ this.datasetHub.getDatasetIcon } setDatasetIcon={ this.setDatasetIcon } datasetEnabled={this.state.datasetEnabled} datasetLoading={this.state.datasetLoading} setEnableDataset={this.setEnableDataset} />}
+						</CardContent>
+					</Card>
+				</Drawer>
+				<Navbar busy={ Object.keys(this.state.busy).length !== 0 } toggleRightDrawer={this.toggleRightDrawer} />
+				<div style={styleSheet.appBody}>
+					{/* Main Plot for the interaction */}
+					<Grid container gutter={16}>
+						<Grid item xs={8}>
+								{/*<center><p>{this.state.primaryDataset.name}</p></center>*/}
+								<Hexplot height={this.layoutFactory.heights.mainView} width={600} responsiveWidth={true} rnaSeqData={this.state.primaryDataset} xName="pValueNegLog10" yName="fc" hexSize={4} hexMax={20} showRenderGenesOption={false}/>
+						</Grid>
+						<Grid item xs={4}>
+							<Grid container gutter={16}>
+								{hexplots}
 							</Grid>
 						</Grid>
-							{/*<Paper>
+						{/* Add Table on whole page length */}
+						<Grid item xs={12}>
 								<Table data={primaryDatasetData} dimNames={primaryDatasetDimNames} height={400} onFilter={this.onFilter} />
+						</Grid>
+					</Grid>
+						{/*<Paper>
+							<Table data={primaryDatasetData} dimNames={primaryDatasetDimNames} height={400} onFilter={this.onFilter} />
+						</Paper>
+						<Grid item xs>
+							<Paper>
+								{pcaImage}
 							</Paper>
-							<Grid item xs>
-								<Paper>
-									{pcaImage}
-								</Paper>
-							</Grid>
-							{hexplots}*/}
-						
-					</div>
+						</Grid>
+						{hexplots}*/}
+					
 				</div>
-			</MuiThemeProvider>
+			</div>
 		);
 	}
 }
