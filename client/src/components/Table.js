@@ -112,7 +112,7 @@ class Table extends React.Component{
 							}
 						</IconButton>
 							<TextField 
-							style={{ width: '100% important!', marginTop: '-21px', marginLeft: '5px'}}
+							style={{ width: '100% important!', marginLeft: '5px'}}
 								id="filter" 
 								label="Filter" 
 								onChange={(event) => {

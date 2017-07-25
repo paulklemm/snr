@@ -5,7 +5,7 @@ import Grid from 'material-ui/Grid';
 const styleSheet = {
   navbar: {
     marginBottom: '60px',
-    marginTop: '50px',
+    marginTop: '40px',
   },
   button: {
     color: '#333',
