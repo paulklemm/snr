@@ -15,7 +15,6 @@ import Piechart from './Piechart';
 import DynamicHexBin from './DynamicHexBin';
 // eslint-disable-next-line
 import ScatterplotRNASeqData from './ScatterplotRNASeqData';
-import OpenCPUBridge from './OpenCPUBridge';
 import NodeBridge from './NodeBridge';
 import Authentication from './Authentication';
 import Dataset from './Dataset';
@@ -30,7 +29,6 @@ import { Icon } from 'react-fa';
 // Material-UI components
 import Drawer from 'material-ui/Drawer';
 import Grid from 'material-ui/Grid';
-import Paper from 'material-ui/Paper';
 import IconButton from 'material-ui/IconButton';
 import Card, { CardContent } from 'material-ui/Card';
 
@@ -202,7 +200,7 @@ class App extends React.Component {
 		// Using setState is not fast enough for the async loading function
 		this.state['openCPULoadDataSessionID'] = 'x040fdf7f13';
 
-		this.setState({ openCPULoadDataSessionID: 'x040fdf7f13' });
+		// this.setState({ openCPULoadDataSessionID: 'x040fdf7f13' });
 		// this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6952_DATASET10020.csv'));
 		// this.setEnableDataset('DIFFEXPR_EXPORT6952_DATASET10020.csv', true);
 		// this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6938_DATASET10016.csv'));
