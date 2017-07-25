@@ -27,8 +27,10 @@ const styleSheet = {
     color: '#ee6351'
   },
   spinner: {
-    left: '-0.9px',
-    top: '-1.8px',
+    // left: '-0.9px',
+    // top: '-1.8px',
+    marginLeft: '-25px',
+    marginTop: '-2px',
     width: '40px',
     height: '40px',
     display: 'inline-block',
