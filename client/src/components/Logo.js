@@ -12,9 +12,9 @@ const injectStyle = (style) => {
 const styleSheet = {
   spinnerParent: {
     // margin: '5px',
-    width: '100px',
-    height: '25px',
-    position: 'relative',
+    // width: '100px',
+    // height: '25px',
+    // position: 'relative',
     fontSize: '30px',
     color: '#333',
     fontFamily: "Helvetica Neue",

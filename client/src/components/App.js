@@ -24,6 +24,7 @@ import Table from './Table';
 import Navbar from './Navbar';
 import Loading from './Loading';
 import LayoutFactory from './LayoutFactory';
+import LoginScreen from './LoginScreen';
 // Third party components
 import { Icon } from 'react-fa';
 // Material-UI components
@@ -31,6 +32,10 @@ import Drawer from 'material-ui/Drawer';
 import Grid from 'material-ui/Grid';
 import IconButton from 'material-ui/IconButton';
 import Card, { CardContent } from 'material-ui/Card';
+//Material-UI theming
+import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
+import createPalette from 'material-ui/styles/palette';
+import orange from 'material-ui/colors/orange';
 
 const styleSheet = {
 	appBody: {
@@ -39,6 +44,13 @@ const styleSheet = {
 	}
 };
 
+// Create theme (https://material-ui-1dab0.firebaseapp.com/customization/themes)
+const theme = createMuiTheme({
+	palette: createPalette({
+		primary: orange
+	}),
+});
+
 class App extends React.Component {
 	constructor() {
 		super();
@@ -46,6 +58,7 @@ class App extends React.Component {
 		this.onFilter = this.onFilter.bind(this);
 		this.handleResize = this.handleResize.bind(this);
 		this.setDatasetIcon = this.setDatasetIcon.bind(this);
+		this.login = this.login.bind(this);
 		this.datasetHub = new DatasetHub();
 		this.debug = true;
 		this.layoutFactory = new LayoutFactory(16);
@@ -59,7 +72,7 @@ class App extends React.Component {
 			openCPULoadDataSessionID: "",
 			// TODO: This is now still set to the last loaded dataset, should be set using the DatasetSelect Element
 			primaryDataset: {},
-			loginRequired: true,
+			loginRequired: false,
 			busy: {},
 			openDrawer: {right: false}
 		};
@@ -181,6 +194,21 @@ class App extends React.Component {
 	}
 
 	/**
+	 * Wrapper function for authentication.login to set the local state as required
+	 * @param {String} user: User to login
+	 * @param {String} password: Password for user
+	 * @return {Boolean} Login successfull
+	 */
+	async login(user, password) {
+		// const loginSuccessful = await this.authentication.login('paul', 'bla');
+		const loginSuccessful = await this.authentication.login(user, password);
+		this.setState({
+			loginRequired: !loginSuccessful
+		});
+		return loginSuccessful;
+	}
+
+	/**
 	 * Start debug session to not require manual input
 	 */
 	async debugSession() {
@@ -193,10 +221,10 @@ class App extends React.Component {
 			loginRequired: loginRequired
 		});
 		// TODO: Debug Login
-		const loginSuccessful = await this.authentication.login('paul', 'bla');
-		this.setState({
-			loginRequired: !loginSuccessful
-		});
+		// const loginSuccessful = await this.authentication.login('paul', 'bla');
+		// this.setState({
+		// 	loginRequired: !loginSuccessful
+		// });
 		// Using setState is not fast enough for the async loading function
 		this.state['openCPULoadDataSessionID'] = 'x040fdf7f13';
 
@@ -294,7 +322,12 @@ class App extends React.Component {
 		let primaryDatasetDimNames = this.state.primaryDataset.dimNames;
 		// Add PCA
 		let pcaImage = (typeof this.state.pcaImage === "undefined") ? pcaImage = <Loading width={800} height={400} /> : <img src={`${this.state.pcaImage}?width=7&height=5`} width={800} height={400} alt="R test PCA" />;
-		return (
+
+		let app = ''
+		if (this.state.loginRequired) {
+			app = <div><LoginScreen login={ this.login } /></div>;
+		} else {
+			app = 
 			<div>
 				<Drawer
 					anchor="right"
@@ -306,17 +339,17 @@ class App extends React.Component {
 					<Card style={{ maxWidth: `${this.layoutFactory.windowWidth / 2}px` }}>
 						<CardContent>
 							<IconButton style={{ float: 'right' }} onClick={this.toggleRightDrawer}><Icon name="times" /></IconButton>
-							{<DatasetSelect getDatasetIcon={ this.datasetHub.getDatasetIcon } setDatasetIcon={ this.setDatasetIcon } datasetEnabled={this.state.datasetEnabled} datasetLoading={this.state.datasetLoading} setEnableDataset={this.setEnableDataset} />}
+							{<DatasetSelect getDatasetIcon={this.datasetHub.getDatasetIcon} setDatasetIcon={this.setDatasetIcon} datasetEnabled={this.state.datasetEnabled} datasetLoading={this.state.datasetLoading} setEnableDataset={this.setEnableDataset} />}
 						</CardContent>
 					</Card>
 				</Drawer>
-				<Navbar busy={ Object.keys(this.state.busy).length !== 0 } toggleRightDrawer={this.toggleRightDrawer} />
+				<Navbar busy={Object.keys(this.state.busy).length !== 0} toggleRightDrawer={this.toggleRightDrawer} />
 				<div style={styleSheet.appBody}>
 					{/* Main Plot for the interaction */}
 					<Grid container gutter={16}>
 						<Grid item xs={8}>
-								{/*<center><p>{this.state.primaryDataset.name}</p></center>*/}
-								<Hexplot height={this.layoutFactory.heights.mainView} width={600} responsiveWidth={true} rnaSeqData={this.state.primaryDataset} xName="pValueNegLog10" yName="fc" hexSize={4} hexMax={20} showRenderGenesOption={false}/>
+							{/*<center><p>{this.state.primaryDataset.name}</p></center>*/}
+							<Hexplot height={this.layoutFactory.heights.mainView} width={600} responsiveWidth={true} rnaSeqData={this.state.primaryDataset} xName="pValueNegLog10" yName="fc" hexSize={4} hexMax={20} showRenderGenesOption={false} />
 						</Grid>
 						<Grid item xs={4}>
 							<Grid container gutter={16}>
@@ -325,21 +358,26 @@ class App extends React.Component {
 						</Grid>
 						{/* Add Table on whole page length */}
 						<Grid item xs={12}>
-								<Table data={primaryDatasetData} dimNames={primaryDatasetDimNames} height={400} onFilter={this.onFilter} />
+							<Table data={primaryDatasetData} dimNames={primaryDatasetDimNames} height={400} onFilter={this.onFilter} />
 						</Grid>
 					</Grid>
-						{/*<Paper>
-							<Table data={primaryDatasetData} dimNames={primaryDatasetDimNames} height={400} onFilter={this.onFilter} />
-						</Paper>
-						<Grid item xs>
-							<Paper>
-								{pcaImage}
+					{/*<Paper>
+								<Table data={primaryDatasetData} dimNames={primaryDatasetDimNames} height={400} onFilter={this.onFilter} />
 							</Paper>
-						</Grid>
-						{hexplots}*/}
-					
+							<Grid item xs>
+								<Paper>
+									{pcaImage}
+								</Paper>
+							</Grid>
+							{hexplots}*/}
+
 				</div>
-			</div>
+			</div>;
+		}
+		return (
+			<MuiThemeProvider theme={theme}>
+				{ app }
+			</MuiThemeProvider>
 		);
 	}
 }
