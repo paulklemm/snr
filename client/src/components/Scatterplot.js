@@ -5,6 +5,7 @@ import {scaleLinear} from 'd3-scale';
 import {axisBottom, axisLeft} from 'd3-axis';
 import {max, min} from 'd3-array';
 import Helper from './Helper';
+import SelectionRectangle from './SelectionRectangle';
 // eslint-disable-next-line
 import {mouse, select} from 'd3-selection';
 // Measure DOM Element in React: https://stackoverflow.com/questions/25371926/how-can-i-respond-to-the-width-of-an-auto-sized-dom-element-in-react
@@ -21,11 +22,13 @@ class Scatterplot extends React.Component {
 	constructor(props){
 		super(props);
 		this.state = {
-			tooltip: []
+			tooltip: [],
+			selectionRectangle: new SelectionRectangle()
 		};
 		this.onMouseLeaveTooltip = this.onMouseLeaveTooltip.bind(this);
-		this.handleClick = this.handleClick.bind(this);
 		this.onMeasure = this.onMeasure.bind(this);
+		this.handleMouseDown = this.handleMouseDown.bind(this);
+		this.handleMouseUp = this.handleMouseUp.bind(this);
 	}
 
 	setMargin() {
@@ -159,13 +162,28 @@ class Scatterplot extends React.Component {
 		return axisLabels;
 	}
 
-	handleClick(event){
+	handleClick(event, x, y){
 		// https://stackoverflow.com/questions/42576198/get-object-data-and-target-element-from-onclick-event-in-react-js
-		let dx = this.xScale(event.nativeEvent.offsetX);
-		let dy = this.yScale(event.nativeEvent.offsetY);
-		console.log(`Click on ${dx}, ${dy}`);
-		console.log(`OffsetX: ${event.nativeEvent.offsetX}, OffsetY: ${event.nativeEvent.offsetY}`);
-		console.log(`Non-Scale: Click on ${event.clientX}, ${event.clientY}`);
+		console.log(`Click Event on ${x}, ${y}`);
+	}
+
+	handleMouseDown(event) {
+		console.log(`Mouse Down (${event.nativeEvent.offsetX}, ${event.nativeEvent.offsetY})`);
+		this.state.selectionRectangle.setStart(event.nativeEvent.offsetX - margin.left, event.nativeEvent.offsetY - margin.bottom);
+	}
+
+	handleMouseMove(event) {
+		console.log(`Mouse Move (${event.nativeEvent.offsetX}, ${event.nativeEvent.offsetY})`);
+		let selectionRectangle = this.state.selectionRectangle;
+		selectionRectangle.setCurrent(event.nativeEvent.offsetX - margin.left, event.nativeEvent.offsetY - margin.bottom);
+		this.setState({ selectionRectangle: selectionRectangle });
+	}
+
+	handleMouseUp(event) {
+		console.log(`Mouse Up (${event.nativeEvent.offsetX}, ${event.nativeEvent.offsetY})`);
+		let selectionRectangle = this.state.selectionRectangle;
+		selectionRectangle.reset();
+		this.setState({ selectionRectangle: selectionRectangle });
 	}
 
 	/**
@@ -203,13 +221,17 @@ class Scatterplot extends React.Component {
 					{ /* <p>#Elements NaN: {`${this.props.xLabel}: ${this.numberOfNaN.x}`}, Y: {`${this.props.yLabel}: ${this.numberOfNaN.y}`}</p> */ }
 					<svg 
 						className="scatterplot"
+						onMouseDown={(e) => this.handleMouseDown(e)}
+						onMouseMove={(e) => this.handleMouseMove(e)}
+						onMouseUp={(e) => this.handleMouseUp(e)}
 						width={this.widthNoMargin + this.margin.left + this.margin.right} 
 						height={this.heightNoMargin + this.margin.top + this.margin.bottom}>
-							<g transform={`translate(${this.margin.left},${this.margin.top})`} onClick={this.handleClick}>
+						<g transform={`translate(${this.margin.left},${this.margin.top})`}>
 							{axes}
 							{dots}
 							{axisLabels}
 							{this.state.tooltip}
+							{this.state.selectionRectangle.getRectangle()}
 						</g>
 					</svg>
 				</div>

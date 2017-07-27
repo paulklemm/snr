@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Scatterplot from './Scatterplot';
 import Helper from './Helper';
+import SelectionRectangle from './SelectionRectangle';
 import {hexbin as D3Hexbin} from 'd3-hexbin';
 import {interpolateLab} from 'd3-interpolate';
 import {scaleLinear} from 'd3-scale';
@@ -19,7 +20,8 @@ class Hexplot extends Scatterplot {
 	constructor() {
 		super();
 		this.state = {
-			renderDots: false
+			renderDots: false,
+			selectionRectangle: new SelectionRectangle()
 		}
 		this.onMeasure = this.onMeasure.bind(this);
 	}
@@ -91,7 +93,9 @@ class Hexplot extends Scatterplot {
 					{this.props.showRenderGenesOption ? renderGenesOption : ''}
 					<svg 
 							className="hexagons"
-							onClick={this.handleClick}
+							onMouseDown={(e) => this.handleMouseDown(e)}
+							onMouseMove={(e) => this.handleMouseMove(e)}
+							onMouseUp={(e) => this.handleMouseUp(e)}
 							width={this.widthNoMargin + this.margin.left + this.margin.right} 
 							height={this.heightNoMargin + this.margin.top + this.margin.bottom}>
 						<g transform={`translate(${this.margin.left},${this.margin.top})`}>
@@ -100,6 +104,7 @@ class Hexplot extends Scatterplot {
 							{axes}
 							{axisLabels}
 							{this.state.tooltip}
+							{this.state.selectionRectangle.getRectangle()}
 						</g>
 					</svg>
 				</div>
