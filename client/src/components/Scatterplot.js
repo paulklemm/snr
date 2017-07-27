@@ -168,19 +168,19 @@ class Scatterplot extends React.Component {
 	}
 
 	handleMouseDown(event) {
-		console.log(`Mouse Down (${event.nativeEvent.offsetX}, ${event.nativeEvent.offsetY})`);
+		// console.log(`Mouse Down (${event.nativeEvent.offsetX}, ${event.nativeEvent.offsetY})`);
 		this.state.selectionRectangle.setStart(event.nativeEvent.offsetX - margin.left, event.nativeEvent.offsetY - margin.bottom);
 	}
 
 	handleMouseMove(event) {
-		console.log(`Mouse Move (${event.nativeEvent.offsetX}, ${event.nativeEvent.offsetY})`);
+		// console.log(`Mouse Move (${event.nativeEvent.offsetX}, ${event.nativeEvent.offsetY})`);
 		let selectionRectangle = this.state.selectionRectangle;
-		selectionRectangle.setCurrent(event.nativeEvent.offsetX - margin.left, event.nativeEvent.offsetY - margin.bottom);
+		selectionRectangle.setEnd(event.nativeEvent.offsetX - margin.left, event.nativeEvent.offsetY - margin.bottom);
 		this.setState({ selectionRectangle: selectionRectangle });
 	}
 
 	handleMouseUp(event) {
-		console.log(`Mouse Up (${event.nativeEvent.offsetX}, ${event.nativeEvent.offsetY})`);
+		// console.log(`Mouse Up (${event.nativeEvent.offsetX}, ${event.nativeEvent.offsetY})`);
 		let selectionRectangle = this.state.selectionRectangle;
 		selectionRectangle.reset();
 		this.setState({ selectionRectangle: selectionRectangle });

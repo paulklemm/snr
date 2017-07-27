@@ -351,7 +351,7 @@ class App extends React.Component {
 					<Grid container gutter={16}>
 						<Grid item xs={8}>
 							{/*<center><p>{this.state.primaryDataset.name}</p></center>*/}
-							<Hexplot height={this.layoutFactory.heights.mainView} width={600} responsiveWidth={true} rnaSeqData={this.state.primaryDataset} xName="pValueNegLog10" yName="fc" hexSize={4} hexMax={20} showRenderGenesOption={false} />
+							<Hexplot height={this.layoutFactory.heights.mainView} width={600} responsiveWidth={true} rnaSeqData={this.state.primaryDataset} xName="pValueNegLog10" yName="fc" hexSize={4} hexMax={20} showRenderGenesOption={true} />
 						</Grid>
 						<Grid item xs={4}>
 							<Grid container gutter={16}>
