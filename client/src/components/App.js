@@ -125,7 +125,8 @@ class App extends React.Component {
 			loginRequired: loginRequired
 		});
 		// get the personal folder
-		const output = await this.runRCommand("sonaR", "getUserFolder", { user: "'paul'" }, "json");
+		// TODO: The node server should decide on which folder to load!
+		const output = await this.runRCommand("sonaR", "getUserFolder", { user: `'${this.authentication.getUser()}'` }, "json");
 		// Output is array containing a string, therefore this looks a bit ugly here
 		let userFolder = output['.val'][0];
 
@@ -226,9 +227,9 @@ class App extends React.Component {
 		// 	loginRequired: !loginSuccessful
 		// });
 		// Using setState is not fast enough for the async loading function
-		this.state['openCPULoadDataSessionID'] = 'x040fdf7f13';
+		this.state['openCPULoadDataSessionID'] = 'x0529ff5682';
 
-		// this.setState({ openCPULoadDataSessionID: 'x040fdf7f13' });
+		// this.setState({ openCPULoadDataSessionID: 'x0529ff5682' });
 		// this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6952_DATASET10020.csv'));
 		// this.setEnableDataset('DIFFEXPR_EXPORT6952_DATASET10020.csv', true);
 		// this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6938_DATASET10016.csv'));
@@ -245,11 +246,11 @@ class App extends React.Component {
 
 	async getPCA() {
 		// TODO: Implement PCA
-		const pcaOutput = await this.runRCommand("sonaR", "get_pca_loadings", { x: 'x040fdf7f13' }, 'json', false);
+		const pcaOutput = await this.runRCommand("sonaR", "get_pca_loadings", { x: 'x0529ff5682' }, 'json', false);
 		console.log(`PCA Output`);
 		console.log(pcaOutput);
 		// Old plotting logic, ths should be removed later on
-		this.runRCommand("sonaR", "plot_pca", { x: 'x040fdf7f13' }, 'ascii', true).then(output => {
+		this.runRCommand("sonaR", "plot_pca", { x: 'x0529ff5682' }, 'ascii', true).then(output => {
 			this.setState({
 				pcaImage: `${output.graphics[0]}/svg`
 			});
@@ -349,7 +350,7 @@ class App extends React.Component {
 					<Grid container gutter={16}>
 						<Grid item xs={8}>
 							{/*<center><p>{this.state.primaryDataset.name}</p></center>*/}
-							<Hexplot height={this.layoutFactory.heights.mainView} width={600} responsiveWidth={true} rnaSeqData={this.state.primaryDataset} xName="pValueNegLog10" yName="fc" hexSize={4} hexMax={20} showRenderGenesOption={false} />
+							<Hexplot height={this.layoutFactory.heights.mainView} width={600} responsiveWidth={true} rnaSeqData={this.state.primaryDataset} xName="pValueNegLog10" yName="fc" hexSize={4} hexMax={20} showRenderGenesOption={false} /> 
 						</Grid>
 						<Grid item xs={4}>
 							<Grid container gutter={16}>

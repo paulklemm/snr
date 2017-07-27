@@ -206,8 +206,8 @@ class UserManager {
 		// If settings are empty, show error
 		if (typeof userSettings === 'undefined')
 			timeStampLog(
-				`Cannot find user ${user} at ${this.getUserConfigPath(user)}. Either user folder (${this
-					.userPath}) is wrong or user does not exist.`,
+				`Cannot find user '${user}' at '${this.getUserConfigPath(user)}'. Either user folder (${this
+					.userPath}) is wrong, JSON for user does not exist or the JSON is faulty.`,
 				true
 			);
 		// Return user Settings if everything works properly

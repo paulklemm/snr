@@ -91,6 +91,7 @@ class Hexplot extends Scatterplot {
 					{this.props.showRenderGenesOption ? renderGenesOption : ''}
 					<svg 
 							className="hexagons"
+							onClick={this.handleClick}
 							width={this.widthNoMargin + this.margin.left + this.margin.right} 
 							height={this.heightNoMargin + this.margin.top + this.margin.bottom}>
 						<g transform={`translate(${this.margin.left},${this.margin.top})`}>

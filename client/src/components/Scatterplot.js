@@ -24,6 +24,7 @@ class Scatterplot extends React.Component {
 			tooltip: []
 		};
 		this.onMouseLeaveTooltip = this.onMouseLeaveTooltip.bind(this);
+		this.handleClick = this.handleClick.bind(this);
 		this.onMeasure = this.onMeasure.bind(this);
 	}
 
@@ -158,9 +159,13 @@ class Scatterplot extends React.Component {
 		return axisLabels;
 	}
 
-	handleClick(event, x, y){
+	handleClick(event){
 		// https://stackoverflow.com/questions/42576198/get-object-data-and-target-element-from-onclick-event-in-react-js
-		console.log(`Click Event on ${x}, ${y}`);
+		let dx = this.xScale(event.nativeEvent.offsetX);
+		let dy = this.yScale(event.nativeEvent.offsetY);
+		console.log(`Click on ${dx}, ${dy}`);
+		console.log(`OffsetX: ${event.nativeEvent.offsetX}, OffsetY: ${event.nativeEvent.offsetY}`);
+		console.log(`Non-Scale: Click on ${event.clientX}, ${event.clientY}`);
 	}
 
 	/**
@@ -200,7 +205,7 @@ class Scatterplot extends React.Component {
 						className="scatterplot"
 						width={this.widthNoMargin + this.margin.left + this.margin.right} 
 						height={this.heightNoMargin + this.margin.top + this.margin.bottom}>
-						<g transform={`translate(${this.margin.left},${this.margin.top})`}>
+							<g transform={`translate(${this.margin.left},${this.margin.top})`} onClick={this.handleClick}>
 							{axes}
 							{dots}
 							{axisLabels}
