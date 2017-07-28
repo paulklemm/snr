@@ -58,6 +58,8 @@ class App extends React.Component {
 		this.onFilter = this.onFilter.bind(this);
 		this.handleResize = this.handleResize.bind(this);
 		this.setDatasetIcon = this.setDatasetIcon.bind(this);
+		this.setPlotDimensions = this.setPlotDimensions.bind(this);
+		this.setPlotDimension = this.setPlotDimension.bind(this);
 		this.login = this.login.bind(this);
 		this.datasetHub = new DatasetHub();
 		this.debug = true;
@@ -74,8 +76,34 @@ class App extends React.Component {
 			primaryDataset: {},
 			loginRequired: false,
 			busy: {},
-			openDrawer: {right: false}
+			openDrawer: {right: false},
+			xDimension: '',
+			yDimension: ''
 		};
+	}
+
+	/**
+	 * Sets the Dimension for the hexplots
+	 * @param {String} xDimension: Name of x dimension
+	 * @param {String} yDimension: Name of y dimension
+	 */
+	setPlotDimensions(xDimension, yDimension) {
+		this.setState({
+			xDimension: xDimension,
+			yDimension: yDimension
+		});
+	}
+
+	/**
+	 * Sets dimension of new x Dimension. The old one will be cycled to the y dimension
+	 * @param {String} newDimension: Name of new Dimension
+	 */
+	setPlotDimension(newDimension) {
+		const lastXDimension = this.state.xDimension;
+		this.setState({
+			xDimension: newDimension,
+			yDimension: lastXDimension
+		});
 	}
 
 	/**
@@ -213,6 +241,8 @@ class App extends React.Component {
 	 */
 	async debugSession() {
 		console.log("Entering Debug mode. Data will be loaded automatically. To disable, set `App.debug` to `false`");
+		// Set default plotting dimensions
+		this.setPlotDimensions('pValueNegLog10', 'fc');
 		// Login Required
 		const loginRequired = await this.authentication.loginRequired();
 		if (loginRequired)
@@ -315,7 +345,7 @@ class App extends React.Component {
 			if (dataset.loaded) {
 				hexplots.push(
 					<Grid item xs={6} key={ name }>
-							<Hexplot responsiveWidth={true} height={this.layoutFactory.heights.smallMultiples} width={0} rnaSeqData={dataset} xName="pValueNegLog10" yName="fc" hexSize={2} hexMax={10} showRenderGenesOption={false}/>
+							<Hexplot responsiveWidth={true} height={this.layoutFactory.heights.smallMultiples} width={0} rnaSeqData={dataset} xName={this.state.xDimension} yName={this.state.yDimension} hexSize={2} hexMax={10} showRenderGenesOption={false}/>
 					</Grid>
 				);
 			}
@@ -351,7 +381,8 @@ class App extends React.Component {
 					<Grid container gutter={16}>
 						<Grid item xs={8}>
 							{/*<center><p>{this.state.primaryDataset.name}</p></center>*/}
-							<Hexplot height={this.layoutFactory.heights.mainView} width={600} responsiveWidth={true} rnaSeqData={this.state.primaryDataset} xName="pValueNegLog10" yName="fc" hexSize={4} hexMax={20} showRenderGenesOption={true} />
+							{/* <Hexplot height={this.layoutFactory.heights.mainView} width={600} responsiveWidth={true} rnaSeqData={this.state.primaryDataset} xName="pValueNegLog10" yName="fc" hexSize={4} hexMax={20} showRenderGenesOption={true} /> */}
+							<Hexplot height={this.layoutFactory.heights.mainView} width={600} responsiveWidth={true} rnaSeqData={this.state.primaryDataset} xName={this.state.xDimension} yName={this.state.yDimension} hexSize={4} hexMax={20} showRenderGenesOption={true} />
 						</Grid>
 						<Grid item xs={4}>
 							<Grid container gutter={16}>
@@ -360,7 +391,7 @@ class App extends React.Component {
 						</Grid>
 						{/* Add Table on whole page length */}
 						<Grid item xs={12}>
-							<Table data={primaryDatasetData} dimNames={primaryDatasetDimNames} height={395} onFilter={this.onFilter} />
+							<Table data={primaryDatasetData} dimNames={primaryDatasetDimNames} height={395} onFilter={this.onFilter} changePlotDimension={this.setPlotDimension} />
 						</Grid>
 					</Grid>
 					{/*<Paper>

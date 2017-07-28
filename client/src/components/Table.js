@@ -79,6 +79,14 @@ class Table extends React.Component{
 			this.props.onFilter(dimension, this.textFieldValues[dimension], this.state.filterSetting[dimension]);
 	}
 
+	/**
+	 * Sets the new x dimension for the hexplots in the main app
+	 * @param {String} dimension: New dimension for hexplots in main app
+	 */
+	onHeaderClick(dimension) {
+		this.props.changePlotDimension(dimension);
+	}
+
 	constructTableHeader() {
 		// let dimensions = Object.keys(DimensionTypes);
 		let dimensions = this.props.dimNames;
@@ -89,8 +97,10 @@ class Table extends React.Component{
 			header.push(
 				<th key={`header-th-${i}`}>
 					<div style={styleSheet.headerTH}>
+						<div onClick={ () => { this.onHeaderClick(dimension)} }>
 						{/* <Typography noWrap type="body1"><Icon name="sort-desc" style={{fontSize:'100%'}} /> {dimension}</Typography> */}
 						{dimension}
+						</div>
 						<div style={{ display: 'flex', whiteSpace: 'nowrap' }}>
 						<IconButton
 							style={{ marginTop: '-2px', width: '10px' }}
@@ -248,6 +258,7 @@ Table.propTypes = {
 	data: PropTypes.array, 
 	dimNames: PropTypes.array, 
 	height: PropTypes.number, 
-	onFilter: PropTypes.func 
+	onFilter: PropTypes.func,
+	changePlotDimension: PropTypes.func 
 } 
 export default Table;
