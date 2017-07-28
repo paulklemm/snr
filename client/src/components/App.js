@@ -360,7 +360,7 @@ class App extends React.Component {
 						</Grid>
 						{/* Add Table on whole page length */}
 						<Grid item xs={12}>
-							<Table data={primaryDatasetData} dimNames={primaryDatasetDimNames} height={400} onFilter={this.onFilter} />
+							<Table data={primaryDatasetData} dimNames={primaryDatasetDimNames} height={395} onFilter={this.onFilter} />
 						</Grid>
 					</Grid>
 					{/*<Paper>

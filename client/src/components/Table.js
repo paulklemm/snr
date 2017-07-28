@@ -18,11 +18,13 @@ const styleSheet = {
 	},
 	th: {
 		textAlign: 'left',
-		height: 25,
+		height: 10,
+		fontWeight: 'normal',
 		overflow: 'hidden'
 	},
 	table: {
 		borderCollapse: 'collapse',
+		fontSize: '10px',
 		width: '100%',
 		tableLayout:'fixed'
 	}
@@ -40,7 +42,7 @@ class Table extends React.Component{
 		this.textFieldValues = {};
 		this.state = {
 			rowTop: 0,
-			rowBottom: 20
+			rowBottom: 40
 		};
 	}
 
@@ -87,7 +89,8 @@ class Table extends React.Component{
 			header.push(
 				<th key={`header-th-${i}`}>
 					<div style={styleSheet.headerTH}>
-						<Typography noWrap type="body1"><Icon name="sort-desc" style={{fontSize:'100%'}} /> {dimension}</Typography>
+						{/* <Typography noWrap type="body1"><Icon name="sort-desc" style={{fontSize:'100%'}} /> {dimension}</Typography> */}
+						{dimension}
 						<div style={{ display: 'flex', whiteSpace: 'nowrap' }}>
 						<IconButton
 							style={{ marginTop: '-2px', width: '10px' }}
@@ -155,9 +158,9 @@ class Table extends React.Component{
 				row.push(
 					<th key={`row_${this.props.data[i][dimension]}-${i}-${j}`}>
 						<div style={styleSheet.th}>
-							<Typography type="body1">
+							{/* <Typography type="body1"> */}
 								{this.props.data[i][dimension]}
-							</Typography>
+							{/* </Typography> */}
 						</div>
 					</th>
 				);
@@ -226,7 +229,7 @@ class Table extends React.Component{
 		if (this.debug) console.log(`Set rowHeight to ${this.rowHeight}`);
 		return (
 			<div>
-			<div><p>{`Rendering ${this.props.data.length} rows`}</p></div>
+			{/* <div><p>{`Rendering ${this.props.data.length} rows`}</p></div> */}
 			{this.constructTableHeader()}
 			<div 
 				ref="scrollable" 
