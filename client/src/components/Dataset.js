@@ -20,9 +20,15 @@ class Dataset {
 		for (let i in this.data)
 			this.filtered[i] = false
 	}
-	getData() {
+
+	/**
+	 * Get array of the data set.
+	 * @param {Boolean} wholeData: Defaults to false. If set to true, will return the whole data set even if it is filtered 
+	 * @return {Array} Data points as array
+	 */
+	getData(wholeData = false) {
 		// TODO: This should me more efficiently, recalculate data array on filter, not on getData
-		if (this.isFiltered()) {
+		if (this.isFiltered() && !wholeData) {
 			let dataFiltered = [];
 			for (let i in this.data)
 				if (!this.filtered[i])

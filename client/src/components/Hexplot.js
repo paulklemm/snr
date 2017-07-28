@@ -60,7 +60,10 @@ class Hexplot extends Scatterplot {
 		if (this.props.rnaSeqData.data === undefined) return (<div>no data</div>);
 		// reset margin and scale in case they changed
 		this.setMargin();
-		let data = this.props.rnaSeqData.getData();
+		// Get the whole data set even if it was filtered
+		let data = this.props.rnaSeqData.getData(true);
+		// Get the filter for the data set, which is a boolean array
+		let filter = this.props.rnaSeqData.filtered;
 		// setScale requires an array of numeric values for each dimension
 		// therefore we have to convert it
 		let xArray = Helper.objectValueToArray(data, this.props.xName)
@@ -69,7 +72,7 @@ class Hexplot extends Scatterplot {
 
 		let axes = this.renderAxes();
 		let dots = [];
-		if (this.state.renderDots) dots = this.renderDots(1, xArray, yArray);
+		if (this.state.renderDots) dots = this.renderDots(1, xArray, yArray, filter);
 		let axisLabels = this.renderAxisLabels(this.props.xName, this.props.yName);
 		let pointArray = this.createPointArray(xArray, yArray);
 

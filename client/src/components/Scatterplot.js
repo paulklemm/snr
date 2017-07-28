@@ -18,6 +18,13 @@ const margin = {top: 10, right: 15, bottom: 20, left: 30};
 // 	x: 'pValue', 
 // 	y: 'fc'}
 // }
+
+const styleSheet = {
+	filteredCircle: {
+		fillOpacity: '0.1'
+	}
+}
+
 class Scatterplot extends React.Component {
 	constructor(props){
 		super(props);
@@ -124,26 +131,37 @@ class Scatterplot extends React.Component {
 		});
 	}
 
-	// create array of circle SVG elements based on the input array
-	renderDots(size, x, y) {
+	// 
+	/**
+	 * Create array of SVG circle elements based on the input array
+	 * @param {Integer} radius: Radius of the circles
+	 * @param {Array} x: Array of values for x
+	 * @param {Array} y: Array of values for y
+	 * @param {Array} filtered: Array of boolean values indicating whether the element is filtered or not
+	 */
+	renderDots(radius, x, y, filtered = []) {
 		// Keep track of the number of elements where one variable shows NaN
 		this.numberOfNaN = {x: 0, y: 0};
 		let dots = [];
 		for (let i in x) {
 			let currentX = x[i];
 			let currentY = y[i];
+			const currentIsFiltered = (typeof filtered[i] === 'undefined') ? false : filtered[i];
+			const currentStyle = currentIsFiltered ? styleSheet.filteredCircle : {};
 			// Only create dot if x and y are numbers
 			if (!isNaN(currentX) && !isNaN(currentY)) {
 				dots.push(
 					<circle 
 						className="dot" 
-						r={size} 
+						r={radius} 
 						cx={this.xScale(currentX)} 
 						cy={this.yScale(currentY)} 
 						key={`${currentX},${currentY},${i}`}
 						onClick={(e) => this.handleClick(e, currentX, currentY)}
 						onMouseEnter={(e) => this.onMouseEnterTooltip(e, currentX, currentY)}
-						onMouseLeave={this.onMouseLeaveTooltip}>
+						onMouseLeave={this.onMouseLeaveTooltip}
+						style={currentStyle}
+						>
 					</circle>
 				);
 			}
