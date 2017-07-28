@@ -16,6 +16,7 @@ class SelectionRectangle {
     this.reset();
     // state variable to store whether the user is currently drawing a rectangle
     this.isDrawing = false;
+    this.boundsSet = false;
   }
 
   /**
@@ -56,6 +57,8 @@ class SelectionRectangle {
     this.startY = '';
     this.currentX = '';
     this.currentY = '';
+    this.bounds = undefined;
+    this.boundsSet = false;
   }
 
   /**
@@ -107,6 +110,9 @@ class SelectionRectangle {
     if (width < 0 || height < 0)
       return;
 
+    // Set global bounds to be used for filtering
+    this.bounds = {minX: x, maxX: x + width, minY: y, maxY: y + height};
+    this.boundsSet = true;
     return (<rect x={x} y={y} width={width} height={height} style={styleSheet.rectangle} />);
 	}
 }

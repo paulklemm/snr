@@ -139,23 +139,29 @@ class Scatterplot extends React.Component {
 	 * @param {Array} y: Array of values for y
 	 * @param {Array} filtered: Array of boolean values indicating whether the element is filtered or not
 	 */
-	renderDots(radius, x, y, filtered = []) {
+	renderDots(radius, x, y, filtered = [], highlight = undefined) {
 		// Keep track of the number of elements where one variable shows NaN
 		this.numberOfNaN = {x: 0, y: 0};
 		let dots = [];
 		for (let i in x) {
 			let currentX = x[i];
 			let currentY = y[i];
+			// Check whether the current element is filtered or not
 			const currentIsFiltered = (typeof filtered[i] === 'undefined') ? false : filtered[i];
+			// If the element is filtered, render the elements accordingly
 			const currentStyle = currentIsFiltered ? styleSheet.filteredCircle : {};
 			// Only create dot if x and y are numbers
 			if (!isNaN(currentX) && !isNaN(currentY)) {
+				// Check if we have to highlight the elements
+				let cx = this.xScale(currentX); 
+				let cy = this.yScale(currentY);
+				let newRadius = (typeof highlight !== 'undefined' && cx >= highlight.minX && cx <= highlight.maxX && cy >= highlight.minY && cy <= highlight.maxY) ? radius + 3 : radius;
 				dots.push(
 					<circle 
 						className="dot" 
-						r={radius} 
-						cx={this.xScale(currentX)} 
-						cy={this.yScale(currentY)} 
+						r={newRadius} 
+						cx={cx} 
+						cy={cy} 
 						key={`${currentX},${currentY},${i}`}
 						onClick={(e) => this.handleClick(e, currentX, currentY)}
 						onMouseEnter={(e) => this.onMouseEnterTooltip(e, currentX, currentY)}

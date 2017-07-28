@@ -72,7 +72,12 @@ class Hexplot extends Scatterplot {
 
 		let axes = this.renderAxes();
 		let dots = [];
-		if (this.state.renderDots) dots = this.renderDots(1, xArray, yArray, filter);
+		if (this.state.renderDots) {
+			if (this.state.selectionRectangle.boundsSet)
+				dots = this.renderDots(1, xArray, yArray, filter, this.state.selectionRectangle.bounds);
+			else
+				dots = this.renderDots(1, xArray, yArray, filter);
+		}
 		let axisLabels = this.renderAxisLabels(this.props.xName, this.props.yName);
 		let pointArray = this.createPointArray(xArray, yArray);
 
