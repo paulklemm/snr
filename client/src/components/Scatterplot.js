@@ -168,22 +168,30 @@ class Scatterplot extends React.Component {
 	}
 
 	handleMouseDown(event) {
-		// console.log(`Mouse Down (${event.nativeEvent.offsetX}, ${event.nativeEvent.offsetY})`);
-		this.state.selectionRectangle.setStart(event.nativeEvent.offsetX - margin.left, event.nativeEvent.offsetY - margin.bottom);
+		event.preventDefault();
+		// Get the selection rectangle object
+		let selectionRectangle = this.state.selectionRectangle;
+		selectionRectangle.reset();
+		selectionRectangle.isDrawing = true;
+		// Tell the selection rectangle the size of the plot in case the window resized
+		selectionRectangle.setCanvasSize(this.widthNoMargin, this.heightNoMargin)
+		// Set start of the rectangle
+		selectionRectangle.setStart(event.nativeEvent.offsetX - margin.left, event.nativeEvent.offsetY - margin.top);
+		this.setState({ selectionRectangle: selectionRectangle });
 	}
 
 	handleMouseMove(event) {
-		// console.log(`Mouse Move (${event.nativeEvent.offsetX}, ${event.nativeEvent.offsetY})`);
+		event.preventDefault();
 		let selectionRectangle = this.state.selectionRectangle;
-		selectionRectangle.setEnd(event.nativeEvent.offsetX - margin.left, event.nativeEvent.offsetY - margin.bottom);
-		this.setState({ selectionRectangle: selectionRectangle });
+		if (selectionRectangle.isDrawing) {
+			selectionRectangle.setEnd(event.nativeEvent.offsetX - margin.left, event.nativeEvent.offsetY - margin.top);
+			this.setState({ selectionRectangle: selectionRectangle });
+		}
 	}
 
 	handleMouseUp(event) {
-		// console.log(`Mouse Up (${event.nativeEvent.offsetX}, ${event.nativeEvent.offsetY})`);
-		let selectionRectangle = this.state.selectionRectangle;
-		selectionRectangle.reset();
-		this.setState({ selectionRectangle: selectionRectangle });
+		event.preventDefault();
+		this.state.selectionRectangle.isDrawing = false;
 	}
 
 	/**

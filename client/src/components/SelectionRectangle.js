@@ -14,6 +14,18 @@ const styleSheet = {
 class SelectionRectangle {
 	constructor() {
     this.reset();
+    // state variable to store whether the user is currently drawing a rectangle
+    this.isDrawing = false;
+  }
+
+  /**
+   * Set the canvas size to limit the selection
+   * @param {Integer} canvasWidth: Width of the canvas in pixels
+   * @param {Integer} canvasHeight: Height of the canvas in pixels
+   */
+  setCanvasSize(canvasWidth, canvasHeight) {
+    this.canvasWidth = canvasWidth;
+    this.canvasHeight = canvasHeight;
   }
   
   /**
@@ -72,6 +84,28 @@ class SelectionRectangle {
       y = this.currentY;
       height = this.startY - this.currentY;
     }
+
+    // Limit maximum size
+    if (x + width > this.canvasWidth) {
+      width = this.canvasWidth - x;
+    }
+    if (y + height > this.canvasHeight) {
+      height = this.canvasHeight - y;
+    }
+
+    // Limit minimum size
+    if (x < 0) {
+      width = width - Math.abs(x);
+      x = 0;
+    }
+    if (y < 0) {
+      height = height - Math.abs(y);
+      y = 0;
+    }
+
+    // Handle negative x and width
+    if (width < 0 || height < 0)
+      return;
 
     return (<rect x={x} y={y} width={width} height={height} style={styleSheet.rectangle} />);
 	}

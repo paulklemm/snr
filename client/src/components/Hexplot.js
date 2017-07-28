@@ -105,6 +105,7 @@ class Hexplot extends Scatterplot {
 							{axisLabels}
 							{this.state.tooltip}
 							{this.state.selectionRectangle.getRectangle()}
+							/>
 						</g>
 					</svg>
 				</div>
