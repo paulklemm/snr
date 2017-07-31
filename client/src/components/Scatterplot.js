@@ -181,8 +181,8 @@ class Scatterplot extends React.Component {
 
 	renderAxisLabels(xLabel, yLabel){
 		let axisLabels = [];
-		axisLabels.push(<text className='label' transform="rotate(-90)" y={6} dy=".71em" style={{'textAnchor': 'end'}} key={yLabel}>{yLabel}</text>);
-		axisLabels.push(<text className='label' x={this.widthNoMargin} y={this.heightNoMargin - 6} style={{'textAnchor': 'end'}} key={xLabel}>{xLabel}</text>);
+		axisLabels.push(<text className='label' transform="rotate(-90)" y={6} dy=".71em" style={{'textAnchor': 'end'}} key={`yaxis_${yLabel}`}>{yLabel}</text>);
+		axisLabels.push(<text className='label' x={this.widthNoMargin} y={this.heightNoMargin - 6} style={{ 'textAnchor': 'end' }} key={`xaxis_${xLabel}`}>{xLabel}</text>);
 		return axisLabels;
 	}
 
