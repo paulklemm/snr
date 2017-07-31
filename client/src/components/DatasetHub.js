@@ -1,4 +1,4 @@
-import DimensionTypes from './DimensionTypes';
+import Filter from './Filter'
 
 class DatasetHub {
 	constructor() {
@@ -6,20 +6,9 @@ class DatasetHub {
 		this.names = [];
 		this.enabled = {};
 		this.loading = {};
-		this.filter = {};
-		this.onFilter = this.onFilter.bind(this);
+		this.broadcastFilter = this.broadcastFilter.bind(this);
 		this.getDatasetIcon = this.getDatasetIcon.bind(this);
-	}
-
-	filterIsValid(name, val) {
-		// Get type from the static object
-		const type = DimensionTypes[name];
-		let isValid = (type === "number") ? !isNaN(val) : true;
-		return isValid;
-	}
-
-	parseFilterValue(name, val) {
-		return (DimensionTypes[name] === "number") ? parseFloat(val) : val;
+		this.filter = new Filter(this.broadcastFilter);
 	}
 
 	broadcastFilter() {
@@ -28,27 +17,8 @@ class DatasetHub {
 			let dataset = this.datasets[name];
 			// Only apply filter if the data set is really loaded
 			if (dataset.loaded)
-				this.datasets[name].setFilter(this.filter);
+				this.datasets[name].setFilter(this.filter.getFilter());
 		}
-	}
-	/**
-	 * Filter function usable by elements that provide a filter for data. If `val` is not a valid input, e.g. it is empty, the filter will be reset.
-	 * @param  {String} name: Dimension name to be filtered
-	 * @param  {Object} val: Filter value can be anything depending on the dimension type
-	 * @param  {Object} operator: Filter operator, either `=`, `<` or `>`. Strings should always use `=`
-	 * @param  {Bool} verbose Get name and value of filter
-	 */
-	onFilter(name, val, operator, verbose = true) {
-		if (verbose) console.log(`Set filter ${val} for ${name}`);
-		if (verbose) console.log(this.filter);
-		const val_filter = this.parseFilterValue(name, val);
-		const filterName = name + operator;
-		if (this.filterIsValid(name, val_filter)) {
-			this.filter[filterName] = {name: name, value: val_filter, operator: operator};
-		} else {
-			delete this.filter[filterName];
-		}
-		this.broadcastFilter();
 	}
 
 	push(dataset) {

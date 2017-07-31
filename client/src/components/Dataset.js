@@ -39,6 +39,12 @@ class Dataset {
 		}
 	}
 
+	/**
+	 * Apply filter to the dataset. This will fill the `filtered` class member array with boolean values associated with each data point
+	 * to indicate the filtered status.
+	 * @param {Object} filter: Filter object in the Format `{name: 'fc', value: '3', operator: '>'}`
+	 * @param {Boolean} debug: Print out debug statements
+	 */
 	setFilter(filter, debug = false) {
 		const filterKeys = Object.keys(filter);
 		if (debug) console.log(`Setfilter for ${this.name}`);
@@ -67,6 +73,10 @@ class Dataset {
 		}
 	}
 
+	/**
+	 * Check if a filter is applied to the data set.
+	 * @return {Boolean} `isFiltered` status
+	 */
 	isFiltered() {
 		for (let i in this.filtered)
 			if (this.filtered[i] === true)

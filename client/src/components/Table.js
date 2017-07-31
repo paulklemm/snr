@@ -75,8 +75,13 @@ class Table extends React.Component{
 		// Scroll back to the top of the list
 		this.refs.scrollable.scrollTop = 0;
 		// Only proceed if both input values are valid
-		if (this.textFieldValues[dimension] !== undefined && this.state.filterSetting[dimension] !== undefined)
-			this.props.onFilter(dimension, this.textFieldValues[dimension], this.state.filterSetting[dimension]);
+		if (this.textFieldValues[dimension] !== undefined && this.state.filterSetting[dimension] !== undefined) {
+			// Remove all filters of this dimension
+			this.props.filter.removeFilter(dimension);
+			this.props.filter.setFilter(dimension, this.textFieldValues[dimension], this.state.filterSetting[dimension])
+			// Update the app
+			this.props.forceUpdateApp();
+		}
 	}
 
 	/**
@@ -258,7 +263,7 @@ Table.propTypes = {
 	data: PropTypes.array, 
 	dimNames: PropTypes.array, 
 	height: PropTypes.number, 
-	onFilter: PropTypes.func,
+	filter: PropTypes.object,
 	changePlotDimension: PropTypes.func 
 } 
 export default Table;

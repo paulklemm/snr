@@ -218,10 +218,9 @@ class Scatterplot extends React.Component {
 		selectionRectangle.setStart(event.nativeEvent.offsetX - margin.left, event.nativeEvent.offsetY - margin.top);
 		this.setState({ selectionRectangle: selectionRectangle });
 		// Remove filters
-		this.props.onFilter(this.props.xName, undefined, '>');
-		this.props.onFilter(this.props.xName, undefined, '<');
-		this.props.onFilter(this.props.yName, undefined, '>');
-		this.props.onFilter(this.props.yName, undefined, '<');
+		this.props.filter.removeFilter(this.props.xName);
+		this.props.filter.removeFilter(this.props.yName);
+		this.props.forceUpdateApp();
 	}
 
 	/**
@@ -246,11 +245,12 @@ class Scatterplot extends React.Component {
 		this.state.selectionRectangle.isDrawing = false;
 		// Propagate the filter with the current bounds of the rectangle
 		if (this.state.selectionRectangle.boundsSet) {
-			this.props.onFilter(this.props.xName, this.xScaleReverse(this.state.selectionRectangle.bounds.minX), '>');
-			this.props.onFilter(this.props.xName, this.xScaleReverse(this.state.selectionRectangle.bounds.maxX), '<');
+			this.props.filter.setFilter(this.props.xName, this.xScaleReverse(this.state.selectionRectangle.bounds.minX), '>')
+			this.props.filter.setFilter(this.props.xName, this.xScaleReverse(this.state.selectionRectangle.bounds.maxX), '<')
 			// Since the coordinates from the bounds are starting in the upper left corner on y, we have to invert bounds here
-			this.props.onFilter(this.props.yName, this.yScaleReverse(this.state.selectionRectangle.bounds.maxY), '>');
-			this.props.onFilter(this.props.yName, this.yScaleReverse(this.state.selectionRectangle.bounds.minY), '<');
+			this.props.filter.setFilter(this.props.yName, this.yScaleReverse(this.state.selectionRectangle.bounds.maxY), '>')
+			this.props.filter.setFilter(this.props.yName, this.yScaleReverse(this.state.selectionRectangle.bounds.minY), '<')
+			this.props.forceUpdateApp();
 		}
 	}
 

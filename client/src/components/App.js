@@ -55,11 +55,11 @@ class App extends React.Component {
 	constructor() {
 		super();
 		this.setEnableDataset = this.setEnableDataset.bind(this);
-		this.onFilter = this.onFilter.bind(this);
 		this.handleResize = this.handleResize.bind(this);
 		this.setDatasetIcon = this.setDatasetIcon.bind(this);
 		this.setPlotDimensions = this.setPlotDimensions.bind(this);
 		this.setPlotDimension = this.setPlotDimension.bind(this);
+		this.forceUpdateApp = this.forceUpdateApp.bind(this);
 		this.login = this.login.bind(this);
 		this.datasetHub = new DatasetHub();
 		this.debug = true;
@@ -125,13 +125,9 @@ class App extends React.Component {
 	}
 
 	/**
-	 * Filter bridge function usable by elements that provide a filter for data
-	 * @param  {String} name: Dimension name to be filtered
-	 * @param  {Object} val: Filter value can be anything depending on the dimension type
-	 * @param  {Object} operator: Filter operator, either `=`, `<` or `>`. Strings should always use `=`
+	 * Force React update. This function is meant to be accessed by child functions e.g. to react to filtering changes.
 	 */
-	onFilter(name, val, operator) {
-		this.datasetHub.onFilter(name, val, operator);
+	forceUpdateApp() {
 		this.forceUpdate();
 	}
 
@@ -141,7 +137,7 @@ class App extends React.Component {
 	 * @param {String} icon name, get icon from DatasetIcons
 	 */
 	setDatasetIcon(datasetName, icon) {
-		this.datasetHub.setDatasetIcon(datasetName, icon);
+		this.datasetHub.setDatasetIcon(datasetName, icon);	
 		console.log(this.datasetHub);
 		this.forceUpdate();
 	}
@@ -382,7 +378,7 @@ class App extends React.Component {
 						<Grid item xs={8}>
 							{/*<center><p>{this.state.primaryDataset.name}</p></center>*/}
 							{/* <Hexplot height={this.layoutFactory.heights.mainView} width={600} responsiveWidth={true} rnaSeqData={this.state.primaryDataset} xName="pValueNegLog10" yName="fc" hexSize={4} hexMax={20} showRenderGenesOption={true} /> */}
-							<Hexplot height={this.layoutFactory.heights.mainView} width={600} responsiveWidth={true} rnaSeqData={this.state.primaryDataset} xName={this.state.xDimension} yName={this.state.yDimension} onFilter={this.onFilter} hexSize={4} hexMax={20} showRenderGenesOption={true} />
+							<Hexplot height={this.layoutFactory.heights.mainView} width={600} responsiveWidth={true} rnaSeqData={this.state.primaryDataset} xName={this.state.xDimension} yName={this.state.yDimension} filter={this.datasetHub.filter} forceUpdateApp={this.forceUpdateApp} hexSize={4} hexMax={20} showRenderGenesOption={true} />
 						</Grid>
 						<Grid item xs={4}>
 							<Grid container gutter={16}>
@@ -391,7 +387,7 @@ class App extends React.Component {
 						</Grid>
 						{/* Add Table on whole page length */}
 						<Grid item xs={12}>
-							<Table data={primaryDatasetData} dimNames={primaryDatasetDimNames} height={395} onFilter={this.onFilter} changePlotDimension={this.setPlotDimension} />
+							<Table data={primaryDatasetData} dimNames={primaryDatasetDimNames} height={395} filter={this.datasetHub.filter} forceUpdateApp={this.forceUpdateApp} changePlotDimension={this.setPlotDimension} />
 						</Grid>
 					</Grid>
 					{/*<Paper>
