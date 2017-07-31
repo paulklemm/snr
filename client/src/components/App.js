@@ -382,7 +382,7 @@ class App extends React.Component {
 						<Grid item xs={8}>
 							{/*<center><p>{this.state.primaryDataset.name}</p></center>*/}
 							{/* <Hexplot height={this.layoutFactory.heights.mainView} width={600} responsiveWidth={true} rnaSeqData={this.state.primaryDataset} xName="pValueNegLog10" yName="fc" hexSize={4} hexMax={20} showRenderGenesOption={true} /> */}
-							<Hexplot height={this.layoutFactory.heights.mainView} width={600} responsiveWidth={true} rnaSeqData={this.state.primaryDataset} xName={this.state.xDimension} yName={this.state.yDimension} hexSize={4} hexMax={20} showRenderGenesOption={true} />
+							<Hexplot height={this.layoutFactory.heights.mainView} width={600} responsiveWidth={true} rnaSeqData={this.state.primaryDataset} xName={this.state.xDimension} yName={this.state.yDimension} onFilter={this.onFilter} hexSize={4} hexMax={20} showRenderGenesOption={true} />
 						</Grid>
 						<Grid item xs={4}>
 							<Grid container gutter={16}>

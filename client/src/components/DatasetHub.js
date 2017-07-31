@@ -32,7 +32,7 @@ class DatasetHub {
 		}
 	}
 	/**
-	 * Filter function usable by elements that provide a filter for data
+	 * Filter function usable by elements that provide a filter for data. If `val` is not a valid input, e.g. it is empty, the filter will be reset.
 	 * @param  {String} name: Dimension name to be filtered
 	 * @param  {Object} val: Filter value can be anything depending on the dimension type
 	 * @param  {Object} operator: Filter operator, either `=`, `<` or `>`. Strings should always use `=`
@@ -40,11 +40,13 @@ class DatasetHub {
 	 */
 	onFilter(name, val, operator, verbose = true) {
 		if (verbose) console.log(`Set filter ${val} for ${name}`);
+		if (verbose) console.log(this.filter);
 		const val_filter = this.parseFilterValue(name, val);
+		const filterName = name + operator;
 		if (this.filterIsValid(name, val_filter)) {
-			this.filter[name] = {value: val_filter, operator: operator};
+			this.filter[filterName] = {name: name, value: val_filter, operator: operator};
 		} else {
-			delete this.filter[name];
+			delete this.filter[filterName];
 		}
 		this.broadcastFilter();
 	}

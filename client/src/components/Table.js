@@ -239,7 +239,7 @@ class Table extends React.Component{
 		if (this.debug) console.log(`Set rowHeight to ${this.rowHeight}`);
 		return (
 			<div>
-			{/* <div><p>{`Rendering ${this.props.data.length} rows`}</p></div> */}
+			 <div><p>{`Rendering ${this.props.data.length} rows`}</p></div> 
 			{this.constructTableHeader()}
 			<div 
 				ref="scrollable" 

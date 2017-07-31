@@ -22,6 +22,9 @@ const margin = {top: 10, right: 15, bottom: 20, left: 30};
 const styleSheet = {
 	filteredCircle: {
 		fillOpacity: '0.1'
+	},
+	circle: {
+		fillOpacity: '0.5'
 	}
 }
 
@@ -52,10 +55,18 @@ class Scatterplot extends React.Component {
 		this.xScale = scaleLinear()
 			.range([0, this.widthNoMargin])
 			.domain([min(x), max(x)]);
+		
+		this.xScaleReverse = scaleLinear()
+			.range([min(x), max(x)])
+			.domain([0, this.widthNoMargin]);
 
 		this.yScale = scaleLinear()
 			.range([this.heightNoMargin, 0])
 			.domain([min(y), max(y)]);
+		
+		this.yScaleReverse = scaleLinear()
+			.range([min(y), max(y)])
+			.domain([this.heightNoMargin, 0]);
 	}
 
 //// Stresstest //////////////////
@@ -149,13 +160,13 @@ class Scatterplot extends React.Component {
 			// Check whether the current element is filtered or not
 			const currentIsFiltered = (typeof filtered[i] === 'undefined') ? false : filtered[i];
 			// If the element is filtered, render the elements accordingly
-			const currentStyle = currentIsFiltered ? styleSheet.filteredCircle : {};
+			const currentStyle = currentIsFiltered ? styleSheet.filteredCircle : styleSheet.circle;
 			// Only create dot if x and y are numbers
 			if (!isNaN(currentX) && !isNaN(currentY)) {
 				// Check if we have to highlight the elements
 				let cx = this.xScale(currentX); 
 				let cy = this.yScale(currentY);
-				let newRadius = (typeof highlight !== 'undefined' && cx >= highlight.minX && cx <= highlight.maxX && cy >= highlight.minY && cy <= highlight.maxY) ? radius + 3 : radius;
+				let newRadius = (typeof highlight !== 'undefined' && cx >= highlight.minX && cx <= highlight.maxX && cy >= highlight.minY && cy <= highlight.maxY) ? radius + 1 : radius;
 				dots.push(
 					<circle 
 						className="dot" 
@@ -191,6 +202,10 @@ class Scatterplot extends React.Component {
 		console.log(`Click Event on ${x}, ${y}`);
 	}
 
+	/**
+	 * Mouse down trigger event to draw brush.
+	 * @param {Object} event: Mouse event containing the position
+	 */
 	handleMouseDown(event) {
 		event.preventDefault();
 		// Get the selection rectangle object
@@ -202,8 +217,17 @@ class Scatterplot extends React.Component {
 		// Set start of the rectangle
 		selectionRectangle.setStart(event.nativeEvent.offsetX - margin.left, event.nativeEvent.offsetY - margin.top);
 		this.setState({ selectionRectangle: selectionRectangle });
+		// Remove filters
+		this.props.onFilter(this.props.xName, undefined, '>');
+		this.props.onFilter(this.props.xName, undefined, '<');
+		this.props.onFilter(this.props.yName, undefined, '>');
+		this.props.onFilter(this.props.yName, undefined, '<');
 	}
 
+	/**
+	 * Mouse move event for adjusting brush size.
+	 * @param {Object} event: Mouse event containing the position
+	 */
 	handleMouseMove(event) {
 		event.preventDefault();
 		let selectionRectangle = this.state.selectionRectangle;
@@ -213,9 +237,21 @@ class Scatterplot extends React.Component {
 		}
 	}
 
+	/**
+	 * Mouse up event to stop drawing the brush.
+	 * @param {Object} event: Mouse event containing the position
+	 */
 	handleMouseUp(event) {
 		event.preventDefault();
 		this.state.selectionRectangle.isDrawing = false;
+		// Propagate the filter with the current bounds of the rectangle
+		if (this.state.selectionRectangle.boundsSet) {
+			this.props.onFilter(this.props.xName, this.xScaleReverse(this.state.selectionRectangle.bounds.minX), '>');
+			this.props.onFilter(this.props.xName, this.xScaleReverse(this.state.selectionRectangle.bounds.maxX), '<');
+			// Since the coordinates from the bounds are starting in the upper left corner on y, we have to invert bounds here
+			this.props.onFilter(this.props.yName, this.yScaleReverse(this.state.selectionRectangle.bounds.maxY), '>');
+			this.props.onFilter(this.props.yName, this.yScaleReverse(this.state.selectionRectangle.bounds.minY), '<');
+		}
 	}
 
 	/**
