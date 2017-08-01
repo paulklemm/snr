@@ -49,6 +49,8 @@ class Scatterplot extends React.Component {
 		const height = (this.props.responsiveHeight && typeof this.state.responsiveHeight !== 'undefined') ? this.state.responsiveHeight : this.props.height;
 		this.widthNoMargin = width - margin.left - margin.right;
 		this.heightNoMargin = height - margin.top - margin.bottom;
+		// Set the size of the selection rectangle
+		this.state.selectionRectangle.setCanvasSize(this.widthNoMargin, this.heightNoMargin);
 	}
 
 	setScale(x, y) {

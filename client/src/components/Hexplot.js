@@ -57,7 +57,7 @@ class Hexplot extends Scatterplot {
 
 	render() {
 		// Check if there is data available
-		if (this.props.rnaSeqData.data === undefined) return (<div>no data</div>);
+		if (this.props.rnaSeqData.data === undefined ||typeof this.props.filter === 'undefined') return (<div>no data</div>);
 		// reset margin and scale in case they changed
 		this.setMargin();
 		// Get the whole data set even if it was filtered
@@ -90,6 +90,9 @@ class Hexplot extends Scatterplot {
 			/>}
 			label="Render Genes"
 			/>;
+
+		// Set Selection rectangle according to the filters
+		this.state.selectionRectangle.setRectangleByFilter(this.props.xName, this.props.yName, this.xScale, this.yScale, this.props.filter);
 
 		return(
 			<Measure

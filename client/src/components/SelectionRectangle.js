@@ -62,10 +62,56 @@ class SelectionRectangle {
   }
 
   /**
+   * Set rectangle according to the filters set in the `Filter` object.
+   * @param {String} dimensionX: Name of X dimension 
+   * @param {String} dimensionY: Name of Y dimension 
+   * @param {Function} xScale: xScale function mapping X dimension space to pixel space
+   * @param {Function} yScale yScale function mapping Y dimension space to pixel space
+   * @param {Filter} filter: Filter object
+   */
+  setRectangleByFilter(dimensionX, dimensionY, xScale, yScale, filter) {
+    if (!this.isDrawing) {
+      // Reset the current drawing
+      this.reset();
+      const filterX = filter.getFilterOfDimension(dimensionX)
+      const filterY = filter.getFilterOfDimension(dimensionY)
+      let minDefault = 0, maxXDefault = this.canvasWidth, maxYDefault = this.canvasHeight;
+      let minX = minDefault, maxX = maxXDefault;
+      let minY = minDefault, maxY = maxYDefault;
+      if (filterX.length > 0) {
+        // Iterate over filter
+        for (let i in filterX) {
+          if (filterX[i].operator === '<')
+            maxX = xScale(filterX[i].value)
+          else if (filterX[i].operator === '>') {
+            minX = xScale(filterX[i].value)
+          }
+        }
+      }
+      if (filterY.length > 0) {
+        // Iterate over filter
+        for (let i in filterY) {
+          if (filterY[i].operator === '<')
+            minY = yScale(filterY[i].value)
+          else if (filterY[i].operator === '>') {
+            maxY = yScale(filterY[i].value)
+          }
+        }
+      }
+      // If all values do not correspond to the default values, draw the rectangle
+      if (minX !== minDefault || maxX !== maxXDefault || minY !== minDefault || maxY !== maxYDefault) {
+        this.setStart(minX, minY);
+        this.setEnd(maxX, maxY);
+      }
+    }
+  }
+
+  /**
    * Get the rectangle SVG element
    * @return {HTML} rectangle
    */
 	getRectangle() {
+    // If start or end positions are not set, return nothing
 		if (this.startX === '' || this.startY === '' || this.currentX === '' || this.currentY === '')
       return
     let x = 0;

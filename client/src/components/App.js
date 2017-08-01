@@ -341,7 +341,7 @@ class App extends React.Component {
 			if (dataset.loaded) {
 				hexplots.push(
 					<Grid item xs={6} key={ name }>
-							<Hexplot responsiveWidth={true} height={this.layoutFactory.heights.smallMultiples} width={0} rnaSeqData={dataset} xName={this.state.xDimension} yName={this.state.yDimension} hexSize={2} hexMax={10} showRenderGenesOption={false}/>
+						<Hexplot responsiveWidth={true} height={this.layoutFactory.heights.smallMultiples} width={0} rnaSeqData={dataset} xName={this.state.xDimension} yName={this.state.yDimension} xName={this.state.xDimension} yName={this.state.yDimension} filter={this.datasetHub.filter} forceUpdateApp={this.forceUpdateApp} hexSize={2} hexMax={10} showRenderGenesOption={false}/>
 					</Grid>
 				);
 			}

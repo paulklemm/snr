@@ -34,6 +34,21 @@ class Filter {
   }
 
   /**
+   * Get the filter of a specific dimension as array
+   * @param {String} dimension: Dimension name to derive filter for
+   * @return {Array} Array of filter objects
+   */
+  getFilterOfDimension(dimension) {
+    let filter = [];
+    for (const filterKey in this.filter) {
+      if (this.filter[filterKey].name === dimension) {
+        filter.push(this.filter[filterKey]);
+      }
+    }
+    return filter;
+  }
+
+  /**
    * Remove filter for dimension
    * @param {String} dimension Dimension to remove the filter for
    */
