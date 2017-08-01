@@ -9,12 +9,18 @@ import {DefaultFilterSetting} from './DimensionTypes.js';
 const styleSheet = {
 	headerTR: {
 		borderBottom: '2px solid #ee6351',
-		backgroundColor: '#fdecea'
+		backgroundColor: '#f2f2f2'
 	},
 	headerTH: {
 		textAlign: 'left',
 		height: 63,
 		overflow: 'hidden'
+	},
+	headerTHFiltered: {
+		textAlign: 'left',
+		height: 63,
+		overflow: 'hidden',
+		backgroundColor: '#fdecea'
 	},
 	th: {
 		textAlign: 'left',
@@ -115,7 +121,7 @@ class Table extends React.Component{
 
 			header.push(
 				<th key={`header-th-${i}`}>
-					<div style={styleSheet.headerTH}>
+					<div style={(filter.length > 0) ? styleSheet.headerTHFiltered : styleSheet.headerTH}>
 						<div onClick={ () => { this.onHeaderClick(dimension)} }>
 						{/* <Typography noWrap type="body1"><Icon name="sort-desc" style={{fontSize:'100%'}} /> {dimension}</Typography> */}
 						{dimension}
