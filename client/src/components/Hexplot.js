@@ -70,6 +70,9 @@ class Hexplot extends Scatterplot {
 		let yArray = Helper.objectValueToArray(data, this.props.yName)
 		this.setScale(xArray, yArray);
 
+		// Set Selection rectangle according to the filters
+		this.state.selectionRectangle.setRectangleByFilter(this.props.xName, this.props.yName, this.xScale, this.yScale, this.props.filter);
+
 		let axes = this.renderAxes();
 		let dots = [];
 		if (this.state.renderDots) {
@@ -90,9 +93,6 @@ class Hexplot extends Scatterplot {
 			/>}
 			label="Render Genes"
 			/>;
-
-		// Set Selection rectangle according to the filters
-		this.state.selectionRectangle.setRectangleByFilter(this.props.xName, this.props.yName, this.xScale, this.yScale, this.props.filter);
 
 		return(
 			<Measure

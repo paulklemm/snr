@@ -36,7 +36,8 @@ class SelectionRectangle {
    */
 	setStart(startX, startY) {
 		this.startX = startX;
-		this.startY = startY;
+    this.startY = startY;
+    this.calculateBounds();
   }
   
   /**
@@ -47,6 +48,7 @@ class SelectionRectangle {
   setEnd(currentX, currentY) {
     this.currentX = currentX;
     this.currentY = currentY;
+    this.calculateBounds();
   }
 
   /**
@@ -107,12 +109,11 @@ class SelectionRectangle {
   }
 
   /**
-   * Get the rectangle SVG element
-   * @return {HTML} rectangle
+   * Calculate bounds of rectangle.
    */
-	getRectangle() {
+  calculateBounds() {
     // If start or end positions are not set, return nothing
-		if (this.startX === '' || this.startY === '' || this.currentX === '' || this.currentY === '')
+    if (this.startX === '' ||  this.startY === '' ||  this.currentX === '' ||  this.currentY === '')
       return
     let x = 0;
     let width = 0;
@@ -153,13 +154,21 @@ class SelectionRectangle {
     }
 
     // Handle negative x and width
-    if (width < 0 || height < 0)
+    if (width < 0 ||  height < 0)
       return;
 
     // Set global bounds to be used for filtering
     this.bounds = { minX: x, maxX: x + width, minY: y, maxY: y + height };
     this.boundsSet = true;
-    return (<rect x={x} y={y} width={width} height={height} style={styleSheet.rectangle} />);
+  }
+
+  /**
+   * Get the rectangle SVG element
+   * @return {HTML} rectangle
+   */
+	getRectangle() {
+    if (this.boundsSet)
+      return (<rect x={this.bounds.minX} y={this.bounds.minY} width={this.bounds.maxX - this.bounds.minX} height={this.bounds.maxY - this.bounds.minY} style={styleSheet.rectangle} />);
 	}
 }
 
