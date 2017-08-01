@@ -74,14 +74,11 @@ class Table extends React.Component{
 	handleFilter(dimension) {
 		// Scroll back to the top of the list
 		this.refs.scrollable.scrollTop = 0;
-		// Only proceed if both input values are valid
-		if (this.textFieldValues[dimension] !== undefined && this.state.filterSetting[dimension] !== undefined) {
-			// Remove all filters of this dimension
-			this.props.filter.removeFilter(dimension);
-			this.props.filter.setFilter(dimension, this.textFieldValues[dimension], this.state.filterSetting[dimension])
-			// Update the app
-			this.props.forceUpdateApp();
-		}
+		// Remove all filters of this dimension
+		this.props.filter.removeFilter(dimension);
+		this.props.filter.setFilter(dimension, this.textFieldValues[dimension], this.state.filterSetting[dimension])
+		// Update the app
+		this.props.forceUpdateApp();
 	}
 
 	/**
@@ -99,6 +96,23 @@ class Table extends React.Component{
 		let header = [];
 		for (let i in dimensions) {
 			const dimension = dimensions[i];
+			// Check if there are filter available for the current dimension and set filter value accordingly
+			const filter = this.props.filter.getFilterOfDimension(dimension);
+			// Default filter value is an empty string
+			let filterValue = '';
+			// We only need to update the filter value when there is exactly one filter set for the current dimension
+			// Otherwise we will simply set the filterValue to `''`
+			if (filter.length === 1) {
+				// Update filterValue to proper value
+				filterValue = filter[0].value;
+				// Update Operator if necessary
+				let filterSetting = this.state.filterSetting;
+				if (filterSetting[dimension] !== filter[0].operator) {
+					filterSetting[dimension] = filter[0].operator;
+					this.setState({ filterSetting: filterSetting });
+				}
+			}
+
 			header.push(
 				<th key={`header-th-${i}`}>
 					<div style={styleSheet.headerTH}>
@@ -132,7 +146,8 @@ class Table extends React.Component{
 							<TextField 
 							style={{ width: '100% important!', marginLeft: '5px'}}
 								id="filter" 
-								label="Filter" 
+								label="Filter"
+								value={filterValue}
 								onChange={(event) => {
 									// Update the textfieldValue object with the newly changed value
 									this.textFieldValues[dimension] = event.target.value;
