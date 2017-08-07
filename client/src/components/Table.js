@@ -14,12 +14,14 @@ const styleSheet = {
 	headerTH: {
 		textAlign: 'left',
 		height: 63,
-		overflow: 'hidden'
+		overflow: 'hidden',
+		cursor: 'pointer'
 	},
 	headerTHFiltered: {
 		textAlign: 'left',
 		height: 63,
 		overflow: 'hidden',
+		cursor: 'pointer',
 		backgroundColor: '#fdecea'
 	},
 	th: {
