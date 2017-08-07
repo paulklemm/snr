@@ -23,6 +23,10 @@ const styleSheet = {
 	filteredCircle: {
 		fillOpacity: '0.1'
 	},
+	highlightedCircle: {
+		fillOpacity: '1',
+		fill: 'red'
+	},
 	circle: {
 		fillOpacity: '0.5'
 	}
@@ -144,13 +148,41 @@ class Scatterplot extends React.Component {
 		});
 	}
 
-	// 
+	renderDot(datapoint, idName, radius = 5) {
+		for (let i in this.props.rnaSeqData.data)
+			if (this.props.rnaSeqData.data[i][idName] === datapoint) {
+				const x = this.props.rnaSeqData.data[i][this.props.xName];
+				const y = this.props.rnaSeqData.data[i][this.props.yName];
+				if (typeof(x) !== 'undefined' && typeof(y) !== 'undefined') {
+					const cx = this.xScale(x);
+					const cy = this.yScale(y);
+					return (
+						<circle
+							className="dot"
+							r={radius}
+							cx={cx}
+							cy={cy}
+							key={`${x},${y},highlighted`}
+							onClick={(e) => this.handleClick(e, x, y)}
+							onMouseEnter={(e) => this.onMouseEnterTooltip(e, x, y)}
+							onMouseLeave={this.onMouseLeaveTooltip}
+							style={styleSheet.highlightedCircle}
+						>
+						</circle>
+					);
+				}
+			}
+		return;
+	}
+
 	/**
 	 * Create array of SVG circle elements based on the input array
 	 * @param {Integer} radius: Radius of the circles
 	 * @param {Array} x: Array of values for x
 	 * @param {Array} y: Array of values for y
 	 * @param {Array} filtered: Array of boolean values indicating whether the element is filtered or not
+	 * @param {Object} hightlight: Highlight object consisting of minX, maxX, minY, maxY defining circles to highlight
+	 * @return {Array} Circle objects as array
 	 */
 	renderDots(radius, x, y, filtered = [], highlight = undefined) {
 		// Keep track of the number of elements where one variable shows NaN

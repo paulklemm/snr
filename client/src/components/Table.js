@@ -203,7 +203,19 @@ class Table extends React.Component{
 			}
 			// Push the columns as new row to the table
 			const evenClass = (i % 2 === 0) ? 'odd' : '';
-			table.push(<tr key={`tr_${dimensionKey}_${i}`} className={evenClass}>{row}</tr>);
+			// Push the new table entry as well as the onClick events
+			table.push(<tr key={`tr_${dimensionKey}_${i}`} className={evenClass}
+				onClick={() => {
+					if (i == this.lastSelectedEntry) {
+						this.props.highlight.clear()
+						this.lastSelectedEntry = undefined;
+					} else {
+						this.props.highlight.push('selection', [this.props.data[i]]);
+						this.lastSelectedEntry = i;
+					}
+					this.props.forceUpdateApp();
+				}}
+			>{row}</tr>);
 		}
 		// The top spacer must not exceed the maximum length of the table minus the visible table window
 		let topSpacerHeight = (this.state.rowBottom < this.props.data.length ? this.state.rowTop * this.rowHeight : (this.props.data.length - 1 - (this.state.rowBottom - this.state.rowTop)) * this.rowHeight);
