@@ -94,6 +94,16 @@ class Hexplot extends Scatterplot {
 			label="Render Genes"
 			/>;
 
+		// Get highlights if there are any
+		const highlight = this.props.highlight.groups['selection'];
+		let highlightObj = '';
+		if (typeof highlight !== 'undefined') {
+			// Only proceed if the array is equal to one
+			if (highlight.length === 1) {
+				highlightObj = this.renderDot(highlight[0], this.props.highlight.idName);
+			}
+		}
+
 		return(
 			<Measure
 				bounds
@@ -114,6 +124,7 @@ class Hexplot extends Scatterplot {
 							{dots}
 							{axes}
 							{axisLabels}
+							{highlightObj}
 							{this.state.tooltip}
 							{this.state.selectionRectangle.getRectangle()}
 							/>

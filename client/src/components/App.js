@@ -25,6 +25,7 @@ import Navbar from './Navbar';
 import Loading from './Loading';
 import LayoutFactory from './LayoutFactory';
 import LoginScreen from './LoginScreen';
+import Highlight from './Highlight';
 // Third party components
 import { Icon } from 'react-fa';
 // Material-UI components
@@ -78,7 +79,8 @@ class App extends React.Component {
 			busy: {},
 			openDrawer: {right: false},
 			xDimension: '',
-			yDimension: ''
+			yDimension: '',
+			highlight: new Highlight('EnsemblID'),
 		};
 	}
 
@@ -341,7 +343,7 @@ class App extends React.Component {
 			if (dataset.loaded) {
 				hexplots.push(
 					<Grid item xs={6} key={ name }>
-						<Hexplot responsiveWidth={true} height={this.layoutFactory.heights.smallMultiples} width={0} rnaSeqData={dataset} xName={this.state.xDimension} yName={this.state.yDimension} xName={this.state.xDimension} yName={this.state.yDimension} filter={this.datasetHub.filter} forceUpdateApp={this.forceUpdateApp} hexSize={2} hexMax={10} showRenderGenesOption={false}/>
+						<Hexplot responsiveWidth={true} height={this.layoutFactory.heights.smallMultiples} width={0} rnaSeqData={dataset} highlight={this.state.highlight} xName={this.state.xDimension} yName={this.state.yDimension} xName={this.state.xDimension} yName={this.state.yDimension} filter={this.datasetHub.filter} forceUpdateApp={this.forceUpdateApp} hexSize={2} hexMax={10} showRenderGenesOption={false}/>
 					</Grid>
 				);
 			}
@@ -378,7 +380,7 @@ class App extends React.Component {
 						<Grid item xs={8}>
 							{/*<center><p>{this.state.primaryDataset.name}</p></center>*/}
 							{/* <Hexplot height={this.layoutFactory.heights.mainView} width={600} responsiveWidth={true} rnaSeqData={this.state.primaryDataset} xName="pValueNegLog10" yName="fc" hexSize={4} hexMax={20} showRenderGenesOption={true} /> */}
-							<Hexplot height={this.layoutFactory.heights.mainView} width={600} responsiveWidth={true} rnaSeqData={this.state.primaryDataset} xName={this.state.xDimension} yName={this.state.yDimension} filter={this.datasetHub.filter} forceUpdateApp={this.forceUpdateApp} hexSize={4} hexMax={20} showRenderGenesOption={true} />
+							<Hexplot height={this.layoutFactory.heights.mainView} width={600} responsiveWidth={true} highlight={this.state.highlight} rnaSeqData={this.state.primaryDataset} xName={this.state.xDimension} yName={this.state.yDimension} filter={this.datasetHub.filter} forceUpdateApp={this.forceUpdateApp} hexSize={4} hexMax={20} showRenderGenesOption={true} />
 						</Grid>
 						<Grid item xs={4}>
 							<Grid container gutter={16}>
@@ -387,7 +389,7 @@ class App extends React.Component {
 						</Grid>
 						{/* Add Table on whole page length */}
 						<Grid item xs={12}>
-							<Table data={primaryDatasetData} dimNames={primaryDatasetDimNames} height={395} filter={this.datasetHub.filter} forceUpdateApp={this.forceUpdateApp} changePlotDimension={this.setPlotDimension} />
+							<Table data={primaryDatasetData} dimNames={primaryDatasetDimNames} height={395} highlight={this.state.highlight} filter={this.datasetHub.filter} forceUpdateApp={this.forceUpdateApp} changePlotDimension={this.setPlotDimension} />
 						</Grid>
 					</Grid>
 					{/*<Paper>
