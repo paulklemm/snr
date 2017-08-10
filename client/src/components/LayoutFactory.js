@@ -39,7 +39,7 @@ class LayoutFactory {
     this.heights.mainView =         this.windowHeight - this.staticElementsHeights.header - this.staticElementsHeights.table - this.heigthPadding;
     const numTileRows = Math.ceil(this.smallMultiplesCount / 2);
     // Added +9 to account for pixels added through the "Paper" component
-    this.heights.smallMultiples = (this.heights.mainView + 9 - (this.gutterSize * numTileRows)) / numTileRows;
+    this.heights.smallMultiples = (this.heights.mainView + 62 - (this.gutterSize * numTileRows)) / numTileRows;
     if (debug) {
       console.log(`--------------------------------------`);
       console.log(`smallMultiplesCount: ${this.smallMultiplesCount}`);
