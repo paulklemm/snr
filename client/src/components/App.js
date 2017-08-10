@@ -63,7 +63,7 @@ class App extends React.Component {
 		this.forceUpdateApp = this.forceUpdateApp.bind(this);
 		this.login = this.login.bind(this);
 		this.datasetHub = new DatasetHub();
-		this.debug = true;
+		this.debug = false;
 		this.layoutFactory = new LayoutFactory(16);
 		// Init NodeBridge
 		this.nodeBridge = new NodeBridge();
@@ -145,13 +145,19 @@ class App extends React.Component {
 	}
 
 	async initSession() {
-		// Login Required
+		// TODO: Clear existing session first, especially the loaded data sets
+		// Check if we ned to login or not
 		const loginRequired = await this.authentication.loginRequired();
 		this.setState({
 			loginRequired: loginRequired
 		});
-		// get the personal folder
-		const output = await this.runRCommand("sonaR", "getUserFolder", { user: "'paul'" }, "json");
+		// If we need to login, then there is no local user or token saved. Therefore initSession needs to exit
+		if (this.state.loginRequired)
+			return;
+		// Set default plotting dimensions
+		this.setPlotDimensions('pValueNegLog10', 'fc');
+		// Get the personal folder
+		const output = await this.runRCommand("sonaR", "getUserFolder", { user: `'${this.authentication.getUser()}'` }, "json");
 		// Output is array containing a string, therefore this looks a bit ugly here
 		let userFolder = output['.val'][0];
 
@@ -175,11 +181,11 @@ class App extends React.Component {
 			this.setEnableDataset(datasetName, false);
 		}
 		
-		// PCA plot
-		const outputPCA = await this.runRCommand("sonaR", "plot_pca", { x: outputLoadData.sessionID }, 'ascii', false);
-		this.setState({
-			pcaImage: `${outputPCA.graphics[0]}/svg`
-		});
+		// // PCA plot
+		// const outputPCA = await this.runRCommand("sonaR", "plot_pca", { x: outputLoadData.sessionID }, 'ascii', false);
+		// this.setState({
+		// 	pcaImage: `${outputPCA.graphics[0]}/svg`
+		// });
 	}
 
 	/**
@@ -231,6 +237,9 @@ class App extends React.Component {
 		this.setState({
 			loginRequired: !loginSuccessful
 		});
+		// If login is successful, init the session
+		if (loginSuccessful)
+			await this.initSession()
 		return loginSuccessful;
 	}
 
