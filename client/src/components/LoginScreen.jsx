@@ -3,6 +3,7 @@ import TextField from 'material-ui/TextField';
 import Logo from './Logo';
 import Button from 'material-ui/Button';
 import Typography from 'material-ui/Typography';
+import PropTypes from 'prop-types';
 
 // https://stackoverflow.com/questions/396145/how-to-vertically-center-a-div-for-all-browsers?page=1&tab=votes#tab-top
 // https://stackoverflow.com/questions/1575141/make-div-100-height-of-browser-window
@@ -90,6 +91,10 @@ class LoginScreen extends React.Component {
       </div>
     );
   }
+}
+
+LoginScreen.propTypes = {
+  login: PropTypes.func
 }
 
 export default LoginScreen;
