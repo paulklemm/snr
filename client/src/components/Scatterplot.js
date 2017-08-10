@@ -276,7 +276,11 @@ class Scatterplot extends React.Component {
 	 */
 	handleMouseUp(event) {
 		event.preventDefault();
-		this.state.selectionRectangle.isDrawing = false;
+		let selectionRectangle = this.state.selectionRectangle;
+		selectionRectangle.isDrawing = false;
+		this.setState({
+			selectionRectangle: selectionRectangle
+		});
 		// Propagate the filter with the current bounds of the rectangle
 		if (this.state.selectionRectangle.boundsSet) {
 			this.props.filter.setFilter(this.props.xName, this.xScaleReverse(this.state.selectionRectangle.bounds.minX), '>')

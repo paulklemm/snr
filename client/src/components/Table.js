@@ -1,7 +1,5 @@
 import React from 'react';
-import {Icon} from 'react-fa';
 import IconButton from 'material-ui/IconButton';
-import Typography from 'material-ui/Typography';
 import TextField from 'material-ui/TextField';
 import PropTypes from 'prop-types';
 import {DefaultFilterSetting} from './DimensionTypes.js';
@@ -124,7 +122,10 @@ class Table extends React.Component{
 			header.push(
 				<th key={`header-th-${i}`}>
 					<div style={(filter.length > 0) ? styleSheet.headerTHFiltered : styleSheet.headerTH}>
-						<div onClick={ () => { this.onHeaderClick(dimension)} }>
+						<div onClick={ (event) => {
+							event.preventDefault();
+							this.onHeaderClick(dimension);
+						}}>
 						{/* <Typography noWrap type="body1"><Icon name="sort-desc" style={{fontSize:'100%'}} /> {dimension}</Typography> */}
 						{dimension}
 						</div>
@@ -208,7 +209,7 @@ class Table extends React.Component{
 			// Push the new table entry as well as the onClick events
 			table.push(<tr key={`tr_${dimensionKey}_${i}`} className={evenClass}
 				onClick={() => {
-					if (i == this.lastSelectedEntry) {
+					if (i === this.lastSelectedEntry) {
 						this.props.highlight.clear()
 						this.lastSelectedEntry = undefined;
 					} else {

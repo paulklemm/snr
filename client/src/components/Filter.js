@@ -54,7 +54,7 @@ class Filter {
    */
   removeFilter(dimension) {
     for (const filterKey in this.filter)
-      if (this.filter[filterKey].name == dimension)
+      if (this.filter[filterKey].name === dimension)
         delete this.filter[filterKey];
     this.broadcastFilter();
   }
