@@ -11,6 +11,18 @@ class DatasetHub {
 		this.filter = new Filter(this.broadcastFilter);
 	}
 
+	/**
+	 * Get the count of enabled datasets in Hub.
+	 * @return {Integer} Enabled dataset count
+	 */
+	getCountOfEnabledDatasets() {
+		let count = 0;
+		for (let dataset in this.enabled)
+			if (this.enabled[dataset] === true)
+				count = count + 1
+		return count;
+	}
+
 	broadcastFilter() {
 		for (let i in this.names) {
 			let name = this.names[i];

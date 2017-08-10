@@ -114,13 +114,13 @@ class App extends React.Component {
 	 * @param {Boolean} enabled Status whether the data should be treated as active or not
 	 */
 	setEnableDataset(name, enabled) {
-		// Update the countf of the small multiples
 		// TODO: Handle removal of 'enabled'
-		this.layoutFactory.increaseSmallMultiplesCount();
 		let requiresLoading = this.datasetHub.setEnable(name, enabled);
 		this.setState({
 			datasetEnabled: this.datasetHub.enabled
 		});
+		// Update the count of the small multiples
+		this.layoutFactory.setSmallMultiplesCount(this.datasetHub.getCountOfEnabledDatasets());
 		if (requiresLoading) {
 			this.loadDataset(name);
 		}
