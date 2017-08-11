@@ -60,14 +60,13 @@ To account for data from different sources, each file in the user folder should 
 
 ```json
 {
-  source: kallisto/sleuth,
-  mapping: {
-    fc = log2(fold_change),
-    pValue = p_value,
-    ensembl_gene_id = ensemblID,
-    ensembl_transcript_id = ensembl_transcriptID
+  "source": "kallisto/sleuth",
+  "mapping": {
+    "fc": "log2(fold_change)",
+    "pValue": "p_value",
+    "ensembl_gene_id": "ensemblID",
+    "ensembl_transcript_id": "ensembl_transcriptID"
   }
-
 }
 ```
 
