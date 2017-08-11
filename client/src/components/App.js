@@ -154,6 +154,11 @@ class App extends React.Component {
 		// If we need to login, then there is no local user or token saved. Therefore initSession needs to exit
 		if (this.state.loginRequired)
 			return;
+
+		// Get GO-Term description
+		// const go_summary = await this.runRCommand("sonaRGO", "get_go_summary", {}, 'json', false);
+		// console.log(go_summary);
+
 		// Set default plotting dimensions
 		this.setPlotDimensions('pValueNegLog10', 'fc');
 		// Get the personal folder
@@ -196,8 +201,6 @@ class App extends React.Component {
 	 * @param {String} rfunction: Name of the `R` function ("rnorm")
 	 * @param {Object} params: JSON object of the parameters ("{ n: 10, mean: 5 }"")
 	 * @param {String} valFormat: Format of .val attribute (ascii, json, tsv), refer to `https://opencpu.github.io/server-manual/opencpu-server.pdf`
-	 * @param {String} user: Name of the user
-	 * @param {String} token: Token of the user
 	 * @param {Boolean} debug: Print debug statements, defaults to false
 	 * @return {Object} result of command
 	 */
