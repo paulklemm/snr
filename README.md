@@ -10,7 +10,7 @@
 
 ### ToDo
 
-Overview over all tasks still left to do.
+Development is divided into sprints to achieve milestones. Head over to [Issues](https://github.sf.mpg.de/pklemm/sonar/issues) for the ToDo List.
 
 - [ ] 🏝 Create project homepage
 - [ ] 🤖 Write documentation on how to set up the infrastructure
@@ -29,51 +29,6 @@ Overview over all tasks still left to do.
 - [ ] 🔥 Add PCA plot including results from ArrayExpress/Kallisto
 - [ ] 🔥 Conduct user studies
 - [ ] 🤖 Create function to add new users
-
-### Timeline
-
-Development is divided into sprints to achieve milestones.
-
-#### Sprint 1. Create presentable ⍺ prototype - 31.08
-
-Create a ⍺ version that is not feature-complete but usable.
-
-- [ ] 🔥 Include GO-Term analysis
-- [ ] 🔥 Add Metadata structure for each dataset to display in the client
-  - [ ] 🔥 Implement Proper data transfer function between back- and front-end
-- [ ] 🔥 Add PCA plot including results from ArrayExpress/Kallisto
-
-#### Sprint 2. Incorporate public data - 29.09
-
-Make the prototype near-feature complete for the evaluation.
-
-- [ ] 🔥 Implement Analysis system of ArrayExpress data using either Kallisto or QuickNGS
-- [ ] 🔥 Include Analyses from QuickNGS
-- [ ] 🤖 Add Similarity Analysis based on ExpressionAtlas
-- [ ] 🤖 Conduct first informal evaluation on prototype
-- [ ] 🤖 Add Icon-visualization of each dataset in table
-
-#### Sprint 3. Include user feedback - 31.10
-
-Include user feedback and prepare the software for release.
-
-- [ ] 🔥 Conduct user studies
-  - [ ] 🔥 Respond to user feedback
-- [ ] 🤖 Create function to add new users
-- [ ] 🤖 Create docker images
-  - [ ] 🤖 Docker image for `R` back-end
-  - [ ] 🤖 Docker image for `node` server and client
-  - [ ] 🏝 Docker image for both
-
-#### Sprint 4. Write the paper and release the Software - 30.11
-
-Write the publication and release the software in public. 
-
-- [ ] 🔥 Maybe conduct second user study
-  - [ ] 🔥 Respond to user feedback
-- [ ] 🔥 Write paper
-- [ ] 🏝 Create project homepage
-- [ ] 🤖 Write documentation on how to set up the infrastructure
 
 ## Structure of Session
 
