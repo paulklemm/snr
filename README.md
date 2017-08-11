@@ -2,15 +2,15 @@
 
 ## Project Roadmap
 
-### Priority Legend
+### ToDo
+
+Priority Legend:
 
 - 🔥 Must have
 - 🤖 Normal
 - 🏝 Nice to have
 
-### ToDo
-
-Development is divided into sprints to achieve milestones. Head over to [Issues](https://github.sf.mpg.de/pklemm/sonar/issues) for the ToDo List.
+Development is divided into sprints to achieve milestones. Head over to [Issues](https://github.sf.mpg.de/pklemm/sonar/issues) for the ToDo list.
 
 - [ ] 🏝 Create project homepage
 - [ ] 🤖 Write documentation on how to set up the infrastructure
