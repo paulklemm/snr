@@ -1,5 +1,72 @@
 # Sonar Readme
 
+## Project Roadmap
+
+### Priority Legend
+
+- 🔥 Must have
+- 🤖 Normal
+- 🏝 Nice to have
+
+### ToDo
+
+Overview over all tasks still left to do.
+
+- [ ] 🏝 Create project homepage
+- [ ] 🤖 Write documentation on how to set up the infrastructure
+- [ ] 🤖 Create docker images
+  - [ ] 🤖 Docker image for `R` back-end
+  - [ ] 🤖 Docker image for `node` server and client
+  - [ ] 🏝 Docker image for both
+- [ ] 🔥 Include GO-Term analysis
+- [ ] 🤖 Add Similarity Analysis based on ExpressionAtlas
+- [ ] 🔥 Include Analyses from QuickNGS
+- [ ] 🤖 Add Icon-visualization of each dataset in table
+- [ ] 🔥 Add Metadata structure for each dataset to display in the client
+  - [ ] 🔥 Implement Proper data transfer function between back- and front-end
+- [ ] 🔥 Implement Analysis system of ArrayExpress data using either Kallisto or QuickNGS
+- [ ] 🔥 Write paper
+- [ ] 🔥 Add PCA plot including results from ArrayExpress/Kallisto
+- [ ] 🔥 Conduct user studies
+- [ ] 🤖 Create function to add new users
+
+### Timeline
+
+Development is divided into sprints to achieve milestones.
+
+#### Sprint 1. Create presentable prototype - 31.08
+
+- [ ] 🔥 Include GO-Term analysis
+- [ ] 🔥 Add Metadata structure for each dataset to display in the client
+  - [ ] 🔥 Implement Proper data transfer function between back- and front-end
+- [ ] 🔥 Add PCA plot including results from ArrayExpress/Kallisto
+
+#### Sprint 2. Incorporate public data - 29.09
+
+- [ ] 🔥 Implement Analysis system of ArrayExpress data using either Kallisto or QuickNGS
+- [ ] 🔥 Include Analyses from QuickNGS
+- [ ] 🤖 Add Similarity Analysis based on ExpressionAtlas
+- [ ] 🤖 Conduct first informal evaluation on prototype
+- [ ] 🤖 Add Icon-visualization of each dataset in table
+
+#### Sprint 3. Include user feedback - 31.10
+
+- [ ] 🔥 Conduct user studies
+  - [ ] 🔥 Respond to user feedback
+- [ ] 🤖 Create function to add new users
+- [ ] 🤖 Create docker images
+  - [ ] 🤖 Docker image for `R` back-end
+  - [ ] 🤖 Docker image for `node` server and client
+  - [ ] 🏝 Docker image for both
+
+#### Sprint 4. Write the paper and release the Software - 30.11
+
+- [ ] 🔥 Maybe conduct second user study
+  - [ ] 🔥 Respond to user feedback
+- [ ] 🔥 Write paper
+- [ ] 🏝 Create project homepage
+- [ ] 🤖 Write documentation on how to set up the infrastructure
+
 ## Structure of Session
 
 With the login you receive select a session configuration file on the server. The session contains the QuickNGS datasets that are available for your Sonar session. 
