@@ -30,21 +30,44 @@ Development is divided into sprints to achieve milestones. Head over to [Issues]
 - [ ] 🔥 Conduct user studies
 - [ ] 🤖 Create function to add new users
 
-## Structure of Session
+#### Not in sprints
 
-With the login you receive select a session configuration file on the server. The session contains the QuickNGS datasets that are available for your Sonar session. 
+- [ ] 🏝 Save sessions locally and on the server to exchange with people (maybe via link)
+  - Maybe using a bookmark system
 
-Example:
+## Structure of Data and OpenCPU Sessions
+
+The data folder looks as follows:
+
+```
+data
+├── arrayexpress
+├── arrayexpressquickngs
+├── expressionatlas
+├── sessions.json
+└── users
+    ├── debug
+    └── paul
+```
+
+Loading all data on client connect requires a lot of time. Therefore loading is cached.
+
+The `sessions.json` file contains OpenCPU session ids for each user as well as the different data sources. The file is parsed by the `sonaR` `get_session()` function. It loads the session from the `sessions.json` file and checks if all data sets are loaded by checking the `R` list against the respective folder contents. This way, data loading is only triggered if there are changes in the `data` folder.
+
+## Data Layout
+
+To account for data from different sources, each file in the user folder should be accompanied with a descriptive `json` file following the following format:
 
 ```json
 {
-  "quickNGSDataPath": "some_path",
-  "primaryDataset": "DIFFEXPR_EXPORT6945_DATASET10018.csv",
-  "publicDatasets": [
-    "link_1",
-    "link_2",
-    "link_3",
-  ]
+  source: kallisto/sleuth,
+  mapping: {
+    fc = log2(fold_change),
+    pValue = p_value,
+    ensembl_gene_id = ensemblID,
+    ensembl_transcript_id = ensembl_transcriptID
+  }
+
 }
 ```
 
