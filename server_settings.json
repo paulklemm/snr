@@ -1,4 +1,5 @@
 {
   "users": "/Users/paul/Workshop/MPI/MPI-MR-Projects/SONAR/app/users/",
+  "sessionsPath": "/Users/paul/Workshop/MPI/MPI-MR-Projects/SONAR/app/data/sessions.json",
   "port": 3099
 }

@@ -37,11 +37,14 @@ class OpenCPUBridge {
 		// Only proceed with the request when the OpenCPU server is online
 		await this.isOnlinePromise;
 		// let response = await post(`${this.address}/ocpu/library/${rpackage}/R/${rfunction}`, params);
-		let response = await ajax({
-			url: `${this.address}/ocpu/library/${rpackage}/R/${rfunction}`,
-			type: "POST",
-			data: params 
-		});
+		let response;
+		try {
+			response = await ajax({
+				url: `${this.address}/ocpu/library/${rpackage}/R/${rfunction}`,
+				type: "POST",
+				data: params 
+			});
+		} catch (error) { timeStampLog(error); }
 		let openCpuOutput = this.getOcpuOutput(response, valFormat);
 		// Now we have URLs for the output of the openCPU command, we get the output of those
 		try	{

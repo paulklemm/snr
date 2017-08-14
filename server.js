@@ -5,6 +5,7 @@ const express = require("express");
 const { timeStampLog, readJSONFSSync } = require('./Components/Helper')
 const { UserManager } = require('./Components/UserManager');
 const { OpenCPUBridge } = require('./Components/OpenCPUBridge');
+const { Sessions } = require('./Components/Sessions');
 
 /**
  * Read settings from file. Settings should contain:
@@ -29,8 +30,16 @@ const settings = getSettings();
 const userManager = new UserManager(settings.users);
 // Create the openCPU connection
 const openCPU = new OpenCPUBridge('http://localhost:8004');
+// Set path to `session.json` file
+const sessions = new Sessions(settings.sessionsPath);
+timeStampLog(sessions.getSession("test"));
+sessions.writeSession("bla", 'blubber');
+
 // TODO: Debug code to test OpenCPU bridge
 // openCPU.runRCommand("sonaR", "getUserFolder", { user: "'paul'" }, "json").then((result) => {
+//   timeStampLog(JSON.stringify(result));
+// });
+// openCPU.runRCommand("stats", "rnorm", { n: 3 }, "json").then((result) => {
 //   timeStampLog(JSON.stringify(result));
 // });
 
