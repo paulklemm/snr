@@ -44,12 +44,12 @@ class OpenCPUBridge {
 				type: "POST",
 				data: params 
 			});
-		} catch (error) { timeStampLog(error); }
+		} catch (error) { timeStampLog(JSON.stringify(error, null, 2)); }
 		let openCpuOutput = this.getOcpuOutput(response, valFormat);
 		// Now we have URLs for the output of the openCPU command, we get the output of those
 		try	{
 			await Promise.all(openCpuOutput.promises);
-		} catch (error) { timeStampLog(error); }
+		} catch (error) { timeStampLog(JSON.stringify(error, null, 2)); }
 		
 		// Remove the promises array since it is not needed anymore
 		delete openCpuOutput.promises;
