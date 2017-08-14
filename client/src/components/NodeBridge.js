@@ -112,6 +112,19 @@ class NodeBridge {
 	}
 
 	/**
+	 * Load data for user.
+	 * 
+	 * @param {String} user User to load data for
+	 * @param {String} token Token associated with user to verify login.
+	 */
+	async loadData(user, token) {
+		let response = await fetch(`api/loaddata?user=${user}&token=${token}`, { accept: 'application/json' })
+			.then(this.parseJSON)
+
+		return response;
+	}
+
+	/**
    * Send login credentials to server and receive success status and token
    * @param {String} user 
    * @param {String} hashedPassword 

@@ -161,19 +161,20 @@ class App extends React.Component {
 
 		// Set default plotting dimensions
 		this.setPlotDimensions('pValueNegLog10', 'fc');
-		// Get the personal folder
-		const output = await this.runRCommand("sonaR", "getUserFolder", { user: `'${this.authentication.getUser()}'` }, "json");
-		// Output is array containing a string, therefore this looks a bit ugly here
-		let userFolder = output['.val'][0];
+		// // Get the personal folder
+		// const output = await this.runRCommand("sonaR", "getUserFolder", { user: `'${this.authentication.getUser()}'` }, "json");
+		// // Output is array containing a string, therefore this looks a bit ugly here
+		// let userFolder = output['.val'][0];
 
-		// Load Data from userFolder and get Session ID for the associated object
-		const outputLoadData = await this.runRCommand("sonaR", "load_data", { data_folder: `'${userFolder}'` }, "json", false);
-		console.log(`LoadData Session ID: ${outputLoadData.sessionID}`);
+		// // Load Data from userFolder and get Session ID for the associated object
+		// const outputLoadData = await this.runRCommand("sonaR", "load_data", { data_folder: `'${userFolder}'` }, "json", false);
+		const outputLoadData = await this.nodeBridge.loadData(this.authentication.getUser(), this.authentication.getToken());
+		console.log(`LoadData Session ID: ${outputLoadData.result.sessionID}`);
 		// Update state with sessionID
-		this.setState({ openCPULoadDataSessionID: outputLoadData.sessionID });
+		this.setState({ openCPULoadDataSessionID: outputLoadData.result.sessionID });
 
 		// Get dataset list as array
-		const outputGetDataNames = await this.runRCommand("sonaR", "get_data_names", { x: `${outputLoadData.sessionID}` }, 'json', false);
+		const outputGetDataNames = await this.runRCommand("sonaR", "get_data_names", { x: `${outputLoadData.result.sessionID}` }, 'json', false);
 		// Attach the dataset array to the datasetHub
 		for (let i in outputGetDataNames['.val']) {
 			let datasetName = outputGetDataNames['.val'][i];
