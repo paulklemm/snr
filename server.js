@@ -65,23 +65,21 @@ app.get("/api/isonline", (req, res) => {
 /**
  * Request R function to be executed on OpenCPU server
  */
-app.get("/api/runrcommand", (req, res) => {
-  const result = userManager.tokenApiFunction('runrcommand', req, (req) => {
-    const rpackage = req.query.rpackage;
-    const rfunction = req.query.rfunction;
+app.get("/api/runrcommand", async (req, res) => {
+  const result = await userManager.tokenApiFunction('runrcommand', req, async (req) => {
+    // Destructure required commands in query
+    const { rpackage, rfunction, valformat } = req.query;
     // Params come as JSON strings
     const params = JSON.parse(req.query.params);
-    const valformat = req.query.valformat;
     // Log the command for debugging
     timeStampLog(`${rpackage}.${rfunction}(${JSON.stringify(params)}), valformat: ${valformat }`);
     // Run the command
-    openCPU.runRCommand(rpackage, rfunction, params, valformat).then((result) => {
-      res.json({ name: 'runrcommand', success: true, result: result });
-    });
+    const result = await openCPU.runRCommand(rpackage, rfunction, params, valformat);
+    // Return success response
+    return ({ name: 'runrcommand', success: true, result: result });
   });
-  // If the check for user and token fails, this will report the failure
-  if (typeof result != 'undefined')
-    res.json(result);
+  // Respond result
+  res.json(result);
 });
 
 /**
@@ -155,7 +153,7 @@ app.get("/api/loaddata", async (req, res) => {
     } else
       // We do know the session ID
       response = { sessionID: sessions.getSession(user) };
-      
+
     // Return result response in case of success
     return({ name: 'loaddata', success: true, result: response });
   });
