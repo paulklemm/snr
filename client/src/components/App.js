@@ -161,13 +161,8 @@ class App extends React.Component {
 
 		// Set default plotting dimensions
 		this.setPlotDimensions('pValueNegLog10', 'fc');
-		// // Get the personal folder
-		// const output = await this.runRCommand("sonaR", "getUserFolder", { user: `'${this.authentication.getUser()}'` }, "json");
-		// // Output is array containing a string, therefore this looks a bit ugly here
-		// let userFolder = output['.val'][0];
 
-		// // Load Data from userFolder and get Session ID for the associated object
-		// const outputLoadData = await this.runRCommand("sonaR", "load_data", { data_folder: `'${userFolder}'` }, "json", false);
+		// Load Data from userFolder and get Session ID for the associated object
 		const outputLoadData = await this.nodeBridge.loadData(this.authentication.getUser(), this.authentication.getToken());
 		console.log(`LoadData Session ID: ${outputLoadData.result.sessionID}`);
 		// Update state with sessionID
