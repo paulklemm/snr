@@ -136,6 +136,7 @@ async function sessionValid(session, dataFolder) {
  * TODO: Change this to only return the listed files and do not pass session ID to the client
  */
 app.get("/api/loaddata", async (req, res) => {
+  // TokenAPIFunction returns a result object for authentication failure
   const result = await userManager.tokenApiFunction('loaddata', req, async (req) => {
     const user = req.query.user;
     timeStampLog(`Load data for user ${user}`);
@@ -151,18 +152,15 @@ app.get("/api/loaddata", async (req, res) => {
       timeStampLog(`Loading data for user ${user} successful, Session-ID: ${response.sessionID}`);
       // Save session Id
       sessions.writeSession(user, response.sessionID);
-      // return ({ name: 'loaddata', success: true, sessionId: response.sessionID });
-    } else {
+    } else
       // We do know the session ID
-      response = {};
-      response.sessionID = sessions.getSession(user);
-    }
-    res.json({ name: 'loaddata', success: true, result: response });
+      response = { sessionID: sessions.getSession(user) };
+      
+    // Return result response in case of success
+    return({ name: 'loaddata', success: true, result: response });
   });
-  // If the check for user and token fails, this will report the failure
-  if (typeof result !== 'undefined') {
-    res.json(result);
-  }
+  // Return result of TokenApi function, either success or failure
+  res.json(result);
 });
 
 /**
