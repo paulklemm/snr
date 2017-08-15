@@ -120,45 +120,49 @@ app.get("/api/echo", (req, res) => {
   res.json({ name: "echo", "echo": param});
 });
 
+async function sessionValid(session, dataFolder) {
+  return (await openCPU.runRCommand("sonaR", "session_valid", { session: session, data_folder: `'${dataFolder}'` }, "json"))['.val'][0];
+}
+
 /**
  * Load data function
  * TODO: Change this to only return the listed files and do not pass session ID to the client
  */
-app.get("/api/loaddata", (req, res) => {
-  const result = userManager.tokenApiFunction('loaddata', req, (req) => {
+app.get("/api/loaddata", async (req, res) => {
+  const result = await userManager.tokenApiFunction('loaddata', req, async (req) => {
     const user = req.query.user;
     timeStampLog(`Load data for user ${user}`);
     // Get OpenCPU data session for user
     let session = sessions.getSession(user);
-    // Check if we already know the session ID
-    if (typeof session === 'undefined') {
+    // If we know the session ID, check if it is valid. If session is not undefined, check if contains all required files
+    const sessionIsValid = (typeof session !== 'undefined') ? await sessionValid(session, userManager.getUserSettings(user).path) : false;
+    let response;
+    if (!sessionIsValid) {
       timeStampLog(`Call R to load data for user ${user}`)
       // We have to load the data with OpenCPU
-      openCPU.runRCommand("sonaR", "load_data", { data_folder: `'${userManager.getUserSettings(user).path}'` }, "json").then((result) => {
-        timeStampLog(`Loading data for user ${user} successful, Session-ID: ${result.sessionID}`);
-        // TODO: Save session Id
-        sessions.writeSession(user, result.sessionID);
-        // return ({ name: 'loaddata', success: true, sessionId: result.sessionID });
-        res.json({ name: 'loaddata', success: true, result: result });
-      });
+      response = await openCPU.runRCommand("sonaR", "load_data", { data_folder: `'${userManager.getUserSettings(user).path}'` }, "json");
+      timeStampLog(`Loading data for user ${user} successful, Session-ID: ${response.sessionID}`);
+      // Save session Id
+      sessions.writeSession(user, response.sessionID);
+      // return ({ name: 'loaddata', success: true, sessionId: response.sessionID });
     } else {
       // We do know the session ID
-      let result = {};
-      // TODO: We still need to check if the session is still valid
-      result.sessionID = sessions.getSession(user);
-      res.json({ name: 'loaddata', success: true, result: result });
+      response = {};
+      response.sessionID = sessions.getSession(user);
     }
+    res.json({ name: 'loaddata', success: true, result: response });
   });
   // If the check for user and token fails, this will report the failure
-  if (typeof result != 'undefined')
+  if (typeof result !== 'undefined') {
     res.json(result);
+  }
 });
 
 /**
  * Simple echo function to see if the server works as expected with user providing a token
  */
-app.get("/api/echotoken", (req, res) => {
-  const result = userManager.tokenApiFunction('echotoken', req, (req) => {
+app.get("/api/echotoken", async (req, res) => {
+  const result = await userManager.tokenApiFunction('echotoken', req, async (req) => {
     const param = req.query.q;
     timeStampLog(`Received echo Token of ${param}`);
     return({name: 'echo', success: true, echo: param});
