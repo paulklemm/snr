@@ -33,9 +33,8 @@ class UserManager {
 	 * @return {Object} return object that indicated failure or return `apiFunction`
 	 */
 	tokenApiFunction(name, req, apiFunction) {
-		// Get user and token from the query
-		const user = req.query.user;
-		const token = req.query.token;
+		// Destructure user and token from the query
+		const {user, token} = req.query;
 		// Check if token is available for the user
 		if (this.checkToken(user, token))
 			// Execute Api function
