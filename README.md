@@ -66,9 +66,14 @@ To account for data from different sources, each file in the user folder should 
     "pValue": "p_value",
     "ensembl_gene_id": "ensemblID",
     "ensembl_transcript_id": "ensembl_transcriptID"
+  },
+  "regex": {
+    "FPKM": "FPKM$"
   }
 }
 ```
+
+This file can also be called `dictionary.json` and then acts as fallback configuration for all files in a folder if there is no specific dictionary file provided for a dataset.
 
 ## Node Server
 
