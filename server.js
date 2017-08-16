@@ -129,11 +129,17 @@ async function sessionValid(session, dataFolder) {
   return (await openCPU.runRCommand("sonaR", "session_valid", { session: session, data_folder: `'${dataFolder}'` }, "json"))['.val'][0];
 }
 
+/**
+ * Get requested dataset from OpenCPU session
+ * TODO: To reduce load on OpenCPU server, this could also be done by reading the raw CSV files
+ */
 app.get("/api/getdataset", async (req, res) => {
   const result = await userManager.tokenApiFunction('getdataset', req, async (req) => {
-    const { name } = req.query;
+    const { name, user } = req.query;
     timeStampLog(`New API function for loading data called on dataset ${name}`);
-    return({ name: "getdataset", success: true })
+    // Load the data set using OpenCPU
+    dataset = await openCPU.runRCommand("sonaR", "get_dataset", { datasets: sessions.getSession(user), name: `'${name}'` }, 'json', true);
+    return({ name: "getdataset", success: true, dataset: dataset});
   });
   res.json(result);
 });

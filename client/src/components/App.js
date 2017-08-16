@@ -294,25 +294,27 @@ class App extends React.Component {
 		});
 	}
 
+	/**
+	 * Load a dataset from Server
+	 * 
+	 * @param {String} name Name of dataset to load
+	 * @param {Boolean} verbose Verbose output for debugging purposes
+	 */
 	async loadDataset(name, verbose = false) {
 		if (verbose) console.log(`Loading ${name} ...`);
 
 		// Set dataset to loading
 		this.datasetHub.setLoading(name)
 		this.setState({datasetLoading: this.datasetHub.loading});
-		// Load the dataset
-		let dataset = await this.runRCommand("sonaR", "get_dataset", { datasets: this.state.openCPULoadDataSessionID, name: `'${name}'`}, 'json', true);
-		this.datasetHub.setData(name, dataset['.val'].dataset, dataset['.val'].dimNames);
+		// Load dataset
+		const response = await this.nodeBridge.getDataset(this.authentication.getUser(), this.authentication.getToken(), name);
+		this.datasetHub.setData(name, response.dataset['.val'].dataset, response.dataset['.val'].dimNames);
 		// Loading is done, so update it again
 		this.setState({datasetLoading: this.datasetHub.loading});
 		this.setState({primaryDataset: this.datasetHub.datasets[name]});
 
 		if (verbose) console.log(`Loading ${name} done!`);
 		if (verbose) console.log(this.datasetHub.datasets);
-
-		// TODO: New loading functionality
-		const newDataset = await this.nodeBridge.getDataset(this.authentication.getUser(), this.authentication.getToken(), name);
-		console.log(newDataset);
 	}
 
 	/** https://stackoverflow.com/questions/19014250/reactjs-rerender-on-browser-resize */
