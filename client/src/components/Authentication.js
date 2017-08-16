@@ -14,6 +14,7 @@ class Authentication {
 
 	/**
 	 * Get user of local storage
+	 * @return {String} User name in storage
 	 */
 	getUser() {
 		return localStorage.getItem('sonarLoginUser');
@@ -21,6 +22,7 @@ class Authentication {
 
 	/**
 	 * Get token of local storage
+	 * @return {String} Token in storage
 	 */
 	getToken() {
 		return localStorage.getItem('sonarLoginToken');

@@ -11,6 +11,15 @@ class NodeBridge {
 	}
 
 	/**
+	 * Set Authentication object for verifying local user and token
+	 * 
+	 * @param {Object} authenticator 
+	 */
+	setAuthentication(authentication) {
+		this.authentication = authentication;
+	}
+
+	/**
 	 * This is a debug function that can be removed later on. It contains code for checking the
 	 * Node server behavior
 	 */
@@ -53,7 +62,9 @@ class NodeBridge {
    * @param {Function} cb callback after query
    * @return {Promise} of sendEcho fetch
    */
-	sendEchoToken(query, user, token, cb) {
+	sendEchoToken(query, cb) {
+		// Get User and Token
+		const { user, token } = this.getUserAndToken();
 		return fetch(`api/echotoken?q=${query}&user=${user}&token=${token}`, { accept: 'application/json' })
 			.then(this.parseJSON)
 			.then(cb);
@@ -87,12 +98,12 @@ class NodeBridge {
 	/**
    * Async Echo function with user and token.
    * @param {String} query: String to echo
-	 * @param {String} user: User to login
-	 * @param {String} token: Token for user
 	 * @param {Boolean} debug: Print echo and server response to console
 	 * @return {Object} Response object of server
 	 */
-	async echoToken(query, user, token, debug = false) {
+	async echoToken(query, debug = false) {
+		// Get User and Token
+		const { user, token } = this.getUserAndToken()
 		if (debug) console.log(`Test async echo token query ${query}`);
 		let response = await this.sendEchoToken(query, user, token);
 		if (debug) console.log(response);
@@ -100,25 +111,39 @@ class NodeBridge {
 	}
 
 	/**
-   * Get echo from server to test availability
-   * @param {String} query term to echo
-   * @param {Function} cb callback after query
-   * @return {Promise} of sendEcho fetch
-   */
-	sendRCommand(rpackage, rfunction, params, valformat, user, token, cb) {
-		return fetch(`api/runrcommand?rpackage=${rpackage}&rfunction=${rfunction}&params=${JSON.stringify(params)}&valformat=${valformat}&user=${user}&token=${token}`, { accept: 'application/json' })
+	 * Execute R command on OpenCPU backend and receive the result in specified valformat
+	 * 
+	 * @param {String} rpackage R package name
+	 * @param {String} rfunction Function of R package
+	 * @param {Object} params Params for function as JSON
+	 * @param {String} valformat Format of .val attribute (ascii, json, tsv), refer to `https://opencpu.github.io/server-manual/opencpu-server.pdf`
+	 * @return {Object} Response from Node server
+	 */
+	async sendRCommand(rpackage, rfunction, params, valformat) {
+		// Get user and token
+		const { user, token } = this.getUserAndToken();
+		// Fetch result from server
+		let response = fetch(`api/runrcommand?rpackage=${rpackage}&rfunction=${rfunction}&params=${JSON.stringify(params)}&valformat=${valformat}&user=${user}&token=${token}`, { accept: 'application/json' })
 			.then(this.parseJSON)
-			.then(cb);
+		
+		return response;
+	}
+
+	/**
+	 * Get User and Token from Authentication
+	 * @return {Object} { user: UserName, token: UserToken }
+	 */
+	getUserAndToken() {
+		return ({ user: this.authentication.getUser(), token: this.authentication.getToken() })
 	}
 
 	/**
 	 * Load data for user.
 	 * 
-	 * @param {String} user User to load data for
-	 * @param {String} token Token associated with user to verify login.
 	 * @return {Object} Server response
 	 */
-	async loadData(user, token) {
+	async loadData() {
+		let { user, token } = this.getUserAndToken();
 		let response = await fetch(`api/loaddata?user=${user}&token=${token}`, { accept: 'application/json' })
 			.then(this.parseJSON)
 
@@ -126,13 +151,14 @@ class NodeBridge {
 	}
 
 	/**
+	 * Get dataset from OpenCPU back end
 	 * 
-	 * @param {String} user User name
-	 * @param {String} token Login token
 	 * @param {String} name Name of the dataset to load
 	 * @return {Object} Server response
 	 */
-	async getDataset(user, token, name) {
+	async getDataset(name) {
+	// Get User and Token
+		const { user, token } = this.getUserAndToken()
 		let response = await fetch(`api/getdataset?user=${user}&token=${token}&name=${name}`, { accept: 'application/json' })
 			.then(this.parseJSON)
 

@@ -69,6 +69,8 @@ class App extends React.Component {
 		this.nodeBridge = new NodeBridge();
 		// Authenticator takes nodebridge as input
 		this.authentication = new Authentication(this.nodeBridge);
+		// Set Authenticator object for the Node Bridge
+		this.nodeBridge.setAuthentication(this.authentication);
 		this.state = {
 			datasetEnabled: {},
 			datasetLoading: {},
@@ -163,7 +165,7 @@ class App extends React.Component {
 		this.setPlotDimensions('pValueNegLog10', 'fc');
 
 		// Load Data from userFolder and get Session ID for the associated object
-		const outputLoadData = await this.nodeBridge.loadData(this.authentication.getUser(), this.authentication.getToken());
+		const outputLoadData = await this.nodeBridge.loadData();
 		console.log(`LoadData Session ID: ${outputLoadData.result.sessionID}`);
 		// Update state with sessionID
 		this.setState({ openCPULoadDataSessionID: outputLoadData.result.sessionID });
@@ -210,7 +212,7 @@ class App extends React.Component {
 
 		// Run the command
 		if (debug) console.log(runKey);
-		let response = await this.nodeBridge.sendRCommand(rpackage, rfunction, params, valformat, this.authentication.getUser(), this.authentication.getToken());
+		let response = await this.nodeBridge.sendRCommand(rpackage, rfunction, params, valformat);
 		if (debug) console.log(response);
 
 		// If Response is negative because of invalid token, invalidate login
@@ -307,7 +309,7 @@ class App extends React.Component {
 		this.datasetHub.setLoading(name)
 		this.setState({datasetLoading: this.datasetHub.loading});
 		// Load dataset
-		const response = await this.nodeBridge.getDataset(this.authentication.getUser(), this.authentication.getToken(), name);
+		const response = await this.nodeBridge.getDataset(name);
 		this.datasetHub.setData(name, response.dataset['.val'].dataset, response.dataset['.val'].dimNames);
 		// Loading is done, so update it again
 		this.setState({datasetLoading: this.datasetHub.loading});
