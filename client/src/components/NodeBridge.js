@@ -116,9 +116,24 @@ class NodeBridge {
 	 * 
 	 * @param {String} user User to load data for
 	 * @param {String} token Token associated with user to verify login.
+	 * @return {Object} Server response
 	 */
 	async loadData(user, token) {
 		let response = await fetch(`api/loaddata?user=${user}&token=${token}`, { accept: 'application/json' })
+			.then(this.parseJSON)
+
+		return response;
+	}
+
+	/**
+	 * 
+	 * @param {String} user User name
+	 * @param {String} token Login token
+	 * @param {String} name Name of the dataset to load
+	 * @return {Object} Server response
+	 */
+	async getDataset(user, token, name) {
+		let response = await fetch(`api/getdataset?user=${user}&token=${token}&name=${name}`, { accept: 'application/json' })
 			.then(this.parseJSON)
 
 		return response;

@@ -129,6 +129,15 @@ async function sessionValid(session, dataFolder) {
   return (await openCPU.runRCommand("sonaR", "session_valid", { session: session, data_folder: `'${dataFolder}'` }, "json"))['.val'][0];
 }
 
+app.get("/api/getdataset", async (req, res) => {
+  const result = await userManager.tokenApiFunction('getdataset', req, async (req) => {
+    const { name } = req.query;
+    timeStampLog(`New API function for loading data called on dataset ${name}`);
+    return({ name: "getdataset", success: true })
+  });
+  res.json(result);
+});
+
 /**
  * Load data function
  * TODO: Change this to only return the listed files and do not pass session ID to the client

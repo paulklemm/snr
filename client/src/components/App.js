@@ -309,6 +309,10 @@ class App extends React.Component {
 
 		if (verbose) console.log(`Loading ${name} done!`);
 		if (verbose) console.log(this.datasetHub.datasets);
+
+		// TODO: New loading functionality
+		const newDataset = await this.nodeBridge.getDataset(this.authentication.getUser(), this.authentication.getToken(), name);
+		console.log(newDataset);
 	}
 
 	/** https://stackoverflow.com/questions/19014250/reactjs-rerender-on-browser-resize */
