@@ -33,7 +33,7 @@ class Sessions {
       sessions = JSON.parse(filebuffer);
     } catch (readOrJsonErr) {
       // Not successful, create empty project.
-      timeStampLog(`Cannot find session file ${this.sessionsPath}. Error: "${readOrJsonErr}"`, true);
+      timeStampLog(`Cannot find session file ${this.sessionsPath}. Error: "${readOrJsonErr}". Attempt to create it.`, true);
       sessions = {};
     }
     return sessions;

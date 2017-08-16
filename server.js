@@ -136,7 +136,6 @@ async function sessionValid(session, dataFolder) {
 app.get("/api/getdataset", async (req, res) => {
   const result = await userManager.tokenApiFunction('getdataset', req, async (req) => {
     const { name, user } = req.query;
-    timeStampLog(`New API function for loading data called on dataset ${name}`);
     // Load the data set using OpenCPU
     dataset = await openCPU.runRCommand("sonaR", "get_dataset", { datasets: sessions.getSession(user), name: `'${name}'` }, 'json', true);
     return({ name: "getdataset", success: true, dataset: dataset});
