@@ -61,6 +61,7 @@ class App extends React.Component {
 		this.setPlotDimensions = this.setPlotDimensions.bind(this);
 		this.setPlotDimension = this.setPlotDimension.bind(this);
 		this.forceUpdateApp = this.forceUpdateApp.bind(this);
+		this.invalidateLogin = this.invalidateLogin.bind(this);
 		this.login = this.login.bind(this);
 		this.datasetHub = new DatasetHub();
 		this.debug = false;
@@ -146,13 +147,30 @@ class App extends React.Component {
 		this.forceUpdate();
 	}
 
-	async initSession() {
-		// TODO: Clear existing session first, especially the loaded data sets
-		// Check if we ned to login or not
+	/**
+	 * Invalidate local login storage and trigger login screen
+	 */
+	async invalidateLogin() {
+		localStorage.clear();
+		await this.checkLogin();
+	}
+
+	/**
+	 * Set state of loginRequired
+	 */
+	async checkLogin() {
+		// Check if login is required
 		const loginRequired = await this.authentication.loginRequired();
+		// Set state
 		this.setState({
 			loginRequired: loginRequired
 		});
+	}
+
+	async initSession() {
+		// TODO: Clear existing session first, especially the loaded data sets
+		// Check if we ned to login or not
+		await this.checkLogin();
 		// If we need to login, then there is no local user or token saved. Therefore initSession needs to exit
 		if (this.state.loginRequired)
 			return;
@@ -402,7 +420,7 @@ class App extends React.Component {
 						</CardContent>
 					</Card>
 				</Drawer>
-				<Navbar busy={Object.keys(this.state.busy).length !== 0} toggleRightDrawer={this.toggleRightDrawer} />
+				<Navbar busy={Object.keys(this.state.busy).length !== 0} toggleRightDrawer={this.toggleRightDrawer} invalidateLogin={this.invalidateLogin} />
 				<div style={styleSheet.appBody}>
 					{/* Main Plot for the interaction */}
 					<Grid container gutter={16}>

@@ -11,7 +11,8 @@ const styleSheet = {
     color: '#333',
     fontFamily: "Helvetica Neue",
     fontSize: '11pt',
-    cursor: 'pointer'
+    cursor: 'pointer',
+    marginRight: '30px'
   },
   buttons: {
     textAlign: 'right'
@@ -29,6 +30,7 @@ class Navbar extends React.Component {
           </Grid>
           <Grid item xs={5} style={styleSheet.buttons}>
             <a style={styleSheet.button} onClick={this.props.toggleRightDrawer}>Show datasets</a>
+            <a style={styleSheet.button} onClick={this.props.invalidateLogin}>Logout</a>
           </Grid>
           <Grid item xs={1}></Grid>
         </Grid>
