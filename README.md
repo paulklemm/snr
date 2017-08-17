@@ -52,7 +52,14 @@ data
 
 Loading all data on client connect requires a lot of time. Therefore loading is cached.
 
-The `sessions.json` file contains OpenCPU session ids for each user as well as the different data sources. The file is parsed by the `sonaR` `get_session()` function. It loads the session from the `sessions.json` file and checks if all data sets are loaded by checking the `R` list against the respective folder contents. This way, data loading is only triggered if there are changes in the `data` folder.
+The `sessions.json` file contains OpenCPU session ids for each user as well as the different data sources. The file is parsed by the `sonaR` `get_session()` function. It loads the session from the `sessions.json` file and checks if all data sets are loaded by checking the `R` list against the respective folder contents. This way, data loading is only triggered if there are changes in the `data` folder. Example for the `sessions.json` file
+
+```json
+{
+  "paul": "x08ed07538b",
+  "debug": "x0d6410f0cc"
+}
+```
 
 ## Data Layout
 
