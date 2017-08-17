@@ -23,7 +23,8 @@ class DatasetSelect extends React.Component {
 	constructor() {
 		super();
 		this.state = {
-			metadata: {}
+			metadata: {},
+			metadataDatasetName: ''
 		};
 	}
 
@@ -33,10 +34,12 @@ class DatasetSelect extends React.Component {
 	 * @param {String} datasetName Name of clicked data set
 	 */
 	async handleListItemClick(datasetName) {
+		// Get metadata from back-end
 		let metadata = await this.props.getMetadata(datasetName);
 		if (metadata.success) {
 			this.setState({
-				metadata: metadata.metadata
+				metadata: metadata.metadata,
+				metadataDatasetName: datasetName
 			});
 		}
 	}
@@ -78,7 +81,7 @@ class DatasetSelect extends React.Component {
 			// Check if value is an array or length is grater than 1
 			const valueToPrint = (Object.prototype.toString.call(value) === "[object Array]" && value.length === 1) ? value[0] : value;
 			metadataListEntries.push(
-				<ListItem key={`Metadata_${metadataKeys[i]}`}> 
+				<ListItem button key={`Metadata_${metadataKeys[i]}`}> 
 					<ListItemText 
 						primary={`${metadataKeys[i]}: ${JSON.stringify(valueToPrint)}` }
 					/>
@@ -93,11 +96,11 @@ class DatasetSelect extends React.Component {
 		const metadata = this.getMetadataList();
 		return(
 			<div>
-				<Typography type="display1" gutterBottom>Available Datasets</Typography>
+				<Typography type="headline" gutterBottom>Available Datasets</Typography>
 				<List>
 					{checkboxes}
 				</List>
-				<Typography type="display1" gutterBottom>Dataset Info</Typography>
+				<Typography type="headline" gutterBottom>{`Dataset Info ${this.state.metadataDatasetName}`}</Typography>
 				<List>
 					{metadata}
 				</List>
