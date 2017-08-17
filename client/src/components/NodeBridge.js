@@ -43,34 +43,6 @@ class NodeBridge {
 	}
 
 	/**
-   * Get echo from server to test availability
-   * @param {String} query term to echo
-   * @param {Function} cb callback after query
-   * @return {Promise} of sendEcho fetch
-   */
-	sendEcho(query, cb) {
-		return fetch(`api/echo?q=${query}`, {
-			accept: 'application/json'
-		})
-			.then(this.parseJSON)
-			.then(cb);
-	}
-
-	/**
-   * Get echo from server to test availability
-   * @param {String} query term to echo
-   * @param {Function} cb callback after query
-   * @return {Promise} of sendEcho fetch
-   */
-	sendEchoToken(query, cb) {
-		// Get User and Token
-		const { user, token } = this.getUserAndToken();
-		return fetch(`api/echotoken?q=${query}&user=${user}&token=${token}`, { accept: 'application/json' })
-			.then(this.parseJSON)
-			.then(cb);
-	}
-
-	/**
    * Private function to send login data to the server
    * @param {String} user for login
    * @param {String} password for login
@@ -105,8 +77,11 @@ class NodeBridge {
 		// Get User and Token
 		const { user, token } = this.getUserAndToken()
 		if (debug) console.log(`Test async echo token query ${query}`);
-		let response = await this.sendEchoToken(query, user, token);
+		// Get response from server
+		let response = await fetch(`api/echotoken?q=${query}&user=${user}&token=${token}`, { accept: 'application/json' })
+			.then(this.parseJSON)
 		if (debug) console.log(response);
+		// Return response
 		return response;
 	}
 
@@ -167,6 +142,7 @@ class NodeBridge {
 
 	/**
    * Send login credentials to server and receive success status and token
+	 * 
    * @param {String} user 
    * @param {String} hashedPassword 
    */
@@ -176,6 +152,7 @@ class NodeBridge {
 	}
 
 	/**
+	 * Parse json from node response object.
    * 
    * @param {Object} response: Response from fetch on node server
    * @return Object containing the server answer

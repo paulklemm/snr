@@ -69,7 +69,7 @@ if (process.env.NODE_ENV === "production") {
  * IsOnline is used as handshake function to see whether the server is online or not
  */
 app.get("/api/isonline", (req, res) => {
-  timeStampLog("Get Handshake request");
+  timeStampLog("Respond positive to handshake request");
   res.json({ "isonline": true });
 });
 
@@ -180,8 +180,9 @@ app.get("/api/loaddata", async (req, res) => {
  */
 app.get("/api/echotoken", async (req, res) => {
   const result = await userManager.tokenApiFunction('echotoken', req, async (req) => {
+    const { user, token } = req.query;
     const param = req.query.q;
-    timeStampLog(`Received echo Token of ${param}`);
+    timeStampLog(`Received echo Token '${param}' of User '${user}', Token '${token}'`);
     return({name: 'echo', success: true, echo: param});
   });
   res.json(result);
