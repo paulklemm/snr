@@ -8,6 +8,7 @@ class NodeBridge {
 	constructor() {
 		this.isOnline = false;
 		this.isOnlinePromise = this.checkServer();
+		this.getMetadata = this.getMetadata.bind(this);
 	}
 
 	/**

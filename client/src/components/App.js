@@ -441,10 +441,10 @@ class App extends React.Component {
 					onClick={this.handleRightClose}
 					docked={true}
 				>
-					<Card style={{ maxWidth: `${this.layoutFactory.windowWidth / 2}px` }}>
+					<Card style={{ maxWidth: `${this.layoutFactory.windowWidth / 2}px`, minWidth: `${this.layoutFactory.windowWidth / 3}px` }}>
 						<CardContent>
 							<IconButton style={{ float: 'right' }} onClick={this.toggleRightDrawer}><Icon name="times" /></IconButton>
-							{<DatasetSelect getDatasetIcon={this.datasetHub.getDatasetIcon} setDatasetIcon={this.setDatasetIcon} datasetEnabled={this.state.datasetEnabled} datasetLoading={this.state.datasetLoading} setEnableDataset={this.setEnableDataset} />}
+								<DatasetSelect getMetadata={this.nodeBridge.getMetadata} getDatasetIcon={this.datasetHub.getDatasetIcon} setDatasetIcon={this.setDatasetIcon} datasetEnabled={this.state.datasetEnabled} datasetLoading={this.state.datasetLoading} setEnableDataset={this.setEnableDataset} />
 						</CardContent>
 					</Card>
 				</Drawer>
