@@ -181,7 +181,9 @@ class App extends React.Component {
 		// Set default plotting dimensions
 		this.setPlotDimensions('pValueNegLog10', 'fc');
 
+		// Add busy state for loading data
 		// Load Data from userFolder and get Session ID for the associated object
+		this.addBusyState('loadData');
 		let filenames = await this.nodeBridge.loadData();
 		filenames = filenames['filenames'];
 		// Attach the dataset array to the datasetHub
@@ -189,12 +191,14 @@ class App extends React.Component {
 			let datasetName = filenames[i];
 			this.datasetHub.push(new Dataset(datasetName));
 		}
-		// Load setEnambled Status
+		// Load setEnabled Status
 		for (let i in filenames) {
 			let datasetName = filenames[i];
 			// Default add value to data set, this should later be derived from firebase
 			this.setEnableDataset(datasetName, false);
 		}
+		// Remove busy state
+		this.removeBusyState('loadData');
 		
 		// // PCA plot
 		// const outputPCA = await this.runRCommand("sonaR", "plot_pca", { x: outputLoadData.sessionID }, 'ascii', false);
@@ -218,9 +222,7 @@ class App extends React.Component {
 		// Set busy state
 		const runKey = `Run R command on node server ${rpackage}.${rfunction}(${JSON.stringify(params)}), valformat: ${valformat}`
 		// Busy is a stack of operations. At the beginning, add a unique key for the operation to the busyStack and then remove it after success
-		let busy = this.state.busy;
-		busy[runKey] = true;
-		this.setState({ busy: busy });
+		this.addBusyState(runKey);
 
 		// Run the command
 		if (debug) console.log(runKey);
@@ -231,11 +233,32 @@ class App extends React.Component {
 		if (typeof response.loginInvalid === 'undefined' && response.loginInvalid === true)
 			this.setState({ loginRequired: true });
 		// Delete the runKey from the busy array
-		busy = this.state.busy;
-		delete busy[runKey];
-		this.setState({ busy: busy });
+		this.removeBusyState(runKey);
 		// Return resulting object
 		return response.result;
+	}
+
+	/**
+	 * The busy state indicates that there are still requests made to the node back-end where no answers have been received yet.
+	 * This function adds a busy state with `busyKey` and updates the react state.
+	 * @param {String} busyKey Unique key for busy state
+	 */
+	addBusyState(busyKey) {
+		let busy = this.state.busy;
+		busy[busyKey] = true;
+		this.setState({ busy: busy });
+	}
+
+	/**
+	 * The busy state indicates that there are still requests made to the node back-end where no answers have been received yet.
+	 * This function removes a busy state with `busyKey` and updates the react state.
+	 * 
+	 * @param {String} busyKey 
+	 */
+	removeBusyState(busyKey) {
+		let busy = this.state.busy;
+		delete busy[busyKey];
+		this.setState({ busy: busy });
 	}
 
 	/**
@@ -316,6 +339,9 @@ class App extends React.Component {
 	async loadDataset(name, verbose = false) {
 		if (verbose) console.log(`Loading ${name} ...`);
 
+		// Add Busy state
+		this.addBusyState(`Load dataset ${name}`);
+
 		// Set dataset to loading
 		this.datasetHub.setLoading(name)
 		this.setState({datasetLoading: this.datasetHub.loading});
@@ -325,6 +351,9 @@ class App extends React.Component {
 		// Loading is done, so update it again
 		this.setState({datasetLoading: this.datasetHub.loading});
 		this.setState({primaryDataset: this.datasetHub.datasets[name]});
+
+		// Remove busy state
+		this.removeBusyState(`Load dataset ${name}`);
 
 		if (verbose) console.log(`Loading ${name} done!`);
 		if (verbose) console.log(this.datasetHub.datasets);

@@ -66,10 +66,10 @@ if (process.env.NODE_ENV === "production") {
 }
 
 /**
- * IsOnline is used as handshake function to see whether the server is online or not
+ * IsOnline is checked by client to see if server is alive
  */
 app.get("/api/isonline", (req, res) => {
-  timeStampLog("Respond positive to handshake request");
+  timeStampLog("Send `isonline` ping");
   res.json({ "isonline": true });
 });
 
