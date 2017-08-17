@@ -22,6 +22,17 @@ function getSettings(path="server_settings.json") {
   return(settings);
 }
 
+/**
+ * Perform OpenCPU session validity check.
+ * 
+ * @param {String} session OpenCPU session string to check
+ * @param {String} dataFolder Path to data folder that should contain the OpenCPU session
+ * @return {Boolean} session is valid or not
+ */
+async function sessionValid(session, dataFolder) {
+  return (await openCPU.runRCommand("sonaR", "session_valid", { session: session, data_folder: `'${dataFolder}'` }, "json"))['.val'][0];
+}
+
 //////////// End of function declarations
 
 // Read in the settings
@@ -117,17 +128,6 @@ app.get("/api/echo", (req, res) => {
   timeStampLog(`Received echo of ${param}`);
   res.json({ name: "echo", "echo": param});
 });
-
-/**
- * Perform OpenCPU session validity check.
- * 
- * @param {String} session OpenCPU session string to check
- * @param {String} dataFolder Path to data folder that should contain the OpenCPU session
- * @return {Boolean} session is valid or not
- */
-async function sessionValid(session, dataFolder) {
-  return (await openCPU.runRCommand("sonaR", "session_valid", { session: session, data_folder: `'${dataFolder}'` }, "json"))['.val'][0];
-}
 
 /**
  * Get requested dataset from OpenCPU session
