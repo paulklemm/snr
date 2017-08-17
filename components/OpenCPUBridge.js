@@ -29,11 +29,9 @@ class OpenCPUBridge {
 	 * @param  {String} rfunction: Name of the `R` function ("rnorm")
 	 * @param  {Object} params: JSON object of the parameters ("{ n: 10, mean: 5 }"")
 	 * @param  {String} valFormat: Format of .val attribute (ascii, json, tsv), refer to `https://opencpu.github.io/server-manual/opencpu-server.pdf`
-	 * @param  {Boolean} measureTime: Measure execution time of command and output it in the console
 	 * @return {Object} openCPU output
 	 */
-	async runRCommand(rpackage, rfunction, params, valFormat = 'json', measureTime = false) {
-		if (measureTime) console.time(`Measure Time: openCPURequest ${rpackage}:${rfunction}:${new Date().toLocaleString()}`);
+	async runRCommand(rpackage, rfunction, params, valFormat = 'json') {
 		// Only proceed with the request when the OpenCPU server is online
 		await this.isOnlinePromise;
 		// let response = await post(`${this.address}/ocpu/library/${rpackage}/R/${rfunction}`, params);
@@ -53,7 +51,6 @@ class OpenCPUBridge {
 		
 		// Remove the promises array since it is not needed anymore
 		delete openCpuOutput.promises;
-		if (measureTime) console.timeEnd(`Measure Time: openCPURequest ${rpackage}:${rfunction}:${new Date().toLocaleString()}`);
 		return(openCpuOutput);
 	}
 

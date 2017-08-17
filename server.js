@@ -137,7 +137,7 @@ app.get("/api/getdataset", async (req, res) => {
   const result = await userManager.tokenApiFunction('getdataset', req, async (req) => {
     const { name, user } = req.query;
     // Load the data set using OpenCPU
-    dataset = await openCPU.runRCommand("sonaR", "get_dataset", { datasets: sessions.getSession(user), name: `'${name}'` }, 'json', true);
+    dataset = await openCPU.runRCommand("sonaR", "get_dataset", { datasets: sessions.getSession(user), name: `'${name}'` }, 'json');
     return({ name: "getdataset", success: true, dataset: dataset});
   });
   res.json(result);
