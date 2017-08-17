@@ -52,10 +52,8 @@ class Authentication {
 		// If there is no local storage for user or token, return true
 		if (localStorage.getItem('sonarLoginToken') == null || localStorage.getItem('sonarLoginUser') == null)
 			return true;
-		const token = localStorage.getItem('sonarLoginToken');
-		const user = localStorage.getItem('sonarLoginUser');
 		// Check if login works
-		const response = await this.nodeBridge.echoToken(`User and token handshake (${user}, ${token})`, user, token);
+		const response = await this.nodeBridge.echoToken(`User and token handshake`);
 		// Invert the success boolean and return it
 		return !response.success;
 	}
