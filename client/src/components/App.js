@@ -75,7 +75,6 @@ class App extends React.Component {
 		this.state = {
 			datasetEnabled: {},
 			datasetLoading: {},
-			openCPULoadDataSessionID: "",
 			// TODO: This is now still set to the last loaded dataset, should be set using the DatasetSelect Element
 			primaryDataset: {},
 			loginRequired: false,
@@ -183,21 +182,16 @@ class App extends React.Component {
 		this.setPlotDimensions('pValueNegLog10', 'fc');
 
 		// Load Data from userFolder and get Session ID for the associated object
-		const outputLoadData = await this.nodeBridge.loadData();
-		console.log(`LoadData Session ID: ${outputLoadData.result.sessionID}`);
-		// Update state with sessionID
-		this.setState({ openCPULoadDataSessionID: outputLoadData.result.sessionID });
-
-		// Get dataset list as array
-		const outputGetDataNames = await this.runRCommand("sonaR", "get_data_names", { x: `${outputLoadData.result.sessionID}` }, 'json', false);
+		let filenames = await this.nodeBridge.loadData();
+		filenames = filenames['filenames'];
 		// Attach the dataset array to the datasetHub
-		for (let i in outputGetDataNames['.val']) {
-			let datasetName = outputGetDataNames['.val'][i];
+		for (let i in filenames) {
+			let datasetName = filenames[i];
 			this.datasetHub.push(new Dataset(datasetName));
 		}
 		// Load setEnambled Status
-		for (let i in outputGetDataNames['.val']) {
-			let datasetName = outputGetDataNames['.val'][i];
+		for (let i in filenames) {
+			let datasetName = filenames[i];
 			// Default add value to data set, this should later be derived from firebase
 			this.setEnableDataset(datasetName, false);
 		}
@@ -282,7 +276,6 @@ class App extends React.Component {
 		// 	loginRequired: !loginSuccessful
 		// });
 		// Using setState is not fast enough for the async loading function
-		this.state['openCPULoadDataSessionID'] = 'x0529ff5682';
 
 		this.datasetHub.push(new Dataset('small.csv'));
 		this.setEnableDataset('small.csv', true);
