@@ -8,11 +8,21 @@ const fs = require("fs");
  */
 function timeStampLog (content, asError=false) {
   let currentdate = new Date();
-  let output = `${currentdate.getDate()}/${currentdate.getMonth() + 1}/${currentdate.getFullYear()} @ ${currentdate.getHours()}:${currentdate.getMinutes()}:${currentdate.getSeconds()} ${content}`;
+  let output = `${twoDigits(currentdate.getDate())}/${twoDigits(currentdate.getMonth() + 1)}/${currentdate.getFullYear()} @ ${twoDigits(currentdate.getHours())}:${twoDigits(currentdate.getMinutes())}:${twoDigits(currentdate.getSeconds())} ${content}`;
   if (asError)
     console.error(output);
   else
     console.log(output);
+}
+
+/**
+ * Helper function for timeStampLog to make hours, minutes and seconds always two-digit
+ * 
+ * @param {Integer} number Number to make two-digits
+ * @return {String} Two-digit number as string
+ */
+function twoDigits(number) {
+  return (number < 10 ? '0' : '') + number
 }
 
 /**
