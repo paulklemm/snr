@@ -76,11 +76,20 @@ To account for data from different sources, each file in the user folder should 
   },
   "regex": {
     "FPKM": "FPKM$"
+  },
+  "metadata": {
+    "Species": "Mus musculus",
+    "Experimental Conditions": "",
+    "Number of Samples": 10,
+    "Genotypes": [],
+    "Phenotypes": []
   }
 }
 ```
 
 This file can also be called `dictionary.json` and then acts as fallback configuration for all files in a folder if there is no specific dictionary file provided for a dataset.
+
+The `dictionary.json` file is also used to add *metadata* to each dataset. All the available metadata will be displayed by Sonar.
 
 ## Node Server
 
