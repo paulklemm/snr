@@ -1,5 +1,21 @@
 # Sonar Readme
 
+<!-- TOC -->
+
+- [Sonar Readme](#sonar-readme)
+  - [Project Roadmap](#project-roadmap)
+    - [ToDo](#todo)
+      - [Not in sprints](#not-in-sprints)
+  - [Structure of Data and OpenCPU Sessions](#structure-of-data-and-opencpu-sessions)
+  - [Data Layout & Metadata](#data-layout--metadata)
+  - [Node Server](#node-server)
+  - [Implementation Examples](#implementation-examples)
+    - [Rendering Graphics from `R` in `Sonar`](#rendering-graphics-from-r-in-sonar)
+    - [Rendering `Sonar` Components](#rendering-sonar-components)
+  - [Security](#security)
+
+<!-- /TOC -->
+
 ## Project Roadmap
 
 ### ToDo
@@ -61,7 +77,7 @@ The `sessions.json` file contains OpenCPU session ids for each user as well as t
 }
 ```
 
-## Data Layout
+## Data Layout & Metadata
 
 To account for data from different sources, each file in the user folder should be accompanied with a descriptive `json` file following the following format:
 
@@ -90,6 +106,8 @@ To account for data from different sources, each file in the user folder should 
 This file can also be called `dictionary.json` and then acts as fallback configuration for all files in a folder if there is no specific dictionary file provided for a dataset.
 
 The `dictionary.json` file is also used to add *metadata* to each dataset. All the available metadata will be displayed by Sonar.
+
+Currently the metadata facilities are rather restricted. The elements will be displayed as they are on the first nesting level. There are, however, no special handling or URLs or similar things. This needs to be enhanced soon.
 
 ## Node Server
 
