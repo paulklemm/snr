@@ -140,6 +140,15 @@ class NodeBridge {
 		return response;
 	}
 
+	async getMetadata(name) {
+		// Get User and Token
+		const { user, token } = this.getUserAndToken()
+		let response = await fetch(`api/getmetadata?user=${user}&token=${token}&name=${name}`, { accept: 'application/json' })
+			.then(this.parseJSON)
+
+		return response;
+	}
+
 	/**
    * Send login credentials to server and receive success status and token
 	 * 

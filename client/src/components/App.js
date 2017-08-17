@@ -197,6 +197,12 @@ class App extends React.Component {
 			// Default add value to data set, this should later be derived from firebase
 			this.setEnableDataset(datasetName, false);
 		}
+
+		// TODO: Debug test for metadata function
+		let metadata = await this.nodeBridge.getMetadata(filenames[0]);
+		console.log("Metadata test");
+		console.log(metadata);
+
 		// Remove busy state
 		this.removeBusyState('loadData');
 		

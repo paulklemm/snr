@@ -176,6 +176,19 @@ app.get("/api/loaddata", async (req, res) => {
 });
 
 /**
+ * Load metadata for data set
+ */
+app.get("/api/getmetadata", async(req, res) => {
+  const result = await userManager.tokenApiFunction('loadmetadata', req, async (req) => {
+    const { name } = req.query;
+    timeStampLog(`Received metadata query for file ${name}`)
+    return({ name: "loadmetadata", success: true, metadata: {} });
+  });
+  // Return result of TokenApi function, either success or failure
+  res.json(result);
+});
+
+/**
  * Simple echo function to see if the server works as expected with user providing a token
  */
 app.get("/api/echotoken", async (req, res) => {
