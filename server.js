@@ -180,9 +180,16 @@ app.get("/api/loaddata", async (req, res) => {
  */
 app.get("/api/getmetadata", async(req, res) => {
   const result = await userManager.tokenApiFunction('loadmetadata', req, async (req) => {
-    const { name } = req.query;
+    const { name, user } = req.query;
     timeStampLog(`Received metadata query for file ${name}`)
-    return({ name: "loadmetadata", success: true, metadata: {} });
+    timeStampLog(`filename: ${name}, data_folder: '${userManager.getUserSettings(user).path}'`)
+    // Load meta data through OpenCPU
+    let metadata;
+    try {
+      metadata = await openCPU.runRCommand("sonaR", "get_metadata", { filename: `'${name}'`, data_folder: `'${userManager.getUserSettings(user).path}'` }, "json");
+    } catch (e) { return({ name: 'loadmetadata', success: false, reason: e}); }
+
+    return({ name: "loadmetadata", success: true, metadata: metadata['.val'] });
   });
   // Return result of TokenApi function, either success or failure
   res.json(result);
