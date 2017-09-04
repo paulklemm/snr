@@ -40,7 +40,7 @@ const settings = getSettings();
 // Create new usersManager object and pass path to users
 const userManager = new UserManager(settings.users);
 // Create the openCPU connection
-const openCPU = new OpenCPUBridge('http://localhost:8004');
+const openCPU = new OpenCPUBridge(settings.opencpuPath);
 // Set path to `session.json` file
 const sessions = new Sessions(settings.sessionsPath);
 // timeStampLog(sessions.getSession("test"));
