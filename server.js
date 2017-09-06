@@ -30,7 +30,17 @@ function getSettings(path="server_settings.json") {
  * @return {Boolean} session is valid or not
  */
 async function sessionValid(session, dataFolder) {
-  return (await openCPU.runRCommand("sonaR", "session_valid", { session: session, data_folder: `'${dataFolder}'` }, "json"))['.val'][0];
+  // HACK:
+  // Quick and Dirty try/catch statement to fix a bug where we have a session from sessions.json, but the
+  // OpenCPU instance doesn't know the session. OpenCPU will terminate the command with for example
+  // `Error 400 Session not found: x0f44385423\n`.
+  // This fix returns false if any error happens during this command. This, however can also happen if the
+  // server is temporary offline or something similar happens. For now this should work.
+  try {
+    return (await openCPU.runRCommand("sonaR", "session_valid", { session: session, data_folder: `'${dataFolder}'` }, "json"))['.val'][0];
+  } catch (error) {
+    return false;
+  }
 }
 
 //////////// End of function declarations
