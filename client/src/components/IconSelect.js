@@ -3,16 +3,16 @@ import PropTypes from 'prop-types';
 // SONAR Imports
 import DatasetIcons from './DatasetIcons';
 // Material-UI Elements
-import { withStyles, createStyleSheet } from 'material-ui/styles';
+import { withStyles } from 'material-ui/styles';
 import Menu, { MenuItem } from 'material-ui/Menu';
 import IconButton from 'material-ui/IconButton';
 
-const styleSheet = createStyleSheet('IconSelect', theme => ({
+const styleSheet = {
 	root: { },
 	iconSelect: {
 		fontSize: '90%'
 	}
-}));
+};
 
 /** Adapted from [https://material-ui-1dab0.firebaseapp.com/component-demos/menus](https://material-ui-1dab0.firebaseapp.com/component-demos/menus) */
 class IconSelect extends Component {
@@ -83,4 +83,4 @@ IconSelect.propTypes = {
 	classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styleSheet)(IconSelect);
+export default withStyles(styleSheet, {name: 'IconSelect'})(IconSelect);

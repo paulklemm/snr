@@ -35,7 +35,6 @@ import IconButton from 'material-ui/IconButton';
 import Card, { CardContent } from 'material-ui/Card';
 //Material-UI theming
 import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
-import createPalette from 'material-ui/styles/palette';
 import orange from 'material-ui/colors/orange';
 
 const styleSheet = {
@@ -47,9 +46,9 @@ const styleSheet = {
 
 // Create theme (https://material-ui-1dab0.firebaseapp.com/customization/themes)
 const theme = createMuiTheme({
-	palette: createPalette({
+	palette: {
 		primary: orange
-	}),
+	},
 });
 
 class App extends React.Component {
@@ -451,7 +450,7 @@ class App extends React.Component {
 				<Navbar busy={Object.keys(this.state.busy).length !== 0} toggleRightDrawer={this.toggleRightDrawer} invalidateLogin={this.invalidateLogin} />
 				<div style={styleSheet.appBody}>
 					{/* Main Plot for the interaction */}
-					<Grid container gutter={16}>
+					<Grid container spacing={16}>
 						<Grid item xs={8}>
 							{/*<center><p>{this.state.primaryDataset.name}</p></center>*/}
 							{/* <Hexplot height={this.layoutFactory.heights.mainView} width={600} responsiveWidth={true} rnaSeqData={this.state.primaryDataset} xName="pValueNegLog10" yName="fc" hexSize={4} hexMax={20} showRenderGenesOption={true} /> */}
@@ -471,7 +470,7 @@ class App extends React.Component {
 							/>
 						</Grid>
 						<Grid item xs={4}>
-							<Grid container gutter={16}>
+							<Grid container spacing={16}>
 								{hexplots}
 							</Grid>
 						</Grid>
