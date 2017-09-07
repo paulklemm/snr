@@ -1,12 +1,12 @@
 class LayoutFactory {
-  constructor(gutterSize) {
+  constructor(spacingSize) {
     this.windowWidth = -1;
     this.windowHeight = -1;
     this.smallMultiplesCount = 0;
     // This is estimated roughly by all the padding settings there are horizontal in the app.
     // This could easily change during the development.
     this.heigthPadding = 120;
-    this.gutterSize = gutterSize;
+    this.spacingSize = spacingSize;
     this.staticElementsHeights = {
       table: 500,
       header: 64
@@ -39,14 +39,14 @@ class LayoutFactory {
     this.heights.mainView =         this.windowHeight - this.staticElementsHeights.header - this.staticElementsHeights.table - this.heigthPadding;
     const numTileRows = Math.ceil(this.smallMultiplesCount / 2);
     // Added +9 to account for pixels added through the "Paper" component
-    this.heights.smallMultiples = (this.heights.mainView + 62 - (this.gutterSize * numTileRows)) / numTileRows;
+    this.heights.smallMultiples = (this.heights.mainView + 62 - (this.spacingSize * numTileRows)) / numTileRows;
     if (debug) {
       console.log(`--------------------------------------`);
       console.log(`smallMultiplesCount: ${this.smallMultiplesCount}`);
-      console.log(`numTileRows: ${numTileRows}, gutterSize: ${this.gutterSize}`);
+      console.log(`numTileRows: ${numTileRows}, spacingSize: ${this.spacingSize}`);
       console.log(`MainView height: ${this.heights.mainView}, SmallMultiplesHeight: ${this.heights.smallMultiples}`);
-      console.log("this.heights.smallMultiples = (this.heights.mainView - (this.gutterSize * numTileRows)) / numTileRows");
-      console.log(`${this.heights.smallMultiples} = (${this.heights.mainView} - (${this.gutterSize} * ${numTileRows})) / ${numTileRows}`);
+      console.log("this.heights.smallMultiples = (this.heights.mainView - (this.spacingSize * numTileRows)) / numTileRows");
+      console.log(`${this.heights.smallMultiples} = (${this.heights.mainView} - (${this.spacingSize} * ${numTileRows})) / ${numTileRows}`);
     }
   }
 }
