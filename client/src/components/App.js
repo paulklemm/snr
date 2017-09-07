@@ -433,7 +433,6 @@ class App extends React.Component {
 					open={this.state.openDrawer.right}
 					onRequestClose={this.handleRightClose}
 					onClick={this.handleRightClose}
-					docked={true}
 				>
 					<Card style={{ maxWidth: `${this.layoutFactory.windowWidth / 2}px`, minWidth: `${this.layoutFactory.windowWidth / 3}px` }}>
 						<CardContent>
