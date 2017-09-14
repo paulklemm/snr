@@ -64,7 +64,15 @@ const sessions = new Sessions(settings.sessionsPath);
 //   timeStampLog(JSON.stringify(result));
 // });
 // openCPU.runRCommand("stats", "rnorm", { n: 3 }, "json").then((result) => {
-//   timeStampLog(JSON.stringify(result));
+//   timeStampLog(JSON.stringify(result, null, 2));
+// });
+// Show how to pass arrays into OpenCPU
+// openCPU.runRCommand("base", "mean", { x:'c(1, 2, 3, 4, 5, 6)' }, "json").then((result) => {
+//   timeStampLog(JSON.stringify(result, null, 2));
+// });
+// Alternative:
+// openCPU.runRCommand("base", "mean", { x:'[1, 2, 3, 4, 5, 6]' }, "json").then((result) => {
+//   timeStampLog(JSON.stringify(result, null, 2));
 // });
 
 const app = express();

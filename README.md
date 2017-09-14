@@ -3,16 +3,17 @@
 <!-- TOC -->
 
 - [Sonar Readme](#sonar-readme)
-  - [Project Roadmap](#project-roadmap)
-    - [ToDo](#todo)
-      - [Not in sprints](#not-in-sprints)
-  - [Structure of Data and OpenCPU Sessions](#structure-of-data-and-opencpu-sessions)
-  - [Data Layout & Metadata](#data-layout--metadata)
-  - [Node Server](#node-server)
-  - [Implementation Examples](#implementation-examples)
-    - [Rendering Graphics from `R` in `Sonar`](#rendering-graphics-from-r-in-sonar)
-    - [Rendering `Sonar` Components](#rendering-sonar-components)
-  - [Security](#security)
+	- [Project Roadmap](#project-roadmap)
+		- [ToDo](#todo)
+			- [Not in sprints](#not-in-sprints)
+	- [Structure of Data and OpenCPU Sessions](#structure-of-data-and-opencpu-sessions)
+	- [Data Layout & Metadata](#data-layout--metadata)
+	- [Node Server](#node-server)
+	- [Implementation Examples](#implementation-examples)
+		- [Pass an Array to `R`](#pass-an-array-to-r)
+		- [Rendering Graphics from `R` in `Sonar`](#rendering-graphics-from-r-in-sonar)
+		- [Rendering `Sonar` Components](#rendering-sonar-components)
+	- [Security](#security)
 
 <!-- /TOC -->
 
@@ -124,8 +125,22 @@ To start the development environment run:
 
 ## Implementation Examples
 
-### Rendering Graphics from `R` in `Sonar`
+### Pass an Array to `R`
 
+The ajax request used to pass arguments to the `OpenCPU` back-end server needs to be provided with arrays as a string or as a string of an `R` array (e.g. `'c(1,2,3)'`).
+
+```javascript
+// Show how to pass arrays into OpenCPU
+openCPU.runRCommand("base", "mean", { x:'c(1, 2, 3, 4, 5, 6)' }, "json").then((result) => {
+  timeStampLog(JSON.stringify(result, null, 2));
+});
+// Alternative
+openCPU.runRCommand("base", "mean", { x:'[1, 2, 3, 4, 5, 6]' }, "json").then((result) => {
+  timeStampLog(JSON.stringify(result, null, 2));
+});
+```
+
+### Rendering Graphics from `R` in `Sonar`
 
 Get a graphic from `R`
 
