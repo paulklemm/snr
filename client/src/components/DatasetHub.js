@@ -8,6 +8,7 @@ class DatasetHub {
 		this.loading = {};
 		this.broadcastFilter = this.broadcastFilter.bind(this);
 		this.getDatasetIcon = this.getDatasetIcon.bind(this);
+		// Init filter object and inject broadcastFilter function
 		this.filter = new Filter(this.broadcastFilter);
 	}
 
@@ -23,6 +24,9 @@ class DatasetHub {
 		return count;
 	}
 
+	/**
+	 * Propagate the current filter to all datasets
+	 */
 	broadcastFilter() {
 		for (let i in this.names) {
 			let name = this.names[i];
