@@ -1,7 +1,8 @@
 class GoTerms {
-	constructor(getGoSummary) {
+	constructor(getGoSummary, toGo) {
 		this.summary = {};
-		this.getGoSummary = getGoSummary;
+		this.nodeBridgeGetGoSummary = getGoSummary;
+		this.nodeBridgeTogo = toGo;
 	}
 
 	/**
@@ -15,8 +16,21 @@ class GoTerms {
 			this.summary[ensemblDataset] = {};
 		if (!(ensemblVersion in Object.keys(this.summary[ensemblDataset])))
 			this.summary[ensemblDataset][ensemblVersion] = {};
-		this.summary[ensemblDataset][ensemblVersion] = this.getSummary(this.getGoSummary(ensemblDataset, ensemblVersion))
+		this.summary[ensemblDataset][ensemblVersion] = await this.getSummary(this.nodeBridgeGetGoSummary(ensemblDataset, ensemblVersion))
 		console.log(this.summary);
+	}
+
+	/**
+	 * Returns GO-Terms associated with identifiers
+	 * 
+	 * @param {array} identifier Array of identifier to relate to go-terms (e.g. ["ENSMUSG00000064370", "ENSMUSG00000065947"])
+	 * @param {String} ensemblDataset Biomart dataset
+	 * @param {String} ensemblVersion Ensembl version ('release')
+	 */
+	async toGo(identifier, ensemblDataset, ensemblVersion) {
+		const response = await this.nodeBridgeTogo(identifier, ensemblDataset, ensemblVersion);
+		const goTermsPerIdentifier = response['go']['.val'];
+		return goTermsPerIdentifier;
 	}
 
 	/**

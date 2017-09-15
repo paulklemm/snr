@@ -175,14 +175,15 @@ class App extends React.Component {
 			return;
 
 		// Get GO-Term description
-		// Init GOTerms object with getGoSummary from nodebridge
-		this.goTerms = new GoTerms(this.nodeBridge.getGoSummary);
+		// Init GOTerms object with getGoSummary and toGo from nodebridge
+		this.goTerms = new GoTerms(this.nodeBridge.getGoSummary, this.nodeBridge.toGo);
 		// TODO: This "current" thing needs to go away, because this will change!
+		// TODO: Set busy state
 		this.goTerms.addSummary('mmusculus_gene_ensembl', 'current');
 		// Get GO-Term for test-Group
-		const get_go_result = await this.runRCommand("sonaRGO", "to_go", { input: '["ENSMUSG00000064370", "ENSMUSG00000065947"]', ensembl_dataset: '"mmusculus_gene_ensembl"' }, 'json', false);
-		// console.log(get_go_result);
-		console.log(get_go_result);
+		const testToGo = await this.goTerms.toGo(["ENSMUSG00000064370", "ENSMUSG00000065947"], "mmusculus_gene_ensembl", "current");
+		console.log(testToGo);
+
 
 		// Set default plotting dimensions
 		this.setPlotDimensions('pValueNegLog10', 'fc');
