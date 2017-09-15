@@ -17,6 +17,7 @@ import DynamicHexBin from './DynamicHexBin';
 import ScatterplotRNASeqData from './ScatterplotRNASeqData';
 import NodeBridge from './NodeBridge';
 import Authentication from './Authentication';
+import GoTerms from './GoTerms';
 import Dataset from './Dataset';
 import DatasetHub from './DatasetHub';
 import DatasetSelect from './DatasetSelect';
@@ -174,16 +175,14 @@ class App extends React.Component {
 			return;
 
 		// Get GO-Term description
-
-		// const go_summary = await this.runRCommand("sonaRGO", "get_go_summary", {}, 'json', false);
-		const goSummary = await this.nodeBridge.getGoSummary('mmusculus_gene_ensembl', 'current');
-		
-		console.log(goSummary);
+		// Init GOTerms object with getGoSummary from nodebridge
+		this.goTerms = new GoTerms(this.nodeBridge.getGoSummary);
+		// TODO: This "current" thing needs to go away, because this will change!
+		this.goTerms.addSummary('mmusculus_gene_ensembl', 'current');
 		// Get GO-Term for test-Group
-		// const get_go_result = await this.runRCommand("sonaRGO", "to_go", { input: "c('ENSMUSG00000064370', 'ENSMUSG00000065947')", ensembl_dataset: '"mmusculus_gene_ensembl"' }, 'json', false);
-		const get_go_result_2 = await this.runRCommand("sonaRGO", "to_go", { input: '["ENSMUSG00000064370", "ENSMUSG00000065947"]', ensembl_dataset: '"mmusculus_gene_ensembl"' }, 'json', false);
+		const get_go_result = await this.runRCommand("sonaRGO", "to_go", { input: '["ENSMUSG00000064370", "ENSMUSG00000065947"]', ensembl_dataset: '"mmusculus_gene_ensembl"' }, 'json', false);
 		// console.log(get_go_result);
-		console.log(get_go_result_2);
+		console.log(get_go_result);
 
 		// Set default plotting dimensions
 		this.setPlotDimensions('pValueNegLog10', 'fc');
