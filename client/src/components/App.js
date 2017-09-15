@@ -174,8 +174,11 @@ class App extends React.Component {
 			return;
 
 		// Get GO-Term description
-		const go_summary = await this.runRCommand("sonaRGO", "get_go_summary", {}, 'json', false);
-		console.log(go_summary);
+
+		// const go_summary = await this.runRCommand("sonaRGO", "get_go_summary", {}, 'json', false);
+		const goSummary = await this.nodeBridge.getGoSummary('mmusculus_gene_ensembl', 'current');
+		
+		console.log(goSummary);
 		// Get GO-Term for test-Group
 		// const get_go_result = await this.runRCommand("sonaRGO", "to_go", { input: "c('ENSMUSG00000064370', 'ENSMUSG00000065947')", ensembl_dataset: '"mmusculus_gene_ensembl"' }, 'json', false);
 		const get_go_result_2 = await this.runRCommand("sonaRGO", "to_go", { input: '["ENSMUSG00000064370", "ENSMUSG00000065947"]', ensembl_dataset: '"mmusculus_gene_ensembl"' }, 'json', false);

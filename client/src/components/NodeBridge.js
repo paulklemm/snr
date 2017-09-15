@@ -151,6 +151,22 @@ class NodeBridge {
 	}
 
 	/**
+	 * Get summary table of all GO terms from the back-end.
+	 * If ensemblDataset or ensemblVersion are undefined, defaults from `R` package will be used.
+	 * @param {String} ensemblDataset Biomart dataset
+	 * @param {String} ensemblVersion Ensembl version ('release') 
+	 * @return {Object} Server response
+	 */
+	async getGoSummary(ensemblDataset, ensemblVersion) {
+		// Get User and Token
+		const { user, token } = this.getUserAndToken()
+		let response = await fetch(`api/getgosummary?user=${user}&token=${token}&ensembldataset=${ensemblDataset}&ensemblversion=${ensemblVersion}`, { accept: 'application/json' })
+			.then(this.parseJSON)
+
+		return response;
+	}
+
+	/**
    * Send login credentials to server and receive success status and token
 	 * 
    * @param {String} user 
