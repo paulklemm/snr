@@ -18,6 +18,39 @@ class NodeBridge {
 	}
 
 	/**
+	 * Get User and Token from Authentication
+	 * @return {Object} { user: UserName, token: UserToken }
+	 */
+	_getUserAndToken() {
+		return ({ user: this.authentication.getUser(), token: this.authentication.getToken() })
+	}
+
+	/**
+	 * Wrapper function that calls the fetchURL on the node back-end with user credentials.
+	 * If you provide no post-variables, be sure to end the fetchURL with a '?'.
+	 * Examples:
+	 *   _fetchWithUserAndToken(`api/loaddata?`);
+	 *   _fetchWithUserAndToken(`api/getdataset?name=${name}`);
+	 * 
+	 * @param {String} fetchUrl URL to call. User and token will be appended with 
+	 * @return {Object} Response from the server containing name of the call, success boolean and data
+	 */
+	async _fetchWithUserAndToken(fetchUrl) {
+		// Set busy state of the app
+		this.addBusyState(fetchUrl);
+		// Get User and Token
+		const { user, token } = this._getUserAndToken();
+		// Some functions like the getData functions do not take aruments, therefore we have to omit the first `&`
+		const andSymbol = fetchUrl.endsWith('?') ? '' : '&';
+		let response = await fetch(`${fetchUrl}${andSymbol}user=${user}&token=${token}`, { accept: 'application/json' })
+			.then(this.parseJSON)
+
+		// Set busy state of the app
+		this.removeBusyState(fetchUrl);
+		return response;
+	}
+
+	/**
 	 * Set Authentication object for verifying local user and token
 	 * 
 	 * @param {Object} authenticator 
@@ -58,33 +91,8 @@ class NodeBridge {
 	 * @return {Object} Response object of server
 	 */
 	echoToken(query, debug = false) {
-		let response = this.fetchWithUserAndToken(`api/echotoken?q=${query}`);
+		let response = this._fetchWithUserAndToken(`api/echotoken?q=${query}`);
 		if (debug) console.log(response);
-		return response;
-	}
-
-	/**
-	 * Wrapper function that calls the fetchURL on the node back-end with user credentials.
-	 * If you provide no post-variables, be sure to end the fetchURL with a '?'.
-	 * Examples:
-	 *   fetchWithUserAndToken(`api/loaddata?`);
-	 *   fetchWithUserAndToken(`api/getdataset?name=${name}`);
-	 * 
-	 * @param {String} fetchUrl URL to call. User and token will be appended with 
-	 * @return {Object} Response from the server containing name of the call, success boolean and data
-	 */
-	async fetchWithUserAndToken(fetchUrl) {
-		// Set busy state of the app
-		this.addBusyState(fetchUrl);
-		// Get User and Token
-		const { user, token } = this.getUserAndToken();
-		// Some functions like the getData functions do not take aruments, therefore we have to omit the first `&`
-		const andSymbol = fetchUrl.endsWith('?') ? '' : '&';
-		let response = await fetch(`${fetchUrl}${andSymbol}user=${user}&token=${token}`, { accept: 'application/json' })
-			.then(this.parseJSON)
-
-		// Set busy state of the app
-		this.removeBusyState(fetchUrl);
 		return response;
 	}
 
@@ -99,19 +107,11 @@ class NodeBridge {
 	 */
 	async sendRCommand(rpackage, rfunction, params, valformat) {
 		// Get user and token
-		const { user, token } = this.getUserAndToken();
+		const { user, token } = this._getUserAndToken();
 		let response = fetch(`api/runrcommand?rpackage=${rpackage}&rfunction=${rfunction}&params=${JSON.stringify(params)}&valformat=${valformat}&user=${user}&token=${token}`, { accept: 'application/json' })
 			.then(this.parseJSON)
 		
 		return response;
-	}
-
-	/**
-	 * Get User and Token from Authentication
-	 * @return {Object} { user: UserName, token: UserToken }
-	 */
-	getUserAndToken() {
-		return ({ user: this.authentication.getUser(), token: this.authentication.getToken() })
 	}
 
 	/**
@@ -120,7 +120,7 @@ class NodeBridge {
 	 * @return {Object} Server response
 	 */
 	loadData() {
-		return this.fetchWithUserAndToken(`api/loaddata?`);
+		return this._fetchWithUserAndToken(`api/loaddata?`);
 	}
 
 	/**
@@ -130,7 +130,7 @@ class NodeBridge {
 	 * @return {Object} Response
 	 */
 	getDataset(name) {
-		return this.fetchWithUserAndToken(`api/getdataset?name=${name}`);
+		return this._fetchWithUserAndToken(`api/getdataset?name=${name}`);
 	}
 
 	/**
@@ -140,7 +140,7 @@ class NodeBridge {
 	 * @return {Object} Response
 	 */
 	getMetadata(name) {
-		return this.fetchWithUserAndToken(`api/getmetadata?name=${name}`);
+		return this._fetchWithUserAndToken(`api/getmetadata?name=${name}`);
 	}
 
 	/**
@@ -151,7 +151,7 @@ class NodeBridge {
 	 * @return {Object} Server response
 	 */
 	getGoSummary(ensemblDataset, ensemblVersion) {
-		return this.fetchWithUserAndToken(`api/getgosummary?ensembldataset=${ensemblDataset}&ensemblversion=${ensemblVersion}`);
+		return this._fetchWithUserAndToken(`api/getgosummary?ensembldataset=${ensemblDataset}&ensemblversion=${ensemblVersion}`);
 	}
 
 	/**
@@ -167,7 +167,7 @@ class NodeBridge {
 		// For example, the array ["ENSMUSG00000064370", "ENSMUSG00000065947"] need to
 		// be converted into the string '["ENSMUSG00000064370", "ENSMUSG00000065947"]'
 		identifier = `["${identifier.join('","')}"]`;
-		return this.fetchWithUserAndToken(`api/gettogo?identifier=${identifier}&ensembldataset=${ensemblDataset}&ensemblversion=${ensemblVersion}`);
+		return this._fetchWithUserAndToken(`api/gettogo?identifier=${identifier}&ensembldataset=${ensemblDataset}&ensemblversion=${ensemblVersion}`);
 	}
 
 	/**

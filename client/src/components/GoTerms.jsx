@@ -7,6 +7,22 @@ class GoTerms {
 	}
 
 	/**
+	 * Helper function: Process the GO summary promise and create dictionary based on go-term id
+	 * @param {Promise} summaryPromise of NodeBridge query
+	 * @return {Object} Dictionary assigning GO-term summary to go-id
+	 */
+	async _getSummary(summaryPromise) {
+		const summary = await summaryPromise;
+		// Create dictionary for go term based on its id
+		let summaryDict = {};
+		summary['go']['.val'].forEach((element) => {
+			// Reference element by go-id
+			summaryDict[element.go_id] = element;
+		});
+		return summaryDict;
+	}
+
+	/**
 	 * Get GO summary for ensembl dataset and release and add it to GoTersm.summary
 	 * 
 	 * @param {String} ensemblDataset Ensembl dataset to query GO term summary from
@@ -17,7 +33,7 @@ class GoTerms {
 			this.summary[ensemblDataset] = {};
 		if (!(ensemblVersion in Object.keys(this.summary[ensemblDataset])))
 			this.summary[ensemblDataset][ensemblVersion] = {};
-		this.summary[ensemblDataset][ensemblVersion] = await this.getSummary(this.nodeBridgeGetGoSummary(ensemblDataset, ensemblVersion))
+		this.summary[ensemblDataset][ensemblVersion] = await this._getSummary(this.nodeBridgeGetGoSummary(ensemblDataset, ensemblVersion))
 		console.log(this.summary);
 	}
 
@@ -32,22 +48,6 @@ class GoTerms {
 		const response = await this.nodeBridgeTogo(identifier, ensemblDataset, ensemblVersion);
 		const goTermsPerIdentifier = response['go']['.val'];
 		return goTermsPerIdentifier;
-	}
-
-	/**
-	 * Helper function: Process the GO summary promise and create dictionary based on go-term id
-	 * @param {Promise} summaryPromise of NodeBridge query
-	 * @return {Object} Dictionary assigning GO-term summary to go-id
-	 */
-	async getSummary(summaryPromise) {
-		const summary = await summaryPromise;
-		// Create dictionary for go term based on its id
-		let summaryDict = {};
-		summary['go']['.val'].forEach((element) => {
-			// Reference element by go-id
-			summaryDict[element.go_id] = element;
-		});
-		return summaryDict;
 	}
 }
 
