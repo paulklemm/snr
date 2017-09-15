@@ -23,19 +23,6 @@ class NodeBridge {
 	}
 
 	/**
-	 * This is a debug function that can be removed later on. It contains code for checking the
-	 * Node server behavior
-	 */
-	debugTestServer() {
-		console.log('IsOnlinePromise');
-		console.log(this.isOnlinePromise);
-		this.testEcho('Wohooooo');
-		// this.login('paul', '$2a$10$GJl7RZ8xfKnLieVLPH3sMeAE/EM3Z2JVRI21/YDEaELMMbV3.XWhm');
-		this.echoToken("Wohoo token", 'paul', localStorage.getItem('sonarLoginToken'));
-		this.echoToken("Wohoo token should not work", 'paul', 'afffe72deb80f6519f20b1ab9696c74a7d5c45e4b');
-	}
-
-	/**
    * Checks server availability and sets NodeBridge.isOnline
    * @return {Promise} of Check
    */
@@ -61,30 +48,35 @@ class NodeBridge {
 	}
 
 	/**
-   * Test function for sendEcho fetch
-   * @param {String} query to echo
-   */
-	async testEcho(query) {
-		console.log(`Test Async Echo query ${query}`);
-		let response = await this.sendEcho(query);
-		console.log(response);
-	}
-
-	/**
    * Async Echo function with user and token.
    * @param {String} query: String to echo
 	 * @param {Boolean} debug: Print echo and server response to console
 	 * @return {Object} Response object of server
 	 */
 	async echoToken(query, debug = false) {
-		// Get User and Token
-		const { user, token } = this.getUserAndToken()
-		if (debug) console.log(`Test async echo token query ${query}`);
-		// Get response from server
-		let response = await fetch(`api/echotoken?q=${query}&user=${user}&token=${token}`, { accept: 'application/json' })
-			.then(this.parseJSON)
+		let response = await this.fetchWithUserAndToken(`api/echotoken?q=${query}`);
 		if (debug) console.log(response);
-		// Return response
+		return response;
+	}
+
+	/**
+	 * Wrapper function that calls the fetchURL on the node back-end with user credentials.
+	 * If you provide no post-variables, be sure to end the fetchURL with a '?'.
+	 * Examples:
+	 *   fetchWithUserAndToken(`api/loaddata?`);
+	 *   fetchWithUserAndToken(`api/getdataset?name=${name}`);
+	 * 
+	 * @param {String} fetchUrl URL to call. User and token will be appended with 
+	 * @return {Object} Response from the server containing name of the call, success boolean and data
+	 */
+	async fetchWithUserAndToken(fetchUrl) {
+		// Get User and Token
+		const { user, token } = this.getUserAndToken();
+		// Some functions like the getData functions do not take aruments, therefore we have to omit the first `&`
+		const andSymbol = fetchUrl.endsWith('?') ? '' : '&';
+		let response = fetch(`${fetchUrl}${andSymbol}user=${user}&token=${token}`, { accept: 'application/json' })
+			.then(this.parseJSON)
+
 		return response;
 	}
 
@@ -100,7 +92,6 @@ class NodeBridge {
 	async sendRCommand(rpackage, rfunction, params, valformat) {
 		// Get user and token
 		const { user, token } = this.getUserAndToken();
-		// Fetch result from server
 		let response = fetch(`api/runrcommand?rpackage=${rpackage}&rfunction=${rfunction}&params=${JSON.stringify(params)}&valformat=${valformat}&user=${user}&token=${token}`, { accept: 'application/json' })
 			.then(this.parseJSON)
 		
@@ -121,35 +112,27 @@ class NodeBridge {
 	 * @return {Object} Server response
 	 */
 	async loadData() {
-		let { user, token } = this.getUserAndToken();
-		let response = await fetch(`api/loaddata?user=${user}&token=${token}`, { accept: 'application/json' })
-			.then(this.parseJSON)
-
-		return response;
+		return await this.fetchWithUserAndToken(`api/loaddata?`);
 	}
 
 	/**
-	 * Get dataset from OpenCPU back end
+	 * Get dataset
 	 * 
-	 * @param {String} name Name of the dataset to load
-	 * @return {Object} Server response
+	 * @param {String} name Dataset to load
+	 * @return {Object} Response
 	 */
 	async getDataset(name) {
-	// Get User and Token
-		const { user, token } = this.getUserAndToken()
-		let response = await fetch(`api/getdataset?user=${user}&token=${token}&name=${name}`, { accept: 'application/json' })
-			.then(this.parseJSON)
-
-		return response;
+		return await this.fetchWithUserAndToken(`api/getdataset?name=${name}`);
 	}
 
+	/**
+	 * Get metadata for dataset
+	 * 
+	 * @param {String} name Dataset to load
+	 * @return {Object} Response
+	 */
 	async getMetadata(name) {
-		// Get User and Token
-		const { user, token } = this.getUserAndToken()
-		let response = await fetch(`api/getmetadata?user=${user}&token=${token}&name=${name}`, { accept: 'application/json' })
-			.then(this.parseJSON)
-
-		return response;
+		return await this.fetchWithUserAndToken(`api/getmetadata?name=${name}`);
 	}
 
 	/**
@@ -160,12 +143,7 @@ class NodeBridge {
 	 * @return {Object} Server response
 	 */
 	async getGoSummary(ensemblDataset, ensemblVersion) {
-		// Get User and Token
-		const { user, token } = this.getUserAndToken()
-		let response = await fetch(`api/getgosummary?user=${user}&token=${token}&ensembldataset=${ensemblDataset}&ensemblversion=${ensemblVersion}`, { accept: 'application/json' })
-			.then(this.parseJSON)
-
-		return response;
+		return await this.fetchWithUserAndToken(`api/getgosummary?ensembldataset=${ensemblDataset}&ensemblversion=${ensemblVersion}`);
 	}
 
 	/**
@@ -177,16 +155,11 @@ class NodeBridge {
 	 * @return {Object} Server response
 	 */
 	async toGo(identifier, ensemblDataset, ensemblVersion) {
-		// Get User and Token
-		const { user, token } = this.getUserAndToken()
 		// Get identifier into an array format that OpenCPU can read
 		// For example, the array ["ENSMUSG00000064370", "ENSMUSG00000065947"] need to
 		// be converted into the string '["ENSMUSG00000064370", "ENSMUSG00000065947"]'
 		identifier = `["${identifier.join('","')}"]`;
-		let response = await fetch(`api/gettogo?user=${user}&token=${token}&identifier=${identifier}&ensembldataset=${ensemblDataset}&ensemblversion=${ensemblVersion}`, { accept: 'application/json' })
-			.then(this.parseJSON)
-
-		return response;
+		return await this.fetchWithUserAndToken(`api/gettogo?identifier=${identifier}&ensembldataset=${ensemblDataset}&ensemblversion=${ensemblVersion}`);
 	}
 
 	/**
