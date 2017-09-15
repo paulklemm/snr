@@ -62,12 +62,14 @@ class App extends React.Component {
 		this.setPlotDimension = this.setPlotDimension.bind(this);
 		this.forceUpdateApp = this.forceUpdateApp.bind(this);
 		this.invalidateLogin = this.invalidateLogin.bind(this);
+		this.addBusyState = this.addBusyState.bind(this);
+		this.removeBusyState = this.removeBusyState.bind(this);
 		this.login = this.login.bind(this);
 		this.datasetHub = new DatasetHub();
 		this.debug = false;
 		this.layoutFactory = new LayoutFactory(16);
-		// Init NodeBridge
-		this.nodeBridge = new NodeBridge();
+		// Init NodeBridge and inject busystate functions
+		this.nodeBridge = new NodeBridge(this.addBusyState, this.removeBusyState);
 		// Authenticator takes nodebridge as input
 		this.authentication = new Authentication(this.nodeBridge);
 		// Set Authenticator object for the Node Bridge

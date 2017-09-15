@@ -1,3 +1,4 @@
+
 /**
  * Bridge to Node Backend
  * Code organized using the following posts:
@@ -5,12 +6,15 @@
  * [https://github.com/fullstackreact/food-lookup-demo](https://github.com/fullstackreact/food-lookup-demo)
  */
 class NodeBridge {
-	constructor() {
+	constructor(addBusyState, removeBusyState) {
 		this.isOnline = false;
 		this.isOnlinePromise = this.checkServer();
 		this.getMetadata = this.getMetadata.bind(this);
 		this.getGoSummary = this.getGoSummary.bind(this);
 		this.toGo = this.toGo.bind(this);
+		// Add Busy State function from parent App class
+		this.addBusyState = addBusyState;
+		this.removeBusyState = removeBusyState;
 	}
 
 	/**
@@ -53,8 +57,8 @@ class NodeBridge {
 	 * @param {Boolean} debug: Print echo and server response to console
 	 * @return {Object} Response object of server
 	 */
-	async echoToken(query, debug = false) {
-		let response = await this.fetchWithUserAndToken(`api/echotoken?q=${query}`);
+	echoToken(query, debug = false) {
+		let response = this.fetchWithUserAndToken(`api/echotoken?q=${query}`);
 		if (debug) console.log(response);
 		return response;
 	}
@@ -70,13 +74,17 @@ class NodeBridge {
 	 * @return {Object} Response from the server containing name of the call, success boolean and data
 	 */
 	async fetchWithUserAndToken(fetchUrl) {
+		// Set busy state of the app
+		this.addBusyState(fetchUrl);
 		// Get User and Token
 		const { user, token } = this.getUserAndToken();
 		// Some functions like the getData functions do not take aruments, therefore we have to omit the first `&`
 		const andSymbol = fetchUrl.endsWith('?') ? '' : '&';
-		let response = fetch(`${fetchUrl}${andSymbol}user=${user}&token=${token}`, { accept: 'application/json' })
+		let response = await fetch(`${fetchUrl}${andSymbol}user=${user}&token=${token}`, { accept: 'application/json' })
 			.then(this.parseJSON)
 
+		// Set busy state of the app
+		this.removeBusyState(fetchUrl);
 		return response;
 	}
 
@@ -111,8 +119,8 @@ class NodeBridge {
 	 * 
 	 * @return {Object} Server response
 	 */
-	async loadData() {
-		return await this.fetchWithUserAndToken(`api/loaddata?`);
+	loadData() {
+		return this.fetchWithUserAndToken(`api/loaddata?`);
 	}
 
 	/**
@@ -121,8 +129,8 @@ class NodeBridge {
 	 * @param {String} name Dataset to load
 	 * @return {Object} Response
 	 */
-	async getDataset(name) {
-		return await this.fetchWithUserAndToken(`api/getdataset?name=${name}`);
+	getDataset(name) {
+		return this.fetchWithUserAndToken(`api/getdataset?name=${name}`);
 	}
 
 	/**
@@ -131,8 +139,8 @@ class NodeBridge {
 	 * @param {String} name Dataset to load
 	 * @return {Object} Response
 	 */
-	async getMetadata(name) {
-		return await this.fetchWithUserAndToken(`api/getmetadata?name=${name}`);
+	getMetadata(name) {
+		return this.fetchWithUserAndToken(`api/getmetadata?name=${name}`);
 	}
 
 	/**
@@ -142,8 +150,8 @@ class NodeBridge {
 	 * @param {String} ensemblVersion Ensembl version ('release') 
 	 * @return {Object} Server response
 	 */
-	async getGoSummary(ensemblDataset, ensemblVersion) {
-		return await this.fetchWithUserAndToken(`api/getgosummary?ensembldataset=${ensemblDataset}&ensemblversion=${ensemblVersion}`);
+	getGoSummary(ensemblDataset, ensemblVersion) {
+		return this.fetchWithUserAndToken(`api/getgosummary?ensembldataset=${ensemblDataset}&ensemblversion=${ensemblVersion}`);
 	}
 
 	/**
@@ -154,12 +162,12 @@ class NodeBridge {
 	 * @param {String} ensemblVersion Ensembl version ('release') 
 	 * @return {Object} Server response
 	 */
-	async toGo(identifier, ensemblDataset, ensemblVersion) {
+	toGo(identifier, ensemblDataset, ensemblVersion) {
 		// Get identifier into an array format that OpenCPU can read
 		// For example, the array ["ENSMUSG00000064370", "ENSMUSG00000065947"] need to
 		// be converted into the string '["ENSMUSG00000064370", "ENSMUSG00000065947"]'
 		identifier = `["${identifier.join('","')}"]`;
-		return await this.fetchWithUserAndToken(`api/gettogo?identifier=${identifier}&ensembldataset=${ensemblDataset}&ensemblversion=${ensemblVersion}`);
+		return this.fetchWithUserAndToken(`api/gettogo?identifier=${identifier}&ensembldataset=${ensemblDataset}&ensemblversion=${ensemblVersion}`);
 	}
 
 	/**

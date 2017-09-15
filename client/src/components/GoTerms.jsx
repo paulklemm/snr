@@ -1,6 +1,7 @@
 class GoTerms {
 	constructor(getGoSummary, toGo) {
 		this.summary = {};
+		// Define the Methods from other Objects
 		this.nodeBridgeGetGoSummary = getGoSummary;
 		this.nodeBridgeTogo = toGo;
 	}
