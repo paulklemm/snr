@@ -204,22 +204,9 @@ class App extends React.Component {
 		// Init GOTerms object with getGoSummary and toGo from nodebridge
 		// TODO: This "current" thing needs to go away, because this will change!
 		// TODO: Set busy state
-		this.goTerms = new GoTerms(this.nodeBridge.getGoSummary, this.nodeBridge.toGo);
-		const goPerGene = await this.nodeBridge.getGoPerGene('mmusculus_gene_ensembl', 'current');
-		console.log(goPerGene);
-		let geneToGo = {};
-		console.time(`Get GO per Gene`);
-		
-		goPerGene['go']['.val'].map((elem) => {
-			if (elem['go_id'] === '')
-				return;
-			if (typeof geneToGo[elem['ensembl_gene_id']] === 'undefined')
-				geneToGo[elem['ensembl_gene_id']] = [];
-			geneToGo[elem['ensembl_gene_id']].push(elem['go_id']);
-		});
-		console.log(geneToGo);
-		console.timeEnd(`Get GO per Gene`);
-		// this.goTerms.addSummary('mmusculus_gene_ensembl', 'current');
+		this.goTerms = new GoTerms(this.nodeBridge.getGoSummary, this.nodeBridge.getGoPerGene);
+		this.goTerms.addGeneToGo('mmusculus_gene_ensembl', 'current');
+		this.goTerms.addSummary('mmusculus_gene_ensembl', 'current');
 
 		// Set default plotting dimensions
 		this.setPlotDimensions('pValueNegLog10', 'fc');

@@ -11,6 +11,7 @@ class NodeBridge {
 		this.isOnlinePromise = this.checkServer();
 		this.getMetadata = this.getMetadata.bind(this);
 		this.getGoSummary = this.getGoSummary.bind(this);
+		this.getGoPerGene = this.getGoPerGene.bind(this);
 		// Add Busy State function from parent App class
 		this.addBusyState = addBusyState;
 		this.removeBusyState = removeBusyState;
