@@ -56,11 +56,11 @@ class GoTerms {
 	/**
 	 * Add GO terms as object mapping Gene-IDs to GO-term ids
 	 * 
-	 * @param {String} ensemblDataset Biomart dataset
+	 * @param {String} ensemblDataset Ensembl dataset
 	 * @param {String} ensemblVersion Ensembl version ('release')
 	 */
 	async addGeneToGo(ensemblDataset, ensemblVersion) {
-		const goPerGene = await this.nodeBridgeGetGoPerGene('mmusculus_gene_ensembl', 'current');
+		const goPerGene = await this.nodeBridgeGetGoPerGene(ensemblDataset, ensemblVersion);
 		let newGeneToGo = {};
 		// Make dictionary pointing gene IDs to GO-terms
 		goPerGene['go']['.val'].map((elem) => {
@@ -72,6 +72,23 @@ class GoTerms {
 		});
 		this.geneToGo = await this.addWithEnsemblAndVersion(this.geneToGo, newGeneToGo, ensemblDataset, ensemblVersion);
 		console.log(this.geneToGo);
+	}
+
+	/**
+	 * 
+	 * @param {Array} ensemblIDs EnsemblIDs to get GO-Terms for
+	 * @param {String} ensemblDataset Ensembl dataset
+	 * @param {String} ensemblVersion Ensembl version ('release')
+	 * @return {Object} Dictionary relating Ensembl gene ids to GO-Terms 
+	 */
+	getGoTerms(ensemblIDs, ensemblDataset = 'mmusculus_gene_ensembl', ensemblVersion = 'current') {
+		let goTerms = {};
+		ensemblIDs.forEach(ensemblID => {
+			const goTerms = this.geneToGo[ensemblDataset][ensemblVersion][ensemblID];
+			if (typeof goTerms !== 'undefined')
+				goTerms[ensemblID] = goTerms;
+		});
+		return goTerms;
 	}
 }
 
