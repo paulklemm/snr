@@ -190,21 +190,6 @@ app.get("/api/getgopergene", async (req, res) => {
 });
 
 /**
- * Get Go terms for list of identifier
- */
-app.get("/api/gettogo", async (req, res) => {
-  const result = await userManager.tokenApiFunction('gettogo', req, async (req) => {
-    const { name, user, ensembldataset, ensemblversion, identifier } = req.query;
-    // Get the GO summary from OpenCPU
-    timeStampLog(`Get GO terms for: \n \ \ ensembl dataset '${ensembldataset}'\n \ \ ensembl version: '${ensemblversion}'\n \ \ identifier: '${identifier}'`);
-    summary = await openCPU.runRCommand("sonaRGO", "to_go", { input:`${identifier}`, ensembl_dataset: `'${ensembldataset}'`, ensembl_version: `'${ensemblversion}'` }, 'json');
-    timeStampLog(`Get GO terms done!`);
-    return ({ name: "getgosummary", success: true, go: summary });
-  });
-  res.json(result);
-});
-
-/**
  * Load data function
  * TODO: Change this to only return the listed files and do not pass session ID to the client
  */

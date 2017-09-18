@@ -11,7 +11,6 @@ class NodeBridge {
 		this.isOnlinePromise = this.checkServer();
 		this.getMetadata = this.getMetadata.bind(this);
 		this.getGoSummary = this.getGoSummary.bind(this);
-		this.toGo = this.toGo.bind(this);
 		// Add Busy State function from parent App class
 		this.addBusyState = addBusyState;
 		this.removeBusyState = removeBusyState;
@@ -163,22 +162,6 @@ class NodeBridge {
 	 */
 	getGoPerGene(ensemblDataset, ensemblVersion) {
 		return this._fetchWithUserAndToken(`api/getgopergene?ensembldataset=${ensemblDataset}&ensemblversion=${ensemblVersion}`);
-	}
-
-	/**
-	 * Get GO-Terms associated with identifier list
-	 * If ensemblDataset or ensemblVersion are undefined, defaults from `R` package will be used.
-	 * @param {array} identifier Array of identifier to relate to go-terms (e.g. ["ENSMUSG00000064370", "ENSMUSG00000065947"])
-	 * @param {String} ensemblDataset Biomart dataset
-	 * @param {String} ensemblVersion Ensembl version ('release') 
-	 * @return {Object} Server response
-	 */
-	toGo(identifier, ensemblDataset, ensemblVersion) {
-		// Get identifier into an array format that OpenCPU can read
-		// For example, the array ["ENSMUSG00000064370", "ENSMUSG00000065947"] need to
-		// be converted into the string '["ENSMUSG00000064370", "ENSMUSG00000065947"]'
-		identifier = `["${identifier.join('","')}"]`;
-		return this._fetchWithUserAndToken(`api/gettogo?identifier=${identifier}&ensembldataset=${ensemblDataset}&ensemblversion=${ensemblVersion}`);
 	}
 
 	/**

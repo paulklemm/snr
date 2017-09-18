@@ -36,19 +36,6 @@ class GoTerms {
 		this.summary[ensemblDataset][ensemblVersion] = await this._getSummary(this.nodeBridgeGetGoSummary(ensemblDataset, ensemblVersion))
 		console.log(this.summary);
 	}
-
-	/**
-	 * Returns GO-Terms associated with identifiers
-	 * 
-	 * @param {array} identifier Array of identifier to relate to go-terms (e.g. ["ENSMUSG00000064370", "ENSMUSG00000065947"])
-	 * @param {String} ensemblDataset Biomart dataset
-	 * @param {String} ensemblVersion Ensembl version ('release')
-	 */
-	async toGo(identifier, ensemblDataset, ensemblVersion) {
-		const response = await this.nodeBridgeTogo(identifier, ensemblDataset, ensemblVersion);
-		const goTermsPerIdentifier = response['go']['.val'];
-		return goTermsPerIdentifier;
-	}
 }
 
 export default GoTerms;
