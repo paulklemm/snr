@@ -64,8 +64,10 @@ class App extends React.Component {
 		this.invalidateLogin = this.invalidateLogin.bind(this);
 		this.addBusyState = this.addBusyState.bind(this);
 		this.removeBusyState = this.removeBusyState.bind(this);
+		this.filterBroadcasted = this.filterBroadcasted.bind(this);
 		this.login = this.login.bind(this);
-		this.datasetHub = new DatasetHub();
+		// Init datasethub and inject filterTriggered function
+		this.datasetHub = new DatasetHub(this.filterBroadcasted);
 		this.debug = false;
 		this.layoutFactory = new LayoutFactory(16);
 		// Init NodeBridge and inject busystate functions
@@ -149,6 +151,28 @@ class App extends React.Component {
 	}
 
 	/**
+	 * This function will be injected to the DatasetHub object and
+	 * is triggered when a new filter was broadcasted to the datasets
+	 */
+	filterBroadcasted() {
+		console.log(`Filter triggered.`);
+		this.applyGoTerms();
+	}
+
+	/**
+	 * TODO: Implement
+	 */
+	async applyGoTerms() {
+		const primaryDatasetData = this.state.primaryDataset.getData();
+		const ensemblIds = Helper.objectValueToArray(primaryDatasetData, 'EnsemblID');
+		// console.log(ensemblIds);
+		// if (ensemblIds.length > 0) {
+		// 	const testToGo = await this.goTerms.toGo(ensemblIds, "mmusculus_gene_ensembl", "current");
+		// 	console.log(testToGo);
+		// }
+	}
+
+	/**
 	 * Invalidate local login storage and trigger login screen
 	 */
 	async invalidateLogin() {
@@ -178,14 +202,24 @@ class App extends React.Component {
 
 		// Get GO-Term description
 		// Init GOTerms object with getGoSummary and toGo from nodebridge
-		this.goTerms = new GoTerms(this.nodeBridge.getGoSummary, this.nodeBridge.toGo);
 		// TODO: This "current" thing needs to go away, because this will change!
 		// TODO: Set busy state
-		this.goTerms.addSummary('mmusculus_gene_ensembl', 'current');
-		// Get GO-Term for test-Group
-		const testToGo = await this.goTerms.toGo(["ENSMUSG00000064370", "ENSMUSG00000065947"], "mmusculus_gene_ensembl", "current");
-		console.log(testToGo);
-
+		this.goTerms = new GoTerms(this.nodeBridge.getGoSummary, this.nodeBridge.toGo);
+		const goPerGene = await this.nodeBridge.getGoPerGene('mmusculus_gene_ensembl', 'current');
+		console.log(goPerGene);
+		let geneToGo = {};
+		console.time(`Get GO per Gene`);
+		
+		goPerGene['go']['.val'].map((elem) => {
+			if (elem['go_id'] === '')
+				return;
+			if (typeof geneToGo[elem['ensembl_gene_id']] === 'undefined')
+				geneToGo[elem['ensembl_gene_id']] = [];
+			geneToGo[elem['ensembl_gene_id']].push(elem['go_id']);
+		});
+		console.log(geneToGo);
+		console.timeEnd(`Get GO per Gene`);
+		// this.goTerms.addSummary('mmusculus_gene_ensembl', 'current');
 
 		// Set default plotting dimensions
 		this.setPlotDimensions('pValueNegLog10', 'fc');

@@ -10,6 +10,7 @@ class Filter {
       "=": 'equals'
     };
     this.filter = {};
+    // broadcastFilter function from DatasetHub
     this.broadcastFilter = broadcastFilter;
   }
 

@@ -176,6 +176,20 @@ app.get("/api/getgosummary", async (req, res) => {
 });
 
 /**
+ * Get GO Terms per Gene
+ */
+app.get("/api/getgopergene", async (req, res) => {
+  const result = await userManager.tokenApiFunction('getgopergene', req, async (req) => {
+    const { name, user, ensembldataset, ensemblversion } = req.query;
+    // Get the GO terms from OpenCPU
+    timeStampLog(`Get GO per Gene for: \n \ \ ensembl dataset '${ensembldataset}'\n \ \ ensembl version: '${ensemblversion}'`);
+    goPerGene = await openCPU.runRCommand("sonaRGO", "get_go_per_gene", { ensembl_dataset: `'${ensembldataset}'`, ensembl_version: `'${ensemblversion}'` }, 'json');
+    return ({ name: "getgopergene", success: true, go: goPerGene });
+  });
+  res.json(result);
+});
+
+/**
  * Get Go terms for list of identifier
  */
 app.get("/api/gettogo", async (req, res) => {
@@ -184,6 +198,7 @@ app.get("/api/gettogo", async (req, res) => {
     // Get the GO summary from OpenCPU
     timeStampLog(`Get GO terms for: \n \ \ ensembl dataset '${ensembldataset}'\n \ \ ensembl version: '${ensemblversion}'\n \ \ identifier: '${identifier}'`);
     summary = await openCPU.runRCommand("sonaRGO", "to_go", { input:`${identifier}`, ensembl_dataset: `'${ensembldataset}'`, ensembl_version: `'${ensemblversion}'` }, 'json');
+    timeStampLog(`Get GO terms done!`);
     return ({ name: "getgosummary", success: true, go: summary });
   });
   res.json(result);

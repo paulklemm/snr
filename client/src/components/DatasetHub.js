@@ -1,7 +1,7 @@
 import Filter from './Filter'
 
 class DatasetHub {
-	constructor() {
+	constructor(filterBroadcasted) {
 		this.datasets = {};
 		this.names = [];
 		this.enabled = {};
@@ -10,6 +10,8 @@ class DatasetHub {
 		this.getDatasetIcon = this.getDatasetIcon.bind(this);
 		// Init filter object and inject broadcastFilter function
 		this.filter = new Filter(this.broadcastFilter);
+		// filterTriggered function from App.js
+		this.filterBroadcasted = filterBroadcasted;
 	}
 
 	/**
@@ -35,6 +37,8 @@ class DatasetHub {
 			if (dataset.loaded)
 				this.datasets[name].setFilter(this.filter.getFilter());
 		}
+		// Call triggered function to run follow-up tasks
+		this.filterBroadcasted();
 	}
 
 	push(dataset) {

@@ -155,6 +155,17 @@ class NodeBridge {
 	}
 
 	/**
+	 * Get GO-ids per gene
+	 * If ensemblDataset or ensemblVersion are undefined, defaults from `R` package will be used.
+	 * @param {String} ensemblDataset Biomart dataset
+	 * @param {String} ensemblVersion Ensembl version ('release') 
+	 * @return {Object} Server response
+	 */
+	getGoPerGene(ensemblDataset, ensemblVersion) {
+		return this._fetchWithUserAndToken(`api/getgopergene?ensembldataset=${ensemblDataset}&ensemblversion=${ensemblVersion}`);
+	}
+
+	/**
 	 * Get GO-Terms associated with identifier list
 	 * If ensemblDataset or ensemblVersion are undefined, defaults from `R` package will be used.
 	 * @param {array} identifier Array of identifier to relate to go-terms (e.g. ["ENSMUSG00000064370", "ENSMUSG00000065947"])
