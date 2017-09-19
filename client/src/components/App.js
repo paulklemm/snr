@@ -160,14 +160,13 @@ class App extends React.Component {
 	}
 
 	/**
-	 * TODO: Implement
+	 * Get GO-Terms
 	 */
 	async applyGoTerms() {
 		const primaryDatasetData = this.state.primaryDataset.getData();
 		const ensemblIds = Helper.objectValueToArray(primaryDatasetData, 'EnsemblID');
 		console.log(ensemblIds);
 		if (ensemblIds.length > 0) {
-			// const testToGo = await this.goTerms.toGo(ensemblIds, "mmusculus_gene_ensembl", "current");
 			const testToGo = this.goTerms.getGoTerms(ensemblIds);
 			console.log(testToGo);
 		}
