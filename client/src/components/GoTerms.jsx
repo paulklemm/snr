@@ -81,6 +81,7 @@ class GoTerms {
 	}
 
 	/**
+	 * Get Dictionary keying GO-term IDs to the provided Ensembl-IDs
 	 * 
 	 * @param {Array} ensemblIDs EnsemblIDs to get GO-Terms for
 	 * @param {String} ensemblDataset Ensembl dataset
@@ -88,11 +89,23 @@ class GoTerms {
 	 * @return {Object} Dictionary relating Ensembl gene ids to GO-Terms 
 	 */
 	getGoTerms(ensemblIDs, ensemblDataset = 'mmusculus_gene_ensembl', ensemblVersion = 'current') {
+		// Initialize dictionary pointing GO-terms to the provided ensembl-IDs
 		let goTerms = {};
+		// Iterate over all ensembl ids
 		ensemblIDs.forEach(ensemblID => {
-			const goTermPerGene = this.geneToGo[ensemblDataset][ensemblVersion][ensemblID];
-			if (typeof goTerms !== 'undefined')
-				goTerms[ensemblID] = goTermPerGene;
+			// Get all GO-Terms the gene is associated with
+			const goTermsOfGene = this.geneToGo[ensemblDataset][ensemblVersion][ensemblID];
+			// When the gene is not associated with GO terms, do nothing
+			if (typeof goTermsOfGene === 'undefined')
+				return;
+			// Iterate over all GO-terms the gene is associated with and add it to goTerms object
+			goTermsOfGene.forEach(goTerm => {
+				// When GO-term is not in the dictionary, initialize it as empty array
+				if (typeof goTerms[goTerm] === 'undefined')
+					goTerms[goTerm] = [];
+				// Push the GO-term 
+				goTerms[goTerm].push(ensemblID);
+			});
 		});
 		return goTerms;
 	}
