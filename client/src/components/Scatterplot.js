@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import {scaleLinear} from 'd3-scale';
 import {axisBottom, axisLeft} from 'd3-axis';
 import {max, min} from 'd3-array';
-import Helper from './Helper';
+import { createDummyDataScatterplot, createDummySettingsScatterplot } from './Helper';
 import SelectionRectangle from './SelectionRectangle';
 // eslint-disable-next-line
 import {mouse, select} from 'd3-selection';
@@ -99,8 +99,8 @@ class Scatterplot extends React.Component {
 	}
 
 	stresstestTick() {
-		let data = Helper.createDummyDataScatterplot(this.props.stressTest.elementCount);
-		let settings = Helper.createDummySettingsScatterplot();
+		let data = createDummyDataScatterplot(this.props.stressTest.elementCount);
+		let settings = createDummySettingsScatterplot();
 		this.setState({
 			settings: settings,
 			data: data

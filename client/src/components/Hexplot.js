@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Scatterplot from './Scatterplot';
-import Helper from './Helper';
+import { objectValueToArray } from './Helper';
 import SelectionRectangle from './SelectionRectangle';
 import {hexbin as D3Hexbin} from 'd3-hexbin';
 import {interpolateLab} from 'd3-interpolate';
@@ -66,8 +66,8 @@ class Hexplot extends Scatterplot {
 		let filter = this.props.rnaSeqData.filtered;
 		// setScale requires an array of numeric values for each dimension
 		// therefore we have to convert it
-		let xArray = Helper.objectValueToArray(data, this.props.xName)
-		let yArray = Helper.objectValueToArray(data, this.props.yName)
+		let xArray = objectValueToArray(data, this.props.xName)
+		let yArray = objectValueToArray(data, this.props.yName)
 		this.setScale(xArray, yArray);
 
 		// Set Selection rectangle according to the filters

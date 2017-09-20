@@ -162,10 +162,10 @@ Include the image in HTML using
 
 ```html
 <BarChart width={200} height={200} />
-<Scatterplot width={200} height={200} x={Helper.getIris().sepalWidth} y={Helper.getIris().sepalLength} xLabel="Sepal Width" yLabel="Sepal Length" />
-<ScatterplotRNASeqData width={200} height={200} rnaSeqData={Helper.getIrisNewFormat()} xName="sepalWidth" yName="sepalLength" />
+<Scatterplot width={200} height={200} x={getIris().sepalWidth} y={getIris().sepalLength} xLabel="Sepal Width" yLabel="Sepal Length" />
+<ScatterplotRNASeqData width={200} height={200} rnaSeqData={getIrisNewFormat()} xName="sepalWidth" yName="sepalLength" />
 <ScatterplotRNASeqData width={600} height={400} rnaSeqData={this.state.rnaSeqData} xName="pValue" yName="fc" />
-<Hexplot width={600} height={400} rnaSeqData={Helper.getIrisNewFormat()} xName="sepalWidth" yName="sepalLength" hexSize={10} hexMax={10} />
+<Hexplot width={600} height={400} rnaSeqData={getIrisNewFormat()} xName="sepalWidth" yName="sepalLength" hexSize={10} hexMax={10} />
 <Piechart width={200} height={200} data={[1, 1, 2, 3, 5, 8, 13, 21]}/>
 <Hexplot width={500} height={400} rnaSeqData={this.state.rnaSeqData} xName="pValue" yName="fc" hexSize={10} hexMax={10} />
 ```

@@ -1,6 +1,6 @@
 import React from 'react';
 import Scatterplot from './Scatterplot';
-import Helper from './Helper';
+import { objectValueToArray } from './Helper';
 
 class ScatterplotRNASeqData extends Scatterplot {
 	render() {
@@ -10,8 +10,8 @@ class ScatterplotRNASeqData extends Scatterplot {
 		this.setMargin();
 		// setScale requires an array of numeric values for each dimension
 		// therefore we have to convert it
-		let xArray = Helper.objectValueToArray(this.props.rnaSeqData.data, this.props.xName)
-		let yArray = Helper.objectValueToArray(this.props.rnaSeqData.data, this.props.yName)
+		let xArray = objectValueToArray(this.props.rnaSeqData.data, this.props.xName)
+		let yArray = objectValueToArray(this.props.rnaSeqData.data, this.props.yName)
 		this.setScale(xArray, yArray);
 
 		let axes = this.renderAxes();

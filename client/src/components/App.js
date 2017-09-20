@@ -6,8 +6,7 @@ import BarChart from './BarChart';
 // eslint-disable-next-line
 import Scatterplot from './Scatterplot';
 // eslint-disable-next-line
-import Helper from './Helper';
-import { getRandomInt } from './Helper';
+import { getRandomInt, objectValueToArray } from './Helper';
 // eslint-disable-next-line
 import Hexplot from './Hexplot';
 // eslint-disable-next-line
@@ -166,7 +165,7 @@ class App extends React.Component {
 	 */
 	async applyGoTerms() {
 		const primaryDatasetData = this.state.primaryDataset.getData();
-		const ensemblIds = Helper.objectValueToArray(primaryDatasetData, 'EnsemblID');
+		const ensemblIds = objectValueToArray(primaryDatasetData, 'EnsemblID');
 		console.log(ensemblIds);
 		if (ensemblIds.length > 0) {
 			const testToGo = this.goTerms.getGoTerms(ensemblIds);
