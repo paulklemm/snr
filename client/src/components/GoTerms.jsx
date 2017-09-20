@@ -1,3 +1,5 @@
+import { isUndefined } from './Helper';
+
 class GoTerms {
 	constructor(getGoSummary, getGoPerGene) {
 		this.summary = {};
@@ -69,7 +71,7 @@ class GoTerms {
 			if (elem['go_id'] === '')
 				return;
 			// Create a new array to store the GO-terms in
-			if (typeof newGeneToGo[elem['ensembl_gene_id']] === 'undefined')
+			if (isUndefined(newGeneToGo[elem['ensembl_gene_id']]))
 				newGeneToGo[elem['ensembl_gene_id']] = [];
 			// Add GO-term to the dictionary
 			newGeneToGo[elem['ensembl_gene_id']].push(elem['go_id']);
@@ -96,12 +98,12 @@ class GoTerms {
 			// Get all GO-Terms the gene is associated with
 			const goTermsOfGene = this.geneToGo[ensemblDataset][ensemblVersion][ensemblID];
 			// When the gene is not associated with GO terms, do nothing
-			if (typeof goTermsOfGene === 'undefined')
+			if (isUndefined(goTermsOfGene))
 				return;
 			// Iterate over all GO-terms the gene is associated with and add it to goTerms object
 			goTermsOfGene.forEach(goTerm => {
 				// When GO-term is not in the dictionary, initialize it as empty array
-				if (typeof goTerms[goTerm] === 'undefined')
+				if (isUndefined(goTerms[goTerm]))
 					goTerms[goTerm] = [];
 				// Push the GO-term 
 				goTerms[goTerm].push(ensemblID);

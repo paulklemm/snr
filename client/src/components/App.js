@@ -203,9 +203,9 @@ class App extends React.Component {
 
 		// Get GO-Term description
 		// TODO: This "current" thing needs to go away, because this will change!
-		// this.goTerms = new GoTerms(this.nodeBridge.getGoSummary, this.nodeBridge.getGoPerGene);
-		// this.goTerms.addGeneToGo('mmusculus_gene_ensembl', 'current');
-		// this.goTerms.addSummary('mmusculus_gene_ensembl', 'current');
+		this.goTerms = new GoTerms(this.nodeBridge.getGoSummary, this.nodeBridge.getGoPerGene);
+		this.goTerms.addGeneToGo('mmusculus_gene_ensembl', 'current');
+		this.goTerms.addSummary('mmusculus_gene_ensembl', 'current');
 
 		// Set default plotting dimensions
 		this.setPlotDimensions('pValueNegLog10', 'fc');

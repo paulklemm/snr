@@ -1,5 +1,14 @@
 import {range} from 'd3-array';
 
+/**
+ * Check if symbol is undefined
+ * @param {Symbol} x 
+ * @return {Boolean} isUndefined
+ */
+function isUndefined(x) {
+	return (typeof x === 'undefined');
+}
+
 function createDummyDataScatterplot(entryCount = 25) {
 	let xValues = range(entryCount).map(() => Math.random());
 	let yValues = range(entryCount).map(() => Math.random());
@@ -79,5 +88,6 @@ export {
 	getIris,
 	getIrisSettingsScatterplot,
 	objectValueToArray,
-	getRandomInt
+	getRandomInt,
+	isUndefined
 };
