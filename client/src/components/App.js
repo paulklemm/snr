@@ -504,8 +504,8 @@ class App extends React.Component {
 							</Grid>
 						</Grid>
 						<GoPlot
-							width={200}
-							height={200}
+							width={150}
+							height={10}
 							data={goPlotData}
 						/>
 						{/* Add Table on whole page length */}

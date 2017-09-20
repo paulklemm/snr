@@ -22,10 +22,10 @@ class GoPlot extends React.Component {
 					<rect
 						width={this.props.width}
 						height={this.props.height}
-						rx="8"
-						ry="8"
-						stroke="black"
-						strokeWidth="4"
+						rx=""
+						ry=""
+						stroke="grey"
+						strokeWidth="1"
 						fillOpacity="0"
 						strokeOpacity="1"
 					/>
