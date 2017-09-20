@@ -16,6 +16,15 @@ function timeStampLog (content, asError=false) {
 }
 
 /**
+ * Check if symbol is undefined
+ * @param {Symbol} x 
+ * @return {Boolean} isUndefined
+ */
+function isUndefined(x) {
+  return (typeof x === 'undefined');
+}
+
+/**
  * Helper function for timeStampLog to make hours, minutes and seconds always two-digit
  * 
  * @param {Integer} number Number to make two-digits
@@ -59,3 +68,4 @@ function writeFSSync(path, obj) {
 exports.timeStampLog = timeStampLog;
 exports.readJSONFSSync = readJSONFSSync;
 exports.writeFSSync = writeFSSync;
+exports.isUndefined = isUndefined;

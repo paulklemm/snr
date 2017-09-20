@@ -6,7 +6,7 @@ import BarChart from './BarChart';
 // eslint-disable-next-line
 import Scatterplot from './Scatterplot';
 // eslint-disable-next-line
-import { getRandomInt, objectValueToArray } from './Helper';
+import { getRandomInt, objectValueToArray, isUndefined } from './Helper';
 // eslint-disable-next-line
 import Hexplot from './Hexplot';
 // eslint-disable-next-line
@@ -260,7 +260,7 @@ class App extends React.Component {
 		if (debug) console.log(response);
 
 		// If Response is negative because of invalid token, invalidate login
-		if (typeof response.loginInvalid === 'undefined' && response.loginInvalid === true)
+		if (isUndefined(response.loginInvalid) && response.loginInvalid === true)
 			this.setState({ loginRequired: true });
 		// Delete the runKey from the busy array
 		this.removeBusyState(runKey);

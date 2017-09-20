@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import {scaleLinear} from 'd3-scale';
 import {axisBottom, axisLeft} from 'd3-axis';
 import {max, min} from 'd3-array';
-import { createDummyDataScatterplot, createDummySettingsScatterplot } from './Helper';
+import { createDummyDataScatterplot, createDummySettingsScatterplot, isUndefined } from './Helper';
 import SelectionRectangle from './SelectionRectangle';
 // eslint-disable-next-line
 import {mouse, select} from 'd3-selection';
@@ -49,8 +49,8 @@ class Scatterplot extends React.Component {
 		this.margin = margin;
 		// When the scatterplot is included in a responsive layout, setting the width
 		// by hard is a problem. Therefore check if we are in a responsive setting
-		const width = (this.props.responsiveWidth && typeof this.state.responsiveWidth !== 'undefined') ? this.state.responsiveWidth : this.props.width;
-		const height = (this.props.responsiveHeight && typeof this.state.responsiveHeight !== 'undefined') ? this.state.responsiveHeight : this.props.height;
+		const width = (this.props.responsiveWidth && !isUndefined(this.state.responsiveWidth)) ? this.state.responsiveWidth : this.props.width;
+		const height = (this.props.responsiveHeight && !isUndefined(this.state.responsiveHeight)) ? this.state.responsiveHeight : this.props.height;
 		this.widthNoMargin = width - margin.left - margin.right;
 		this.heightNoMargin = height - margin.top - margin.bottom;
 		// Set the size of the selection rectangle
@@ -153,7 +153,7 @@ class Scatterplot extends React.Component {
 			if (this.props.rnaSeqData.data[i][idName] === datapoint) {
 				const x = this.props.rnaSeqData.data[i][this.props.xName];
 				const y = this.props.rnaSeqData.data[i][this.props.yName];
-				if (typeof(x) !== 'undefined' && typeof(y) !== 'undefined') {
+				if (isUndefined(x) && isUndefined(y)) {
 					const cx = this.xScale(x);
 					const cy = this.yScale(y);
 					return (
@@ -192,7 +192,7 @@ class Scatterplot extends React.Component {
 			let currentX = x[i];
 			let currentY = y[i];
 			// Check whether the current element is filtered or not
-			const currentIsFiltered = (typeof filtered[i] === 'undefined') ? false : filtered[i];
+			const currentIsFiltered = (isUndefined(filtered[i])) ? false : filtered[i];
 			// If the element is filtered, render the elements accordingly
 			const currentStyle = currentIsFiltered ? styleSheet.filteredCircle : styleSheet.circle;
 			// Only create dot if x and y are numbers
@@ -200,7 +200,7 @@ class Scatterplot extends React.Component {
 				// Check if we have to highlight the elements
 				let cx = this.xScale(currentX); 
 				let cy = this.yScale(currentY);
-				let newRadius = (typeof highlight !== 'undefined' && cx >= highlight.minX && cx <= highlight.maxX && cy >= highlight.minY && cy <= highlight.maxY) ? radius + 1 : radius;
+				let newRadius = (!isUndefined(highlight) && cx >= highlight.minX && cx <= highlight.maxX && cy >= highlight.minY && cy <= highlight.maxY) ? radius + 1 : radius;
 				dots.push(
 					<circle 
 						className="dot" 

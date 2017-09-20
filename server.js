@@ -2,7 +2,7 @@
 // Node classes: https://stackoverflow.com/questions/42684177/node-js-es6-classes-with-require
 const express = require("express");
 // const UserManager = require("./UserManager");
-const { timeStampLog, readJSONFSSync } = require('./Components/Helper')
+const { timeStampLog, readJSONFSSync, isUndefined } = require('./Components/Helper')
 const { UserManager } = require('./Components/UserManager');
 const { OpenCPUBridge } = require('./Components/OpenCPUBridge');
 const { Sessions } = require('./Components/Sessions');
@@ -127,7 +127,7 @@ app.get("/api/login", (req, res) => {
     // Create the token on disk
     const token = userManager.createToken(user);
     // When creating the token fails, token will be undefined
-    if (typeof token === 'undefined')
+    if (isUndefined(token))
        res.json({ name: "login", success: false, reason: 'Access token cannot be created on server, please contact the admins'});
     // If everything works fine, return result
     else
@@ -201,7 +201,7 @@ app.get("/api/loaddata", async (req, res) => {
     // Get OpenCPU data session for user
     let session = sessions.getSession(user);
     // If we know the session ID, check if it is valid. If session is not undefined, check if contains all required files
-    let sessionIsValid = (typeof session !== 'undefined') ? await sessionValid(session, userManager.getUserSettings(user).path) : false;
+    let sessionIsValid = (!isUndefined(session)) ? await sessionValid(session, userManager.getUserSettings(user).path) : false;
     let filenames;
     if (!sessionIsValid) {
       timeStampLog(`Call R to load data for user ${user}`);

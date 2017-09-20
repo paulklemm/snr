@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Scatterplot from './Scatterplot';
-import { objectValueToArray } from './Helper';
+import { objectValueToArray, isUndefined } from './Helper';
 import SelectionRectangle from './SelectionRectangle';
 import {hexbin as D3Hexbin} from 'd3-hexbin';
 import {interpolateLab} from 'd3-interpolate';
@@ -57,7 +57,7 @@ class Hexplot extends Scatterplot {
 
 	render() {
 		// Check if there is data available
-		if (this.props.rnaSeqData.data === undefined ||typeof this.props.filter === 'undefined') return (<div>no data</div>);
+		if (this.props.rnaSeqData.data === undefined || isUndefined(this.props.filter)) return (<div>no data</div>);
 		// reset margin and scale in case they changed
 		this.setMargin();
 		// Get the whole data set even if it was filtered
@@ -97,7 +97,7 @@ class Hexplot extends Scatterplot {
 		// Get highlights if there are any
 		const highlight = this.props.highlight.groups['selection'];
 		let highlightObj = '';
-		if (typeof highlight !== 'undefined') {
+		if (!isUndefined(highlight)) {
 			// Only proceed if the array is equal to one
 			if (highlight.length === 1) {
 				highlightObj = this.renderDot(highlight[0], this.props.highlight.idName);

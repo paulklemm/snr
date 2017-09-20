@@ -1,7 +1,7 @@
 // Require bcrypt for authentication
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
-const { timeStampLog, readJSONFSSync, writeFSSync } = require('./Helper');
+const { timeStampLog, readJSONFSSync, writeFSSync, isUndefined } = require('./Helper');
 
 class UserManager {
 	constructor(userPath) {
@@ -65,7 +65,7 @@ class UserManager {
 		// Get settings for the user
 		const userSettings = this.getUserSettings(user);
 		// If user settings are undefined, return false
-		if (typeof userSettings === 'undefined')
+		if (isUndefined(userSettings))
 			return false;
 		// When there are no tokens added, return false
 		if (typeof userSettings.tokens !== 'object') return false;
@@ -119,7 +119,7 @@ class UserManager {
 		// b is the oldest one, so we should end up a and c
 		tokens = this.removeOldestToken(tokens);
 		console.log(tokens);
-		return typeof tokens.b === 'undefined';
+		return isUndefined(tokens.b);
 	}
 
 	/**
@@ -188,7 +188,7 @@ class UserManager {
 	 */
 	getPasswordHash(user) {
 		const userSettings = this.getUserSettings(user);
-		if (typeof userSettings === 'undefined' || typeof userSettings.passwd === 'undefined') {
+		if (isUndefined(userSettings) || isUndefined(userSettings.passwd)) {
 			timeStampLog(`Password or user not defined for ${user}`, true);
 			return '';
 		} else return userSettings.passwd;
@@ -203,7 +203,7 @@ class UserManager {
 		// Read the user settings
 		const userSettings = readJSONFSSync(this.getUserConfigPath(user));
 		// If settings are empty, show error
-		if (typeof userSettings === 'undefined')
+		if (isUndefined(userSettings))
 			timeStampLog(
 				`Cannot find user ${user} at ${this.getUserConfigPath(user)}. Either user folder (${this
 					.userPath}) is wrong or user does not exist.`,
