@@ -1,11 +1,13 @@
 import {range} from 'd3-array';
 
 class Helper {
+
 	static createDummyDataScatterplot(entryCount = 25) {
 		let xValues = range(entryCount).map(() => Math.random());
 		let yValues = range(entryCount).map(() => Math.random());
 		return({xValues: xValues, yValues: yValues});
 	}
+
 	static createDummySettingsScatterplot() {
 		return ({
 			'x': {'variableName': 'xValues', 'label': 'dummy x values'}, 
@@ -59,4 +61,18 @@ class Helper {
 	}
 }
 
+/**
+ * Get random value between min and max.
+ * 
+ * @param {Integer} min Minimum value
+ * @param {Integer} max Maximum value
+ * @return {Integer} Random integer between min and max
+ */
+function getRandomInt(min, max) {
+	min = Math.ceil(min);
+	max = Math.floor(max);
+	return Math.floor(Math.random() * (max - min)) + min;
+}
+
+export { getRandomInt };
 export default Helper;

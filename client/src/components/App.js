@@ -7,6 +7,7 @@ import BarChart from './BarChart';
 import Scatterplot from './Scatterplot';
 // eslint-disable-next-line
 import Helper from './Helper';
+import { getRandomInt } from './Helper';
 // eslint-disable-next-line
 import Hexplot from './Hexplot';
 // eslint-disable-next-line
@@ -27,6 +28,7 @@ import Loading from './Loading';
 import LayoutFactory from './LayoutFactory';
 import LoginScreen from './LoginScreen';
 import Highlight from './Highlight';
+import GoPlot from './GoPlot';
 // Third party components
 import { Icon } from 'react-fa';
 // Material-UI components
@@ -201,12 +203,10 @@ class App extends React.Component {
 			return;
 
 		// Get GO-Term description
-		// Init GOTerms object with getGoSummary and toGo from nodebridge
 		// TODO: This "current" thing needs to go away, because this will change!
-		// TODO: Set busy state
-		this.goTerms = new GoTerms(this.nodeBridge.getGoSummary, this.nodeBridge.getGoPerGene);
-		this.goTerms.addGeneToGo('mmusculus_gene_ensembl', 'current');
-		this.goTerms.addSummary('mmusculus_gene_ensembl', 'current');
+		// this.goTerms = new GoTerms(this.nodeBridge.getGoSummary, this.nodeBridge.getGoPerGene);
+		// this.goTerms.addGeneToGo('mmusculus_gene_ensembl', 'current');
+		// this.goTerms.addSummary('mmusculus_gene_ensembl', 'current');
 
 		// Set default plotting dimensions
 		this.setPlotDimensions('pValueNegLog10', 'fc');
@@ -450,6 +450,10 @@ class App extends React.Component {
 		}
 		let primaryDatasetData = (this.state.primaryDataset.data === undefined) ? undefined : this.state.primaryDataset.getData();
 		let primaryDatasetDimNames = this.state.primaryDataset.dimNames;
+		// DEBUG GOPlots
+		let goPlotData = [];
+		for (let i = 0; i < 200; i++) { goPlotData.push(getRandomInt(0, 500)) }
+
 		// Add PCA
 		let pcaImage = (typeof this.state.pcaImage === "undefined") ? pcaImage = <Loading width={800} height={400} /> : <img src={`${this.state.pcaImage}?width=7&height=5`} width={800} height={400} alt="R test PCA" />;
 
@@ -499,6 +503,11 @@ class App extends React.Component {
 								{hexplots}
 							</Grid>
 						</Grid>
+						<GoPlot
+							width={200}
+							height={200}
+							data={goPlotData}
+						/>
 						{/* Add Table on whole page length */}
 						<Grid item xs={12}>
 							<Table
