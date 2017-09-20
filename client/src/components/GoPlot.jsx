@@ -67,6 +67,7 @@ class GoPlot extends React.Component {
 					x={ barWidth * index }
 					fill={ this.colorScale(val) }
 					y={0}
+					key={`Value ${val} + Index ${index}`}
 				/>
 			);
 		});
