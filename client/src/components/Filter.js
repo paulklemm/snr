@@ -54,6 +54,7 @@ class Filter {
    * @param {String} dimension Dimension to remove the filter for
    */
   removeFilter(dimension) {
+    console.log(`Broadcast: Remove filter for dimension ${dimension}`)
     for (const filterKey in this.filter)
       if (this.filter[filterKey].name === dimension)
         delete this.filter[filterKey];
@@ -66,6 +67,7 @@ class Filter {
    * @param {String} operator: Operator to remove
    */
   removeFilterWithOperator(dimension, operator) {
+    console.log(`Broadcast: Remove filter with op for dimension ${dimension}`)
     const filterKey = this._getFilterKey(dimension, operator);
     delete this.filter[filterKey];
     this.broadcastFilter();
