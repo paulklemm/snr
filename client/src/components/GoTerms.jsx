@@ -1,4 +1,4 @@
-import { isUndefined } from './Helper';
+import { isUndefined, objectValueToArray } from './Helper';
 
 class GoTerms {
 	constructor(getGoSummary, getGoPerGene) {
@@ -45,6 +45,7 @@ class GoTerms {
 		// If it could not be retreived locally, download it form the server and add it to the localStorage
 		let summary = await this._getSummary(this.nodeBridgeGetGoSummary(ensemblDataset, ensemblVersion))
 		this.summary = await this.addWithEnsemblAndVersion(this.summary, summary, ensemblDataset, ensemblVersion);
+		console.log(this.summary);
 		// Add to localstorage
 		// localStorage.setItem(localStorageKey, JSON.stringify(this.summary));
 	}
@@ -103,12 +104,12 @@ class GoTerms {
 	}
 
 	/**
-	 * Get Dictionary keying GO-term IDs to the provided Ensembl-IDs
+	 * Array of GO-IDs of the provided Ensembl-IDs
 	 * 
 	 * @param {Array} ensemblIDs EnsemblIDs to get GO-Terms for
 	 * @param {String} ensemblDataset Ensembl dataset
 	 * @param {String} ensemblVersion Ensembl version ('release')
-	 * @return {Object} Dictionary relating Ensembl gene ids to GO-Terms 
+	 * @return {Array} Array of GO-terms
 	 */
 	getGoTerms(ensemblIDs, ensemblDataset = 'mmusculus_gene_ensembl', ensemblVersion = 'current') {
 		// Initialize dictionary pointing GO-terms to the provided ensembl-IDs
@@ -122,13 +123,41 @@ class GoTerms {
 				return;
 			// Iterate over all GO-terms the gene is associated with and add it to goTerms object
 			goTermsOfGene.forEach(goTerm => {
-				// When GO-term is not in the dictionary, initialize it as empty array
-				if (isUndefined(goTerms[goTerm]))
-					goTerms[goTerm] = [];
-				// Push the GO-term 
-				goTerms[goTerm].push(ensemblID);
+				// When GO-term is not in the dictionary, initialize it
+				if (isUndefined(goTerms[goTerm])) {
+					goTerms[goTerm] = {};
+					goTerms[goTerm]['ids'] = [];
+				}
+				// Push the GO-term
+				goTerms[goTerm]['ids'].push({ id: ensemblID });
 			});
 		});
+		// Iterate again over all goTerms and calculate the percentage of elements in the GO-terms
+		Object.keys(goTerms).forEach( goTermKey => {
+			goTerms[goTermKey]['percentage'] = goTerms[goTermKey]['ids'].length / this.summary[ensemblDataset][ensemblVersion][goTermKey]['count_genes'];
+		});
+
+		// Convert the collection to an array
+		let goTermsArray = [];
+		// Iterate over all GO-Terms and add them to the array
+		Object.keys(goTerms).forEach(goTermKey => {
+			let newEntry = goTerms[goTermKey];
+			// To still know which goTerm we have, keep the ID
+			newEntry['goId'] = goTermKey;
+			goTermsArray.push(newEntry);
+		});
+
+		return goTermsArray;
+	}
+
+	/**
+	 * Sort GO-terms, currently only by percentage
+	 * 
+	 * @param {Object} goTerms 
+	 */
+	sortGoTerms(goTerms) {
+		// Sort it
+		goTerms = goTerms.sort((a, b) => b['percentage'] - a['percentage']);
 		return goTerms;
 	}
 }

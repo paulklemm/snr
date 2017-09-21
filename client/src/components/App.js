@@ -164,13 +164,22 @@ class App extends React.Component {
 	 * Get GO-Terms
 	 */
 	async applyGoTerms() {
+		// Check if we have a primary dataset
+		if (isUndefined(this.state.primaryDataset.data))
+			return;
+		
+			// Get the (filtered) primary dataset
 		const primaryDatasetData = this.state.primaryDataset.getData();
+		// Get ensembl-ID array
 		const ensemblIds = objectValueToArray(primaryDatasetData, 'EnsemblID');
-		console.log(ensemblIds);
-		if (ensemblIds.length > 0) {
-			const testToGo = this.goTerms.getGoTerms(ensemblIds);
-			console.log(testToGo);
-		}
+		// Only proceed if the selection of ensembl IDs is not 0
+		if (ensemblIds.length == 0)
+			return;
+		
+		// Get collection pointing GO-ids to arrays of ensembl-ids in the filter
+		const goTerms = this.goTerms.getGoTerms(ensemblIds);
+		// Sort the GOTermArray
+		console.log(this.goTerms.sortGoTerms(goTerms));
 	}
 
 	/**
@@ -206,8 +215,6 @@ class App extends React.Component {
 		this.goTerms = new GoTerms(this.nodeBridge.getGoSummary, this.nodeBridge.getGoPerGene);
 		this.goTerms.addGeneToGo('mmusculus_gene_ensembl', 'current');
 		this.goTerms.addSummary('mmusculus_gene_ensembl', 'current');
-		console.log(this.goTerms.summary);
-		console.log(this.goTerms.geneToGo);
 		// Set default plotting dimensions
 		this.setPlotDimensions('pValueNegLog10', 'fc');
 
