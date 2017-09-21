@@ -34,9 +34,19 @@ class GoTerms {
 	 * @param {String} ensemblVersion Ensembl version/release
 	 */
 	async addSummary(ensemblDataset, ensemblVersion) {
+		// Check local storage, as we might not have to download the files every time
+		// const localStorageKey = `Sonar 'summary' Ens: ${ensemblDataset}, Ver: ${ensemblVersion}`;
+		// const localStorageGeneToGo = localStorage.getItem(localStorageKey);
+		// if (localStorageGeneToGo !== null) {
+		// 	this.summary = JSON.parse(localStorageGeneToGo);
+		// 	return;
+		// }
+
+		// If it could not be retreived locally, download it form the server and add it to the localStorage
 		let summary = await this._getSummary(this.nodeBridgeGetGoSummary(ensemblDataset, ensemblVersion))
 		this.summary = await this.addWithEnsemblAndVersion(this.summary, summary, ensemblDataset, ensemblVersion);
-		console.log(this.summary);
+		// Add to localstorage
+		// localStorage.setItem(localStorageKey, JSON.stringify(this.summary));
 	}
 
 	/**
@@ -64,6 +74,15 @@ class GoTerms {
 	 * @param {String} ensemblVersion Ensembl version ('release')
 	 */
 	async addGeneToGo(ensemblDataset, ensemblVersion) {
+		// Check local storage, as we might not have to download the files every time
+		// const localStorageKey = `Sonar 'gene to go' Ens: ${ensemblDataset}, Ver: ${ensemblVersion}`;
+		// const localStorageGeneToGo = localStorage.getItem(localStorageKey);
+		// if (localStorageGeneToGo !== null) {
+		// 	this.geneToGo = JSON.parse(localStorageGeneToGo);
+		// 	return;
+		// }
+
+		// If local storage retrieval fails, proceed
 		const goPerGene = await this.nodeBridgeGetGoPerGene(ensemblDataset, ensemblVersion);
 		let newGeneToGo = {};
 		// Make dictionary pointing gene IDs to GO-terms
@@ -79,7 +98,8 @@ class GoTerms {
 			this.summary[ensemblDataset][ensemblVersion][elem['go_id']]['genes'].push(elem['ensembl_gene_id']);
 		});
 		this.geneToGo = await this.addWithEnsemblAndVersion(this.geneToGo, newGeneToGo, ensemblDataset, ensemblVersion);
-		console.log(this.geneToGo);
+		// Save the result to localstorage
+		// localStorage.setItem(localStorageKey, JSON.stringify(this.geneToGo));
 	}
 
 	/**

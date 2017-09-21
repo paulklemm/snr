@@ -206,7 +206,8 @@ class App extends React.Component {
 		this.goTerms = new GoTerms(this.nodeBridge.getGoSummary, this.nodeBridge.getGoPerGene);
 		this.goTerms.addGeneToGo('mmusculus_gene_ensembl', 'current');
 		this.goTerms.addSummary('mmusculus_gene_ensembl', 'current');
-
+		console.log(this.goTerms.summary);
+		console.log(this.goTerms.geneToGo);
 		// Set default plotting dimensions
 		this.setPlotDimensions('pValueNegLog10', 'fc');
 
