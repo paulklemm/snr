@@ -10,6 +10,13 @@ class Dataset {
 		// HTML Element representing the dataset icon
 		this.icon = "";
 	}
+
+	/**
+	 * Set dataset content
+	 * 
+	 * @param {Array} data Array of datapoints
+	 * @param {Array} dimNames Names of the dimensions
+	 */
 	setData(data, dimNames) {
 		this.data = data;
 		this.loaded = true;
@@ -19,10 +26,41 @@ class Dataset {
 		this.filtered = [];
 		for (let i in this.data)
 			this.filtered[i] = false
+		
+		// Setup collection associating id of each entry with row-id for fast access
+		this.ensemblToArrayIndex = this._updateEnsemblToArrayIndex(this.data);
+		// Keep a copy of the unfiltered one
+		this.ensemblToArrayIndexUnfiltered = {...this.ensemblToArrayIndex};
+	}
+
+	/**
+	 * Get collection mapping row id to index in the array
+	 * 
+	 * @param {Boolean} wholeData Return indexing collection for whole data or apply filtered data
+	 * @return {Object} Collection mapping row id to index in the array
+	 */
+	getEnsemblToArrayIndex(wholeData = false) {
+		return wholeData ? this.ensemblToArrayIndexUnfiltered : this.ensemblToArrayIndex;
+	}
+
+	/**
+	 * Get collection mapping row id to index in the array
+	 * 
+	 * @param {Array} data data to create the collection for
+	 * @return {Object} Collection mapping row id to index in the array
+	 */
+	_updateEnsemblToArrayIndex(data) {
+		let ensemblToArrayIndex = {};
+		// Iterate over all entries in the data and create the index
+		for (let rowIndex in data)
+			ensemblToArrayIndex[data[rowIndex]['EnsemblID']] = rowIndex;
+		
+		return ensemblToArrayIndex;
 	}
 
 	/**
 	 * Get array of the data set.
+	 * 
 	 * @param {Boolean} wholeData: Defaults to false. If set to true, will return the whole data set even if it is filtered 
 	 * @return {Array} Data points as array
 	 */
@@ -33,6 +71,9 @@ class Dataset {
 			for (let i in this.data)
 				if (!this.filtered[i])
 					dataFiltered.push(this.data[i]);
+			
+			// Update element-ID to array index
+			this.ensemblToArrayIndex = this._updateEnsemblToArrayIndex(dataFiltered);
 			return dataFiltered;
 		} else {
 			return this.data;
@@ -42,6 +83,7 @@ class Dataset {
 	/**
 	 * Apply filter to the dataset. This will fill the `filtered` class member array with boolean values associated with each data point
 	 * to indicate the filtered status.
+	 * 
 	 * @param {Object} filter: Filter object in the Format `{name: 'fc', value: '3', operator: '>'}`
 	 * @param {Boolean} debug: Print out debug statements
 	 */
@@ -75,6 +117,7 @@ class Dataset {
 
 	/**
 	 * Check if a filter is applied to the data set.
+	 * 
 	 * @return {Boolean} `isFiltered` status
 	 */
 	isFiltered() {
