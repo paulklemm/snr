@@ -251,10 +251,6 @@ class Scatterplot extends React.Component {
 		// Set start of the rectangle
 		selectionRectangle.setStart(event.nativeEvent.offsetX - margin.left, event.nativeEvent.offsetY - margin.top);
 		this.setState({ selectionRectangle: selectionRectangle });
-		// Remove filters
-		this.props.filter.removeFilter(this.props.xName);
-		this.props.filter.removeFilter(this.props.yName);
-		this.props.forceUpdateApp();
 	}
 
 	/**
@@ -288,6 +284,12 @@ class Scatterplot extends React.Component {
 			// Since the coordinates from the bounds are starting in the upper left corner on y, we have to invert bounds here
 			this.props.filter.setFilter(this.props.yName, this.yScaleReverse(this.state.selectionRectangle.bounds.maxY), '>')
 			this.props.filter.setFilter(this.props.yName, this.yScaleReverse(this.state.selectionRectangle.bounds.minY), '<')
+			this.props.forceUpdateApp();
+		} else {
+			// If no bounds are set, we have a click without mouse movement, which will remove all the filters
+			// Remove filters
+			this.props.filter.removeFilter(this.props.xName);
+			this.props.filter.removeFilter(this.props.yName);
 			this.props.forceUpdateApp();
 		}
 	}
