@@ -1,8 +1,9 @@
 import React from 'react';
 import GoPlot from './GoPlot';
-import { getRandomInt } from './Helper'
+import { getRandomInt, isUndefined } from './Helper'
 
 class GoPlotHub extends React.Component {
+
 	render() {
 		// DEBUG GOPlots
 		let goPlotData = [];
@@ -15,6 +16,7 @@ class GoPlotHub extends React.Component {
 					height={10}
 					data={goPlotData}
 				/>
+				{isUndefined(this.props.goTerms) ? 'No GO Terms provided' : 'Yes, GO Terms provided'}
 			</div>
 		);
 	}

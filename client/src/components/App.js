@@ -156,7 +156,7 @@ class App extends React.Component {
 	 * is triggered when a new filter was broadcasted to the datasets
 	 */
 	filterBroadcasted() {
-		console.log(`Filter triggered.`);
+		console.log(`App.js: Filter Broadcasted. Apply GO-Term analysis`);
 		this.applyGoTerms();
 	}
 
@@ -179,7 +179,9 @@ class App extends React.Component {
 		// Get collection pointing GO-ids to arrays of ensembl-ids in the filter
 		const goTerms = this.goTerms.getGoTerms(ensemblIds);
 		// Sort the GOTermArray
-		console.log(this.goTerms.sortGoTerms(goTerms));
+		this.setState({
+			'goTerms': this.goTerms.sortGoTerms(goTerms)
+		});
 	}
 
 	/**
@@ -508,6 +510,7 @@ class App extends React.Component {
 							</Grid>
 						</Grid>
 						<GoPlotHub
+							goTerms={this.state.goTerms}
 						/>
 						{/* Add Table on whole page length */}
 						<Grid item xs={12}>
