@@ -49,6 +49,19 @@ class Dataset {
 	}
 
 	/**
+	 * Gives O(1) access to data entry based on EnsemblID
+	 * 
+	 * @param {String} id EnsemblID of data row
+	 * @param {String} dimension Entry of row to return
+	 * @return {Object} Entry
+	 */
+	getEntry(id, dimension) {
+		// Get index data array position
+		const dataPosition = this._getEnsemblToArrayIndex()[id];
+		return this.data[dataPosition][dimension];
+	}
+
+	/**
 	 * Get collection mapping row id to index in the array
 	 * 
 	 * @param {Array} data data to create the collection for
