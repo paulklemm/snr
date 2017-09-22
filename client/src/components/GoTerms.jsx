@@ -129,7 +129,7 @@ class GoTerms {
 					goTerms[goTerm]['ids'] = [];
 				}
 				// Push the GO-term
-				goTerms[goTerm]['ids'].push({ id: ensemblID });
+				goTerms[goTerm]['ids'].push(ensemblID);
 			});
 		});
 		// Iterate again over all goTerms and calculate the percentage of elements in the GO-terms

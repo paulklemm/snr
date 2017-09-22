@@ -35,14 +35,37 @@ class GoPlot extends React.Component {
 	}
 
 	/**
+	 * Takes EnsemblIDs array and converts it to array of dimension values
+	 * based on the given dataset
+	 * 
+	 * @param {Dataset} dataset 
+	 * @param {String} dimension 
+	 * @param {Array} ids 
+	 */
+	convertData(dataset, dimension, ids) {
+		// Initialitze empty data array
+		let data = [];
+		// Iterate over all ids and get the values of `dimension` out of it
+		for (const id of ids)
+			// Get the index of the 
+			data.push(dataset.getEntry(id, dimension));
+
+		// Update the state
+		// TODO: Move to State!
+		this.data = data;
+	}
+
+	/**
 	 * React on changes of properties or state by updating the class members
 	 */
 	update() {
+		// Get the data
+		this.convertData(this.props.dataset, this.props.dimension, this.props.goTerm['ids'])
 		// Sort the data
-		this.dataSorted = this.props.data.sort((a, b) => a - b);
+		this.dataSorted = this.data.sort((a, b) => a - b);
 		// Update scales
 		this.colorScale = scaleLinear()
-			.domain([min(this.props.data), mean(this.props.data), max(this.props.data)])
+			.domain([min(this.data), mean(this.data), max(this.data)])
 			.range(["blue", "rgba(0, 0, 0, 0)", "#ee6351"])
 			.interpolate(interpolateLab);
 	}

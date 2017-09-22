@@ -168,7 +168,7 @@ class App extends React.Component {
 		if (isUndefined(this.state.primaryDataset.data))
 			return;
 		
-			// Get the (filtered) primary dataset
+		// Get the (filtered) primary dataset
 		const primaryDatasetData = this.state.primaryDataset.getData();
 		// Get ensembl-ID array
 		const ensemblIds = objectValueToArray(primaryDatasetData, 'EnsemblID');
@@ -511,6 +511,7 @@ class App extends React.Component {
 						</Grid>
 						<GoPlotHub
 							goTerms={this.state.goTerms}
+							dataset={this.state.primaryDataset}
 						/>
 						{/* Add Table on whole page length */}
 						<Grid item xs={12}>

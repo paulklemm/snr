@@ -57,7 +57,7 @@ class Dataset {
 	 */
 	getEntry(id, dimension) {
 		// Get index data array position
-		const dataPosition = this._getEnsemblToArrayIndex()[id];
+		const dataPosition = this._getEnsemblToArrayIndex(true)[id];
 		return this.data[dataPosition][dimension];
 	}
 
@@ -71,7 +71,7 @@ class Dataset {
 		let ensemblToArrayIndex = {};
 		// Iterate over all entries in the data and create the index
 		for (let rowIndex in data)
-			ensemblToArrayIndex[data[rowIndex]['EnsemblID']] = rowIndex;
+			ensemblToArrayIndex[data[rowIndex]['EnsemblID']] = parseInt(rowIndex);
 		
 		return ensemblToArrayIndex;
 	}
