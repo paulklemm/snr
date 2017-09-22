@@ -17,6 +17,7 @@ class GoPlot extends React.Component {
 	render() {
 		return (
 			<div>
+				{ this.props.goTerm.goId }
 				<svg width={this.props.width} height={this.props.height}>
 					{this.renderBars()}
 					<rect
