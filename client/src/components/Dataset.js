@@ -18,7 +18,12 @@ class Dataset {
 	 * @param {Array} dimNames Names of the dimensions
 	 */
 	setData(data, dimNames) {
+		// Keep a copy of the data and the filtered data for fast access
 		this.data = data;
+		this.dataFiltered = data;
+		// A flag that is set when a new filter is applied. It will trigger the
+		// dataFiltered object to be updated when it is accessed
+		this.filterDataRequired = false;
 		this.loaded = true;
 		this.loading = false;
 		this.dimNames = dimNames;
@@ -39,7 +44,7 @@ class Dataset {
 	 * @param {Boolean} wholeData Return indexing collection for whole data or apply filtered data
 	 * @return {Object} Collection mapping row id to index in the array
 	 */
-	getEnsemblToArrayIndex(wholeData = false) {
+	_getEnsemblToArrayIndex(wholeData = false) {
 		return wholeData ? this.ensemblToArrayIndexUnfiltered : this.ensemblToArrayIndex;
 	}
 
@@ -65,19 +70,37 @@ class Dataset {
 	 * @return {Array} Data points as array
 	 */
 	getData(wholeData = false) {
-		// TODO: This should me more efficiently, recalculate data array on filter, not on getData
-		if (this.isFiltered() && !wholeData) {
-			let dataFiltered = [];
-			for (let i in this.data)
-				if (!this.filtered[i])
-					dataFiltered.push(this.data[i]);
-			
-			// Update element-ID to array index
-			this.ensemblToArrayIndex = this._updateEnsemblToArrayIndex(dataFiltered);
-			return dataFiltered;
-		} else {
-			return this.data;
+		// Apply filter to data if required
+		if (!wholeData && this.filterDataRequired) {
+			this._applyFilterToData();
+			this.filterDataRequired = false;
 		}
+
+		// Since the dataFiltered is data when there is no filter applied, we can
+		// return based on the wholeData variable
+		return wholeData ? this.data : this.dataFiltered;
+	}
+
+	/**
+	 * Apply the filters to the dataset
+	 */
+	_applyFilterToData() {
+		// If the data is not filtered, the filtered dataset is equal to the the normal one
+		if (!this.isFiltered()) {
+			this.dataFiltered = this.data;
+			this.ensemblToArrayIndex = this.ensemblToArrayIndexUnfiltered;
+			return;
+		}
+
+		// If the data is filtered, apply the filter
+		let dataFiltered = [];
+		for (let i in this.data)
+			if (!this.filtered[i])
+				dataFiltered.push(this.data[i]);
+
+		// Update element-ID to array index
+		this.ensemblToArrayIndex = this._updateEnsemblToArrayIndex(dataFiltered);
+		this.dataFiltered = dataFiltered;
 	}
 
 	/**
@@ -113,6 +136,10 @@ class Dataset {
 				}
 			}
 		}
+		// Apply the filter to the data to be able to retrieve it fast
+		// Set the flag that a new filter is applied, so when the data is queried next time
+		// we have to update it. This may be saving some time when the data is not used
+		this.filterDataRequired = true;
 	}
 
 	/**
