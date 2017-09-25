@@ -177,10 +177,10 @@ class App extends React.Component {
 			return;
 		
 		// Get collection pointing GO-ids to arrays of ensembl-ids in the filter
-		const goTerms = this.goTerms.getGoTerms(ensemblIds);
+		const goTerms = this.goTermHub.getGoTerms(ensemblIds);
 		// Sort the GOTermArray
 		this.setState({
-			'goTerms': this.goTerms.sortGoTerms(goTerms)
+			'goTerms': this.goTermHub.sortGoTerms(goTerms)
 		});
 	}
 
@@ -214,9 +214,9 @@ class App extends React.Component {
 
 		// Get GO-Term description
 		// TODO: This "current" thing needs to go away, because this will change!
-		this.goTerms = new GoTermHub(this.nodeBridge.getGoSummary, this.nodeBridge.getGoPerGene);
-		this.goTerms.addGeneToGo('mmusculus_gene_ensembl', 'current');
-		this.goTerms.addSummary('mmusculus_gene_ensembl', 'current');
+		this.goTermHub = new GoTermHub(this.nodeBridge.getGoSummary, this.nodeBridge.getGoPerGene);
+		this.goTermHub.addGeneToGo('mmusculus_gene_ensembl', 'current');
+		this.goTermHub.addSummary('mmusculus_gene_ensembl', 'current');
 		// Set default plotting dimensions
 		this.setPlotDimensions('pValueNegLog10', 'fc');
 

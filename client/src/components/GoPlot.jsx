@@ -21,7 +21,7 @@ class GoPlot extends React.Component {
 				<svg width={this.props.width} height={this.props.height}>
 					{this.renderBars()}
 					<rect
-						width={this.props.width}
+						width={ this.widthScale(this.dataSorted.length) }
 						height={this.props.height}
 						rx=""
 						ry=""
@@ -69,6 +69,10 @@ class GoPlot extends React.Component {
 			.domain([min(this.data), mean(this.data), max(this.data)])
 			.range(["blue", "rgba(0, 0, 0, 0)", "#ee6351"])
 			.interpolate(interpolateLab);
+		// Width scale
+		this.widthScale = scaleLinear()
+			.range([0, this.props.maxWidth])
+			.domain([0, this.props.maxGeneCount]);
 	}
 
 	/**
@@ -80,8 +84,8 @@ class GoPlot extends React.Component {
 		let rects = [];
 		// Get the data
 		let data = this.dataSorted;
-		// Calculate the width of the bars
-		const barWidth = this.props.width / data.length;
+		// Width of the bar is the maximum width divided by the number of data elements
+		const barWidth = this.widthScale(data.length) / data.length;
 		// Iterate over each entry to add a bar
 		data.forEach((val, index) => {
 			rects.push(

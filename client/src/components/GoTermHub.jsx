@@ -1,12 +1,26 @@
 import { isUndefined, objectValueToArray } from './Helper';
+import { max } from 'd3-array';
 
 class GoTermHub {
 	constructor(getGoSummary, getGoPerGene) {
 		this.summary = {};
 		this.geneToGo = {};
+		this.maxGeneCount = 0;
 		// Define the Methods from other Objects
 		this.nodeBridgeGetGoSummary = getGoSummary;
 		this.nodeBridgeGetGoPerGene = getGoPerGene;
+	}
+
+	/**
+	 * Get the maximum size of GO-terms
+	 * 
+	 * @param {object} summary Collection named by GO-id
+	 * @return {integer} Number of genes in the largest GO-term
+	 */
+	getMaximumGoTermSize(summary) {
+		// Convert the summary to an array
+		const goSizes = objectValueToArray(Object.values(summary), 'count_genes');
+		return max(goSizes);
 	}
 
 	/**
@@ -46,6 +60,8 @@ class GoTermHub {
 		let summary = await this._getSummary(this.nodeBridgeGetGoSummary(ensemblDataset, ensemblVersion))
 		this.summary = await this.addWithEnsemblAndVersion(this.summary, summary, ensemblDataset, ensemblVersion);
 		console.log(this.summary);
+		// Count the maximum GO-Term size
+		this.maxGeneCount = this.getMaximumGoTermSize(this.summary[ensemblDataset][ensemblVersion]);
 		// Add to localstorage
 		// localStorage.setItem(localStorageKey, JSON.stringify(this.summary));
 	}
