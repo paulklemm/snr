@@ -17,7 +17,7 @@ import DynamicHexBin from './DynamicHexBin';
 import ScatterplotRNASeqData from './ScatterplotRNASeqData';
 import NodeBridge from './NodeBridge';
 import Authentication from './Authentication';
-import GoTerms from './GoTerms';
+import GoTermHub from './GoTermHub';
 import Dataset from './Dataset';
 import DatasetHub from './DatasetHub';
 import DatasetSelect from './DatasetSelect';
@@ -214,7 +214,7 @@ class App extends React.Component {
 
 		// Get GO-Term description
 		// TODO: This "current" thing needs to go away, because this will change!
-		this.goTerms = new GoTerms(this.nodeBridge.getGoSummary, this.nodeBridge.getGoPerGene);
+		this.goTerms = new GoTermHub(this.nodeBridge.getGoSummary, this.nodeBridge.getGoPerGene);
 		this.goTerms.addGeneToGo('mmusculus_gene_ensembl', 'current');
 		this.goTerms.addSummary('mmusculus_gene_ensembl', 'current');
 		// Set default plotting dimensions
@@ -512,6 +512,7 @@ class App extends React.Component {
 						<GoPlotHub
 							goTerms={this.state.goTerms}
 							dataset={this.state.primaryDataset}
+							goTermHub={this.goTermHub}
 						/>
 						{/* Add Table on whole page length */}
 						<Grid item xs={12}>

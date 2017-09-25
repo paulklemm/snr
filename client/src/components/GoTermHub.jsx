@@ -1,6 +1,6 @@
 import { isUndefined, objectValueToArray } from './Helper';
 
-class GoTerms {
+class GoTermHub {
 	constructor(getGoSummary, getGoPerGene) {
 		this.summary = {};
 		this.geneToGo = {};
@@ -162,4 +162,4 @@ class GoTerms {
 	}
 }
 
-export default GoTerms;
+export default GoTermHub;
