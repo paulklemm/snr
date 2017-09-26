@@ -71,7 +71,7 @@ class Dataset {
 		let ensemblToArrayIndex = {};
 		// Iterate over all entries in the data and create the index
 		for (let rowIndex in data)
-			ensemblToArrayIndex[data[rowIndex]['EnsemblID']] = parseInt(rowIndex);
+			ensemblToArrayIndex[data[rowIndex]['EnsemblID']] = parseInt(rowIndex, 10);
 		
 		return ensemblToArrayIndex;
 	}

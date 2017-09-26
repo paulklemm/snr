@@ -1,6 +1,6 @@
 import React from 'react';
 import GoPlot from './GoPlot';
-import { getRandomInt, isUndefined } from './Helper';
+import { isUndefined } from './Helper';
 import { max } from 'd3-array';
 
 class GoPlotHub extends React.Component {

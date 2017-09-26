@@ -103,7 +103,7 @@ class GoTermHub {
 		const goPerGene = await this.nodeBridgeGetGoPerGene(ensemblDataset, ensemblVersion);
 		let newGeneToGo = {};
 		// Make dictionary pointing gene IDs to GO-terms
-		goPerGene['go']['.val'].map((elem) => {
+		goPerGene['go']['.val'].forEach((elem) => {
 			if (elem['go_id'] === '')
 				return;
 			// Create a new array to store the GO-terms in

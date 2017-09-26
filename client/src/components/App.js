@@ -23,7 +23,6 @@ import DatasetHub from './DatasetHub';
 import DatasetSelect from './DatasetSelect';
 import Table from './Table';
 import Navbar from './Navbar';
-import Loading from './Loading';
 import LayoutFactory from './LayoutFactory';
 import LoginScreen from './LoginScreen';
 import Highlight from './Highlight';
@@ -173,7 +172,7 @@ class App extends React.Component {
 		// Get ensembl-ID array
 		const ensemblIds = objectValueToArray(primaryDatasetData, 'EnsemblID');
 		// Only proceed if the selection of ensembl IDs is not 0
-		if (ensemblIds.length == 0)
+		if (ensemblIds.length === 0)
 			return;
 		
 		// Get collection pointing GO-ids to arrays of ensembl-ids in the filter
@@ -461,7 +460,8 @@ class App extends React.Component {
 		let primaryDatasetDimNames = this.state.primaryDataset.dimNames;
 
 		// Add PCA
-		let pcaImage = (typeof this.state.pcaImage === "undefined") ? pcaImage = <Loading width={800} height={400} /> : <img src={`${this.state.pcaImage}?width=7&height=5`} width={800} height={400} alt="R test PCA" />;
+		// TODO PCA Comment back in if doing the PCA
+		// let pcaImage = (typeof this.state.pcaImage === "undefined") ? pcaImage = <Loading width={800} height={400} /> : <img src={`${this.state.pcaImage}?width=7&height=5`} width={800} height={400} alt="R test PCA" />;
 
 		let app = ''
 		if (this.state.loginRequired) {
