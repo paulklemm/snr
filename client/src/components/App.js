@@ -216,6 +216,8 @@ class App extends React.Component {
 		this.goTermHub = new GoTermHub(this.nodeBridge.getGoSummary, this.nodeBridge.getGoPerGene);
 		this.goTermHub.addGeneToGo('mmusculus_gene_ensembl', 'current');
 		this.goTermHub.addSummary('mmusculus_gene_ensembl', 'current');
+		this.datasetHub.push(new Dataset('Dataset_1.csv'));
+		this.setEnableDataset('Dataset_1.csv', true);
 		// Set default plotting dimensions
 		this.setPlotDimensions('pValueNegLog10', 'fc');
 

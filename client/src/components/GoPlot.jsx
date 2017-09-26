@@ -6,6 +6,16 @@ import { interpolateLab } from 'd3-interpolate';
 
 class GoPlot extends React.Component {
 
+	constructor() {
+		super();
+		// Bind `this` to the individual functions
+		this.onMouseLeaveRect = this.onMouseLeaveRect.bind(this);
+		this.onMouseMoveRect = this.onMouseMoveRect.bind(this);
+		this.state = {
+			tooltip: ''
+		};
+	}
+
 	componentWillMount() {
 		this.update();
 	}
@@ -18,21 +28,48 @@ class GoPlot extends React.Component {
 		return (
 			<div>
 				{ this.props.goTerm.goId }
-				<svg width={this.props.width} height={this.props.height}>
-					{this.renderBars()}
-					<rect
-						width={ this.widthScale(this.dataSorted.length) }
-						height={this.props.height}
-						rx=""
-						ry=""
-						stroke="grey"
-						strokeWidth="1"
-						fillOpacity="0"
-						strokeOpacity="1"
-					/>
+				<svg 
+					width={this.props.width} 
+					height={this.props.height}
+				>
+					{ this.renderBars() }
 				</svg>
+				{this.state.tooltip}
 			</div>
 		);
+	}
+
+	/**
+	 * React to mouse movement on rect elements
+	 * 
+	 * @param {Event} event Mouse move event
+	 */
+	onMouseMoveRect(event) {
+		let dx = event.pageX - 55;
+		let dy = event.pageY - 35;
+		let tooltip =
+			<div className="tooltip" 
+			style={{
+				position: 'absolute',
+				left: dx,
+				top: dy
+				}}
+			>
+				This is my Tooltip!
+			</div>
+			
+		this.setState({
+			tooltip: tooltip
+		});
+	}
+
+	/**
+	 * React on mouse leave event on rect elements
+	 */
+	onMouseLeaveRect() {
+		this.setState({
+			tooltip: ""
+		});
 	}
 
 	/**
@@ -75,23 +112,6 @@ class GoPlot extends React.Component {
 			.domain([0, this.props.maxGeneCount]);
 	}
 
-// 	<foreignObject width={20} key={`Value ${val} + Index ${index}`}>
-// 	<Tooltip
-// 		id="tooltip-top"
-// 		title={"sdadhsadjksahdksskajhdskjhsajkd"}
-// 		placement="left"
-// 	>
-// 		<svg transform={`translate(${barWidth * index},0)`}> width={barWidth} height={this.props.height}>
-// 						<rect
-// 				width={barWidth}
-// 				height={this.props.height}
-// 				fill={this.colorScale(val)}
-// 				y={0}
-// 			/>
-// 		</svg>
-// 	</Tooltip>
-// </foreignObject>
-
 	/**
 	 * Render bars as rect elements deriving color from data
 	 * @return {Array} List of svg rect elements
@@ -113,6 +133,8 @@ class GoPlot extends React.Component {
 					x={barWidth * index}
 					y={0}
 					key={`Value ${val} + Index ${index}`}
+					onMouseMove={(e) => this.onMouseMoveRect(e)}
+					onMouseLeave={this.onMouseLeaveRect}
 				/>
 			);
 		});

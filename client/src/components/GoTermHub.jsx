@@ -59,7 +59,7 @@ class GoTermHub {
 		// If it could not be retreived locally, download it form the server and add it to the localStorage
 		let summary = await this._getSummary(this.nodeBridgeGetGoSummary(ensemblDataset, ensemblVersion))
 		this.summary = await this.addWithEnsemblAndVersion(this.summary, summary, ensemblDataset, ensemblVersion);
-		console.log(this.summary);
+		console.log("Summary added");
 		// Count the maximum GO-Term size
 		this.maxGeneCount = this.getMaximumGoTermSize(this.summary[ensemblDataset][ensemblVersion]);
 		// Add to localstorage
@@ -92,12 +92,12 @@ class GoTermHub {
 	 */
 	async addGeneToGo(ensemblDataset, ensemblVersion) {
 		// Check local storage, as we might not have to download the files every time
-		// const localStorageKey = `Sonar 'gene to go' Ens: ${ensemblDataset}, Ver: ${ensemblVersion}`;
-		// const localStorageGeneToGo = localStorage.getItem(localStorageKey);
-		// if (localStorageGeneToGo !== null) {
-		// 	this.geneToGo = JSON.parse(localStorageGeneToGo);
-		// 	return;
-		// }
+		const localStorageKey = `Sonar 'gene to go' Ens: ${ensemblDataset}, Ver: ${ensemblVersion}`;
+		const localStorageGeneToGo = localStorage.getItem(localStorageKey);
+		if (localStorageGeneToGo !== null) {
+			this.geneToGo = JSON.parse(localStorageGeneToGo);
+			return;
+		}
 
 		// If local storage retrieval fails, proceed
 		const goPerGene = await this.nodeBridgeGetGoPerGene(ensemblDataset, ensemblVersion);
@@ -115,8 +115,10 @@ class GoTermHub {
 			this.summary[ensemblDataset][ensemblVersion][elem['go_id']]['genes'].push(elem['ensembl_gene_id']);
 		});
 		this.geneToGo = await this.addWithEnsemblAndVersion(this.geneToGo, newGeneToGo, ensemblDataset, ensemblVersion);
+		console.log("Gene to Go added");
+		
 		// Save the result to localstorage
-		// localStorage.setItem(localStorageKey, JSON.stringify(this.geneToGo));
+		localStorage.setItem(localStorageKey, JSON.stringify(this.geneToGo));
 	}
 
 	/**

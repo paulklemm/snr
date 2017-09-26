@@ -9,3 +9,27 @@ tr:hover {
 body {
 	background-color: #fcfcfc;
 }
+
+.tooltip {
+  background-color: black;
+  color: white;
+  padding: 7px;
+  border-radius: 5px;
+  font-size: 12px;
+}
+
+/* Tooltip arrow from http://www.cssarrowplease.com/ */
+.tooltip:after {
+	top: 100%;
+	left: 50%;
+	border: solid transparent;
+	content: " ";
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+	border-color: rgba(0, 0, 0, 0);
+	border-top-color: #000000;
+	border-width: 5px;
+	margin-left: -5px;
+}
