@@ -4,7 +4,6 @@ import { isUndefined } from './Helper';
 import { max } from 'd3-array';
 import { FormControlLabel } from 'material-ui/Form';
 import Switch from 'material-ui/Switch';
-import Checkbox from 'material-ui/Checkbox';
 
 class GoPlotHub extends React.Component {
 
