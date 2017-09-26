@@ -75,6 +75,23 @@ class GoPlot extends React.Component {
 			.domain([0, this.props.maxGeneCount]);
 	}
 
+// 	<foreignObject width={20} key={`Value ${val} + Index ${index}`}>
+// 	<Tooltip
+// 		id="tooltip-top"
+// 		title={"sdadhsadjksahdksskajhdskjhsajkd"}
+// 		placement="left"
+// 	>
+// 		<svg transform={`translate(${barWidth * index},0)`}> width={barWidth} height={this.props.height}>
+// 						<rect
+// 				width={barWidth}
+// 				height={this.props.height}
+// 				fill={this.colorScale(val)}
+// 				y={0}
+// 			/>
+// 		</svg>
+// 	</Tooltip>
+// </foreignObject>
+
 	/**
 	 * Render bars as rect elements deriving color from data
 	 * @return {Array} List of svg rect elements
@@ -92,10 +109,9 @@ class GoPlot extends React.Component {
 				<rect 
 					width={ barWidth }
 					height={ this.props.height }
-					x={ barWidth * index }
 					fill={ this.colorScale(val) }
+					x={barWidth * index}
 					y={0}
-					key={`Value ${val} + Index ${index}`}
 				/>
 			);
 		});
