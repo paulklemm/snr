@@ -91,13 +91,13 @@ class GoTermHub {
 	 * @param {String} ensemblVersion Ensembl version ('release')
 	 */
 	async addGeneToGo(ensemblDataset, ensemblVersion) {
-		// Check local storage, as we might not have to download the files every time
-		const localStorageKey = `Sonar 'gene to go' Ens: ${ensemblDataset}, Ver: ${ensemblVersion}`;
-		const localStorageGeneToGo = localStorage.getItem(localStorageKey);
-		if (localStorageGeneToGo !== null) {
-			this.geneToGo = JSON.parse(localStorageGeneToGo);
-			return;
-		}
+		// // Check local storage, as we might not have to download the files every time
+		// const localStorageKey = `Sonar 'gene to go' Ens: ${ensemblDataset}, Ver: ${ensemblVersion}`;
+		// const localStorageGeneToGo = localStorage.getItem(localStorageKey);
+		// if (localStorageGeneToGo !== null) {
+		// 	this.geneToGo = JSON.parse(localStorageGeneToGo);
+		// 	return;
+		// }
 
 		// If local storage retrieval fails, proceed
 		const goPerGene = await this.nodeBridgeGetGoPerGene(ensemblDataset, ensemblVersion);
@@ -117,8 +117,8 @@ class GoTermHub {
 		this.geneToGo = await this.addWithEnsemblAndVersion(this.geneToGo, newGeneToGo, ensemblDataset, ensemblVersion);
 		console.log("Gene to Go added");
 		
-		// Save the result to localstorage
-		localStorage.setItem(localStorageKey, JSON.stringify(this.geneToGo));
+		// // Save the result to localstorage
+		// localStorage.setItem(localStorageKey, JSON.stringify(this.geneToGo));
 	}
 
 	/**

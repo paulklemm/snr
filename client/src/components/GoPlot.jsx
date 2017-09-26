@@ -98,7 +98,12 @@ class GoPlot extends React.Component {
 	 */
 	update() {
 		// Get the data
-		this.convertData(this.props.dataset, this.props.dimension, this.props.goTerm['ids'])
+		if (this.props.drawWholeGO)
+			// Derive the data from all genes in the GO-term
+			this.convertData(this.props.dataset, this.props.dimension, this.props.goTermSummary['genes'])
+		else
+			// Derive data from all selected genes in GO-term
+			this.convertData(this.props.dataset, this.props.dimension, this.props.goTerm['ids'])
 		// Sort the data
 		this.dataSorted = this.data.sort((a, b) => a - b);
 		// Update scales

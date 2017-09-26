@@ -2,8 +2,18 @@ import React from 'react';
 import GoPlot from './GoPlot';
 import { isUndefined } from './Helper';
 import { max } from 'd3-array';
+import { FormControlLabel } from 'material-ui/Form';
+import Switch from 'material-ui/Switch';
+import Checkbox from 'material-ui/Checkbox';
 
 class GoPlotHub extends React.Component {
+
+	constructor() {
+		super();
+		this.state = {
+			drawWholeGO: false
+		};
+	}
 
 	/**
 	 * Filter GO-terms based on size and number of plots
@@ -41,10 +51,10 @@ class GoPlotHub extends React.Component {
 	 * @param {array} goTerms Array of goTerms to determin max size for
 	 * @return {integer} Size of largest go-Term in the array
 	 */
-	getMaxGoTermSize(goTerms) {
+	getMaxGoTermSize(goTerms, arrayMember) {
 		const goTermsSizes = [];
 		goTerms.forEach(goTerm => {
-			goTermsSizes.push(goTerm['ids'].length);
+			goTermsSizes.push(goTerm[arrayMember].length);
 		});
 		return max(goTermsSizes);
 	}
@@ -61,9 +71,22 @@ class GoPlotHub extends React.Component {
 		const maxPlots = 10;
 		const minGoSize = 10;
 		const filteredGoTerms = this.filter(this.props.goTerms, minGoSize, maxPlots);
-		console.log(filteredGoTerms);
+		
+		let maxGoTermSize;
 		// Get the maximum GO size in the filtered GO terms
-		const maxGoTermSize = this.getMaxGoTermSize(filteredGoTerms);
+		if (this.state.drawWholeGO) {
+			// If we want to draw the whole GO-terms, we have to get the summary of all of the filtered GO terms
+			let filteredGoTermSummaries = [];
+			for (const filteredGoTerm of filteredGoTerms) {
+				filteredGoTermSummaries.push(this.props.goTermHub.summary[this.props.dataset.ensemblDataset][this.props.dataset.ensemblVersion][filteredGoTerm['goId']]);
+			}
+			maxGoTermSize = this.getMaxGoTermSize(Object.values(filteredGoTermSummaries), 'genes');
+		} else {
+			// Otherwise, just count the filtered ids per GO
+			maxGoTermSize = this.getMaxGoTermSize(filteredGoTerms, 'ids');
+		}
+		
+			
 		console.log(`maxGoTermSize: ${maxGoTermSize}`);
 		// Iterate over goTerm elements
 		// Restrict to 10 plots
@@ -74,10 +97,12 @@ class GoPlotHub extends React.Component {
 					height={10}
 					dataset={this.props.dataset}
 					goTerm={goTerm}
+					goTermSummary={this.props.goTermHub.summary[this.props.dataset.ensemblDataset][this.props.dataset.ensemblVersion][goTerm['goId']]}
 					dimension={"fc"}
+					drawWholeGO={this.state.drawWholeGO}
 					maxGeneCount={maxGoTermSize}
 					maxWidth={150}
-					key={`Dataset ${this.props.dataset.name}, GoID ${goTerm.goId}`}
+					key={`Dataset ${this.props.dataset.name}, GoID ${goTerm.goId}, wholeGo ${this.state.drawWholeGO}`}
 				/>;
 
 			goPlots.push(newGoPlot);
@@ -93,6 +118,15 @@ class GoPlotHub extends React.Component {
 		}	else {
 			toRender = 
 				<div>
+					<FormControlLabel
+						control={
+							<Switch
+								checked={this.state.drawWholeGO}
+								onChange={(event, checked) => this.setState({ drawWholeGO: checked })}
+							/>
+						}
+						label="Draw whole GO-Term"
+					/>
 					{this.getGoPlots()}
 					{isUndefined(this.props.goTerms) ? 'No GO Terms provided' : 'Yes, GO Terms provided'}
 				</div>;

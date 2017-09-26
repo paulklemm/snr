@@ -1,4 +1,5 @@
 import DimensionTypes from './DimensionTypes';
+import { isUndefined } from './Helper';
 
 class Dataset {
 	constructor(name, enabled = false) {
@@ -7,6 +8,9 @@ class Dataset {
 		this.loaded = false;
 		this.loading = false;
 		this.dimNames = [];
+		// TODO: Derive this from metadata!
+		this.ensemblDataset = "mmusculus_gene_ensembl";
+		this.ensemblVersion = "current";
 		// HTML Element representing the dataset icon
 		this.icon = "";
 	}
@@ -58,7 +62,7 @@ class Dataset {
 	getEntry(id, dimension) {
 		// Get index data array position
 		const dataPosition = this._getEnsemblToArrayIndex(true)[id];
-		return this.data[dataPosition][dimension];
+		return isUndefined(this.data[dataPosition]) ? undefined : this.data[dataPosition][dimension];
 	}
 
 	/**
