@@ -3,6 +3,7 @@ import React from 'react';
 import { scaleLinear } from 'd3-scale';
 import { max, min, mean } from 'd3-array';
 import { interpolateLab } from 'd3-interpolate';
+import { objectValueToArray } from './Helper';
 
 class GoPlot extends React.Component {
 
@@ -86,7 +87,10 @@ class GoPlot extends React.Component {
 		// Iterate over all ids and get the values of `dimension` out of it
 		for (const id of ids)
 			// Get the index of the 
-			data.push(dataset.getEntry(id, dimension));
+			data.push({
+				value: dataset.getEntry(id, dimension),
+				id: id
+			});
 
 		// Update the state
 		// TODO: Move to State!
@@ -105,10 +109,12 @@ class GoPlot extends React.Component {
 			// Derive data from all selected genes in GO-term
 			this.convertData(this.props.dataset, this.props.dimension, this.props.goTerm['ids'])
 		// Sort the data
-		this.dataSorted = this.data.sort((a, b) => a - b);
+		this.dataSorted = this.data.sort((a, b) => a.value - b.value);
+		// Get DataSorted value array for min/mean/max
+		const datasortedValues = objectValueToArray(this.dataSorted, 'value');
 		// Update scales
 		this.colorScale = scaleLinear()
-			.domain([min(this.data), mean(this.data), max(this.data)])
+			.domain([min(datasortedValues), mean(datasortedValues), max(datasortedValues)])
 			.range(["blue", "rgba(0, 0, 0, 0)", "#ee6351"])
 			.interpolate(interpolateLab);
 		// Width scale
@@ -134,7 +140,7 @@ class GoPlot extends React.Component {
 				<rect 
 					width={ barWidth }
 					height={ this.props.height }
-					fill={ this.colorScale(val) }
+					fill={ this.colorScale(val.value) }
 					x={barWidth * index}
 					y={0}
 					key={`Value ${val} + Index ${index}`}
