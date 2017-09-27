@@ -28,12 +28,12 @@ class GoPlot extends React.Component {
 	render() {
 		return (
 			<div>
-				{ this.props.goTerm.goId }
-				<svg 
-					width={this.props.width} 
+				{this.props.goTerm.goId}
+				<svg
+					width={this.props.width}
 					height={this.props.height}
 				>
-					{ this.renderBars() }
+					{this.renderBars()}
 				</svg>
 				{this.state.tooltip}
 			</div>
@@ -45,20 +45,20 @@ class GoPlot extends React.Component {
 	 * 
 	 * @param {Event} event Mouse move event
 	 */
-	onMouseMoveRect(event) {
-		let dx = event.pageX - 55;
+	onMouseMoveRect(event, id, val) {
+		let dx = event.pageX - 75;
 		let dy = event.pageY - 35;
 		let tooltip =
-			<div className="tooltip" 
-			style={{
-				position: 'absolute',
-				left: dx,
-				top: dy
+			<div className="tooltip"
+				style={{
+					position: 'absolute',
+					left: dx,
+					top: dy
 				}}
 			>
-				This is my Tooltip!
+				{`${id}, ${val}`}
 			</div>
-			
+
 		this.setState({
 			tooltip: tooltip
 		});
@@ -86,10 +86,10 @@ class GoPlot extends React.Component {
 		let data = [];
 		// Iterate over all ids and get the values of `dimension` out of it
 		for (const id of ids)
-			// Get the index of the 
+			// Get the index of the entry
 			data.push({
-				value: dataset.getEntry(id, dimension),
-				id: id
+				'val': parseInt(dataset.getEntry(id, dimension), 10),
+				'id': id
 			});
 
 		// Update the state
@@ -109,9 +109,9 @@ class GoPlot extends React.Component {
 			// Derive data from all selected genes in GO-term
 			this.convertData(this.props.dataset, this.props.dimension, this.props.goTerm['ids'])
 		// Sort the data
-		this.dataSorted = this.data.sort((a, b) => a.value - b.value);
+		this.dataSorted = this.data.sort((a, b) => a['val'] - b['val']);
 		// Get DataSorted value array for min/mean/max
-		const datasortedValues = objectValueToArray(this.dataSorted, 'value');
+		const datasortedValues = objectValueToArray(this.dataSorted, 'val');
 		// Update scales
 		this.colorScale = scaleLinear()
 			.domain([min(datasortedValues), mean(datasortedValues), max(datasortedValues)])
@@ -137,14 +137,14 @@ class GoPlot extends React.Component {
 		// Iterate over each entry to add a bar
 		data.forEach((val, index) => {
 			rects.push(
-				<rect 
-					width={ barWidth }
-					height={ this.props.height }
-					fill={ this.colorScale(val.value) }
+				<rect
+					width={barWidth}
+					height={this.props.height}
+					fill={this.colorScale(val['val'])}
 					x={barWidth * index}
 					y={0}
 					key={`Value ${val} + Index ${index}`}
-					onMouseMove={(e) => this.onMouseMoveRect(e)}
+					onMouseMove={(e) => this.onMouseMoveRect(e, val['id'], val['val'])}
 					onMouseLeave={this.onMouseLeaveRect}
 				/>
 			);
