@@ -156,6 +156,7 @@ class Table extends React.Component{
 							style={{ width: '100% important!', marginLeft: '5px'}}
 								id="filter" 
 								label="Filter"
+								type="search"
 								value={filterValue}
 								onChange={(event) => {
 									// Update the textfieldValue object with the newly changed value
