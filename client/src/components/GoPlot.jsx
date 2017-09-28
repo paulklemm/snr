@@ -3,7 +3,7 @@ import React from 'react';
 import { scaleLinear } from 'd3-scale';
 import { max, min, mean } from 'd3-array';
 import { interpolateLab } from 'd3-interpolate';
-import { objectValueToArray } from './Helper';
+import { objectValueToArray, isUndefined } from './Helper.js';
 
 class GoPlot extends React.Component {
 
@@ -46,7 +46,7 @@ class GoPlot extends React.Component {
 	 * @param {Event} event Mouse move event
 	 */
 	onMouseMoveRect(event, id, val) {
-		let dx = event.pageX - 75;
+		let dx = event.pageX - 55;
 		let dy = event.pageY - 35;
 		let tooltip =
 			<div className="tooltip"
@@ -56,7 +56,7 @@ class GoPlot extends React.Component {
 					top: dy
 				}}
 			>
-				{`${id}, ${val}`}
+				{`${id}, ${this.props.dimension}: ${val}`}
 			</div>
 
 		this.setState({
@@ -86,9 +86,10 @@ class GoPlot extends React.Component {
 		let data = [];
 		// Iterate over all ids and get the values of `dimension` out of it
 		for (const id of ids)
-			// Get the index of the entry
+			// Get the index of the 
+			// data.push(dataset.getEntry(id, dimension));
 			data.push({
-				'val': parseInt(dataset.getEntry(id, dimension), 10),
+				'val': dataset.getEntry(id, dimension),
 				'id': id
 			});
 
@@ -108,13 +109,21 @@ class GoPlot extends React.Component {
 		else
 			// Derive data from all selected genes in GO-term
 			this.convertData(this.props.dataset, this.props.dimension, this.props.goTerm['ids'])
+		// Use values of the data to determine transfer function
+		let dataValues = objectValueToArray(this.data, 'val');
+		// Remove undefined values from dataValues
+		dataValues = dataValues.filter(Number);
+		console.log(dataValues);
 		// Sort the data
-		this.dataSorted = this.data.sort((a, b) => a['val'] - b['val']);
-		// Get DataSorted value array for min/mean/max
-		const datasortedValues = objectValueToArray(this.dataSorted, 'val');
+		this.dataSorted = this.data.sort((a, b) => {
+			if (a['val'] == b['val']) return 0;
+			if (a['val'] == undefined) return -1;
+			if (b['val'] == undefined) return 1;
+			return a['val'] - b['val'];
+		});
 		// Update scales
 		this.colorScale = scaleLinear()
-			.domain([min(datasortedValues), mean(datasortedValues), max(datasortedValues)])
+			.domain([min(dataValues), mean(dataValues), max(dataValues)])
 			.range(["blue", "rgba(0, 0, 0, 0)", "#ee6351"])
 			.interpolate(interpolateLab);
 		// Width scale
@@ -140,7 +149,7 @@ class GoPlot extends React.Component {
 				<rect
 					width={barWidth}
 					height={this.props.height}
-					fill={this.colorScale(val['val'])}
+					fill={isUndefined(val['val']) ? 'gray' : this.colorScale(val['val'])}
 					x={barWidth * index}
 					y={0}
 					key={`Value ${val} + Index ${index}`}
