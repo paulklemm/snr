@@ -118,9 +118,9 @@ class GoPlot extends React.Component {
 		// Sort the data
 		this.dataSorted = this.data.sort((a, b) => {
 			// Sort undefined values at the very beginning
-			if (a['val'] == b['val']) return 0;
-			if (a['val'] == undefined) return -1;
-			if (b['val'] == undefined) return 1;
+			if (a['val'] === b['val']) return 0;
+			if (a['val'] === undefined) return -1;
+			if (b['val'] === undefined) return 1;
 			return a['val'] - b['val'];
 		});
 		// Update scales

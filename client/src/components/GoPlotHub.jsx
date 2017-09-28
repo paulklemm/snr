@@ -4,13 +4,15 @@ import { isUndefined } from './Helper';
 import { max } from 'd3-array';
 import { FormControlLabel } from 'material-ui/Form';
 import Switch from 'material-ui/Switch';
+import TextField from 'material-ui/TextField';
 
 class GoPlotHub extends React.Component {
 
 	constructor() {
 		super();
 		this.state = {
-			drawWholeGO: false
+			drawWholeGO: false,
+			numberGoPlots: 10
 		};
 	}
 
@@ -67,9 +69,8 @@ class GoPlotHub extends React.Component {
 			return [];
 
 		// Filter the GO-plots
-		const maxPlots = 10;
 		const minGoSize = 10;
-		const filteredGoTerms = this.filter(this.props.goTerms, minGoSize, maxPlots);
+		const filteredGoTerms = this.filter(this.props.goTerms, minGoSize, this.state.numberGoPlots);
 		
 		let maxGoTermSize;
 		// Get the maximum GO size in the filtered GO terms
@@ -93,7 +94,7 @@ class GoPlotHub extends React.Component {
 		for (const goTerm of filteredGoTerms) {
 			const newGoPlot =
 				<GoPlot
-					height={10}
+					height={8}
 					dataset={this.props.dataset}
 					goTerm={goTerm}
 					goTermSummary={this.props.goTermHub.summary[this.props.dataset.ensemblDataset][this.props.dataset.ensemblVersion][goTerm['goId']]}
@@ -117,15 +118,27 @@ class GoPlotHub extends React.Component {
 		}	else {
 			toRender = 
 				<div>
-					<FormControlLabel
-						control={
-							<Switch
-								checked={this.state.drawWholeGO}
-								onChange={(event, checked) => this.setState({ drawWholeGO: checked })}
-							/>
-						}
-						label="Draw whole GO-Term"
-					/>
+					<form className='goplothubform' noValidate autoComplete="off">
+						<TextField
+							className="goplothubformelement"
+							id="numberGoPlots"
+							label="#Plots"
+							value={this.state.numberGoPlots}
+							onChange={e => this.setState({ numberGoPlots: e.target.value })}
+							type="number"
+							margin="normal"
+						/>
+						<FormControlLabel
+							className="goplothubformelement"
+							control={
+								<Switch
+									checked={this.state.drawWholeGO}
+									onChange={(event, checked) => this.setState({ drawWholeGO: checked })}
+								/>
+							}
+							label="Draw whole GO-Term"
+						/>
+					</form>
 					{this.getGoPlots()}
 					{isUndefined(this.props.goTerms) ? 'No GO Terms provided' : 'Yes, GO Terms provided'}
 				</div>;
