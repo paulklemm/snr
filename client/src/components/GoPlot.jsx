@@ -28,7 +28,9 @@ class GoPlot extends React.Component {
 	render() {
 		return (
 			<div>
-				{this.props.goTerm.goId}
+				<span className='gotermlabel'>
+					{this.props.goTerm.goId}
+				</span>
 				<svg
 					width={this.props.width}
 					height={this.props.height}
@@ -113,9 +115,9 @@ class GoPlot extends React.Component {
 		let dataValues = objectValueToArray(this.data, 'val');
 		// Remove undefined values from dataValues
 		dataValues = dataValues.filter(Number);
-		console.log(dataValues);
 		// Sort the data
 		this.dataSorted = this.data.sort((a, b) => {
+			// Sort undefined values at the very beginning
 			if (a['val'] == b['val']) return 0;
 			if (a['val'] == undefined) return -1;
 			if (b['val'] == undefined) return 1;
