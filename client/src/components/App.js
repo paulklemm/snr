@@ -169,6 +169,9 @@ class App extends React.Component {
 		
 		// Get the (filtered) primary dataset
 		const primaryDatasetData = this.state.primaryDataset.getData();
+		console.log(`Filtered dataset size: ${primaryDatasetData.length}`);
+		console.log(`Dataset Object:`);
+		console.log(this.state.primaryDataset);
 		// Get ensembl-ID array
 		const ensemblIds = objectValueToArray(primaryDatasetData, 'EnsemblID');
 		// Only proceed if the selection of ensembl IDs is not 0
@@ -176,7 +179,7 @@ class App extends React.Component {
 			return;
 		
 		// Get collection pointing GO-ids to arrays of ensembl-ids in the filter
-		const goTerms = this.goTermHub.getGoTerms(ensemblIds);
+		const goTerms = await this.goTermHub.getGoTerms(ensemblIds);
 		// Sort the GOTermArray
 		this.setState({
 			'goTerms': this.goTermHub.sortGoTerms(goTerms)

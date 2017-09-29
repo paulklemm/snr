@@ -6,6 +6,7 @@ class GoTermHub {
 		this.summary = {};
 		this.geneToGo = {};
 		this.maxGeneCount = 0;
+		this.promises = {};
 		// Define the Methods from other Objects
 		this.nodeBridgeGetGoSummary = getGoSummary;
 		this.nodeBridgeGetGoPerGene = getGoPerGene;
@@ -42,12 +43,30 @@ class GoTermHub {
 	}
 
 	/**
+	 * Wrapper function for `_addSummary`
+	 * Get GO summary for ensembl dataset and release and add it to GoTersm.summary
+	 *
+	 * @param {String} ensemblDataset Ensembl dataset to query GO term summary from
+	 * @param {String} ensemblVersion Ensembl version/release
+	 */
+	async addSummary(ensemblDataset, ensemblVersion) {
+		// Call addSummary and get the Promise
+		const addSummaryPromise = this._addSummary(ensemblDataset, ensemblVersion);
+		// Push the promise to the local promise array
+		this.promisePush(addSummaryPromise, 'addSummary');
+		// Await the promise
+		await addSummaryPromise;
+		// Give status ouput
+		console.log("Summary added");
+	}
+
+	/**
 	 * Get GO summary for ensembl dataset and release and add it to GoTersm.summary
 	 * 
 	 * @param {String} ensemblDataset Ensembl dataset to query GO term summary from
 	 * @param {String} ensemblVersion Ensembl version/release
 	 */
-	async addSummary(ensemblDataset, ensemblVersion) {
+	async _addSummary(ensemblDataset, ensemblVersion) {
 		// Check local storage, as we might not have to download the files every time
 		// const localStorageKey = `Sonar 'summary' Ens: ${ensemblDataset}, Ver: ${ensemblVersion}`;
 		// const localStorageGeneToGo = localStorage.getItem(localStorageKey);
@@ -57,9 +76,8 @@ class GoTermHub {
 		// }
 
 		// If it could not be retreived locally, download it form the server and add it to the localStorage
-		let summary = await this._getSummary(this.nodeBridgeGetGoSummary(ensemblDataset, ensemblVersion))
+		let summary = await this._getSummary(this.nodeBridgeGetGoSummary(ensemblDataset, ensemblVersion));
 		this.summary = await this.addWithEnsemblAndVersion(this.summary, summary, ensemblDataset, ensemblVersion);
-		console.log("Summary added");
 		// Count the maximum GO-Term size
 		this.maxGeneCount = this.getMaximumGoTermSize(this.summary[ensemblDataset][ensemblVersion]);
 		// Add to localstorage
@@ -75,7 +93,7 @@ class GoTermHub {
 	 * @param {String} ensemblVersion Ensembl version to add the value to
 	 * @return {Object} Updated dictionary
 	 */
-	async addWithEnsemblAndVersion(dict, value, ensemblDataset, ensemblVersion) {
+	addWithEnsemblAndVersion(dict, value, ensemblDataset, ensemblVersion) {
 		if (!(ensemblDataset in Object.keys(dict)))
 			dict[ensemblDataset] = {};
 		if (!(ensemblVersion in Object.keys(dict[ensemblDataset])))
@@ -85,12 +103,48 @@ class GoTermHub {
 	}
 
 	/**
+	 * Push promise to array
+	 * 
+	 * @param {promise} promise Promise to push
+	 * @param {string} name Name for promise
+	 */
+	promisePush(promise, name) {
+		this.promises[name] = promise;
+	}
+
+	/**
+	 * Get array of all promises of communication with server
+	 * @return {array} Array of promises
+	 */
+	promiseGet() {
+		return Object.values(this.promises);
+	}
+
+	/**
+	 * Wrapper function for `_addGoTerms`
 	 * Add GO terms as object mapping Gene-IDs to GO-term ids
 	 * 
 	 * @param {String} ensemblDataset Ensembl dataset
 	 * @param {String} ensemblVersion Ensembl version ('release')
 	 */
 	async addGeneToGo(ensemblDataset, ensemblVersion) {
+		// Call addGeneToGoPromise and get the Promise
+		const addGeneToGoPromise = this._addGeneToGo(ensemblDataset, ensemblVersion);
+		// Push the promise to the local promise array
+		this.promisePush(addGeneToGoPromise, 'geneToGo');
+		// Await the promise
+		await addGeneToGoPromise;
+		// Give status ouput
+		console.log("Gene to Go added");
+	}
+
+	/**
+	 * Add GO terms as object mapping Gene-IDs to GO-term ids
+	 * 
+	 * @param {String} ensemblDataset Ensembl dataset
+	 * @param {String} ensemblVersion Ensembl version ('release')
+	 */
+	async _addGeneToGo(ensemblDataset, ensemblVersion) {
 		// // Check local storage, as we might not have to download the files every time
 		// const localStorageKey = `Sonar 'gene to go' Ens: ${ensemblDataset}, Ver: ${ensemblVersion}`;
 		// const localStorageGeneToGo = localStorage.getItem(localStorageKey);
@@ -115,7 +169,6 @@ class GoTermHub {
 			this.summary[ensemblDataset][ensemblVersion][elem['go_id']]['genes'].push(elem['ensembl_gene_id']);
 		});
 		this.geneToGo = await this.addWithEnsemblAndVersion(this.geneToGo, newGeneToGo, ensemblDataset, ensemblVersion);
-		console.log("Gene to Go added");
 		
 		// // Save the result to localstorage
 		// localStorage.setItem(localStorageKey, JSON.stringify(this.geneToGo));
@@ -129,7 +182,10 @@ class GoTermHub {
 	 * @param {String} ensemblVersion Ensembl version ('release')
 	 * @return {Array} Array of GO-terms
 	 */
-	getGoTerms(ensemblIDs, ensemblDataset = 'mmusculus_gene_ensembl', ensemblVersion = 'current') {
+	async getGoTerms(ensemblIDs, ensemblDataset = 'mmusculus_gene_ensembl', ensemblVersion = 'current') {
+		// Await running operation pulling data from the server
+		console.log(this.promiseGet());
+		await Promise.all(this.promiseGet())
 		// Initialize dictionary pointing GO-terms to the provided ensembl-IDs
 		let goTerms = {};
 		// Iterate over all ensembl ids
