@@ -14,7 +14,7 @@ class GoPlot extends React.Component {
 		this.onMouseMoveRect = this.onMouseMoveRect.bind(this);
 		this.state = {
 			tooltip: '',
-			debug: true
+			debug: false
 		};
 	}
 

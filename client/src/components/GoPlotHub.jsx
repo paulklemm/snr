@@ -123,7 +123,7 @@ class GoPlotHub extends React.Component {
 					drawWholeGO={this.state.drawWholeGO}
 					maxGeneCount={maxGoTermSize}
 					maxWidth={150}
-					key={`Dataset ${this.props.dataset.name}, GoID ${goTerm.goId}, wholeGo ${this.state.drawWholeGO}, Min: ${this.state.numberMinIdsInGo}, Max: ${this.state.numberMaxIdsInGo}, dynamic: ${this.state.dynamicTransferFunction}, dimension: ${this.state.colorByDimension}`}
+					key={`Dataset ${this.props.dataset.name}, GoID ${goTerm.goId}, wholeGo ${this.state.drawWholeGO}, MinInGo: ${this.state.numberMinIdsInGo}, Min: ${this.state.numberTransferMin}, Max: ${this.state.numberTransferMax}, dynamic: ${this.state.dynamicTransferFunction}, dimension: ${this.state.colorByDimension}`}
 				/>;
 
 			goPlots.push(newGoPlot);
