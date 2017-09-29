@@ -8,7 +8,9 @@ export const DimensionTypes = {
 	biotype: "string",
 	sampleMean: "number",
 	controlMean: "number",
-	strand: "string"
+	strand: "string",
+	Start: "number",
+	End: "number"
 };
 
 export const DefaultFilterSetting = {
@@ -22,7 +24,9 @@ export const DefaultFilterSetting = {
 	controlMean: ">",
 	name: "=",
 	biotype: "=",
-	strand: "="
+	strand: "=",
+	Start: ">",
+	End: "<"
 };
 
 export default DimensionTypes;
