@@ -12,6 +12,9 @@ const styleSheet = {
 	},
 	'formNumPlots': {
 		width: '45px'
+	},
+	'formTransfer': {
+		width: '30px'
 	}
 };
 
@@ -22,7 +25,9 @@ class GoPlotHub extends React.Component {
 		this.state = {
 			drawWholeGO: false,
 			numberGoPlots: 10,
-			numberMinIdsInGo: 10
+			numberMinIdsInGo: 10,
+			numberTransferMin: -2,
+			numberTransferMax: 2
 		};
 	}
 
@@ -118,6 +123,26 @@ class GoPlotHub extends React.Component {
 		return goPlots;
 	}
 
+	/**
+	 * Get static linear gradient rect for UI to adjust transfer function
+	 */
+	getGradient() {
+		const width = 100;
+		const height = 8;
+		return (
+			<svg style={{ marginLeft: '5px', marginRight: '5px'}}width={width} height={height} version="1.1" xmlns="http://www.w3.org/2000/svg">
+				<defs>
+					<linearGradient id="Gradient1">
+						<stop class="stop1" offset="0%" stopColor="blue" />
+						<stop class="stop2" offset="50%" stopColor="white" />
+						<stop class="stop3" offset="100%" stopColor="#ee6351" />
+					</linearGradient>
+				</defs>
+				<rect rx="2" ry="2" width={width} height={height} fill="url(#Gradient1)" />
+			</svg>
+		)
+	}
+
 	render() {
 		let toRender;
 		// 
@@ -126,12 +151,11 @@ class GoPlotHub extends React.Component {
 		}	else {
 			toRender = 
 				<div>
-					<form className='goplothubform' noValidate autoComplete="off">
+					<form noValidate autoComplete="off">
 					<FormControl style={Object.assign(...styleSheet.formControl, styleSheet.formNumPlots)}>
 						<TextField
-							className="goplothubformelement"
 							id="numberGoPlots"
-							label="# Plots"
+							label="#Plots"
 							value={this.state.numberGoPlots}
 							onChange={e => this.setState({ numberGoPlots: e.target.value })}
 							type="number"
@@ -139,16 +163,14 @@ class GoPlotHub extends React.Component {
 					</FormControl>
 					<FormControl style={styleSheet.formControl}>
 						<TextField
-							className="goplothubformelement"
 							id="numberMinIdsInGo"
-							label="# Mininum filtered"
+							label="#Mininum filtered"
 							value={this.state.numberMinIdsInGo}
 							onChange={e => this.setState({ numberMinIdsInGo: e.target.value })}
 							type="number"
 						/>
 					</FormControl>
 						<FormControlLabel
-							className="goplothubformelement"
 							control={
 								<Switch
 									checked={this.state.drawWholeGO}
@@ -157,6 +179,26 @@ class GoPlotHub extends React.Component {
 							}
 							label="Draw whole GO-Term"
 						/>
+						{/* Gradient minimum and maximum */}
+						<FormControl style={Object.assign(...styleSheet.formControl, styleSheet.formTransfer)}>
+							<TextField
+								id="numberTransferMin"
+								label="Min"
+								value={this.state.numberTransferMin}
+								onChange={e => this.setState({ numberTransferMin: e.target.value })}
+								type="number"
+							/>
+						</FormControl>
+						{this.getGradient()}
+						<FormControl style={Object.assign(...styleSheet.formControl, styleSheet.formTransfer)}>
+							<TextField
+								id="numberTransferMax"
+								label="Max"
+								value={this.state.numberTransferMax}
+								onChange={e => this.setState({ numberTransferMax: e.target.value })}
+								type="number"
+							/>
+						</FormControl>
 					</form>
 					{this.getGoPlots()}
 					{isUndefined(this.props.goTerms) ? 'No GO Terms provided' : 'Yes, GO Terms provided'}
