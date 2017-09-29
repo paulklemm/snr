@@ -2,9 +2,18 @@ import React from 'react';
 import GoPlot from './GoPlot';
 import { isUndefined } from './Helper';
 import { max } from 'd3-array';
-import { FormControlLabel } from 'material-ui/Form';
+import { FormControl, FormControlLabel } from 'material-ui/Form';
 import Switch from 'material-ui/Switch';
 import TextField from 'material-ui/TextField';
+
+const styleSheet = {
+	'formControl': { 
+		margin: '10px' 
+	},
+	'formNumPlots': {
+		width: '45px'
+	}
+};
 
 class GoPlotHub extends React.Component {
 
@@ -12,7 +21,8 @@ class GoPlotHub extends React.Component {
 		super();
 		this.state = {
 			drawWholeGO: false,
-			numberGoPlots: 10
+			numberGoPlots: 10,
+			numberMinIdsInGo: 10
 		};
 	}
 
@@ -20,16 +30,16 @@ class GoPlotHub extends React.Component {
 	 * Filter GO-terms based on size and number of plots
 	 * 
 	 * @param {array} goTerms List of goTerm objects
-	 * @param {integer} minGoSize Minimum count of genes for GO-term
+	 * @param {integer} minIdsInGo Minimum count of filtered Ids in GO-term
 	 * @param {integer} maxPlots Maximum number of plotted GO-terms 
 	 * @return {array} Filtered list of goTerms
 	 */
-	filter(goTerms, minGoSize, maxPlots) {
+	filter(goTerms, minIdsInGo, maxPlots) {
 		let filteredGoTerms = [];
 		// Iterate over GO terms and check if they satisfy the criteria
 		for (const goTerm of goTerms) {
 			// Check for minimum size
-			if (goTerm['ids'].length < minGoSize)
+			if (goTerm['ids'].length < minIdsInGo)
 				continue
 			// Push the new goTerm
 			filteredGoTerms.push(goTerm);
@@ -68,9 +78,7 @@ class GoPlotHub extends React.Component {
 		if (isUndefined(this.props.goTerms))
 			return [];
 
-		// Filter the GO-plots
-		const minGoSize = 10;
-		const filteredGoTerms = this.filter(this.props.goTerms, minGoSize, this.state.numberGoPlots);
+		const filteredGoTerms = this.filter(this.props.goTerms, this.state.numberMinIdsInGo, this.state.numberGoPlots);
 		
 		let maxGoTermSize;
 		// Get the maximum GO size in the filtered GO terms
@@ -119,15 +127,26 @@ class GoPlotHub extends React.Component {
 			toRender = 
 				<div>
 					<form className='goplothubform' noValidate autoComplete="off">
+					<FormControl style={Object.assign(...styleSheet.formControl, styleSheet.formNumPlots)}>
 						<TextField
 							className="goplothubformelement"
 							id="numberGoPlots"
-							label="#Plots"
+							label="# Plots"
 							value={this.state.numberGoPlots}
 							onChange={e => this.setState({ numberGoPlots: e.target.value })}
 							type="number"
-							margin="normal"
 						/>
+					</FormControl>
+					<FormControl style={styleSheet.formControl}>
+						<TextField
+							className="goplothubformelement"
+							id="numberMinIdsInGo"
+							label="# Mininum filtered"
+							value={this.state.numberMinIdsInGo}
+							onChange={e => this.setState({ numberMinIdsInGo: e.target.value })}
+							type="number"
+						/>
+					</FormControl>
 						<FormControlLabel
 							className="goplothubformelement"
 							control={
