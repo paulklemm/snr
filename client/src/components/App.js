@@ -515,11 +515,13 @@ class App extends React.Component {
 								{hexplots}
 							</Grid>
 						</Grid>
-						<GoPlotHub
-							goTerms={this.state.goTerms}
-							dataset={this.state.primaryDataset}
-							goTermHub={this.goTermHub}
-						/>
+						<Grid item xs={12}>
+							<GoPlotHub
+								goTerms={this.state.goTerms}
+								dataset={this.state.primaryDataset}
+								goTermHub={this.goTermHub}
+							/>
+						</Grid>
 						{/* Add Table on whole page length */}
 						<Grid item xs={12}>
 							<Table
