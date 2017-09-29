@@ -13,7 +13,8 @@ class GoPlot extends React.Component {
 		this.onMouseLeaveRect = this.onMouseLeaveRect.bind(this);
 		this.onMouseMoveRect = this.onMouseMoveRect.bind(this);
 		this.state = {
-			tooltip: ''
+			tooltip: '',
+			debug: true
 		};
 	}
 
@@ -111,10 +112,6 @@ class GoPlot extends React.Component {
 		else
 			// Derive data from all selected genes in GO-term
 			this.convertData(this.props.dataset, this.props.dimension, this.props.goTerm['ids'])
-		// Use values of the data to determine transfer function
-		let dataValues = objectValueToArray(this.data, 'val');
-		// Remove undefined values from dataValues
-		dataValues = dataValues.filter(Number);
 		// Sort the data
 		this.dataSorted = this.data.sort((a, b) => {
 			// Sort undefined values at the very beginning
@@ -123,9 +120,27 @@ class GoPlot extends React.Component {
 			if (b['val'] === undefined) return 1;
 			return a['val'] - b['val'];
 		});
+		// Calculate domain color space based on input props
+		let domainMin, domainMax, domainMean;
+		// Calculate the dimension boundaries dynamic from the minimum/maximum of the input data
+		if (this.props.dimensionBoundariesDynamic) {
+			// Use values of the data to determine transfer function
+			let dataValues = objectValueToArray(this.data, 'val');
+			// Remove undefined values from dataValues
+			dataValues = dataValues.filter(Number);
+			domainMin = min(dataValues);
+			domainMean = mean(dataValues);
+			domainMax = max(dataValues);
+		} else {
+			// Calculate the domain from given props
+			domainMin = this.props.dimensionMin;
+			domainMean = mean([this.props.dimensionMin, this.props.dimensionMax]);
+			domainMax = this.props.dimensionMax;
+		}
+		if (this.state.debug) console.log(`GoPlot ${this.props.goTerm.goId}: domainMin: ${domainMin}, domainMean: ${domainMean}, domainMax: ${domainMax}`);
 		// Update scales
 		this.colorScale = scaleLinear()
-			.domain([min(dataValues), mean(dataValues), max(dataValues)])
+			.domain([domainMin, domainMean, domainMax])
 			.range(["blue", "rgba(0, 0, 0, 0)", "#ee6351"])
 			.interpolate(interpolateLab);
 		// Width scale

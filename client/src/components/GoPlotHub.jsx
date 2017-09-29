@@ -14,7 +14,7 @@ const styleSheet = {
 		width: '45px'
 	},
 	'formTransfer': {
-		width: '30px'
+		width: '50px'
 	}
 };
 
@@ -27,7 +27,8 @@ class GoPlotHub extends React.Component {
 			numberGoPlots: 10,
 			numberMinIdsInGo: 10,
 			numberTransferMin: -2,
-			numberTransferMax: 2
+			numberTransferMax: 2,
+			dynamicTransferFunction: false
 		};
 	}
 
@@ -79,7 +80,7 @@ class GoPlotHub extends React.Component {
 	 * Retrieve array of GoPlots based on input GO terms
 	 * @return {Array} Array of GoPlot elements
 	 */
-	getGoPlots() {
+	getGoPlots(debug = true) {
 		if (isUndefined(this.props.goTerms))
 			return [];
 
@@ -98,9 +99,7 @@ class GoPlotHub extends React.Component {
 			// Otherwise, just count the filtered ids per GO
 			maxGoTermSize = this.getMaxGoTermSize(filteredGoTerms, 'ids');
 		}
-		
-			
-		console.log(`maxGoTermSize: ${maxGoTermSize}`);
+		if (debug) console.log(`maxGoTermSize: ${maxGoTermSize}`);
 		// Iterate over goTerm elements
 		// Restrict to 10 plots
 		let goPlots = [];
@@ -112,10 +111,13 @@ class GoPlotHub extends React.Component {
 					goTerm={goTerm}
 					goTermSummary={this.props.goTermHub.summary[this.props.dataset.ensemblDataset][this.props.dataset.ensemblVersion][goTerm['goId']]}
 					dimension={"fc"}
+					dimensionMin={this.state.numberTransferMin}
+					dimensionMax={this.state.numberTransferMax}
+					dimensionBoundariesDynamic={this.state.dynamicTransferFunction}
 					drawWholeGO={this.state.drawWholeGO}
 					maxGeneCount={maxGoTermSize}
 					maxWidth={150}
-					key={`Dataset ${this.props.dataset.name}, GoID ${goTerm.goId}, wholeGo ${this.state.drawWholeGO}`}
+					key={`Dataset ${this.props.dataset.name}, GoID ${goTerm.goId}, wholeGo ${this.state.drawWholeGO}, Min: ${this.state.numberMinIdsInGo}, Max: ${this.state.numberMaxIdsInGo}, dynamic: ${this.state.dynamicTransferFunction}`}
 				/>;
 
 			goPlots.push(newGoPlot);
@@ -126,16 +128,16 @@ class GoPlotHub extends React.Component {
 	/**
 	 * Get static linear gradient rect for UI to adjust transfer function
 	 */
-	getGradient() {
+	getGradient(disabled = false) {
 		const width = 100;
 		const height = 8;
 		return (
 			<svg style={{ marginLeft: '5px', marginRight: '5px'}}width={width} height={height} version="1.1" xmlns="http://www.w3.org/2000/svg">
 				<defs>
 					<linearGradient id="Gradient1">
-						<stop class="stop1" offset="0%" stopColor="blue" />
+						<stop class="stop1" offset="0%" stopColor={disabled ? "gray" : "blue"} />
 						<stop class="stop2" offset="50%" stopColor="white" />
-						<stop class="stop3" offset="100%" stopColor="#ee6351" />
+						<stop class="stop3" offset="100%" stopColor={disabled ? "gray" : "#ee6351"} />
 					</linearGradient>
 				</defs>
 				<rect rx="2" ry="2" width={width} height={height} fill="url(#Gradient1)" />
@@ -182,6 +184,7 @@ class GoPlotHub extends React.Component {
 						{/* Gradient minimum and maximum */}
 						<FormControl style={Object.assign(...styleSheet.formControl, styleSheet.formTransfer)}>
 							<TextField
+								disabled={this.state.dynamicTransferFunction}
 								id="numberTransferMin"
 								label="Min"
 								value={this.state.numberTransferMin}
@@ -189,9 +192,10 @@ class GoPlotHub extends React.Component {
 								type="number"
 							/>
 						</FormControl>
-						{this.getGradient()}
-						<FormControl style={Object.assign(...styleSheet.formControl, styleSheet.formTransfer)}>
+						{this.getGradient(this.state.dynamicTransferFunction)}
+						<FormControl style={Object.assign(...styleSheet.formControl, styleSheet.formTransfer)} >
 							<TextField
+								disabled={this.state.dynamicTransferFunction}
 								id="numberTransferMax"
 								label="Max"
 								value={this.state.numberTransferMax}
@@ -199,6 +203,15 @@ class GoPlotHub extends React.Component {
 								type="number"
 							/>
 						</FormControl>
+						<FormControlLabel
+							control={
+								<Switch
+									checked={this.state.dynamicTransferFunction}
+									onChange={(event, checked) => this.setState({ dynamicTransferFunction: checked })}
+								/>
+							}
+							label="Dynamic Transfer"
+						/>
 					</form>
 					{this.getGoPlots()}
 					{isUndefined(this.props.goTerms) ? 'No GO Terms provided' : 'Yes, GO Terms provided'}
