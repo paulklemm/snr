@@ -16,6 +16,14 @@ class Dataset {
 	}
 
 	/**
+	 * Get array of Dimension names
+	 * @return {array} Dimension names as strings
+	 */
+	getDimensionNames() {
+		return this.dimNames;
+	}
+
+	/**
 	 * Set dataset content
 	 * 
 	 * @param {Array} data Array of datapoints
