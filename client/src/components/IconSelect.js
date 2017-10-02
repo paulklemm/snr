@@ -38,18 +38,18 @@ class IconSelect extends Component {
 		};
 	}
 
-	handleMenuItemClick = (event, index) => {
+	handleMenuItemClick (event, index) {
 		this.setState({ selectedIndex: index, open: false });
 		this.props.setDatasetIcon(this.props.datasetName, this.arrayIndexToIconName[index]);
-	};
+	}
 
-	handleRequestClose = () => {
+	handleRequestClose() {
 		this.setState({ open: false });
-	};
+	}
 
-	handleButtonClick = event => {
+	handleButtonClick(event) {
 		this.setState({ open: true, anchorEl: event.currentTarget });
-	};
+	}
 
 	render() {
 		const classes = this.props.classes;
