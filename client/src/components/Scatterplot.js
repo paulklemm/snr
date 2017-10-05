@@ -153,7 +153,7 @@ class Scatterplot extends React.Component {
 			if (this.props.rnaSeqData.data[i][idName] === datapoint) {
 				const x = this.props.rnaSeqData.data[i][this.props.xName];
 				const y = this.props.rnaSeqData.data[i][this.props.yName];
-				if (isUndefined(x) && isUndefined(y)) {
+				if (!isUndefined(x) && !isUndefined(y)) {
 					const cx = this.xScale(x);
 					const cy = this.yScale(y);
 					return (
