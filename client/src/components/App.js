@@ -38,13 +38,6 @@ import LoginScreen from './LoginScreen';
 import Highlight from './Highlight';
 import GoPlotHub from './GoPlotHub';
 
-const styleSheet = {
-  appBody: {
-    marginRight: 100,
-    marginLeft: 100,
-  },
-};
-
 // Create theme (https://material-ui-1dab0.firebaseapp.com/customization/themes)
 const theme = createMuiTheme({
   palette: {
@@ -65,6 +58,8 @@ class App extends React.Component {
     this.addBusyState = this.addBusyState.bind(this);
     this.removeBusyState = this.removeBusyState.bind(this);
     this.filterBroadcasted = this.filterBroadcasted.bind(this);
+    this.toggleLeftDrawer = this.toggleLeftDrawer.bind(this);
+    this.toggleRightDrawer = this.toggleRightDrawer.bind(this);
     this.login = this.login.bind(this);
     // Init datasethub and inject filterTriggered function
     this.datasetHub = new DatasetHub(this.filterBroadcasted);
@@ -84,7 +79,10 @@ class App extends React.Component {
       primaryDataset: {},
       loginRequired: false,
       busy: {},
-      openDrawer: { right: false },
+      openDrawer: {
+        right: false,
+        left: false
+      },
       xDimension: '',
       yDimension: '',
       highlight: new Highlight('EnsemblID'),
@@ -158,8 +156,7 @@ class App extends React.Component {
    */
   async applyGoTerms() {
     // Check if we have a primary dataset
-    if (isUndefined(this.state.primaryDataset.data))
-      return;
+    if (isUndefined(this.state.primaryDataset.data)) { return; }
     // Get the (filtered) primary dataset
     const primaryDatasetData = this.state.primaryDataset.getData();
     console.log(`Filtered dataset size: ${primaryDatasetData.length}`);
@@ -212,9 +209,9 @@ class App extends React.Component {
     this.goTermHub = new GoTermHub(this.nodeBridge.getGoSummary, this.nodeBridge.getGoPerGene);
     this.goTermHub.addGeneToGo('mmusculus_gene_ensembl', 'current');
     this.goTermHub.addSummary('mmusculus_gene_ensembl', 'current');
-    this.datasetHub.push(new Dataset('Dataset_1.csv'));
-    this.setEnableDataset('Dataset_1.csv', true);
-    this.datasetHub.datasets['Dataset_1.csv'].loaded = true;
+    // this.datasetHub.push(new Dataset('Dataset_1.csv'));
+    // this.setEnableDataset('Dataset_1.csv', true);
+    // this.datasetHub.datasets['Dataset_1.csv'].loaded = true;
     // Set default plotting dimensions
     this.setPlotDimensions('pValueNegLog10', 'fc');
 
@@ -444,6 +441,10 @@ class App extends React.Component {
     this.toggleDrawer('right', !this.state.openDrawer.right);
   }
 
+  toggleLeftDrawer() {
+    this.toggleDrawer('left', !this.state.openDrawer.left);
+  }
+
   toggleDrawer(side, open) {
     const drawerState = {};
     drawerState[side] = open;
@@ -451,6 +452,13 @@ class App extends React.Component {
   }
 
   render() {
+    const styleSheet = {
+      appBody: {
+        marginRight: 100,
+        marginLeft: this.state.openDrawer.left ? 30 : 100,
+        paddingLeft: this.state.openDrawer.left ? this.layoutFactory.windowWidth / 2 : 0
+      },
+    };
     // Create Hexplot dynamic from inbox data
     const hexplots = [];
     for (let i in this.datasetHub.names) {
@@ -458,8 +466,8 @@ class App extends React.Component {
       let dataset = this.datasetHub.datasets[name];
       if (dataset.loaded) {
         hexplots.push(
-          <Grid item xs={6} key={ name }>
-            <Hexplot 
+          <Grid item xs={6} key={name}>
+            <Hexplot
               responsiveWidth={true} 
               height={this.layoutFactory.heights.smallMultiples} 
               width={0} 
@@ -483,13 +491,30 @@ class App extends React.Component {
     // Add PCA
     // TODO PCA Comment back in if doing the PCA
     // let pcaImage = (typeof this.state.pcaImage === "undefined") ? pcaImage = <Loading width={800} height={400} /> : <img src={`${this.state.pcaImage}?width=7&height=5`} width={800} height={400} alt="R test PCA" />;
-
+    const leftDrawerWidth = this.layoutFactory.windowWidth / 3;
     let app = '';
     if (this.state.loginRequired) {
       app = <div><LoginScreen login={ this.login } /></div>;
     } else {
-      app = 
+      app =
       <div>
+        <Drawer
+          anchor="left"
+          type="persistent"
+          open={this.state.openDrawer.left}
+        >
+          <Card style={{ maxWidth: `${leftDrawerWidth}px`, minWidth: `${leftDrawerWidth}px` }}>
+            <CardContent>
+              <IconButton style={{ float: 'right' }} onClick={this.toggleLeftDrawer}><Icon name="times" /></IconButton>
+                <GoPlotHub
+                  goTerms={this.state.goTerms}
+                  dataset={this.state.primaryDataset}
+                  goTermHub={this.goTermHub}
+                  width={leftDrawerWidth}
+                />
+            </CardContent>
+          </Card>
+        </Drawer>
         <Drawer
           anchor="right"
           open={this.state.openDrawer.right}
@@ -510,7 +535,14 @@ class App extends React.Component {
             </CardContent>
           </Card>
         </Drawer>
-        <Navbar busy={Object.keys(this.state.busy).length !== 0} toggleRightDrawer={this.toggleRightDrawer} invalidateLogin={this.invalidateLogin} />
+        <div style={{ marginLeft: this.state.openDrawer.left ? this.layoutFactory.windowWidth / 2 : 0 }}>
+          <Navbar
+            busy={Object.keys(this.state.busy).length !== 0}
+            toggleRightDrawer={this.toggleRightDrawer}
+            toggleLeftDrawer={this.toggleLeftDrawer}
+            invalidateLogin={this.invalidateLogin}
+          />
+        </div>
         <div style={styleSheet.appBody}>
           {/* Main Plot for the interaction */}
           <Grid container spacing={16}>
@@ -536,13 +568,6 @@ class App extends React.Component {
               <Grid container spacing={16}>
                 {hexplots}
               </Grid>
-            </Grid>
-            <Grid item xs={12}>
-              <GoPlotHub
-                goTerms={this.state.goTerms}
-                dataset={this.state.primaryDataset}
-                goTermHub={this.goTermHub}
-              />
             </Grid>
             {/* Add Table on whole page length */}
             <Grid item xs={12}>

@@ -40,7 +40,7 @@ class GoPlotHub extends React.Component {
     this.state = {
       debug: true,
       drawWholeGO: false,
-      numberGoPlots: 10,
+      numberGoPlots: 50,
       numberMinIdsInGo: 10,
       numberTransferMin: -2,
       numberTransferMax: 2,
@@ -51,10 +51,10 @@ class GoPlotHub extends React.Component {
 
   /**
    * Filter GO-terms based on size and number of plots
-   * 
+   *
    * @param {array} goTerms List of goTerm objects
    * @param {integer} minIdsInGo Minimum count of filtered Ids in GO-term
-   * @param {integer} maxPlots Maximum number of plotted GO-terms 
+   * @param {integer} maxPlots Maximum number of plotted GO-terms
    * @return {array} Filtered list of goTerms
    */
   filter(goTerms, minIdsInGo, maxPlots) {
@@ -134,7 +134,7 @@ class GoPlotHub extends React.Component {
           dimensionBoundariesDynamic={this.state.dynamicTransferFunction}
           drawWholeGO={this.state.drawWholeGO}
           maxGeneCount={maxGoTermSize}
-          maxWidth={150}
+          maxWidth={this.props.width - 10}
           key={`Dataset ${this.props.dataset.name}, GoID ${goTerm.goId}, wholeGo ${this.state.drawWholeGO}, MinInGo: ${this.state.numberMinIdsInGo}, Min: ${this.state.numberTransferMin}, Max: ${this.state.numberTransferMax}, dynamic: ${this.state.dynamicTransferFunction}, dimension: ${this.state.colorByDimension}`}
         />;
 
@@ -199,110 +199,114 @@ class GoPlotHub extends React.Component {
     }  else {
       toRender = 
         <div>
-        <form noValidate autoComplete="off">
-          <Grid container spacing={16}>
-            <Grid item xs={12}>
-              <Paper style={styleSheet.paperGo}>
-                <Grid container spacing={8}>
-                  <Grid item xs={2}>
-                    <Typography style={styleSheet.goOptionLabel} type="body2">GO-Plot General</Typography>
-                  </Grid>
-                  <Grid item xs={3}>
-                    <FormControl>
-                      <TextField
-                        id="numberGoPlots"
-                        label="#Plots"
-                        value={this.state.numberGoPlots}
-                        onChange={e => this.setState({ numberGoPlots: e.target.value })}
-                        type="number"
-                      />
-                    </FormControl>
-                  </Grid>
-                  <Grid item xs={3}>
-                    <FormControl>
-                      <TextField
-                        id="numberMinIdsInGo"
-                        label="#Mininum filtered"
-                        value={this.state.numberMinIdsInGo}
-                        onChange={e => this.setState({ numberMinIdsInGo: e.target.value })}
-                        type="number"
-                      />
-                    </FormControl>
-                  </Grid>
-                  <Grid item xs={3}>
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          checked={this.state.drawWholeGO}
-                          onChange={(event, checked) => this.setState({ drawWholeGO: checked })}
+          <form noValidate autoComplete="off">
+            <Grid container spacing={16}>
+              <Grid item xs={12}>
+                <Paper style={styleSheet.paperGo}>
+                  <Grid container spacing={16}>
+                    <Grid item xs={2}>
+                      <Typography style={styleSheet.goOptionLabel} type="body2">GO-Plot General</Typography>
+                    </Grid>
+                    <Grid item xs={3}>
+                      <FormControl>
+                        <TextField
+                          id="numberGoPlots"
+                          label="#Plots"
+                          value={this.state.numberGoPlots}
+                          onChange={e => this.setState({ numberGoPlots: e.target.value })}
+                          type="number"
                         />
-                      }
-                      label="Draw whole GO-Term"
-                    />
-                  </Grid>
-                </Grid>
-              </Paper>
-            </Grid>
-            <Grid item xs={12}>
-              <Paper style={styleSheet.paperGo}>
-                <Grid container spacing={8}>
-                  <Grid item xs={2}>
-                    <Typography style={styleSheet.goOptionLabel} type="body2">Transfer Function</Typography>
-                  </Grid>
-                  {/* Gradient minimum and maximum */}
-                  <Grid item xs={4}>
-                    <FormControl style={Object.assign(...styleSheet.formControl, styleSheet.formTransfer)}>
-                      <TextField
-                        disabled={this.state.dynamicTransferFunction}
-                        id="numberTransferMin"
-                        label="Min"
-                        value={this.state.numberTransferMin}
-                        onChange={e => this.setState({ numberTransferMin: e.target.value })}
-                        type="number"
-                      />
-                    </FormControl>
-                    {this.getGradient(this.state.dynamicTransferFunction, 100, 8)}
-                    <FormControl style={Object.assign(...styleSheet.formControl, styleSheet.formTransfer)} >
-                      <TextField
-                        disabled={this.state.dynamicTransferFunction}
-                        id="numberTransferMax"
-                        label="Max"
-                        value={this.state.numberTransferMax}
-                        onChange={e => this.setState({ numberTransferMax: e.target.value })}
-                        type="number"
-                      />
-                    </FormControl>
-                  </Grid>
-                  <Grid item xs={2}>
-                    <FormControl>
+                      </FormControl>
+                    </Grid>
+                    <Grid item xs={3}>
+                      <FormControl>
+                        <TextField
+                          id="numberMinIdsInGo"
+                          label="#Mininum filtered"
+                          value={this.state.numberMinIdsInGo}
+                          onChange={e => this.setState({ numberMinIdsInGo: e.target.value })}
+                          type="number"
+                        />
+                      </FormControl>
+                    </Grid>
+                    <Grid item xs={4}>
                       <FormControlLabel
                         control={
                           <Switch
-                            checked={this.state.dynamicTransferFunction}
-                            onChange={(event, checked) => this.setState({ dynamicTransferFunction: checked })}
+                            checked={this.state.drawWholeGO}
+                            onChange={(event, checked) => this.setState({ drawWholeGO: checked })}
                           />
                         }
-                        label="Dynamic Transfer"
+                        label="Draw whole GO-Term"
                       />
-                    </FormControl>
+                    </Grid>
                   </Grid>
-                  <Grid item xs={4}>
-                    <FormControl>
-                      <InputLabel>Color by</InputLabel>
-                      <Select
-                        value={this.state.colorByDimension}
-                        onChange={event => this.setState({ colorByDimension: event.target.value })}
-                      >
-                        {this.getMenuItems()}
-                      </Select>
-                    </FormControl>
-                  </Grid>
+                </Paper>
+              </Grid>
+              <Grid item xs={12}>
+                <Paper style={styleSheet.paperGo}>
+                  <Grid container spacing={8}>
+                    <Grid item xs={2}>
+                      <Typography style={styleSheet.goOptionLabel} type="body2">Transfer Function</Typography>
+                    </Grid>
+                    <Grid item xs={10}>
+                      <Grid container spacing={8}>
+                        {/* Gradient minimum and maximum */}
+                        <Grid item xs={10} lg={6}>
+                          <FormControl style={Object.assign(...styleSheet.formControl, styleSheet.formTransfer)}>
+                            <TextField
+                              disabled={this.state.dynamicTransferFunction}
+                              id="numberTransferMin"
+                              label="Min"
+                              value={this.state.numberTransferMin}
+                              onChange={e => this.setState({ numberTransferMin: e.target.value })}
+                              type="number"
+                            />
+                          </FormControl>
+                          {this.getGradient(this.state.dynamicTransferFunction, 100, 8)}
+                          <FormControl style={Object.assign(...styleSheet.formControl, styleSheet.formTransfer)} >
+                            <TextField
+                              disabled={this.state.dynamicTransferFunction}
+                              id="numberTransferMax"
+                              label="Max"
+                              value={this.state.numberTransferMax}
+                              onChange={e => this.setState({ numberTransferMax: e.target.value })}
+                              type="number"
+                            />
+                          </FormControl>
+                        </Grid>
+                        <Grid item xs={5} lg={3}>
+                          <FormControl>
+                            <FormControlLabel
+                              control={
+                                <Switch
+                                  checked={this.state.dynamicTransferFunction}
+                                  onChange={(event, checked) => this.setState({ dynamicTransferFunction: checked })}
+                                />
+                              }
+                              label="Dynamic Transfer"
+                            />
+                          </FormControl>
+                        </Grid>
+                        <Grid item xs={5} lg={3}>
+                          <FormControl>
+                            <InputLabel>Color by</InputLabel>
+                            <Select
+                              value={this.state.colorByDimension}
+                              onChange={event => this.setState({ colorByDimension: event.target.value })}
+                            >
+                              {this.getMenuItems()}
+                            </Select>
+                          </FormControl>
+                        </Grid>
+                      </Grid>
+                    </Grid>
                 </Grid>
               </Paper>
             </Grid>
           </Grid>
         </form>
-          {this.getGoPlots()}
+            {this.getGoPlots()}
         </div>;
     }
     return toRender;

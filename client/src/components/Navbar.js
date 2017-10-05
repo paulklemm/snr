@@ -29,6 +29,7 @@ class Navbar extends React.Component {
             <Logo pulse={ this.props.busy }></Logo>
           </Grid>
           <Grid item xs={5} style={styleSheet.buttons}>
+            <a style={styleSheet.button} onClick={this.props.toggleLeftDrawer}>Show GO-Terms</a>
             <a style={styleSheet.button} onClick={this.props.toggleRightDrawer}>Show datasets</a>
             <a style={styleSheet.button} onClick={this.props.invalidateLogin}>Logout</a>
           </Grid>
