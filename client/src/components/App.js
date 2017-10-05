@@ -160,11 +160,10 @@ class App extends React.Component {
     // Check if we have a primary dataset
     if (isUndefined(this.state.primaryDataset.data))
       return;
-    
     // Get the (filtered) primary dataset
     const primaryDatasetData = this.state.primaryDataset.getData();
     console.log(`Filtered dataset size: ${primaryDatasetData.length}`);
-    console.log(`Dataset Object:`);
+    console.log('Dataset Object:');
     console.log(this.state.primaryDataset);
     // Get ensembl-ID array
     const ensemblIds = objectValueToArray(primaryDatasetData, 'EnsemblID');
@@ -223,33 +222,41 @@ class App extends React.Component {
     // Load Data from userFolder and get Session ID for the associated object
     this.addBusyState('loadData');
     let filenames = await this.nodeBridge.loadData();
-    filenames = filenames['filenames'];
+    filenames = filenames.filenames;
     // Attach the dataset array to the datasetHub
-    for (let i in filenames) {
-      let datasetName = filenames[i];
+    for (const datasetName of filenames) {
       this.datasetHub.push(new Dataset(datasetName));
     }
     // Load setEnabled Status
-    for (let i in filenames) {
-      let datasetName = filenames[i];
+    for (const datasetName of filenames) {
       // Default add value to data set, this should later be derived from firebase
       this.setEnableDataset(datasetName, false);
     }
 
     // Remove busy state
     this.removeBusyState('loadData');
-    
     // // PCA plot
-    // const outputPCA = await this.runRCommand("sonaR", "plot_pca", { x: outputLoadData.sessionID }, 'ascii', false);
+    // const outputPCA = await this.runRCommand(
+      // 'sonaR',
+      // 'plot_pca',
+      // { x: outputLoadData.sessionID },
+      // 'ascii',
+      // false);
     // this.setState({
     //   pcaImage: `${outputPCA.graphics[0]}/svg`
     // });
   }
 
   /**
-   * Sends R command to node server. There it will be executed and return the result in the specified valformat
+   * Sends R command to node server. There it will be executed and return the
+   * result in the specified valformat
    * Example:
-   * runRCommand("sonaR", "getUserFolder", { user: "'paul'" }, "json", 'paul', localStorage.getItem('sonarLoginToken'));
+   * runRCommand("sonaR",
+   *   "getUserFolder",
+   *   { user: "'paul'" },
+   *   "json",
+   *   'paul',
+   *   localStorage.getItem('sonarLoginToken'));
    * @param {String} rpackage: Name of the `R` package ("stats")
    * @param {String} rfunction: Name of the `R` function ("rnorm")
    * @param {Object} params: JSON object of the parameters ("{ n: 10, mean: 5 }"")
@@ -259,13 +266,16 @@ class App extends React.Component {
    */
   async runRCommand(rpackage, rfunction, params, valformat, debug = false) {
     // Set busy state
-    const runKey = `Run R command on node server ${rpackage}.${rfunction}(${JSON.stringify(params)}), valformat: ${valformat}`
-    // Busy is a stack of operations. At the beginning, add a unique key for the operation to the busyStack and then remove it after success
+    const runKey = `Run R command on node server \
+      ${rpackage}.${rfunction}(${JSON.stringify(params)}), \
+      valformat: ${valformat}`;
+    // Busy is a stack of operations. At the beginning, add a unique key for the
+    // operation to the busyStack and then remove it after success
     this.addBusyState(runKey);
 
     // Run the command
     if (debug) console.log(runKey);
-    let response = await this.nodeBridge.sendRCommand(rpackage, rfunction, params, valformat);
+    const response = await this.nodeBridge.sendRCommand(rpackage, rfunction, params, valformat);
     if (debug) console.log(response);
 
     // If Response is negative because of invalid token, invalidate login
