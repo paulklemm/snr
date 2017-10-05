@@ -10,10 +10,10 @@ class Highlight {
   }
 
   /**
-	 * Removes the existing set of highlighted entries and adds the given ones
-	 * @param {String} name of the highlight group
-	 * @param {Array} datapoints belonging to the highlight group
-	 */
+   * Removes the existing set of highlighted entries and adds the given ones
+   * @param {String} name of the highlight group
+   * @param {Array} datapoints belonging to the highlight group
+   */
   push(name, datapoints) {
     this.groups[name] = [];
     // Iterate over all data points and add only the Id
@@ -21,9 +21,9 @@ class Highlight {
       this.groups[name].push(datapoints[point][this.idName]);
   }
 
-	/**
-	 * Remove all highlight groups
-	 */
+  /**
+   * Remove all highlight groups
+   */
   clear() {
     this.groups = {};
   }

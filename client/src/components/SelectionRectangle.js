@@ -12,7 +12,7 @@ const styleSheet = {
  * Use it by settings start and end coordinates
  */
 class SelectionRectangle {
-	constructor() {
+  constructor() {
     this.reset();
     // state variable to store whether the user is currently drawing a rectangle
     this.isDrawing = false;
@@ -34,8 +34,8 @@ class SelectionRectangle {
    * @param {Integer} startX: Start coordinate in x 
    * @param {Integer} startY: Start coordinate in y
    */
-	setStart(startX, startY) {
-		this.startX = startX;
+  setStart(startX, startY) {
+    this.startX = startX;
     this.startY = startY;
     this.calculateBounds();
   }
@@ -166,10 +166,10 @@ class SelectionRectangle {
    * Get the rectangle SVG element
    * @return {HTML} rectangle
    */
-	getRectangle() {
+  getRectangle() {
     if (this.boundsSet)
       return (<rect x={this.bounds.minX} y={this.bounds.minY} width={this.bounds.maxX - this.bounds.minX} height={this.bounds.maxY - this.bounds.minY} style={styleSheet.rectangle} />);
-	}
+  }
 }
 
 export default SelectionRectangle;

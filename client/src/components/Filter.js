@@ -82,12 +82,12 @@ class Filter {
   }
   
   /**
-	 * Filter function usable by elements that provide a filter for data. If `val` is not a valid input, e.g. it is empty, the filter will be reset.
-	 * @param  {String} name: Dimension name to be filtered
-	 * @param  {Object} val: Filter value can be anything depending on the dimension type
-	 * @param  {Object} operator: Filter operator, either `=`, `<` or `>`. Strings should always use `=`
-	 * @param  {Bool} verbose Get name and value of filter
-	 */
+   * Filter function usable by elements that provide a filter for data. If `val` is not a valid input, e.g. it is empty, the filter will be reset.
+   * @param  {String} name: Dimension name to be filtered
+   * @param  {Object} val: Filter value can be anything depending on the dimension type
+   * @param  {Object} operator: Filter operator, either `=`, `<` or `>`. Strings should always use `=`
+   * @param  {Bool} verbose Get name and value of filter
+   */
   setFilter(name, val, operator, verbose = true) {
     if (verbose) console.log(`Set filter ${val} for ${name}`);
     const val_filter = this._parseFilterValue(name, val);

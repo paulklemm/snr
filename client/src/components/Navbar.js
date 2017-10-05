@@ -20,8 +20,8 @@ const styleSheet = {
 };
 
 class Navbar extends React.Component {
-	render() {
-		return(
+  render() {
+    return(
       <div style={styleSheet.navbar}>
         <Grid container spacing={24}>
           <Grid item xs={1}></Grid>
@@ -36,8 +36,8 @@ class Navbar extends React.Component {
           <Grid item xs={1}></Grid>
         </Grid>
       </div>
-		);
-	}
+    );
+  }
 }
 
 export default Navbar;
