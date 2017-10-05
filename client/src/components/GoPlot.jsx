@@ -49,6 +49,11 @@ class GoPlot extends React.Component {
    * @param {Event} event Mouse move event
    */
   onMouseMoveRect(event, id, val) {
+    // Update select
+    this.props.highlight.clear();
+    this.props.highlight.push('selection', [this.props.dataset.getEntry(id)]);
+    this.props.forceUpdateApp();
+
     let dx = event.pageX - 55;
     let dy = event.pageY - 35;
     let tooltip =

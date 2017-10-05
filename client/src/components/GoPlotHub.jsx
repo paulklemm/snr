@@ -133,6 +133,8 @@ class GoPlotHub extends React.Component {
           dimensionMax={this.state.numberTransferMax}
           dimensionBoundariesDynamic={this.state.dynamicTransferFunction}
           drawWholeGO={this.state.drawWholeGO}
+          highlight={this.props.highlight}
+          forceUpdateApp={this.props.forceUpdateApp}
           maxGeneCount={maxGoTermSize}
           maxWidth={this.props.width - 10}
           key={`Dataset ${this.props.dataset.name}, GoID ${goTerm.goId}, wholeGo ${this.state.drawWholeGO}, MinInGo: ${this.state.numberMinIdsInGo}, Min: ${this.state.numberTransferMin}, Max: ${this.state.numberTransferMax}, dynamic: ${this.state.dynamicTransferFunction}, dimension: ${this.state.colorByDimension}`}

@@ -61,7 +61,7 @@ class Dataset {
   }
 
   /**
-   * Gives O(1) access to data entry based on EnsemblID
+   * Gives O(1) access to data entry or row based on EnsemblID
    * 
    * @param {String} id EnsemblID of data row
    * @param {String} dimension Entry of row to return
@@ -70,7 +70,12 @@ class Dataset {
   getEntry(id, dimension) {
     // Get index data array position
     const dataPosition = this._getEnsemblToArrayIndex(true)[id];
-    return isUndefined(this.data[dataPosition]) ? undefined : this.data[dataPosition][dimension];
+    // if dimension is defined, return only the dimension
+    if (!isUndefined(dimension)) {
+      return isUndefined(this.data[dataPosition]) ? undefined : this.data[dataPosition][dimension];
+    }
+    // If dimension is undefined, return the whole row
+    return isUndefined(this.data[dataPosition]) ? undefined : this.data[dataPosition];
   }
 
   /**

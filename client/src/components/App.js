@@ -509,6 +509,8 @@ class App extends React.Component {
                 <GoPlotHub
                   goTerms={this.state.goTerms}
                   dataset={this.state.primaryDataset}
+                  highlight={this.state.highlight}
+                  forceUpdateApp={this.forceUpdateApp}
                   goTermHub={this.goTermHub}
                   width={leftDrawerWidth}
                 />
