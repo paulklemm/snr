@@ -11,5 +11,8 @@
             "jsx": true
         },
         "sourceType": "module"
+    },
+    "rules": {
+        "no-console": 0
     }
 }
