@@ -41,7 +41,7 @@ class GoPlotHub extends React.Component {
     this.state = {
       debug: false,
       drawWholeGO: false,
-      numberGoPlots: 10,
+      numberGoPlots: 50,
       numberMinIdsInGo: 10,
       numberTransferMin: -2,
       numberTransferMax: 2,
@@ -252,6 +252,7 @@ class GoPlotHub extends React.Component {
     }  else {
       toRender = 
         <div>
+          <Typography type="headline" gutterBottom>GO-Term Settings</Typography>
           <form noValidate autoComplete="off">
             <Grid container spacing={16}>
               <Grid item xs={12}>
@@ -359,7 +360,19 @@ class GoPlotHub extends React.Component {
             </Grid>
           </Grid>
         </form>
-            {this.getGoPlots()}
+        <Typography
+          style={{marginTop: '20'}}
+          type="headline"
+          gutterBottom>
+           GO-Terms
+        </Typography>
+        <div
+          style={{
+            marginTop: '10'
+          }}
+        >
+          {this.getGoPlots()}
+        </div>
         </div>;
     }
     return toRender;

@@ -502,8 +502,13 @@ class App extends React.Component {
           type="persistent"
           open={this.state.openDrawer.left}
         >
-          <Card style={{ maxWidth: `${leftDrawerWidth}px`, minWidth: `${leftDrawerWidth}px` }}>
-            <CardContent>
+          <div
+            style={{
+              maxWidth: `${leftDrawerWidth}px`,
+              minWidth: `${leftDrawerWidth}px`,
+              padding: '10'
+            }}
+          >
               <IconButton style={{ float: 'right' }} onClick={this.toggleLeftDrawer}><Icon name="times" /></IconButton>
                 <GoPlotHub
                   goTerms={this.state.goTerms}
@@ -514,8 +519,7 @@ class App extends React.Component {
                   goTermHub={this.goTermHub}
                   width={leftDrawerWidth}
                 />
-            </CardContent>
-          </Card>
+          </div>
         </Drawer>
         <Drawer
           anchor="right"
