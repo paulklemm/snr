@@ -143,10 +143,23 @@ class GoPlotHub extends React.Component {
     filteredGoTerms.forEach((goTerm) => {
       // Check if the goTerm is selected, if so render it for all datasets
       if (this.state.selectedGoTerms[goTerm.goId] === true) {
-      // Iterate over all datasets
-      Object.values(this.props.datasetHub.datasets).forEach((dataset) => {
-        if (dataset.loaded) { goPlots.push(this.getGoPlot(dataset, goTerm, maxGoTermSize, true)); }
-      });
+        // Attach GO-Term information
+        const currentSummary = this.props.goTermHub.summary[this.props.dataset.ensemblDataset][this.props.dataset.ensemblVersion][goTerm['goId']];
+        goPlots.push(
+          <div style={{ fontSize: '10' }}>
+            <ul>
+              <li>Definition: {currentSummary.go_term_definition}</li>
+              <li>Name: {currentSummary.go_term_name}</li>
+              <li>Domain: {currentSummary.go_domain}</li>
+              <li>Gene Count: {currentSummary.count_genes}</li>
+              <li>Transcript Count: {currentSummary.count_transcripts}</li>
+            </ul>
+          </div>
+        );
+        // Iterate over all datasets
+        Object.values(this.props.datasetHub.datasets).forEach((dataset) => {
+          if (dataset.loaded) { goPlots.push(this.getGoPlot(dataset, goTerm, maxGoTermSize, true)); }
+        });
       // If not, add the standard dataset
       } else {
         goPlots.push(this.getGoPlot(this.props.dataset, goTerm, maxGoTermSize));
