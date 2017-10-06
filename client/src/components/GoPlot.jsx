@@ -3,7 +3,9 @@ import React from 'react';
 import { scaleLinear } from 'd3-scale';
 import { max, min, mean } from 'd3-array';
 import { interpolateLab } from 'd3-interpolate';
+// Own components
 import { objectValueToArray, isUndefined } from './Helper.js';
+import DatasetIcons from './DatasetIcons';
 
 class GoPlot extends React.Component {
 
@@ -30,10 +32,11 @@ class GoPlot extends React.Component {
     return (
       <div>
         <span className='gotermlabel'>
+          {DatasetIcons[this.props.icon]}
           {this.props.goTerm.goId}
         </span>
         <svg
-          width={this.props.width}
+          width={this.props.maxWidth}
           height={this.props.height}
         >
           {this.renderBars()}

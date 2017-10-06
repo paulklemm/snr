@@ -38,7 +38,7 @@ class GoPlotHub extends React.Component {
   constructor() {
     super();
     this.state = {
-      debug: true,
+      debug: false,
       drawWholeGO: false,
       numberGoPlots: 50,
       numberMinIdsInGo: 10,
@@ -120,15 +120,22 @@ class GoPlotHub extends React.Component {
     if (this.state.debug) console.log(`maxGoTermSize: ${maxGoTermSize}`);
     // Iterate over goTerm elements
     // Restrict to 10 plots
-    let goPlots = [];
-    for (const goTerm of filteredGoTerms) {
+    const goPlots = [];
+    filteredGoTerms.forEach((goTerm) => {
+      // Iterate over all datasets
+      // this.props.datasetHub.datasets.forEach((dataset) => {
+
+      // });
       const newGoPlot =
-        <GoPlot
+        (<GoPlot
           height={8}
           dataset={this.props.dataset}
           goTerm={goTerm}
-          goTermSummary={this.props.goTermHub.summary[this.props.dataset.ensemblDataset][this.props.dataset.ensemblVersion][goTerm['goId']]}
+          goTermSummary={
+            this.props.goTermHub.summary[this.props.dataset.ensemblDataset][this.props.dataset.ensemblVersion][goTerm['goId']]
+          }
           dimension={this.state.colorByDimension}
+          icon={this.props.datasetHub.getDatasetIcon(this.props.dataset.name)}
           dimensionMin={this.state.numberTransferMin}
           dimensionMax={this.state.numberTransferMax}
           dimensionBoundariesDynamic={this.state.dynamicTransferFunction}
@@ -136,12 +143,20 @@ class GoPlotHub extends React.Component {
           highlight={this.props.highlight}
           forceUpdateApp={this.props.forceUpdateApp}
           maxGeneCount={maxGoTermSize}
-          maxWidth={this.props.width - 10}
-          key={`Dataset ${this.props.dataset.name}, GoID ${goTerm.goId}, wholeGo ${this.state.drawWholeGO}, MinInGo: ${this.state.numberMinIdsInGo}, Min: ${this.state.numberTransferMin}, Max: ${this.state.numberTransferMax}, dynamic: ${this.state.dynamicTransferFunction}, dimension: ${this.state.colorByDimension}`}
-        />;
+          maxWidth={this.props.width - 160}
+          key={`\
+            Dataset ${this.props.dataset.name},\
+            GoID ${goTerm.goId},\
+            wholeGo ${this.state.drawWholeGO},\
+            MinInGo: ${this.state.numberMinIdsInGo},\
+            Min: ${this.state.numberTransferMin},\
+            Max: ${this.state.numberTransferMax},\
+            dynamic: ${this.state.dynamicTransferFunction},\
+            dimension: ${this.state.colorByDimension}`}
+        />);
 
       goPlots.push(newGoPlot);
-    }
+    });
     return goPlots;
   }
 

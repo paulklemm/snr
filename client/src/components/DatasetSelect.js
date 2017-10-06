@@ -62,7 +62,7 @@ class DatasetSelect extends React.Component {
               <Icon name="check-circle-o" />
           </IconButton>
 
-          <IconSelect defaultIconID={ i } datasetName={datasetName} setDatasetIcon={this.props.setDatasetIcon} getDatasetIcon={this.props.getDatasetIcon} />
+          <IconSelect defaultIconID={i} datasetName={datasetName} setDatasetIcon={this.props.setDatasetIcon} getDatasetIcon={this.props.getDatasetIcon} />
         </ListItem>
       );
     }

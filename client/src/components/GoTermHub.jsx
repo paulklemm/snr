@@ -184,8 +184,7 @@ class GoTermHub {
    */
   async getGoTerms(ensemblIDs, ensemblDataset = 'mmusculus_gene_ensembl', ensemblVersion = 'current') {
     // Await running operation pulling data from the server
-    console.log(this.promiseGet());
-    await Promise.all(this.promiseGet())
+    await Promise.all(this.promiseGet());
     // Initialize dictionary pointing GO-terms to the provided ensembl-IDs
     let goTerms = {};
     // Iterate over all ensembl ids

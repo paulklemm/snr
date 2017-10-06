@@ -137,7 +137,7 @@ class App extends React.Component {
    * @param {String} icon name, get icon from DatasetIcons
    */
   setDatasetIcon(datasetName, icon) {
-    this.datasetHub.setDatasetIcon(datasetName, icon);  
+    this.datasetHub.setDatasetIcon(datasetName, icon);
     console.log(this.datasetHub);
     this.forceUpdate();
   }
@@ -147,7 +147,6 @@ class App extends React.Component {
    * is triggered when a new filter was broadcasted to the datasets
    */
   filterBroadcasted() {
-    console.log(`App.js: Filter Broadcasted. Apply GO-Term analysis`);
     this.applyGoTerms();
   }
 
@@ -159,9 +158,9 @@ class App extends React.Component {
     if (isUndefined(this.state.primaryDataset.data)) { return; }
     // Get the (filtered) primary dataset
     const primaryDatasetData = this.state.primaryDataset.getData();
-    console.log(`Filtered dataset size: ${primaryDatasetData.length}`);
-    console.log('Dataset Object:');
-    console.log(this.state.primaryDataset);
+    // console.log(`Filtered dataset size: ${primaryDatasetData.length}`);
+    // console.log('Dataset Object:');
+    // console.log(this.state.primaryDataset);
     // Get ensembl-ID array
     const ensemblIds = objectValueToArray(primaryDatasetData, 'EnsemblID');
     // Only proceed if the selection of ensembl IDs is not 0
@@ -509,6 +508,7 @@ class App extends React.Component {
                 <GoPlotHub
                   goTerms={this.state.goTerms}
                   dataset={this.state.primaryDataset}
+                  datasetHub={this.datasetHub}
                   highlight={this.state.highlight}
                   forceUpdateApp={this.forceUpdateApp}
                   goTermHub={this.goTermHub}

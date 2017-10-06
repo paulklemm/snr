@@ -18,6 +18,7 @@ const styleSheet = {
 class IconSelect extends Component {
   constructor(props) {
     super(props);
+    this.handleButtonClick = this.handleButtonClick.bind(this);
     // Convert DatasetIcons Object to array
     this.iconsArray = Object.values(DatasetIcons);
     // Contains the index of the icon names
@@ -29,8 +30,13 @@ class IconSelect extends Component {
       this.arrayIndexToIconName.push(Object.keys(DatasetIcons)[i]);
     }
     // Get the icon associated with the data set. If there is none set, get the default one
-    const iconName = props.getDatasetIcon(props.datasetName);
-    const iconID = (iconName === '') ? props.defaultIconID : this.iconNameToArrayIndex[iconName];
+    let iconName = this.props.getDatasetIcon(props.datasetName);
+    // If there is no icon set for the current dataset, add one
+    if (iconName === '') {
+      this.props.setDatasetIcon(this.props.datasetName, this.arrayIndexToIconName[this.props.defaultIconID]);
+      iconName = this.props.getDatasetIcon(props.datasetName);
+    }
+    const iconID = this.iconNameToArrayIndex[iconName];
     this.state = {
       anchorEl: undefined,
       open: false,
