@@ -31,8 +31,15 @@ class GoPlot extends React.Component {
   render() {
     return (
       <div>
-        <span className='gotermlabel'>
-          {DatasetIcons[this.props.icon]}
+        <span 
+          className="gotermlabel" 
+          onClick={() => this.props.toggleGOTerm(this.props.goTerm.goId)}
+        >
+          <span style={{ 
+            marginRight: this.props.drawIcon ? '5' : '0'
+          }}>
+            {this.props.drawIcon ? DatasetIcons[this.props.icon] : undefined}
+          </span>
           {this.props.goTerm.goId}
         </span>
         <svg

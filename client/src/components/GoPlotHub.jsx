@@ -37,15 +37,17 @@ class GoPlotHub extends React.Component {
 
   constructor() {
     super();
+    this.toggleGOTerm = this.toggleGOTerm.bind(this);
     this.state = {
       debug: false,
       drawWholeGO: false,
-      numberGoPlots: 50,
+      numberGoPlots: 10,
       numberMinIdsInGo: 10,
       numberTransferMin: -2,
       numberTransferMax: 2,
-      dynamicTransDferFunction: false,
-      colorByDimension: 'fc'
+      dynamicTransferFunction: false,
+      colorByDimension: 'fc',
+      selectedGoTerms: {}
     };
   }
 
@@ -94,6 +96,21 @@ class GoPlotHub extends React.Component {
   }
 
   /**
+   * Toggle GO-Term used in OnClick function in GoPlots. If it is toggled, render it for all datasets
+   *
+   * @param {String} goTermName Name of GO term to toggle
+   */
+  toggleGOTerm(goTermName) {
+    const selectedGoTerms = this.state.selectedGoTerms;
+    if (selectedGoTerms[goTermName] === true) { 
+      delete selectedGoTerms[goTermName];
+    } else {
+      selectedGoTerms[goTermName] = true;
+    }
+    this.setState({ selectedGoTerms });
+  }
+
+  /**
    * Retrieve array of GoPlots based on input GO terms
    * @return {Array} Array of GoPlot elements
    */
@@ -102,8 +119,11 @@ class GoPlotHub extends React.Component {
       return [];
     }
 
-    const filteredGoTerms = this.filter(this.props.goTerms, this.state.numberMinIdsInGo, this.state.numberGoPlots);
-    
+    const filteredGoTerms = this.filter(
+      this.props.goTerms,
+      this.state.numberMinIdsInGo,
+      this.state.numberGoPlots
+    );
     let maxGoTermSize;
     // Get the maximum GO size in the filtered GO terms
     if (this.state.drawWholeGO) {
@@ -119,33 +139,53 @@ class GoPlotHub extends React.Component {
     }
     if (this.state.debug) console.log(`maxGoTermSize: ${maxGoTermSize}`);
     // Iterate over goTerm elements
-    // Restrict to 10 plots
     const goPlots = [];
     filteredGoTerms.forEach((goTerm) => {
+      // Check if the goTerm is selected, if so render it for all datasets
+      if (this.state.selectedGoTerms[goTerm.goId] === true) {
       // Iterate over all datasets
-      // this.props.datasetHub.datasets.forEach((dataset) => {
+      Object.values(this.props.datasetHub.datasets).forEach((dataset) => {
+        if (dataset.loaded) { goPlots.push(this.getGoPlot(dataset, goTerm, maxGoTermSize, true)); }
+      });
+      // If not, add the standard dataset
+      } else {
+        goPlots.push(this.getGoPlot(this.props.dataset, goTerm, maxGoTermSize));
+      }
+    });
+    return goPlots;
+  }
 
-      // });
-      const newGoPlot =
-        (<GoPlot
-          height={8}
-          dataset={this.props.dataset}
-          goTerm={goTerm}
-          goTermSummary={
-            this.props.goTermHub.summary[this.props.dataset.ensemblDataset][this.props.dataset.ensemblVersion][goTerm['goId']]
-          }
-          dimension={this.state.colorByDimension}
-          icon={this.props.datasetHub.getDatasetIcon(this.props.dataset.name)}
-          dimensionMin={this.state.numberTransferMin}
-          dimensionMax={this.state.numberTransferMax}
-          dimensionBoundariesDynamic={this.state.dynamicTransferFunction}
-          drawWholeGO={this.state.drawWholeGO}
-          highlight={this.props.highlight}
-          forceUpdateApp={this.props.forceUpdateApp}
-          maxGeneCount={maxGoTermSize}
-          maxWidth={this.props.width - 160}
-          key={`\
-            Dataset ${this.props.dataset.name},\
+  /**
+   * Represent GO-term instance using the GoPlot class
+   *
+   * @param {Dataset} dataset to render
+   * @param {Object} goTerm to render
+   * @param {integer} maxGoTermSize maximum width of the go term
+   * @param {boolean} drawIcon draw the icon of the data set or not
+   * @return {JSX.Element} GoPlot instance representing the GO-term
+   */
+  getGoPlot(dataset, goTerm, maxGoTermSize, drawIcon = false) {
+    return (<GoPlot
+      height={8}
+      dataset={dataset}
+      goTerm={goTerm}
+      goTermSummary={
+        this.props.goTermHub.summary[dataset.ensemblDataset][dataset.ensemblVersion][goTerm['goId']]
+      }
+      dimension={this.state.colorByDimension}
+      icon={this.props.datasetHub.getDatasetIcon(dataset.name)}
+      drawIcon={drawIcon}
+      dimensionMin={this.state.numberTransferMin}
+      dimensionMax={this.state.numberTransferMax}
+      dimensionBoundariesDynamic={this.state.dynamicTransferFunction}
+      drawWholeGO={this.state.drawWholeGO}
+      highlight={this.props.highlight}
+      forceUpdateApp={this.props.forceUpdateApp}
+      maxGeneCount={maxGoTermSize}
+      toggleGOTerm={this.toggleGOTerm}
+      maxWidth={this.props.width - 160}
+      key={`\
+            Dataset ${dataset.name},\
             GoID ${goTerm.goId},\
             wholeGo ${this.state.drawWholeGO},\
             MinInGo: ${this.state.numberMinIdsInGo},\
@@ -153,11 +193,7 @@ class GoPlotHub extends React.Component {
             Max: ${this.state.numberTransferMax},\
             dynamic: ${this.state.dynamicTransferFunction},\
             dimension: ${this.state.colorByDimension}`}
-        />);
-
-      goPlots.push(newGoPlot);
-    });
-    return goPlots;
+    />);
   }
 
   /**
