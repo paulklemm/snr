@@ -3,6 +3,8 @@ import React from 'react';
 import { scaleLinear } from 'd3-scale';
 import { max, min, mean } from 'd3-array';
 import { interpolateLab } from 'd3-interpolate';
+// Material-UI Imports
+import Tooltip from 'material-ui/Tooltip';
 // Own components
 import { objectValueToArray, isUndefined } from './Helper.js';
 import DatasetIcons from './DatasetIcons';
@@ -31,17 +33,19 @@ class GoPlot extends React.Component {
   render() {
     return (
       <div>
-        <span 
-          className="gotermlabel" 
-          onClick={() => this.props.toggleGOTerm(this.props.goTerm.goId)}
-        >
-          <span style={{ 
-            marginRight: this.props.drawIcon ? '5' : '0'
-          }}>
-            {this.props.drawIcon ? DatasetIcons[this.props.icon] : undefined}
+        <Tooltip id="tooltip-icon" title={this.props.goTermSummary.go_term_name} placement="bottom">
+          <span
+            className="gotermlabel" 
+            onClick={() => this.props.toggleGOTerm(this.props.goTerm.goId)}
+          >
+            <span style={{ 
+              marginRight: this.props.drawIcon ? '5' : '0'
+            }}>
+              {this.props.drawIcon ? DatasetIcons[this.props.icon] : undefined}
+            </span>
+            {this.props.goTerm.goId}
           </span>
-          {this.props.goTerm.goId}
-        </span>
+        </Tooltip>
         <svg
           width={this.props.maxWidth}
           height={this.props.height}
