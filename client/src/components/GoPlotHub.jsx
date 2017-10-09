@@ -13,23 +13,28 @@ import GoPlot from './GoPlot';
 import { isUndefined } from './Helper';
 
 const styleSheet = {
-  'goOptionLabel': {
+  goOptionLabel: {
     marginTop: '16px'
   },
-  'paperGo': {
+  paperGo: {
     padding: '10px'
   },
-  'formControl': { 
+  formControl: {
     margin: '10px'
   },
-  'formNumPlots': {
+  formNumPlots: {
     width: '45px'
   },
-  'formTransfer': {
+  formTransfer: {
     width: '50px'
   },
-  'colorBy': {
+  colorBy: {
     minWidth: '100px'
+  },
+  goPlotSummaryPaper: {
+    padding: '10',
+    marginTop: '2',
+    marginBottom: '2'
   }
 };
 
@@ -146,51 +151,65 @@ class GoPlotHub extends React.Component {
         // Attach GO-Term information
         const currentSummary = this.props.goTermHub.summary[this.props.dataset.ensemblDataset][this.props.dataset.ensemblVersion][goTerm['goId']];
         const url = `http://amigo.geneontology.org/amigo/term/${goTerm.goId}`;
+        const summaryTable =
+          (<table className="gosummarytable">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Details</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Definition</td>
+                <td>{currentSummary.go_term_definition}</td>
+              </tr>
+              <tr>
+                <td>Name</td>
+                <td>{currentSummary.go_term_name}</td>
+              </tr>
+              <tr>
+                <td>Domain</td>
+                <td>{currentSummary.go_domain}</td>
+              </tr>
+              <tr>
+                <td>Filtered Gene Count</td>
+                <td>{`${goTerm.ids.length}/${currentSummary.count_genes}(${Math.round(parseFloat(goTerm.percentage) * 100)}%)`}</td>
+              </tr>
+              <tr>
+                <td>Transcript Count</td>
+                <td>{currentSummary.count_transcripts}</td>
+              </tr>
+              <tr>
+                <td>Link</td>
+                <td>
+                  <a target="_blank" href={url}>{url}</a>
+                </td>
+              </tr>
+            </tbody>
+          </table>);
+        // Iterate over all datasets
+        const goPlotsPerDataset = [];
+        Object.values(this.props.datasetHub.datasets).forEach((dataset) => {
+          if (dataset.loaded) {
+            goPlotsPerDataset.push(this.getGoPlot(dataset, goTerm, maxGoTermSize, true));
+          }
+        });
+        // Push the table and GoPlots to a paper element
         goPlots.push(
-          <Paper style={{padding: '10'}}>
-            <Typography type="subheading" gutterBottom>{goTerm.goId}</Typography>
-            <table className='gosummarytable'>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Details</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Definition</td>
-                  <td>{currentSummary.go_term_definition}</td>
-                </tr>
-                <tr>
-                  <td>Name</td>
-                  <td>{currentSummary.go_term_name}</td>
-                </tr>
-                <tr>
-                  <td>Domain</td>
-                  <td>{currentSummary.go_domain}</td>
-                </tr>
-                <tr>
-                  <td>Gene Count</td>
-                  <td>{currentSummary.count_genes}</td>
-                </tr>
-                <tr>
-                  <td>Transcript Count</td>
-                  <td>{currentSummary.count_transcripts}</td>
-                </tr>
-                <tr>
-                  <td>Link</td>
-                  <td>
-                    <a target="_blank" href={url}>{url}</a>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+          <Paper style={styleSheet.goPlotSummaryPaper}>
+            <Typography
+              type="subheading"
+              style={{ cursor: 'pointer' }}
+              gutterBottom
+              onClick={() => this.toggleGOTerm(goTerm.goId)}
+            >
+              {goTerm.goId}
+            </Typography>
+            {summaryTable}
+            {goPlotsPerDataset}
           </Paper>
         );
-        // Iterate over all datasets
-        Object.values(this.props.datasetHub.datasets).forEach((dataset) => {
-          if (dataset.loaded) { goPlots.push(this.getGoPlot(dataset, goTerm, maxGoTermSize, true)); }
-        });
       // If not, add the standard dataset
       } else {
         goPlots.push(this.getGoPlot(this.props.dataset, goTerm, maxGoTermSize));
