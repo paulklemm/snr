@@ -8,6 +8,15 @@ tr:hover {
 
 body {
 	background-color: #fcfcfc;
+	/* Set default font family */
+}
+
+.gosummarytable {
+	font-size: 11px;
+	font-family: "Roboto",
+	"Helvetica",
+	"Arial",
+	sans-serif
 }
 
 .gotermlabel {

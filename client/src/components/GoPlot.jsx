@@ -33,7 +33,7 @@ class GoPlot extends React.Component {
   render() {
     return (
       <div>
-        <Tooltip id="tooltip-icon" title={this.props.goTermSummary.go_term_name} placement="bottom">
+        <Tooltip id="tooltip-icon" title={this.props.goTermSummary.go_term_name} placement="top">
           <span
             className="gotermlabel" 
             onClick={() => this.props.toggleGOTerm(this.props.goTerm.goId)}

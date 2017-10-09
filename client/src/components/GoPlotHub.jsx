@@ -145,16 +145,47 @@ class GoPlotHub extends React.Component {
       if (this.state.selectedGoTerms[goTerm.goId] === true) {
         // Attach GO-Term information
         const currentSummary = this.props.goTermHub.summary[this.props.dataset.ensemblDataset][this.props.dataset.ensemblVersion][goTerm['goId']];
+        const url = `http://amigo.geneontology.org/amigo/term/${goTerm.goId}`;
         goPlots.push(
-          <div style={{ fontSize: '10' }}>
-            <ul>
-              <li>Definition: {currentSummary.go_term_definition}</li>
-              <li>Name: {currentSummary.go_term_name}</li>
-              <li>Domain: {currentSummary.go_domain}</li>
-              <li>Gene Count: {currentSummary.count_genes}</li>
-              <li>Transcript Count: {currentSummary.count_transcripts}</li>
-            </ul>
-          </div>
+          <Paper style={{padding: '10'}}>
+            <Typography type="subheading" gutterBottom>{goTerm.goId}</Typography>
+            <table className='gosummarytable'>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Details</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Definition</td>
+                  <td>{currentSummary.go_term_definition}</td>
+                </tr>
+                <tr>
+                  <td>Name</td>
+                  <td>{currentSummary.go_term_name}</td>
+                </tr>
+                <tr>
+                  <td>Domain</td>
+                  <td>{currentSummary.go_domain}</td>
+                </tr>
+                <tr>
+                  <td>Gene Count</td>
+                  <td>{currentSummary.count_genes}</td>
+                </tr>
+                <tr>
+                  <td>Transcript Count</td>
+                  <td>{currentSummary.count_transcripts}</td>
+                </tr>
+                <tr>
+                  <td>Link</td>
+                  <td>
+                    <a target="_blank" href={url}>{url}</a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </Paper>
         );
         // Iterate over all datasets
         Object.values(this.props.datasetHub.datasets).forEach((dataset) => {
