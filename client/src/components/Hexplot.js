@@ -7,6 +7,11 @@ import {hexbin as D3Hexbin} from 'd3-hexbin';
 import {interpolateLab} from 'd3-interpolate';
 import {scaleLinear} from 'd3-scale';
 import { FormControlLabel } from 'material-ui/Form';
+import Popover from 'material-ui/Popover';
+import { findDOMNode } from 'react-dom';
+import { Icon } from 'react-fa';
+import IconButton from 'material-ui/IconButton';
+import Paper from 'material-ui/Paper';
 import Switch from 'material-ui/Switch';
 import Measure from 'react-measure';
 
@@ -21,7 +26,8 @@ class Hexplot extends Scatterplot {
     super();
     this.state = {
       renderDots: false,
-      selectionRectangle: new SelectionRectangle()
+      selectionRectangle: new SelectionRectangle(),
+      popoverOpen: false
     }
     this.onMeasure = this.onMeasure.bind(this);
   }
@@ -66,8 +72,9 @@ class Hexplot extends Scatterplot {
     let filter = this.props.rnaSeqData.filtered;
     // setScale requires an array of numeric values for each dimension
     // therefore we have to convert it
-    let xArray = objectValueToArray(data, this.props.xName)
-    let yArray = objectValueToArray(data, this.props.yName)
+    let xArray = objectValueToArray(data, this.props.xName);
+    let yArray = objectValueToArray(data, this.props.yName);
+    // yArray = yArray.map((elem) => elem < 0 ? Math.sqrt(elem * -1) * -1 : Math.sqrt(elem));
     this.setScale(xArray, yArray);
 
     // Set Selection rectangle according to the filters
@@ -86,13 +93,56 @@ class Hexplot extends Scatterplot {
 
     let hexagons = Hexplot.printHexagons(pointArray, this.props.hexSize, this.props.hexMax);
     // UI Element for enabling FormControlLabel
-    let renderGenesOption = <FormControlLabel
-      control={<Switch 
-        checked={this.state.renderDots}
-        onChange={(event, checked) => this.setState({ renderDots: checked })}
-      />}
-      label="Render Genes"
-      />;
+    const renderGenesOption =
+      (<div 
+        ref={(node) => {
+          this.optionIconRef = node;
+        }}
+      >
+        <IconButton 
+          aria-label="Options"
+          style={{ 
+            fontSize: 15,
+            position: 'absolute',
+            marginLeft: this.widthNoMargin
+          }}
+          onClick={() => {
+            this.setState({
+              popoverOpen: !this.state.popoverOpen,
+              anchorElPopoverY: findDOMNode(this.optionIconRef)
+            });
+          }}
+        >
+          <Icon
+            name="bars"
+          />
+        </IconButton>
+        <Popover
+          open={this.state.popoverOpen}
+          anchorEl={this.optionIconRef}
+          onRequestClose={() => { this.setState({ popoverOpen: false }); }}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right',
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'right',
+          }}
+        >
+          <Paper style={{ padding: '10px' }}
+          >
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={this.state.renderDots}
+                  onChange={(event, checked) => this.setState({ renderDots: checked })}
+                />}
+              label="Plot genes as dots 🐢"
+            />
+          </Paper>
+        </Popover>
+      </div>);
 
     // Get highlights if there are any
     const highlight = this.props.highlight.groups['selection'];

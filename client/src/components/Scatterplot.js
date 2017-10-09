@@ -1,5 +1,5 @@
 import React from 'react';
-import * as ReactFauxDOM from 'react-faux-dom'
+import * as ReactFauxDOM from 'react-faux-dom';
 import PropTypes from 'prop-types';
 import {scaleLinear} from 'd3-scale';
 import {axisBottom, axisLeft} from 'd3-axis';
@@ -61,7 +61,7 @@ class Scatterplot extends React.Component {
     this.xScale = scaleLinear()
       .range([0, this.widthNoMargin])
       .domain([min(x), max(x)]);
-    
+
     this.xScaleReverse = scaleLinear()
       .range([min(x), max(x)])
       .domain([0, this.widthNoMargin]);
@@ -69,7 +69,7 @@ class Scatterplot extends React.Component {
     this.yScale = scaleLinear()
       .range([this.heightNoMargin, 0])
       .domain([min(y), max(y)]);
-    
+
     this.yScaleReverse = scaleLinear()
       .range([min(y), max(y)])
       .domain([this.heightNoMargin, 0]);
@@ -224,10 +224,33 @@ class Scatterplot extends React.Component {
     return dots;
   }
 
-  renderAxisLabels(xLabel, yLabel){
+  renderAxisLabels(xLabel, yLabel) {
     let axisLabels = [];
-    axisLabels.push(<text className='label' transform="rotate(-90)" y={6} dy=".71em" style={{'textAnchor': 'end'}} key={`yaxis_${yLabel}`}>{yLabel}</text>);
-    axisLabels.push(<text className='label' x={this.widthNoMargin} y={this.heightNoMargin - 6} style={{ 'textAnchor': 'end' }} key={`xaxis_${xLabel}`}>{xLabel}</text>);
+    // x-axis
+    axisLabels.push(
+      <text
+        className="label"
+        transform="rotate(-90)"
+        y={6}
+        dy=".71em"
+        style={{ textAnchor: 'end' }}
+        key={`yaxis_${yLabel}`}
+      >
+        {yLabel}
+      </text>
+    );
+    // y-Axis
+    axisLabels.push(
+      <text
+        className="label"
+        x={this.widthNoMargin}
+        y={this.heightNoMargin - 6}
+        style={{ textAnchor: 'end' }}
+        key={`xaxis_${xLabel}`}
+      >
+        {xLabel}
+      </text>
+    );
     return axisLabels;
   }
 
