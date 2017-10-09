@@ -14,6 +14,13 @@ import IconButton from 'material-ui/IconButton';
 import Paper from 'material-ui/Paper';
 import Switch from 'material-ui/Switch';
 import Measure from 'react-measure';
+import List, {
+  ListItem,
+  ListItemIcon,
+  ListItemSecondaryAction,
+  ListItemText,
+  ListSubheader,
+} from 'material-ui/List';
 
 // Important Links
 // https://github.com/d3/d3-hexbin
@@ -130,17 +137,46 @@ class Hexplot extends Scatterplot {
             horizontal: 'right',
           }}
         >
-          <Paper style={{ padding: '10px' }}
-          >
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={this.state.renderDots}
-                  onChange={(event, checked) => this.setState({ renderDots: checked })}
-                />}
-              label="Plot genes as dots 🐢"
-            />
-          </Paper>
+          <div style={{ padding: '10px' }}>
+            <List subheader={<ListSubheader>Settings</ListSubheader>}>
+              <ListItem>
+                <ListItemIcon>
+                  <Icon name="bars" />
+                </ListItemIcon>
+                <ListItemText primary="Transformation X-Axis" />
+                <ListItemSecondaryAction>
+                  <Switch
+                    onClick={() => {}}
+                    checked={false}
+                  />
+                </ListItemSecondaryAction>
+              </ListItem>
+              <ListItem>
+                <ListItemIcon>
+                  <Icon name="bars" />
+                </ListItemIcon>
+                <ListItemText primary="Transformation Y-Axis" />
+                <ListItemSecondaryAction>
+                  <Switch
+                    onClick={() => {}}
+                    checked={false}
+                  />
+                </ListItemSecondaryAction>
+              </ListItem>
+              <ListItem>
+                <ListItemIcon>
+                  <Icon name="dot-circle-o" />
+                </ListItemIcon>
+                <ListItemText primary="Plot genes as dots (slow)" />
+                <ListItemSecondaryAction>
+                  <Switch
+                    checked={this.state.renderDots}
+                    onChange={(event, checked) => this.setState({ renderDots: checked })}
+                  />
+                </ListItemSecondaryAction>
+              </ListItem>
+            </List>
+          </div>
         </Popover>
       </div>);
 
