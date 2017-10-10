@@ -1,4 +1,5 @@
 import React from 'react';
+import { applyTransformation } from './TransformationHelper';
 
 // https://www.w3schools.com/graphics/svg_rect.asp
 const styleSheet = {
@@ -71,7 +72,7 @@ class SelectionRectangle {
    * @param {Function} yScale yScale function mapping Y dimension space to pixel space
    * @param {Filter} filter: Filter object
    */
-  setRectangleByFilter(dimensionX, dimensionY, xScale, yScale, filter) {
+  setRectangleByFilter(dimensionX, dimensionY, xScale, yScale, filter, xTransformation, yTransformation) {
     if (!this.isDrawing) {
       // Reset the current drawing
       this.reset();
@@ -83,23 +84,26 @@ class SelectionRectangle {
       if (filterX.length > 0) {
         // Iterate over filter
         for (let i in filterX) {
+          const value = applyTransformation(filterX[i].value, xTransformation);
           if (filterX[i].operator === '<')
-            maxX = xScale(filterX[i].value)
+            maxX = xScale(value);
           else if (filterX[i].operator === '>') {
-            minX = xScale(filterX[i].value)
+            minX = xScale(value);
           }
         }
       }
       if (filterY.length > 0) {
         // Iterate over filter
         for (let i in filterY) {
+          const value = applyTransformation(filterY[i].value, yTransformation);
           if (filterY[i].operator === '<')
-            minY = yScale(filterY[i].value)
+            minY = yScale(value);
           else if (filterY[i].operator === '>') {
-            maxY = yScale(filterY[i].value)
+            maxY = yScale(value);
           }
         }
       }
+
       // If all values do not correspond to the default values, draw the rectangle
       if (minX !== minDefault || maxX !== maxXDefault || minY !== minDefault || maxY !== maxYDefault) {
         this.setStart(minX, minY);

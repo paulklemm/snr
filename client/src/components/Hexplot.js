@@ -17,7 +17,7 @@ import Measure from 'react-measure';
 import Select from 'material-ui/Select';
 import { MenuItem } from 'material-ui/Menu';
 import Input, { InputLabel } from 'material-ui/Input';
-import Dataset from './Dataset';
+import { applyTransformationArray } from './TransformationHelper';
 import List, {
   ListItem,
   ListItemIcon,
@@ -78,21 +78,22 @@ class Hexplot extends Scatterplot {
     // reset margin and scale in case they changed
     this.setMargin();
     // Get the whole data set even if it was filtered
-    let data = this.props.rnaSeqData.getData(true);
+    // const data = this.props.rnaSeqData.getData(!this.props.zoom);
+    const data = this.props.rnaSeqData.getData(true);
     // Get the filter for the data set, which is a boolean array
-    let filter = this.props.rnaSeqData.filtered;
+    const filter = this.props.rnaSeqData.filtered;
     // setScale requires an array of numeric values for each dimension
     // therefore we have to convert it
     let xArray = objectValueToArray(data, this.props.xName);
     let yArray = objectValueToArray(data, this.props.yName);
     // Apply transformations
-    xArray = Dataset.applyTransformation(xArray, this.props.xTransformation);
-    yArray = Dataset.applyTransformation(yArray, this.props.yTransformation);
+    xArray = applyTransformationArray(xArray, this.props.xTransformation);
+    yArray = applyTransformationArray(yArray, this.props.yTransformation);
     // yArray = yArray.map((elem) => elem < 0 ? Math.sqrt(elem * -1) * -1 : Math.sqrt(elem));
     this.setScale(xArray, yArray);
 
     // Set Selection rectangle according to the filters
-    this.state.selectionRectangle.setRectangleByFilter(this.props.xName, this.props.yName, this.xScale, this.yScale, this.props.filter);
+    this.state.selectionRectangle.setRectangleByFilter(this.props.xName, this.props.yName, this.xScale, this.yScale, this.props.filter, this.props.xTransformation, this.props.yTransformation);
 
     let axes = this.renderAxes();
     let dots = [];

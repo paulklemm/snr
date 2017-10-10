@@ -6,6 +6,7 @@ import {axisBottom, axisLeft} from 'd3-axis';
 import {max, min} from 'd3-array';
 import { createDummyDataScatterplot, createDummySettingsScatterplot, isUndefined } from './Helper';
 import SelectionRectangle from './SelectionRectangle';
+import { transformationNegates, inverseTransformation } from './TransformationHelper';
 // eslint-disable-next-line
 import {mouse, select} from 'd3-selection';
 // Measure DOM Element in React: https://stackoverflow.com/questions/25371926/how-can-i-respond-to-the-width-of-an-auto-sized-dom-element-in-react
@@ -302,11 +303,23 @@ class Scatterplot extends React.Component {
     });
     // Propagate the filter with the current bounds of the rectangle
     if (this.state.selectionRectangle.boundsSet) {
-      this.props.filter.setFilter(this.props.xName, this.xScaleReverse(this.state.selectionRectangle.bounds.minX), '>')
-      this.props.filter.setFilter(this.props.xName, this.xScaleReverse(this.state.selectionRectangle.bounds.maxX), '<')
+      let minX = this.xScaleReverse(this.state.selectionRectangle.bounds.minX);
+      let maxX = this.xScaleReverse(this.state.selectionRectangle.bounds.maxX);
       // Since the coordinates from the bounds are starting in the upper left corner on y, we have to invert bounds here
-      this.props.filter.setFilter(this.props.yName, this.yScaleReverse(this.state.selectionRectangle.bounds.maxY), '>')
-      this.props.filter.setFilter(this.props.yName, this.yScaleReverse(this.state.selectionRectangle.bounds.minY), '<')
+      let minY = this.yScaleReverse(this.state.selectionRectangle.bounds.maxY);
+      let maxY = this.yScaleReverse(this.state.selectionRectangle.bounds.minY);
+      minX = inverseTransformation(minX, this.props.xTransformation);
+      maxX = inverseTransformation(maxX, this.props.xTransformation);
+      minY = inverseTransformation(minY, this.props.yTransformation);
+      maxY = inverseTransformation(maxY, this.props.yTransformation);
+      if (transformationNegates(this.props.xTransformation)) { [minX, maxX] = [maxX, minX]; }
+      if (transformationNegates(this.props.yTransformation)) { [minY, maxY] = [maxY, minY]; }
+      console.log(`X: > ${minX} | < ${maxX}; Y: > ${minY} | < ${maxY}`);
+      this.props.filter.setFilter(this.props.xName, minX, '>')
+      this.props.filter.setFilter(this.props.xName, maxX, '<')
+      // Since the coordinates from the bounds are starting in the upper left corner on y, we have to invert bounds here
+      this.props.filter.setFilter(this.props.yName, minY, '>')
+      this.props.filter.setFilter(this.props.yName, maxY, '<')
       this.props.forceUpdateApp();
     } else {
       // If no bounds are set, we have a click without mouse movement, which will remove all the filters
