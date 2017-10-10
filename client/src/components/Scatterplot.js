@@ -11,6 +11,7 @@ import { transformationNegates, inverseTransformation } from './TransformationHe
 import {mouse, select} from 'd3-selection';
 // Measure DOM Element in React: https://stackoverflow.com/questions/25371926/how-can-i-respond-to-the-width-of-an-auto-sized-dom-element-in-react
 import Measure from 'react-measure';
+import { applyTransformation } from './TransformationHelper';
 
 const margin = {top: 10, right: 15, bottom: 20, left: 30};
 // const margin = {top: 0, right: 0, bottom: 0, left: 0};
@@ -152,8 +153,11 @@ class Scatterplot extends React.Component {
   renderDot(datapoint, idName, radius = 5) {
     for (let i in this.props.rnaSeqData.data)
       if (this.props.rnaSeqData.data[i][idName] === datapoint) {
-        const x = this.props.rnaSeqData.data[i][this.props.xName];
-        const y = this.props.rnaSeqData.data[i][this.props.yName];
+        let x = this.props.rnaSeqData.data[i][this.props.xName];
+        let y = this.props.rnaSeqData.data[i][this.props.yName];
+        // If we have a transformation set, apply it
+        x = !isUndefined(this.props.xTransformation) ? applyTransformation(x, this.props.xTransformation) : x;
+        y = !isUndefined(this.props.yTransformation) ? applyTransformation(y, this.props.yTransformation) : y;
         if (!isUndefined(x) && !isUndefined(y)) {
           const cx = this.xScale(x);
           const cy = this.yScale(y);
