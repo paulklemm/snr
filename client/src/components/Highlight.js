@@ -1,3 +1,5 @@
+import { isUndefined } from './Helper';
+
 class Highlight {
   /**
    * Handle groups of data entries that need to be highlighted separately
@@ -17,8 +19,12 @@ class Highlight {
   push(name, datapoints) {
     this.groups[name] = [];
     // Iterate over all data points and add only the Id
-    for (let point in datapoints)
-      this.groups[name].push(datapoints[point][this.idName]);
+    datapoints.forEach((point) => {
+      // Make sure point is not undefined and push it to the list
+      if (!isUndefined(point)) {
+        this.groups[name].push(point[this.idName]);
+      }
+    });
   }
 
   /**
