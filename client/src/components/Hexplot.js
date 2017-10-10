@@ -102,8 +102,16 @@ class Hexplot extends Scatterplot {
       else
         dots = this.renderDots(1, xArray, yArray, filter);
     }
-    let axisLabels = this.renderAxisLabels(this.props.xName, this.props.yName);
-    let pointArray = this.createPointArray(xArray, yArray);
+    // Rename the labels based on the transformation
+    const axisLabelPattern = (transformation, name) => {
+      // If linear, use name, else use transformation(name)
+      return transformation !== 'linear' ? `${transformation}(${name})` : name;
+    };
+    const axisLabels = this.renderAxisLabels(
+      axisLabelPattern(this.props.xTransformation, this.props.xName),
+      axisLabelPattern(this.props.yTransformation, this.props.yName)
+    );
+    const pointArray = this.createPointArray(xArray, yArray);
 
     let hexagons = Hexplot.printHexagons(pointArray, this.props.hexSize, this.props.hexMax);
     // UI Element for enabling FormControlLabel
