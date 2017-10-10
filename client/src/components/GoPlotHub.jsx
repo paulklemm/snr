@@ -32,9 +32,9 @@ const styleSheet = {
     minWidth: '100px'
   },
   goPlotSummaryPaper: {
-    padding: '10',
-    marginTop: '2',
-    marginBottom: '2'
+    padding: '10px',
+    marginTop: '2px',
+    marginBottom: '2px'
   }
 };
 
@@ -197,7 +197,10 @@ class GoPlotHub extends React.Component {
         });
         // Push the table and GoPlots to a paper element
         goPlots.push(
-          <Paper style={styleSheet.goPlotSummaryPaper}>
+          <Paper 
+            style={styleSheet.goPlotSummaryPaper}
+            key={`${goTerm.goId} Summary Paper`}
+          >
             <Typography
               type="subheading"
               style={{ cursor: 'pointer' }}

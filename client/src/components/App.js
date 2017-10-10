@@ -86,7 +86,7 @@ class App extends React.Component {
       },
       xDimension: '',
       yDimension: '',
-      xTransformation: 'linear',
+      xTransformation: '-log10',
       yTransformation: 'linear',
       highlight: new Highlight('EnsemblID'),
     };
@@ -230,7 +230,7 @@ class App extends React.Component {
     // this.setEnableDataset('Dataset_1.csv', true);
     // this.datasetHub.datasets['Dataset_1.csv'].loaded = true;
     // Set default plotting dimensions
-    this.setPlotDimensions('pValueNegLog10', 'fc');
+    this.setPlotDimensions('pValue', 'fc');
 
     // Add busy state for loading data
     // Load Data from userFolder and get Session ID for the associated object
@@ -527,7 +527,7 @@ class App extends React.Component {
             style={{
               maxWidth: `${leftDrawerWidth}px`,
               minWidth: `${leftDrawerWidth}px`,
-              padding: '10'
+              padding: '10px'
             }}
           >
               <IconButton style={{ float: 'right' }} onClick={this.toggleLeftDrawer}><Icon name="times" /></IconButton>
