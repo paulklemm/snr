@@ -60,6 +60,7 @@ class App extends React.Component {
     this.filterBroadcasted = this.filterBroadcasted.bind(this);
     this.toggleLeftDrawer = this.toggleLeftDrawer.bind(this);
     this.toggleRightDrawer = this.toggleRightDrawer.bind(this);
+    this.setTransformation = this.setTransformation.bind(this);
     this.login = this.login.bind(this);
     // Init datasethub and inject filterTriggered function
     this.datasetHub = new DatasetHub(this.filterBroadcasted);
@@ -85,8 +86,24 @@ class App extends React.Component {
       },
       xDimension: '',
       yDimension: '',
+      xTransformation: 'linear',
+      yTransformation: 'linear',
       highlight: new Highlight('EnsemblID'),
     };
+  }
+
+  /**
+   * Set default transformation for x and y dimension
+   *
+   * @param {string} dimension Set transformation for 'x' or 'y'
+   * @param {*} transformation Transformation type to set
+   */
+  setTransformation(dimension, transformation) {
+    if (dimension === 'x') {
+      this.setState({ xTransformation: transformation });
+    } else {
+      this.setState({ yTransformation: transformation });
+    }
   }
 
   /**
@@ -209,9 +226,9 @@ class App extends React.Component {
     this.goTermHub.addGeneToGo('mmusculus_gene_ensembl', 'current');
     this.goTermHub.addSummary('mmusculus_gene_ensembl', 'current');
     // DEBUG
-    this.datasetHub.push(new Dataset('Dataset_1.csv'));
-    this.setEnableDataset('Dataset_1.csv', true);
-    this.datasetHub.datasets['Dataset_1.csv'].loaded = true;
+    // this.datasetHub.push(new Dataset('Dataset_1.csv'));
+    // this.setEnableDataset('Dataset_1.csv', true);
+    // this.datasetHub.datasets['Dataset_1.csv'].loaded = true;
     // Set default plotting dimensions
     this.setPlotDimensions('pValueNegLog10', 'fc');
 
@@ -480,6 +497,9 @@ class App extends React.Component {
               hexSize={2}
               hexMax={10}
               showRenderGenesOption={false}
+              setTransformation={this.setTransformation}
+              xTransformation={this.state.xTransformation}
+              yTransformation={this.state.yTransformation}
             />
           </Grid>
         );
@@ -569,6 +589,9 @@ class App extends React.Component {
                 hexSize={4}
                 hexMax={20}
                 showRenderGenesOption={true}
+                setTransformation={this.setTransformation}
+                xTransformation={this.state.xTransformation}
+                yTransformation={this.state.yTransformation}
               />
             </Grid>
             <Grid item xs={4}>

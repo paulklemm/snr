@@ -38,10 +38,8 @@ class Hexplot extends Scatterplot {
     this.state = {
       renderDots: false,
       selectionRectangle: new SelectionRectangle(),
-      popoverOpen: false,
-      transformationX: 'linear',
-      transformationY: 'linear'
-    }
+      popoverOpen: false
+    };
     this.onMeasure = this.onMeasure.bind(this);
   }
 
@@ -88,8 +86,8 @@ class Hexplot extends Scatterplot {
     let xArray = objectValueToArray(data, this.props.xName);
     let yArray = objectValueToArray(data, this.props.yName);
     // Apply transformations
-    xArray = Dataset.applyTransformation(xArray, this.state.transformationX);
-    yArray = Dataset.applyTransformation(yArray, this.state.transformationY);
+    xArray = Dataset.applyTransformation(xArray, this.props.xTransformation);
+    yArray = Dataset.applyTransformation(yArray, this.props.yTransformation);
     // yArray = yArray.map((elem) => elem < 0 ? Math.sqrt(elem * -1) * -1 : Math.sqrt(elem));
     this.setScale(xArray, yArray);
 
@@ -159,8 +157,8 @@ class Hexplot extends Scatterplot {
                 <ListItemText primary="Transformation X-Axis" />
                 <ListItemSecondaryAction>
                   <Select
-                    value={this.state.transformationX}
-                    onChange={(event) => this.setState({ transformationX: event.target.value })}
+                    value={this.props.xTransformation}
+                    onChange={(event) => this.props.setTransformation('x', event.target.value)}
                     input={<Input />}
                   >
                     <MenuItem value="linear">linear</MenuItem>
@@ -181,8 +179,8 @@ class Hexplot extends Scatterplot {
                 <ListItemText primary="Transformation Y-Axis" />
                 <ListItemSecondaryAction>
                   <Select
-                    value={this.state.transformationY}
-                    onChange={(event) => this.setState({ transformationY: event.target.value })}
+                    value={this.props.yTransformation}
+                    onChange={(event) => this.props.setTransformation('y', event.target.value)}
                     input={<Input />}
                   >
                     <MenuItem value="linear">linear</MenuItem>
