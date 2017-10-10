@@ -14,6 +14,10 @@ import IconButton from 'material-ui/IconButton';
 import Paper from 'material-ui/Paper';
 import Switch from 'material-ui/Switch';
 import Measure from 'react-measure';
+import Select from 'material-ui/Select';
+import { MenuItem } from 'material-ui/Menu';
+import Input, { InputLabel } from 'material-ui/Input';
+import Dataset from './Dataset';
 import List, {
   ListItem,
   ListItemIcon,
@@ -34,7 +38,9 @@ class Hexplot extends Scatterplot {
     this.state = {
       renderDots: false,
       selectionRectangle: new SelectionRectangle(),
-      popoverOpen: false
+      popoverOpen: false,
+      transformationX: 'linear',
+      transformationY: 'linear'
     }
     this.onMeasure = this.onMeasure.bind(this);
   }
@@ -81,6 +87,9 @@ class Hexplot extends Scatterplot {
     // therefore we have to convert it
     let xArray = objectValueToArray(data, this.props.xName);
     let yArray = objectValueToArray(data, this.props.yName);
+    // Apply transformations
+    xArray = Dataset.applyTransformation(xArray, this.state.transformationX);
+    yArray = Dataset.applyTransformation(yArray, this.state.transformationY);
     // yArray = yArray.map((elem) => elem < 0 ? Math.sqrt(elem * -1) * -1 : Math.sqrt(elem));
     this.setScale(xArray, yArray);
 
@@ -137,37 +146,61 @@ class Hexplot extends Scatterplot {
             horizontal: 'right',
           }}
         >
-          <div style={{ padding: '10px' }}>
+          <div style={{
+            padding: '10px',
+            width: '320px'
+          }}
+          >
             <List subheader={<ListSubheader>Settings</ListSubheader>}>
               <ListItem>
                 <ListItemIcon>
-                  <Icon name="bars" />
+                  <Icon name="bar-chart-o" />
                 </ListItemIcon>
                 <ListItemText primary="Transformation X-Axis" />
                 <ListItemSecondaryAction>
-                  <Switch
-                    onClick={() => {}}
-                    checked={false}
-                  />
+                  <Select
+                    value={this.state.transformationX}
+                    onChange={(event) => this.setState({ transformationX: event.target.value })}
+                    input={<Input />}
+                  >
+                    <MenuItem value="linear">linear</MenuItem>
+                    <MenuItem value="-linear">-linear</MenuItem>
+                    <MenuItem value="log2">log2</MenuItem>
+                    <MenuItem value="-log2">-log2</MenuItem>
+                    <MenuItem value="log10">log10</MenuItem>
+                    <MenuItem value="-log10">-log10</MenuItem>
+                    <MenuItem value="sqrt">sqrt</MenuItem>
+                    <MenuItem value="-sqrt">-sqrt</MenuItem>
+                  </Select>
                 </ListItemSecondaryAction>
               </ListItem>
               <ListItem>
                 <ListItemIcon>
-                  <Icon name="bars" />
+                  <Icon name="bar-chart-o" />
                 </ListItemIcon>
                 <ListItemText primary="Transformation Y-Axis" />
                 <ListItemSecondaryAction>
-                  <Switch
-                    onClick={() => {}}
-                    checked={false}
-                  />
+                  <Select
+                    value={this.state.transformationY}
+                    onChange={(event) => this.setState({ transformationY: event.target.value })}
+                    input={<Input />}
+                  >
+                    <MenuItem value="linear">linear</MenuItem>
+                    <MenuItem value="-linear">-linear</MenuItem>
+                    <MenuItem value="log2">log2</MenuItem>
+                    <MenuItem value="-log2">-log2</MenuItem>
+                    <MenuItem value="log10">log10</MenuItem>
+                    <MenuItem value="-log10">-log10</MenuItem>
+                    <MenuItem value="sqrt">sqrt</MenuItem>
+                    <MenuItem value="-sqrt">-sqrt</MenuItem>
+                  </Select>
                 </ListItemSecondaryAction>
               </ListItem>
               <ListItem>
                 <ListItemIcon>
                   <Icon name="dot-circle-o" />
                 </ListItemIcon>
-                <ListItemText primary="Plot genes as dots (slow)" />
+                <ListItemText primary="Plot genes as dots 🐢" />
                 <ListItemSecondaryAction>
                   <Switch
                     checked={this.state.renderDots}

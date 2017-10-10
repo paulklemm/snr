@@ -99,7 +99,7 @@ class Dataset {
    * @param {Boolean} wholeData: Defaults to false. If set to true, will return the whole data set even if it is filtered 
    * @return {Array} Data points as array
    */
-  getData(wholeData = false) {
+  getData(wholeData = false, transformation = 'linear') {
     // Apply filter to data if required
     if (!wholeData && this.filterDataRequired) {
       this._applyFilterToData();
@@ -109,6 +109,35 @@ class Dataset {
     // Since the dataFiltered is data when there is no filter applied, we can
     // return based on the wholeData variable
     return wholeData ? this.data : this.dataFiltered;
+  }
+
+  /**
+   * Apply transformation to a vector of values
+   *
+   * @param {array} data Dimension as vector of values
+   * @param {string} transformation Type of transformation. Defaults to linear
+   */
+  static applyTransformation(data, transformation = 'linear') {
+    switch (transformation) {
+      case 'linear':
+        return data;
+      case '-linear':
+        return data.map(elem => elem * -1);
+      case 'sqrt':
+        return data.map(elem => elem < 0 ? Math.sqrt(elem * -1) * -1 : Math.sqrt(elem));
+      case '-sqrt':
+        return data.map(elem => elem < 0 ? Math.sqrt(elem * -1) : Math.sqrt(elem) * -1);
+      case 'log10':
+        return data.map(elem => Math.log10(elem));
+      case '-log10':
+        return data.map(elem => Math.log10(elem) * -1);
+      case 'log2':
+        return data.map(elem => Math.log2(elem));
+      case '-log2':
+        return data.map(elem => Math.log2(elem) * -1);
+      default:
+        throw new Error(`Transformation ${transformation} not known`);
+    }
   }
 
   /**
