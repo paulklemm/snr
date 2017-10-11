@@ -80,6 +80,14 @@ class Filter {
   getFilter() {
     return this.filter;
   }
+
+  /**
+   * Filter does actually filter
+   * @return {boolean} Filter filters filtery filtering
+   */
+  doesFilter() {
+    return Object.keys(this.filter).length !== 0;
+  }
   
   /**
    * Filter function usable by elements that provide a filter for data. If `val` is not a valid input, e.g. it is empty, the filter will be reset.

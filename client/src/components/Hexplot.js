@@ -37,6 +37,7 @@ class Hexplot extends Scatterplot {
     super();
     this.state = {
       renderDots: false,
+      renderDotsOnZoom: true,
       selectionRectangle: new SelectionRectangle(),
       popoverOpen: false
     };
@@ -223,7 +224,10 @@ class Hexplot extends Scatterplot {
 
     let axes = this.renderAxes();
     let dots = [];
-    if (this.state.renderDots) {
+    if (
+      this.state.renderDots ||
+      (this.state.renderDotsOnZoom && this.props.filter.doesFilter())
+    ) {
       if (this.state.selectionRectangle.boundsSet) {
         dots = this.renderDots(1, xArray, yArray, filter, this.state.selectionRectangle.bounds);
       } else {
