@@ -61,6 +61,7 @@ class App extends React.Component {
     this.toggleLeftDrawer = this.toggleLeftDrawer.bind(this);
     this.toggleRightDrawer = this.toggleRightDrawer.bind(this);
     this.setTransformation = this.setTransformation.bind(this);
+    this.setZoom = this.setZoom.bind(this);
     this.login = this.login.bind(this);
     // Init datasethub and inject filterTriggered function
     this.datasetHub = new DatasetHub(this.filterBroadcasted);
@@ -88,7 +89,7 @@ class App extends React.Component {
       yDimension: '',
       xTransformation: '-log10',
       yTransformation: 'linear',
-      hexplotZoom: 'true',
+      zoom: 'true',
       highlight: new Highlight('EnsemblID'),
     };
   }
@@ -105,6 +106,14 @@ class App extends React.Component {
     } else {
       this.setState({ yTransformation: transformation });
     }
+  }
+
+  /**
+   * Should plots zoom into selection.
+   * @param {boolean} zoom Zoom status
+   */
+  setZoom(zoom) {
+    this.setState({ zoom });
   }
 
   /**
@@ -499,8 +508,10 @@ class App extends React.Component {
               hexMax={10}
               showRenderGenesOption={false}
               setTransformation={this.setTransformation}
+              setZoom={this.setZoom}
               xTransformation={this.state.xTransformation}
               yTransformation={this.state.yTransformation}
+              zoom={this.state.zoom}
             />
           </Grid>
         );
@@ -591,9 +602,10 @@ class App extends React.Component {
                 hexMax={20}
                 showRenderGenesOption={true}
                 setTransformation={this.setTransformation}
+                setZoom={this.setZoom}
                 xTransformation={this.state.xTransformation}
                 yTransformation={this.state.yTransformation}
-                zoom={this.state.hexplotZoom}
+                zoom={this.state.zoom}
               />
             </Grid>
             <Grid item xs={4}>
