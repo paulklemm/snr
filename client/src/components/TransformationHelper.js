@@ -1,7 +1,18 @@
+/**
+ * Checks if the transformation contains a `-`
+ * @param {string} transformation Transformation name
+ * @return {boolean} Transforation contains `-`
+ */
 function transformationNegates(transformation) {
   return transformation[0] === '-';
 }
 
+/**
+ * Applies inverse transformation of `transformation` to data
+ * @param {double} point Data to transform
+ * @param {string} transformation Transfromation name
+ * @return {double} Transformed data
+ */
 function inverseTransformation(point, transformation = 'linear') {
   switch (transformation) {
     case 'linear':
@@ -9,20 +20,18 @@ function inverseTransformation(point, transformation = 'linear') {
     case '-linear':
       return point * -1;
     case 'sqrt':
-      return;
-      // return point < 0 ? Math.sqrt(point * -1) * -1 : Math.sqrt(point);
+      return Math.pow(point, 2);
     case '-sqrt':
-      return;
-      // return point < 0 ? Math.sqrt(point * -1) : Math.sqrt(point) * -1;
+      return Math.pow(point * -1, 2);
     case 'log10':
       return Math.pow(10, point);
     case '-log10':
       return Math.pow(10, point * -1);
     case 'log2':
-      return;
+      return Math.pow(2, point);
       // return Math.log2(point);
     case '-log2':
-      return Math.log2(point * -1);
+      return Math.pow(2, point * -1);
     default:
       throw new Error(`Transformation ${transformation} not known`);
   }
@@ -30,9 +39,9 @@ function inverseTransformation(point, transformation = 'linear') {
 
 /**
   * Apply transformation to value
-  *
-  * @param {array} point Point to transform
+  * @param {double} point Point to transform
   * @param {string} transformation Type of transformation. Defaults to linear
+  * @return {double} Transformed point
   */
 function applyTransformation(point, transformation = 'linear') {
   switch (transformation) {
