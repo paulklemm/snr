@@ -88,6 +88,7 @@ class App extends React.Component {
       yDimension: '',
       xTransformation: '-log10',
       yTransformation: 'linear',
+      hexplotZoom: 'true',
       highlight: new Highlight('EnsemblID'),
     };
   }
@@ -226,9 +227,9 @@ class App extends React.Component {
     this.goTermHub.addGeneToGo('mmusculus_gene_ensembl', 'current');
     this.goTermHub.addSummary('mmusculus_gene_ensembl', 'current');
     // DEBUG
-    // this.datasetHub.push(new Dataset('Dataset_1.csv'));
-    // this.setEnableDataset('Dataset_1.csv', true);
-    // this.datasetHub.datasets['Dataset_1.csv'].loaded = true;
+    this.datasetHub.push(new Dataset('Dataset_1.csv'));
+    this.setEnableDataset('Dataset_1.csv', true);
+    this.datasetHub.datasets['Dataset_1.csv'].loaded = true;
     // Set default plotting dimensions
     this.setPlotDimensions('pValue', 'fc');
 
@@ -592,6 +593,7 @@ class App extends React.Component {
                 setTransformation={this.setTransformation}
                 xTransformation={this.state.xTransformation}
                 yTransformation={this.state.yTransformation}
+                zoom={this.state.hexplotZoom}
               />
             </Grid>
             <Grid item xs={4}>

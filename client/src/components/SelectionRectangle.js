@@ -29,7 +29,7 @@ class SelectionRectangle {
     this.canvasWidth = canvasWidth;
     this.canvasHeight = canvasHeight;
   }
-  
+
   /**
    * Set the start coordinates, usually on mouse-down
    * @param {Integer} startX: Start coordinate in x 

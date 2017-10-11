@@ -78,8 +78,8 @@ class Hexplot extends Scatterplot {
     // reset margin and scale in case they changed
     this.setMargin();
     // Get the whole data set even if it was filtered
-    // const data = this.props.rnaSeqData.getData(!this.props.zoom);
-    const data = this.props.rnaSeqData.getData(true);
+    const data = this.props.rnaSeqData.getData(!this.props.zoom);
+    // const data = this.props.rnaSeqData.getData(true);
     // Get the filter for the data set, which is a boolean array
     const filter = this.props.rnaSeqData.filtered;
     // setScale requires an array of numeric values for each dimension
@@ -93,7 +93,11 @@ class Hexplot extends Scatterplot {
     this.setScale(xArray, yArray);
 
     // Set Selection rectangle according to the filters
-    this.state.selectionRectangle.setRectangleByFilter(this.props.xName, this.props.yName, this.xScale, this.yScale, this.props.filter, this.props.xTransformation, this.props.yTransformation);
+    if (this.props.zoom && !this.state.selectionRectangle.isDrawing) {
+      this.state.selectionRectangle.reset();
+    } else {
+      this.state.selectionRectangle.setRectangleByFilter(this.props.xName, this.props.yName, this.xScale, this.yScale, this.props.filter, this.props.xTransformation, this.props.yTransformation);
+    }
 
     let axes = this.renderAxes();
     let dots = [];
