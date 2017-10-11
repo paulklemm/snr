@@ -169,11 +169,24 @@ class Hexplot extends Scatterplot {
                 <ListItemIcon>
                   <Icon name="dot-circle-o" />
                 </ListItemIcon>
-                <ListItemText primary="Plot genes as dots 🐢" />
+                <ListItemText primary="Genes as dots 🐢" />
                 <ListItemSecondaryAction>
                   <Switch
                     checked={this.state.renderDots}
                     onChange={(event, checked) => this.setState({ renderDots: checked })}
+                  />
+                </ListItemSecondaryAction>
+              </ListItem>
+              <ListItem>
+                <ListItemIcon>
+                  <Icon name="dot-circle-o" />
+                </ListItemIcon>
+                <ListItemText primary="Genes as dots on zoom" />
+                <ListItemSecondaryAction>
+                  <Switch
+                    disabled={this.state.renderDots}
+                    checked={this.state.renderDotsOnZoom}
+                    onChange={(event, checked) => this.setState({ renderDotsOnZoom: checked })}
                   />
                 </ListItemSecondaryAction>
               </ListItem>
