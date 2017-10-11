@@ -25,7 +25,7 @@ class Navbar extends React.Component {
     return(
       <div style={styleSheet.navbar}>
         <Grid container spacing={24}>
-          {<Grid item xs={1}></Grid>}
+          <Grid item xs={1}></Grid>
           <Grid item xs={2}>
             <Logo pulse={ this.props.busy }></Logo>
           </Grid>

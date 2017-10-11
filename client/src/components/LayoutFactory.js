@@ -38,8 +38,8 @@ class LayoutFactory {
   updateHeights(debug = false) {
     this.heights.mainView =         this.windowHeight - this.staticElementsHeights.header - this.staticElementsHeights.table - this.heigthPadding;
     const numTileRows = Math.ceil(this.smallMultiplesCount / 2);
-    // Added +9 to account for pixels added through the "Paper" component
-    this.heights.smallMultiples = (this.heights.mainView + 62 - (this.spacingSize * numTileRows)) / numTileRows;
+    // Weirdly enough the height must be adjusted by a constant factor
+    this.heights.smallMultiples = (this.heights.mainView + 10 - (this.spacingSize * numTileRows)) / numTileRows;
     if (debug) {
       console.log(`--------------------------------------`);
       console.log(`smallMultiplesCount: ${this.smallMultiplesCount}`);
