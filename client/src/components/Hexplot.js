@@ -72,63 +72,20 @@ class Hexplot extends Scatterplot {
     return hexagons;
   }
 
-  render() {
-    // Check if there is data available
-    if (this.props.rnaSeqData.data === undefined || isUndefined(this.props.filter)) return (<div>no data</div>);
-    // reset margin and scale in case they changed
-    this.setMargin();
-    // Get the whole data set even if it was filtered
-    const data = this.props.rnaSeqData.getData(!this.props.zoom);
-    // const data = this.props.rnaSeqData.getData(true);
-    // Get the filter for the data set, which is a boolean array
-    const filter = this.props.rnaSeqData.filtered;
-    // setScale requires an array of numeric values for each dimension
-    // therefore we have to convert it
-    let xArray = objectValueToArray(data, this.props.xName);
-    let yArray = objectValueToArray(data, this.props.yName);
-    // Apply transformations
-    xArray = applyTransformationArray(xArray, this.props.xTransformation);
-    yArray = applyTransformationArray(yArray, this.props.yTransformation);
-    // yArray = yArray.map((elem) => elem < 0 ? Math.sqrt(elem * -1) * -1 : Math.sqrt(elem));
-    this.setScale(xArray, yArray);
-
-    // Set Selection rectangle according to the filters
-    if (this.props.zoom && !this.state.selectionRectangle.isDrawing) {
-      this.state.selectionRectangle.reset();
-    } else {
-      this.state.selectionRectangle.setRectangleByFilter(this.props.xName, this.props.yName, this.xScale, this.yScale, this.props.filter, this.props.xTransformation, this.props.yTransformation);
-    }
-
-    let axes = this.renderAxes();
-    let dots = [];
-    if (this.state.renderDots) {
-      if (this.state.selectionRectangle.boundsSet)
-        dots = this.renderDots(1, xArray, yArray, filter, this.state.selectionRectangle.bounds);
-      else
-        dots = this.renderDots(1, xArray, yArray, filter);
-    }
-    // Rename the labels based on the transformation
-    const axisLabelPattern = (transformation, name) => {
-      // If linear, use name, else use transformation(name)
-      return transformation !== 'linear' ? `${transformation}(${name})` : name;
-    };
-    const axisLabels = this.renderAxisLabels(
-      axisLabelPattern(this.props.xTransformation, this.props.xName),
-      axisLabelPattern(this.props.yTransformation, this.props.yName)
-    );
-    const pointArray = this.createPointArray(xArray, yArray);
-
-    let hexagons = Hexplot.printHexagons(pointArray, this.props.hexSize, this.props.hexMax);
-    // UI Element for enabling FormControlLabel
-    const renderGenesOption =
-      (<div 
+  /**
+   * Get HTML options pane
+   * @return {html} options pane
+   */
+  getOptionsPane() {
+    return (
+      <div
         ref={(node) => {
           this.optionIconRef = node;
         }}
       >
-        <IconButton 
+        <IconButton
           aria-label="Options"
-          style={{ 
+          style={{
             fontSize: 15,
             position: 'absolute',
             marginLeft: this.widthNoMargin
@@ -235,6 +192,58 @@ class Hexplot extends Scatterplot {
           </div>
         </Popover>
       </div>);
+  }
+
+  render() {
+    // Check if there is data available
+    if (this.props.rnaSeqData.data === undefined || isUndefined(this.props.filter)) return (<div>no data</div>);
+    // reset margin and scale in case they changed
+    this.setMargin();
+    // Get the whole data set even if it was filtered
+    const data = this.props.rnaSeqData.getData(!this.props.zoom);
+    // const data = this.props.rnaSeqData.getData(true);
+    // Get the filter for the data set, which is a boolean array
+    const filter = this.props.rnaSeqData.filtered;
+    // setScale requires an array of numeric values for each dimension
+    // therefore we have to convert it
+    let xArray = objectValueToArray(data, this.props.xName);
+    let yArray = objectValueToArray(data, this.props.yName);
+    // Apply transformations
+    xArray = applyTransformationArray(xArray, this.props.xTransformation);
+    yArray = applyTransformationArray(yArray, this.props.yTransformation);
+    // yArray = yArray.map((elem) => elem < 0 ? Math.sqrt(elem * -1) * -1 : Math.sqrt(elem));
+    this.setScale(xArray, yArray);
+
+    // Set Selection rectangle according to the filters
+    if (this.props.zoom && !this.state.selectionRectangle.isDrawing) {
+      this.state.selectionRectangle.reset();
+    } else {
+      this.state.selectionRectangle.setRectangleByFilter(this.props.xName, this.props.yName, this.xScale, this.yScale, this.props.filter, this.props.xTransformation, this.props.yTransformation);
+    }
+
+    let axes = this.renderAxes();
+    let dots = [];
+    if (this.state.renderDots) {
+      if (this.state.selectionRectangle.boundsSet) {
+        dots = this.renderDots(1, xArray, yArray, filter, this.state.selectionRectangle.bounds);
+      } else {
+        dots = this.renderDots(1, xArray, yArray, filter);
+      }
+    }
+    // Rename the labels based on the transformation
+    const axisLabelPattern = (transformation, name) => {
+      // If linear, use name, else use transformation(name)
+      return transformation !== 'linear' ? `${transformation}(${name})` : name;
+    };
+    const axisLabels = this.renderAxisLabels(
+      axisLabelPattern(this.props.xTransformation, this.props.xName),
+      axisLabelPattern(this.props.yTransformation, this.props.yName)
+    );
+    const pointArray = this.createPointArray(xArray, yArray);
+
+    const hexagons = Hexplot.printHexagons(pointArray, this.props.hexSize, this.props.hexMax);
+    // UI Element for enabling FormControlLabel
+    const renderGenesOption = this.getOptionsPane();
 
     // Get highlights if there are any
     const highlight = this.props.highlight.groups['selection'];
