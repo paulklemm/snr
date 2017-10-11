@@ -246,8 +246,8 @@ class App extends React.Component {
     this.goTermHub.addGeneToGo('mmusculus_gene_ensembl', 'current');
     this.goTermHub.addSummary('mmusculus_gene_ensembl', 'current');
     // DEBUG
-    this.datasetHub.push(new Dataset('Dataset_2.csv'));
-    this.setEnableDataset('Dataset_2.csv', true);
+    // this.datasetHub.push(new Dataset('Dataset_2.csv'));
+    // this.setEnableDataset('Dataset_2.csv', true);
     // Set default plotting dimensions
     this.setPlotDimensions('pValue', 'fc');
 
@@ -488,11 +488,12 @@ class App extends React.Component {
   }
 
   render() {
+    const leftDrawerWidth = this.layoutFactory.windowWidth / 3;
     const styleSheet = {
       appBody: {
         marginRight: 100,
-        marginLeft: this.state.openDrawer.left ? 30 : 100,
-        paddingLeft: this.state.openDrawer.left ? this.layoutFactory.windowWidth / 2 : 0
+        marginLeft: 100,
+        paddingLeft: this.state.openDrawer.left ? leftDrawerWidth : 0
       },
     };
     // Create Hexplot dynamic from inbox data
@@ -534,7 +535,6 @@ class App extends React.Component {
     // Add PCA
     // TODO PCA Comment back in if doing the PCA
     // let pcaImage = (typeof this.state.pcaImage === "undefined") ? pcaImage = <Loading width={800} height={400} /> : <img src={`${this.state.pcaImage}?width=7&height=5`} width={800} height={400} alt="R test PCA" />;
-    const leftDrawerWidth = this.layoutFactory.windowWidth / 3;
     let app = '';
     if (this.state.loginRequired) {
       app = <div><LoginScreen login={ this.login } /></div>;
@@ -585,7 +585,7 @@ class App extends React.Component {
             </CardContent>
           </Card>
         </Drawer>
-        <div style={{ marginLeft: this.state.openDrawer.left ? this.layoutFactory.windowWidth / 2 : 0 }}>
+        <div style={{ marginLeft: this.state.openDrawer.left ? leftDrawerWidth : 0 }}>
           <Navbar
             busy={Object.keys(this.state.busy).length !== 0}
             toggleRightDrawer={this.toggleRightDrawer}
