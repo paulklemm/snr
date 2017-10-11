@@ -19,10 +19,14 @@ function inverseTransformation(point, transformation = 'linear') {
       return point;
     case '-linear':
       return point * -1;
-    case 'sqrt':
-      return Math.pow(point, 2);
-    case '-sqrt':
-      return Math.pow(point * -1, 2);
+    case 'sqrt': {
+      const inverse = Math.pow(point, 2);
+      return point < 0 ? inverse * -1 : inverse;
+    }
+    case '-sqrt': {
+      const inverse = Math.pow(point, 2);
+      return point < 0 ? inverse : inverse * -1;
+    }
     case 'log10':
       return Math.pow(10, point);
     case '-log10':

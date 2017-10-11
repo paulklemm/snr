@@ -87,9 +87,9 @@ class App extends React.Component {
       },
       xDimension: '',
       yDimension: '',
-      xTransformation: '-log10',
-      yTransformation: 'linear',
-      zoom: 'true',
+      xTransformation: 'linear',
+      yTransformation: '-linear',
+      zoom: false,
       highlight: new Highlight('EnsemblID'),
     };
   }
