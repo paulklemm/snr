@@ -149,7 +149,7 @@ class Hexplot extends Scatterplot {
                 <ListItemSecondaryAction>
                   <Select
                     value={this.props.yTransformation}
-                    onChange={(event) => this.props.setTransformation('y', event.target.value)}
+                    onChange={event => this.props.setTransformation('y', event.target.value)}
                     input={<Input />}
                   >
                     <MenuItem value="linear">linear</MenuItem>
@@ -160,6 +160,23 @@ class Hexplot extends Scatterplot {
                     <MenuItem value="-log10">-log10</MenuItem>
                     <MenuItem value="sqrt">sqrt</MenuItem>
                     <MenuItem value="-sqrt">-sqrt</MenuItem>
+                  </Select>
+                </ListItemSecondaryAction>
+              </ListItem>
+              <ListItem>
+                <ListItemIcon>
+                  <Icon name="tag" />
+                </ListItemIcon>
+                <ListItemText primary="Axis labels" />
+                <ListItemSecondaryAction>
+                  <Select
+                    value={this.props.axisValues}
+                    onChange={event => this.props.setAxisValues(event.target.value)}
+                    input={<Input />}
+                  >
+                    <MenuItem value="both">both</MenuItem>
+                    <MenuItem value="transformed">transformed</MenuItem>
+                    <MenuItem value="untransformed">not transformed</MenuItem>
                   </Select>
                 </ListItemSecondaryAction>
               </ListItem>
@@ -248,7 +265,10 @@ class Hexplot extends Scatterplot {
     // Rename the labels based on the transformation
     const axisLabelPattern = (transformation, name) => {
       // If linear, use name, else use transformation(name)
-      return transformation !== 'linear' ? `${transformation}(${name})` : name;
+      // If `this.props.axisValues` is set to untransformed, also use name
+      return transformation !== 'linear' && this.props.axisValues !== 'untransformed' ?
+        `${transformation}(${name})` :
+        name;
     };
     const axisLabels = this.renderAxisLabels(
       axisLabelPattern(this.props.xTransformation, this.props.xName),

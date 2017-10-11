@@ -6,12 +6,11 @@ import {axisBottom, axisLeft} from 'd3-axis';
 import {max, min} from 'd3-array';
 import { createDummyDataScatterplot, createDummySettingsScatterplot, isUndefined } from './Helper';
 import SelectionRectangle from './SelectionRectangle';
-import { transformationNegates, inverseTransformation } from './TransformationHelper';
+import { transformationNegates, inverseTransformation, applyTransformation } from './TransformationHelper';
 // eslint-disable-next-line
 import {mouse, select} from 'd3-selection';
 // Measure DOM Element in React: https://stackoverflow.com/questions/25371926/how-can-i-respond-to-the-width-of-an-auto-sized-dom-element-in-react
 import Measure from 'react-measure';
-import { applyTransformation } from './TransformationHelper';
 
 const margin = {top: 10, right: 15, bottom: 20, left: 30};
 // const margin = {top: 0, right: 0, bottom: 0, left: 0};
@@ -111,13 +110,46 @@ class Scatterplot extends React.Component {
 
 //// End Stresstest //////////////////
 
+  /**
+   * Return tick value based on `this.props.axisValues` settings
+   * @param {double} value Tick value
+   * @param {string} transformation transformation type
+   * @return Tick value transformed based on `this.props.axisValues`
+   */
+  renderAxisTickHelper(value, transformation) {
+    if (isUndefined(transformation)) {
+      return value;
+    }
+    switch (this.props.axisValues) {
+      case 'both': {
+        // Get the inverse value
+        const inverse = inverseTransformation(value, transformation);
+        return `${value} → ${Math.round(inverse * 100) / 100}`;
+      }
+      case 'transformed':
+        return value;
+      case 'untransformed': {
+        // Get the inverse value
+        const inverse = inverseTransformation(value, transformation);
+        return Math.round(inverse * 100) / 100;
+      }
+      default:
+        return value;
+    }
+  }
   // renderAxes expects xScale and yScale to be set prior to this call using setScale
   renderAxes() {
     let xAxis = axisBottom()
-      .scale(this.xScale);
+      .scale(this.xScale)
+      .tickFormat((x) => {
+        return this.renderAxisTickHelper(x, this.props.xTransformation);
+      });
 
     let yAxis = axisLeft()
-      .scale(this.yScale);
+      .scale(this.yScale)
+      .tickFormat((y) => {
+        return this.renderAxisTickHelper(y, this.props.yTransformation);
+      });
 
     let fauxAxes = new ReactFauxDOM.Element('g');
     select(fauxAxes).append("g")

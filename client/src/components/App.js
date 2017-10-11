@@ -61,6 +61,7 @@ class App extends React.Component {
     this.toggleLeftDrawer = this.toggleLeftDrawer.bind(this);
     this.toggleRightDrawer = this.toggleRightDrawer.bind(this);
     this.setTransformation = this.setTransformation.bind(this);
+    this.setAxisValues = this.setAxisValues.bind(this);
     this.setZoom = this.setZoom.bind(this);
     this.login = this.login.bind(this);
     // Init datasethub and inject filterTriggered function
@@ -87,9 +88,10 @@ class App extends React.Component {
       },
       xDimension: '',
       yDimension: '',
-      xTransformation: '-log10',
-      yTransformation: 'linear',
-      zoom: true,
+      xTransformation: '-log10', // Default transformation on x axis
+      yTransformation: 'linear', // Default transformation on y axis
+      axisValues: 'untransformed', // Can be 'both', 'transformed' or 'untransformed'
+      zoom: true, // Zoom on filtering in the plots
       highlight: new Highlight('EnsemblID'),
     };
   }
@@ -114,6 +116,14 @@ class App extends React.Component {
    */
   setZoom(zoom) {
     this.setState({ zoom });
+  }
+
+  /**
+   * Set rendering option for axis ticks
+   * @param {string} axisValues Axis value rendering option. Can be 'both', 'transformed' or 'untransformed'.
+   */
+  setAxisValues(axisValues) {
+    this.setState({axisValues});
   }
 
   /**
@@ -511,6 +521,8 @@ class App extends React.Component {
               xTransformation={this.state.xTransformation}
               yTransformation={this.state.yTransformation}
               zoom={this.state.zoom}
+              axisValues={this.state.axisValues}
+              setAxisValues={this.setAxisValues}
             />
           </Grid>
         );
@@ -605,6 +617,8 @@ class App extends React.Component {
                 xTransformation={this.state.xTransformation}
                 yTransformation={this.state.yTransformation}
                 zoom={this.state.zoom}
+                axisValues={this.state.axisValues}
+                setAxisValues={this.setAxisValues}
               />
             </Grid>
             <Grid item xs={4}>
