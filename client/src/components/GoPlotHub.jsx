@@ -427,14 +427,14 @@ class GoPlotHub extends React.Component {
           </Grid>
         </form>
         <Typography
-          style={{marginTop: '20'}}
+          style={{ marginTop: '20px' }}
           type="headline"
           gutterBottom>
            GO-Terms
         </Typography>
         <div
           style={{
-            marginTop: '10'
+            marginTop: '10px'
           }}
         >
           {this.getGoPlots()}

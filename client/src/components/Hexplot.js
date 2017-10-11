@@ -1,23 +1,21 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Scatterplot from './Scatterplot';
-import { objectValueToArray, isUndefined } from './Helper';
 import SelectionRectangle from './SelectionRectangle';
 import {hexbin as D3Hexbin} from 'd3-hexbin';
 import {interpolateLab} from 'd3-interpolate';
 import {scaleLinear} from 'd3-scale';
-import { FormControlLabel } from 'material-ui/Form';
 import Popover from 'material-ui/Popover';
 import { findDOMNode } from 'react-dom';
 import { Icon } from 'react-fa';
 import IconButton from 'material-ui/IconButton';
-import Paper from 'material-ui/Paper';
 import Switch from 'material-ui/Switch';
 import Measure from 'react-measure';
 import Select from 'material-ui/Select';
 import { MenuItem } from 'material-ui/Menu';
-import Input, { InputLabel } from 'material-ui/Input';
+import Input from 'material-ui/Input';
 import { applyTransformationArray } from './TransformationHelper';
+import Scatterplot from './Scatterplot';
+import { objectValueToArray, isUndefined } from './Helper';
 import List, {
   ListItem,
   ListItemIcon,
@@ -239,7 +237,7 @@ class Hexplot extends Scatterplot {
     let dots = [];
     if (
       this.state.renderDots ||
-      (this.state.renderDotsOnZoom && this.props.filter.doesFilter())
+      (this.state.renderDotsOnZoom && this.props.zoom && this.props.filter.doesFilter())
     ) {
       if (this.state.selectionRectangle.boundsSet) {
         dots = this.renderDots(1, xArray, yArray, filter, this.state.selectionRectangle.bounds);

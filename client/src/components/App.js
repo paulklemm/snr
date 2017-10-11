@@ -87,9 +87,9 @@ class App extends React.Component {
       },
       xDimension: '',
       yDimension: '',
-      xTransformation: 'linear',
-      yTransformation: '-linear',
-      zoom: false,
+      xTransformation: '-log10',
+      yTransformation: 'linear',
+      zoom: true,
       highlight: new Highlight('EnsemblID'),
     };
   }
@@ -236,9 +236,8 @@ class App extends React.Component {
     this.goTermHub.addGeneToGo('mmusculus_gene_ensembl', 'current');
     this.goTermHub.addSummary('mmusculus_gene_ensembl', 'current');
     // DEBUG
-    this.datasetHub.push(new Dataset('Dataset_1.csv'));
-    this.setEnableDataset('Dataset_1.csv', true);
-    this.datasetHub.datasets['Dataset_1.csv'].loaded = true;
+    this.datasetHub.push(new Dataset('Dataset_2.csv'));
+    this.setEnableDataset('Dataset_2.csv', true);
     // Set default plotting dimensions
     this.setPlotDimensions('pValue', 'fc');
 
