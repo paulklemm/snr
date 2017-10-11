@@ -118,7 +118,7 @@ class Hexplot extends Scatterplot {
             width: '320px'
           }}
           >
-            <List subheader={<ListSubheader>Settings</ListSubheader>}>
+            <List subheader={<ListSubheader>Plot Settings</ListSubheader>}>
               <ListItem>
                 <ListItemIcon>
                   <Icon name="bar-chart-o" />
