@@ -35,7 +35,7 @@ class GoPlot extends React.Component {
       <div>
         <Tooltip id="tooltip-icon" title={this.props.goTermSummary.go_term_name} placement="top">
           <span
-            className="gotermlabel" 
+            className="gotermlabel"
             onClick={() => this.props.toggleGOTerm(this.props.goTerm.goId)}
           >
             <span style={{ 
@@ -188,7 +188,7 @@ class GoPlot extends React.Component {
           fill={isUndefined(val['val']) ? 'gray' : this.colorScale(val['val'])}
           x={barWidth * index}
           y={0}
-          key={`Value ${val} + Index ${index}`}
+          key={`Value ${val} + Index ${index} + ${this.props.goTerm.goId}`}
           onMouseMove={(e) => this.onMouseMoveRect(e, val['id'], val['val'])}
           onMouseLeave={this.onMouseLeaveRect}
         />

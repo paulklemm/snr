@@ -13,6 +13,7 @@
     "react-dom": "^15.5.3",
     "react-fa": "^4.2.0",
     "react-faux-dom": "^3.0.1",
+    "react-flip-move": "^2.9.15",
     "react-measure": "^1.4.7",
     "react-tap-event-plugin": "^2.0.1",
     "typeface-roboto": "0.0.22"

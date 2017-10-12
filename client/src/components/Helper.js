@@ -9,6 +9,15 @@ function isUndefined(x) {
   return (typeof x === 'undefined');
 }
 
+/**
+ * Map out value index for usage in for of loop
+ * See [https://stackoverflow.com/questions/36108110/typescript-for-of-with-index-key](https://stackoverflow.com/questions/36108110/typescript-for-of-with-index-key)
+ * @param {Array} a 
+ */
+function toItemIndexes<T>(a: T[]) {
+  return a.map((item, index) => ({ item, index }));
+}
+
 function createDummyDataScatterplot(entryCount = 25) {
   let xValues = range(entryCount).map(() => Math.random());
   let yValues = range(entryCount).map(() => Math.random());
@@ -89,5 +98,6 @@ export {
   getIrisSettingsScatterplot,
   objectValueToArray,
   getRandomInt,
-  isUndefined
+  isUndefined,
+  toItemIndexes
 };

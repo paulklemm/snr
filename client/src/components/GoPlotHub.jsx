@@ -9,8 +9,9 @@ import Paper from 'material-ui/Paper';
 import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
 import { max } from 'd3-array';
+import FlipMove from 'react-flip-move';
 import GoPlot from './GoPlot';
-import { isUndefined } from './Helper';
+import { isUndefined, toItemIndexes } from './Helper';
 
 const styleSheet = {
   goOptionLabel: {
@@ -99,6 +100,34 @@ class GoPlotHub extends React.Component {
     });
     return max(goTermsSizes);
   }
+
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   if (!isUndefined(this.props.goTerms) && !isUndefined(nextProps.goTerms)) {
+  //     const currentFilteredGoTerms = this.filter(
+  //       this.props.goTerms,
+  //       this.state.numberMinIdsInGo,
+  //       this.state.numberGoPlots
+  //     );
+  //     const newFilteredGoTerms = this.filter(
+  //       nextProps.goTerms,
+  //       nextState.numberMinIdsInGo,
+  //       nextState.numberGoPlots
+  //     );
+  //     if (currentFilteredGoTerms.length !== newFilteredGoTerms.length) { return true; }
+  //     for (const { item, index } of toItemIndexes(currentFilteredGoTerms)) {
+  //       const itemGoId = item.goId;
+  //       const newItemGoId = newFilteredGoTerms[index].goId;
+  //       if (itemGoId !== newItemGoId) {
+  //         console.log('Update: Item mismatch, return true');
+  //         return true;
+  //       }
+  //     }
+  //     console.log('Update: returning false');
+  //     return false;
+  //   }
+  //   console.log("GoPlothub should update");
+  //   return true;
+  // }
 
   /**
    * Toggle GO-Term used in OnClick function in GoPlots. If it is toggled, render it for all datasets
@@ -316,7 +345,9 @@ class GoPlotHub extends React.Component {
     if (isUndefined(this.props.goTermHub)) {
       toRender = <div>GO-Term Hub not initialized</div>
     }  else {
-      toRender = 
+      const goPlots = this.getGoPlots();
+      console.log(`GoPlots Length: ${goPlots.length}`);
+      toRender =
         <div>
           <Typography type="headline" gutterBottom>GO-Term Settings</Typography>
           <form noValidate autoComplete="off">
@@ -437,7 +468,9 @@ class GoPlotHub extends React.Component {
             marginTop: '10px'
           }}
         >
-          {this.getGoPlots()}
+          <FlipMove duration={150} easing="ease-out">
+            { goPlots }
+          </FlipMove>
         </div>
         </div>;
     }
