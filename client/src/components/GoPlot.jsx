@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 // Import D3 stuff
 import { scaleLinear } from 'd3-scale';
 import { max, min, mean } from 'd3-array';
@@ -66,10 +67,19 @@ class GoPlot extends React.Component {
     // Update select
     this.props.highlight.clear();
     this.props.highlight.push('selection', [this.props.dataset.getEntry(id)]);
+    // Update App to account for new highlight
     this.props.forceUpdateApp();
 
-    let dx = event.pageX - 55;
-    let dy = event.pageY - 35;
+    let dx = event.clientX - 55;
+    let dy = event.clientY - 35;
+    // The animation puts the parent div into relative positioning. Therefore we have to
+    // reduce the offset information of the GoPlotHub parent element
+    if (this.props.animated) {
+      const domNode = ReactDOM.findDOMNode(this);
+      dx -= domNode.parentElement.offsetLeft;
+      dy -= domNode.parentElement.offsetTop;
+    }
+    console.log(`${dx}, ${dy}`);
     let tooltip =
       <div className="tooltip"
         style={{

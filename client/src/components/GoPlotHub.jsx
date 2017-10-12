@@ -249,8 +249,7 @@ class GoPlotHub extends React.Component {
     });
 
     // For whole-GO term drawings, animations are too slow, so disable them.
-    const animate = !this.state.drawWholeGO;
-    if (animate) {
+    if (this.shouldAnimate()) {
       return (
         <FlipMove duration={150} easing="ease-out">
           {goPlots}
@@ -259,6 +258,15 @@ class GoPlotHub extends React.Component {
     }
     // No animation return
     return goPlots;
+  }
+
+  /**
+   * Checks parameters determining whether we should animate or not
+   * @return {boolean} Should include animations
+   */
+  shouldAnimate() {
+    // For whole-GO term drawings, animations are too slow, so disable them.
+    return !this.state.drawWholeGO;
   }
 
   /**
@@ -290,6 +298,7 @@ class GoPlotHub extends React.Component {
       maxGeneCount={maxGoTermSize}
       toggleGOTerm={this.toggleGOTerm}
       maxWidth={this.props.width - 160}
+      animated={this.shouldAnimate()}
       key={`\
             Dataset ${dataset.name},\
             GoID ${goTerm.goId},\
