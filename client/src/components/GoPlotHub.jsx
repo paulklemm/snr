@@ -247,6 +247,17 @@ class GoPlotHub extends React.Component {
         goPlots.push(this.getGoPlot(this.props.dataset, goTerm, maxGoTermSize));
       }
     });
+
+    // For whole-GO term drawings, animations are too slow, so disable them.
+    const animate = !this.state.drawWholeGO;
+    if (animate) {
+      return (
+        <FlipMove duration={150} easing="ease-out">
+          {goPlots}
+        </FlipMove>
+      );
+    }
+    // No animation return
     return goPlots;
   }
 
@@ -468,9 +479,7 @@ class GoPlotHub extends React.Component {
             marginTop: '10px'
           }}
         >
-          <FlipMove duration={150} easing="ease-out">
-            { goPlots }
-          </FlipMove>
+          { goPlots }
         </div>
         </div>;
     }
