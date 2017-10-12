@@ -351,18 +351,18 @@ class Scatterplot extends React.Component {
       if (transformationNegates(this.props.xTransformation)) { [minX, maxX] = [maxX, minX]; }
       if (transformationNegates(this.props.yTransformation)) { [minY, maxY] = [maxY, minY]; }
       console.log(`X: > ${minX} | < ${maxX}; Y: > ${minY} | < ${maxY}`);
-      this.props.filter.setFilter(this.props.xName, minX, '>')
-      this.props.filter.setFilter(this.props.xName, maxX, '<')
-      // Since the coordinates from the bounds are starting in the upper left corner on y, we have to invert bounds here
-      this.props.filter.setFilter(this.props.yName, minY, '>')
-      this.props.filter.setFilter(this.props.yName, maxY, '<')
-      this.props.forceUpdateApp();
+      const filters = [
+        { name: this.props.xName, val: minX, operator: '>' },
+        { name: this.props.xName, val: maxX, operator: '<' },
+        { name: this.props.yName, val: minY, operator: '>' },
+        { name: this.props.yName, val: maxY, operator: '<' },
+      ];
+      // Set all the filters at once
+      this.props.filter.setFilters(...filters);
     } else {
       // If no bounds are set, we have a click without mouse movement, which will remove all the filters
       // Remove filters
-      this.props.filter.removeFilter(this.props.xName);
-      this.props.filter.removeFilter(this.props.yName);
-      this.props.forceUpdateApp();
+      this.props.filter.removeFilters(...[this.props.xName, this.props.yName]);
     }
   }
 

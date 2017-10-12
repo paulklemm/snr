@@ -50,15 +50,25 @@ class Filter {
   }
 
   /**
+   * Remove all given dimensions and then broadcast to datasets.
+   * @param {string} dimensions Rest of dimension to remove
+   */
+  removeFilters(...dimensions) {
+    dimensions.forEach(dimension => this.removeFilter(dimension, false));
+    this.broadcastFilter();
+  }
+
+  /**
    * Remove filter for dimension
    * @param {String} dimension Dimension to remove the filter for
+   * @param  {boolean} broadcastFilter Broadcast filter to all datasets
    */
-  removeFilter(dimension) {
+  removeFilter(dimension, broadcastFilter = true) {
     console.log(`Broadcast: Remove filter for dimension ${dimension}`)
     for (const filterKey in this.filter)
       if (this.filter[filterKey].name === dimension)
         delete this.filter[filterKey];
-    this.broadcastFilter();
+    if (broadcastFilter) { this.broadcastFilter(); }
   }
 
   /**
@@ -88,15 +98,35 @@ class Filter {
   doesFilter() {
     return Object.keys(this.filter).length !== 0;
   }
+
+  /**
+   * Set a number of filters at once and broadcast filter when done
+   * @param {Object} filters Any number of filter Objects containing of `name`, `val` and `operator`
+   */
+  setFilters(...filters) {
+    console.log(filters);
+    filters.forEach((filter) => {
+      console.log(`Set Filter ${filter.name}, ${filter.val}, ${filter.operator}`);
+      this.setFilter(
+        filter.name,
+        filter.val,
+        filter.operator,
+        false,
+        false
+      );
+    });
+    this.broadcastFilter();
+  }
   
   /**
    * Filter function usable by elements that provide a filter for data. If `val` is not a valid input, e.g. it is empty, the filter will be reset.
    * @param  {String} name: Dimension name to be filtered
    * @param  {Object} val: Filter value can be anything depending on the dimension type
    * @param  {Object} operator: Filter operator, either `=`, `<` or `>`. Strings should always use `=`
-   * @param  {Bool} verbose Get name and value of filter
+   * @param  {boolean} verbose Get name and value of filter
+   * @param  {boolean} broadcastFilter Broadcast filter to all datasets
    */
-  setFilter(name, val, operator, verbose = true) {
+  setFilter(name, val, operator, verbose = true, broadcastFilter = true) {
     if (verbose) console.log(`Set filter ${val} for ${name}`);
     const val_filter = this._parseFilterValue(name, val);
     if (this._filterIsValid(name, val_filter)) {
@@ -105,7 +135,7 @@ class Filter {
       // Delete the filter
       this.removeFilterWithOperator(name, operator);
     }
-    this.broadcastFilter();
+    if (broadcastFilter) { this.broadcastFilter(); }
   }
 }
 
