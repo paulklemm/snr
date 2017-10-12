@@ -246,8 +246,8 @@ class App extends React.Component {
     this.goTermHub.addGeneToGo('mmusculus_gene_ensembl', 'current');
     this.goTermHub.addSummary('mmusculus_gene_ensembl', 'current');
     // DEBUG
-    // this.datasetHub.push(new Dataset('Dataset_2.csv'));
-    // this.setEnableDataset('Dataset_2.csv', true);
+    this.datasetHub.push(new Dataset('Dataset_2.csv'));
+    this.setEnableDataset('Dataset_2.csv', true);
     // Set default plotting dimensions
     this.setPlotDimensions('pValue', 'fc');
 
@@ -382,8 +382,8 @@ class App extends React.Component {
     // });
     // Using setState is not fast enough for the async loading function
 
-    this.datasetHub.push(new Dataset('small.csv'));
-    this.setEnableDataset('small.csv', true);
+    // this.datasetHub.push(new Dataset('small.csv'));
+    // this.setEnableDataset('small.csv', true);
     // this.setState({ openCPULoadDataSessionID: 'x0529ff5682' });
     // this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6952_DATASET10020.csv'));
     // this.setEnableDataset('DIFFEXPR_EXPORT6952_DATASET10020.csv', true);
@@ -487,6 +487,38 @@ class App extends React.Component {
     this.setState({ openDrawer: drawerState });
   }
 
+  getGoDrawer(leftDrawerWidth) {
+    const goPlotHub = this.state.openDrawer.left ?
+      (<GoPlotHub
+        goTerms={this.state.goTerms}
+        dataset={this.state.primaryDataset}
+        datasetHub={this.datasetHub}
+        highlight={this.state.highlight}
+        forceUpdateApp={this.forceUpdateApp}
+        goTermHub={this.goTermHub}
+        width={leftDrawerWidth}
+      />) :
+      '';
+    return (
+      <Drawer
+        anchor="left"
+        type="persistent"
+        open={this.state.openDrawer.left}
+      >
+        <div
+          style={{
+            maxWidth: `${leftDrawerWidth}px`,
+            minWidth: `${leftDrawerWidth}px`,
+            padding: '10px'
+          }}
+        >
+          <IconButton style={{ float: 'right' }} onClick={this.toggleLeftDrawer}><Icon name="times" /></IconButton>
+          {goPlotHub}
+        </div>
+      </Drawer>
+    );
+  }
+
   render() {
     const leftDrawerWidth = this.layoutFactory.windowWidth / 3;
     const styleSheet = {
@@ -541,30 +573,7 @@ class App extends React.Component {
     } else {
       app =
       <div>
-        <Drawer
-          anchor="left"
-          type="persistent"
-          open={this.state.openDrawer.left}
-        >
-          <div
-            style={{
-              maxWidth: `${leftDrawerWidth}px`,
-              minWidth: `${leftDrawerWidth}px`,
-              padding: '10px'
-            }}
-          >
-              <IconButton style={{ float: 'right' }} onClick={this.toggleLeftDrawer}><Icon name="times" /></IconButton>
-                <GoPlotHub
-                  goTerms={this.state.goTerms}
-                  dataset={this.state.primaryDataset}
-                  datasetHub={this.datasetHub}
-                  highlight={this.state.highlight}
-                  forceUpdateApp={this.forceUpdateApp}
-                  goTermHub={this.goTermHub}
-                  width={leftDrawerWidth}
-                />
-          </div>
-        </Drawer>
+        {this.getGoDrawer(leftDrawerWidth)}
         <Drawer
           anchor="right"
           open={this.state.openDrawer.right}
