@@ -225,7 +225,9 @@ class Hexplot extends Scatterplot {
 
   render() {
     // Check if there is data available
-    if (this.props.rnaSeqData.data === undefined || isUndefined(this.props.filter)) return (<div>no data</div>);
+    if (this.props.rnaSeqData.data === undefined || isUndefined(this.props.filter)) {
+      return <div />;
+    }
     // reset margin and scale in case they changed
     this.setMargin();
     // Get the whole data set even if it was filtered

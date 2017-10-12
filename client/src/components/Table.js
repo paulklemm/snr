@@ -273,7 +273,7 @@ class Table extends React.Component{
   }
 
   render() {
-    if (this.props.data === undefined) return (<div>no data</div>);
+    if (this.props.data === undefined) { return <div />; }
     // console.log(this.props.data);
     // console.log(this.props.dimNames);
     // Update the default height of the row to have precise calculations on the table and not rely on the style sheet
