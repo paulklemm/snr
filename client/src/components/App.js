@@ -37,6 +37,7 @@ import LayoutFactory from './LayoutFactory';
 import LoginScreen from './LoginScreen';
 import Highlight from './Highlight';
 import GoPlotHub from './GoPlotHub';
+import Welcome from './Welcome';
 
 // Create theme (https://material-ui-1dab0.firebaseapp.com/customization/themes)
 const theme = createMuiTheme({
@@ -246,8 +247,8 @@ class App extends React.Component {
     this.goTermHub.addGeneToGo('mmusculus_gene_ensembl', 'current');
     this.goTermHub.addSummary('mmusculus_gene_ensembl', 'current');
     // DEBUG
-    this.datasetHub.push(new Dataset('Dataset_2.csv'));
-    this.setEnableDataset('Dataset_2.csv', true);
+    // this.datasetHub.push(new Dataset('Dataset_2.csv'));
+    // this.setEnableDataset('Dataset_2.csv', true);
     // Set default plotting dimensions
     this.setPlotDimensions('pValue', 'fc');
 
@@ -564,6 +565,16 @@ class App extends React.Component {
     const primaryDatasetData = (this.state.primaryDataset.data === undefined) ? undefined : this.state.primaryDataset.getData();
     const primaryDatasetDimNames = this.state.primaryDataset.dimNames;
 
+    // Create welcome text
+    let welcome = '';
+    if (isUndefined(this.state.primaryDataset.data)) {
+      welcome = [
+        <Grid item xs={12}>
+          <Welcome />
+        </Grid>,
+      ];
+    }
+
     // Add PCA
     // TODO PCA Comment back in if doing the PCA
     // let pcaImage = (typeof this.state.pcaImage === "undefined") ? pcaImage = <Loading width={800} height={400} /> : <img src={`${this.state.pcaImage}?width=7&height=5`} width={800} height={400} alt="R test PCA" />;
@@ -605,6 +616,7 @@ class App extends React.Component {
         <div style={styleSheet.appBody}>
           {/* Main Plot for the interaction */}
           <Grid container spacing={16}>
+            {welcome}
             <Grid item xs={8}>
               {/*<center><p>{this.state.primaryDataset.name}</p></center>*/}
               {/* <Hexplot height={this.layoutFactory.heights.mainView} width={600} responsiveWidth={true} rnaSeqData={this.state.primaryDataset} xName="pValueNegLog10" yName="fc" hexSize={4} hexMax={20} showRenderGenesOption={true} /> */}
