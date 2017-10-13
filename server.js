@@ -190,32 +190,43 @@ app.get("/api/getgopergene", async (req, res) => {
 });
 
 /**
- * Load data function
- * TODO: Change this to only return the listed files and do not pass session ID to the client
+ * Check session (loaded datasets from users folder) for specified user and reload if necessary
+ * @param {string} user User to check session for
  */
-app.get("/api/loaddata", async (req, res) => {
+async function checkUserSession(user) {
+  // Get OpenCPU data session for user
+  const session = sessions.getSession(user);
+  // If we know the session ID, check if it is valid. 
+  // If session is not undefined, check if contains all required files
+  const sessionIsValid =
+    !isUndefined(session) ?
+      await sessionValid(session, userManager.getUserSettings(user).path) :
+      false;
+  if (!sessionIsValid) {
+    timeStampLog(`Call R to load data for user ${user}`);
+    // We have to load the data with OpenCPU
+    const response = await openCPU.runRCommand('sonaR', 'load_data', { data_folder: `'${userManager.getUserSettings(user).path}'` }, 'json');
+    timeStampLog(`Loading data for user ${user} successful, Session-ID: ${response.sessionID}. Note that for many files the JSON export may fail because the R child process of exporting JSON will die.`);
+    // Save session Id
+    sessions.writeSession(user, response.sessionID);
+  }
+} 
+
+/**
+ * Load data function
+ */
+app.get('/api/loaddata', async (req, res) => {
   // TokenAPIFunction returns a result object for authentication failure
   const result = await userManager.tokenApiFunction('loaddata', req, async (req) => {
     const user = req.query.user;
     timeStampLog(`Load data for user '${user}'`);
-    // Get OpenCPU data session for user
-    let session = sessions.getSession(user);
-    // If we know the session ID, check if it is valid. If session is not undefined, check if contains all required files
-    let sessionIsValid = (!isUndefined(session)) ? await sessionValid(session, userManager.getUserSettings(user).path) : false;
-    let filenames;
-    if (!sessionIsValid) {
-      timeStampLog(`Call R to load data for user ${user}`);
-      // We have to load the data with OpenCPU
-      response = await openCPU.runRCommand("sonaR", "load_data", { data_folder: `'${userManager.getUserSettings(user).path}'` }, "json");
-      timeStampLog(`Loading data for user ${user} successful, Session-ID: ${response.sessionID}. Note that for many files the JSON export may fail because the R child process of exporting JSON will die.`);
-      // Save session Id
-      sessions.writeSession(user, response.sessionID);
-    }
+    // Check the user session and redownload if required
+    await checkUserSession(user);
     // Get filenames from datasets object
-    filenames = await openCPU.runRCommand("sonaR", "get_loaded_filenames", { datasets: sessions.getSession(user) }, "json");
+    let filenames = await openCPU.runRCommand("sonaR", "get_loaded_filenames", { datasets: sessions.getSession(user) }, "json");
     filenames = filenames['.val'];
     // Return result response in case of success
-    return({ name: 'loaddata', success: true, filenames: filenames });
+    return ({ name: 'loaddata', success: true, filenames });
   });
   // Return result of TokenApi function, either success or failure
   res.json(result);
