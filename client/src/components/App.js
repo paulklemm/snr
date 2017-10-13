@@ -15,16 +15,15 @@ import './App.css';
 import BarChart from './BarChart';
 // eslint-disable-next-line
 import Scatterplot from './Scatterplot';
+import ScatterplotPCA from './ScatterplotPCA';
 // eslint-disable-next-line
-import { objectValueToArray, isUndefined } from './Helper';
+import { objectValueToArray, isUndefined, getIris } from './Helper';
 // eslint-disable-next-line
 import Hexplot from './Hexplot';
 // eslint-disable-next-line
 import Piechart from './Piechart';
 // eslint-disable-next-line
 import DynamicHexBin from './DynamicHexBin';
-// eslint-disable-next-line
-import ScatterplotRNASeqData from './ScatterplotRNASeqData';
 import NodeBridge from './NodeBridge';
 import Authentication from './Authentication';
 import GoTermHub from './GoTermHub';
@@ -233,6 +232,18 @@ class App extends React.Component {
     });
   }
 
+  /**
+   * Get PCA from node server
+   */
+  async getPCA() {
+    console.log('Get loadings of PCA');
+    const loadings = await this.nodeBridge.getPcaLoadings('mmusculus_gene_ensembl', 'current');
+    this.setState({
+      pca: loadings.loadings['.val']
+    });
+    console.log(loadings);
+  }
+
   async initSession() {
     // TODO: Clear existing session first, especially the loaded data sets
     // Check if we ned to login or not
@@ -242,9 +253,7 @@ class App extends React.Component {
       return;
 
     // PCA Plot
-    console.log('Get loadings of PCA');
-    const loadings = await this.nodeBridge.getPcaLoadings('mmusculus_gene_ensembl', 'current');
-    console.log(loadings);
+    this.getPCA();
 
     // Get GO-Term description
     // TODO: This "current" thing needs to go away, because this will change!
@@ -274,16 +283,6 @@ class App extends React.Component {
 
     // Remove busy state
     this.removeBusyState('loadData');
-    // // PCA plot
-    // const outputPCA = await this.runRCommand(
-      // 'sonaR',
-      // 'plot_pca',
-      // { x: outputLoadData.sessionID },
-      // 'ascii',
-      // false);
-    // this.setState({
-    //   pcaImage: `${outputPCA.graphics[0]}/svg`
-    // });
   }
 
   /**
@@ -387,35 +386,6 @@ class App extends React.Component {
     //   loginRequired: !loginSuccessful
     // });
     // Using setState is not fast enough for the async loading function
-
-    // this.datasetHub.push(new Dataset('small.csv'));
-    // this.setEnableDataset('small.csv', true);
-    // this.setState({ openCPULoadDataSessionID: 'x0529ff5682' });
-    // this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6952_DATASET10020.csv'));
-    // this.setEnableDataset('DIFFEXPR_EXPORT6952_DATASET10020.csv', true);
-    // this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6938_DATASET10016.csv'));
-    // this.setEnableDataset('DIFFEXPR_EXPORT6938_DATASET10016.csv', true);
-    // this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6945_DATASET10018.csv'));
-    // this.setEnableDataset('DIFFEXPR_EXPORT6945_DATASET10018.csv', true);
-    // this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6957_DATASET10022.csv'));
-    // this.setEnableDataset('DIFFEXPR_EXPORT6957_DATASET10022.csv', true);
-    // this.datasetHub.push(new Dataset('DIFFEXPR_EXPORT6964_DATASET10024.csv'));
-    // this.setEnableDataset('DIFFEXPR_EXPORT6964_DATASET10024.csv', true);
-    // Run PCA
-    // this.getPCA();
-  }
-
-  async getPCA() {
-    // TODO: Implement PCA
-    const pcaOutput = await this.runRCommand('sonaR', 'get_pca_loadings', { x: 'x0529ff5682' }, 'json', false);
-    console.log(`PCA Output`);
-    console.log(pcaOutput);
-    // Old plotting logic, ths should be removed later on
-    this.runRCommand('sonaR', 'plot_pca', { x: 'x0529ff5682' }, 'ascii', true).then((output) => {
-      this.setState({
-        pcaImage: `${output.graphics[0]}/svg`,
-      });
-    });
   }
 
   /**
@@ -653,6 +623,14 @@ class App extends React.Component {
               </Grid>
             </Grid>
             {/* Add Table on whole page length */}
+            <ScatterplotPCA
+              width={200}
+              height={200}
+              x={isUndefined(this.state.pca) ? [] : objectValueToArray(this.state.pca, 'PC1')}
+              y={isUndefined(this.state.pca) ? [] : objectValueToArray(this.state.pca, 'PC2')}
+              xLabel="PC1"
+              yLabel="PC2"
+            />
             <Grid item xs={12}>
               <Table
                 data={primaryDatasetData}
