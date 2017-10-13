@@ -199,6 +199,31 @@ app.get("/api/getgosummary", async (req, res) => {
 });
 
 /**
+ * Get PCA-loadings
+ */
+app.get("/api/getpcaloadings", async (req, res) => {
+  const result = await userManager.tokenApiFunction('getpcaloadings', req, async (req) => {
+    const { user, ensembldataset, ensemblversion } = req.query;
+    // Check the user session and reload if required
+    await checkUserSession(user);
+    // Get the GO summary from OpenCPU
+    timeStampLog(`Get PCA loadings for: \n  ensembl dataset '${ensembldataset}'\n  ensembl version: '${ensemblversion}'`);
+    const loadings = await openCPU.runRCommand(
+      'sonaR',
+      'get_pca_loadings',
+      {
+        x: sessions.getSession(user),
+        ensembl_dataset: `'${ensembldataset}'`,
+        ensembl_version: `'${ensemblversion}'`
+      },
+      'json'
+    );
+    return ({ name: 'getpcaloadings', success: true, loadings });
+  });
+  res.json(result);
+});
+
+/**
  * Get GO Terms per Gene
  */
 app.get("/api/getgopergene", async (req, res) => {

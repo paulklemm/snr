@@ -241,6 +241,11 @@ class App extends React.Component {
     if (this.state.loginRequired)
       return;
 
+    // PCA Plot
+    console.log('Get loadings of PCA');
+    const loadings = await this.nodeBridge.getPcaLoadings('mmusculus_gene_ensembl', 'current');
+    console.log(loadings);
+
     // Get GO-Term description
     // TODO: This "current" thing needs to go away, because this will change!
     this.goTermHub = new GoTermHub(this.nodeBridge.getGoSummary, this.nodeBridge.getGoPerGene);

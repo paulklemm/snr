@@ -147,7 +147,7 @@ class NodeBridge {
    * Get summary table of all GO terms from the back-end.
    * If ensemblDataset or ensemblVersion are undefined, defaults from `R` package will be used.
    * @param {String} ensemblDataset Biomart dataset
-   * @param {String} ensemblVersion Ensembl version ('release') 
+   * @param {String} ensemblVersion Ensembl version ('release')
    * @return {Object} Server response
    */
   getGoSummary(ensemblDataset, ensemblVersion) {
@@ -158,11 +158,22 @@ class NodeBridge {
    * Get GO-ids per gene
    * If ensemblDataset or ensemblVersion are undefined, defaults from `R` package will be used.
    * @param {String} ensemblDataset Biomart dataset
-   * @param {String} ensemblVersion Ensembl version ('release') 
+   * @param {String} ensemblVersion Ensembl version ('release')
    * @return {Object} Server response
    */
   getGoPerGene(ensemblDataset, ensemblVersion) {
     return this._fetchWithUserAndToken(`api/getgopergene?ensembldataset=${ensemblDataset}&ensemblversion=${ensemblVersion}`);
+  }
+
+  /**
+   * Get PCA loadings for the loaded datasets
+   * If ensemblDataset or ensemblVersion are undefined, defaults from `R` package will be used.
+   * @param {String} ensemblDataset Biomart dataset
+   * @param {String} ensemblVersion Ensembl version ('release')
+   * @return {Object} Server response
+   */
+  getPcaLoadings(ensemblDataset, ensemblVersion) {
+    return this._fetchWithUserAndToken(`api/getpcaloadings?ensembldataset=${ensemblDataset}&ensemblversion=${ensemblVersion}`);
   }
 
   /**
