@@ -18,17 +18,25 @@ class ScatterplotPCA extends Scatterplot {
     // When PCA object is not defined, return false
     if (isUndefined(nextProps.pca)) { return false; }
     // Get dimensions from PCA and return success state
-    return (this.getDimensionsFromPca(nextProps.pca));
+    return (this.getDimensionsFromPca(nextProps.pca, nextProps));
   }
 
-  getDimensionsFromPca(pca) {
+  /**
+   * Extract dimensions from the PCA
+   * @param {Array} pca Array with PCA object information
+   * @return {boolean} PCA data is valid
+   */
+  getDimensionsFromPca(pca, props) {
     // PCA to scatterplot dimensions
-    const x = objectValueToArray(pca, 'PC1');
-    const y = objectValueToArray(pca, 'PC2');
+    const x = objectValueToArray(pca, `PC${props.xPc}`);
+    const y = objectValueToArray(pca, `PC${props.yPc}`);
     if (x.length <= 0 || y.length <= 0 || x.length !== y.length) { return false; }
     // Remove the last element. It contains the dimensions of the PCA
+    if (pca[x.length - 1]._row !== 'proportion_of_variance') { return false; }
+    // Get variance explained
     this.varianceExplainedX = x.pop();
     this.varianceExplainedY = y.pop();
+    // Set dimensions to class members
     this.x = x;
     this.y = y;
     return true;
@@ -45,8 +53,8 @@ class ScatterplotPCA extends Scatterplot {
     this.dots = this.renderDots(3, this.x, this.y);
     // Add axis labels rounded to two digits after comma
     this.axisLabels = this.renderAxisLabels(
-      `${nextProps.xLabel} (${Math.round(this.varianceExplainedX * 10000) / 100}%)`,
-      `${nextProps.yLabel} (${Math.round(this.varianceExplainedY * 10000) / 100}%)`
+      `PC${nextProps.xPc} (${Math.round(this.varianceExplainedX * 10000) / 100}%)`,
+      `PC${nextProps.yPc} (${Math.round(this.varianceExplainedY * 10000) / 100}%)`
     );
   }
 

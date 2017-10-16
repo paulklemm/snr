@@ -627,8 +627,9 @@ class App extends React.Component {
               width={200}
               height={200}
               pca={this.state.pca}
-              xLabel="PC1"
-              yLabel="PC2"
+              datasetHub={this.datasetHub}
+              xPc={1}
+              yPc={3}
             />
             <Grid item xs={12}>
               <Table
