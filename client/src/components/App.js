@@ -629,7 +629,7 @@ class App extends React.Component {
               pca={this.state.pca}
               datasetHub={this.datasetHub}
               xPc={1}
-              yPc={3}
+              yPc={2}
             />
             <Grid item xs={12}>
               <Table

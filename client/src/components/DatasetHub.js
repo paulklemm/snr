@@ -16,6 +16,15 @@ class DatasetHub {
   }
 
   /**
+   * Get loaded state of dataset
+   * @param {string} dataset Name
+   * @return {boolean} Loaded state
+   */
+  isLoaded(dataset) {
+    return this.datasets[dataset].loaded;
+  }
+
+  /**
    * Get the count of enabled datasets in Hub.
    * @return {Integer} Enabled dataset count
    */
@@ -92,6 +101,7 @@ class DatasetHub {
     this.update();
     return (this.datasets[datasetName].loaded === false && enabled)
   }
+  
   update() {
     let names = Object.keys(this.datasets);
     let enabled = {};

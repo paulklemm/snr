@@ -5,6 +5,12 @@ import Scatterplot from './Scatterplot';
 import { isUndefined, objectValueToArray } from './Helper';
 import DatasetIcons from './DatasetIcons';
 
+const styleSheet = {
+  datasetLoaded: {
+    color: 'orange'
+  }
+};
+
 class ScatterplotPCA extends Scatterplot {
   constructor(props) {
     super(props);
@@ -36,17 +42,14 @@ class ScatterplotPCA extends Scatterplot {
     const y = objectValueToArray(pca, `PC${props.yPc}`);
     const rowNames = objectValueToArray(pca, '_row');
     if (x.length <= 0 || y.length <= 0 || x.length !== y.length) { return false; }
-    // Test for getting the images
+    // Get the images from PCA object
     const icons = [];
     pca.forEach((item) => {
       if (item._row !== 'proportion_of_variance') {
         try {
           const icon = props.datasetHub.getDatasetIcon(item._row);
-          console.log(`${item._row}: ${icon}`);
           icons.push(icon);
-        } catch (error) {
-          console.log(`${item._row} not yet defined`);
-        }
+        } catch (error) { console.log(`${item._row} not yet defined`); }
       }
     });
     // Remove the last element. It contains the dimensions of the PCA
@@ -135,7 +138,9 @@ class ScatterplotPCA extends Scatterplot {
                   };
                 }}
               >
-                {DatasetIcons[this.icons[i]]}
+                <div style={this.props.datasetHub.isLoaded(currentRowName) ? styleSheet.datasetLoaded : {}}>
+                  {DatasetIcons[this.icons[i]]}
+                </div>
               </Measure>
             </foreignObject>
           </g>
