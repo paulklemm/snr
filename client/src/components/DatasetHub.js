@@ -1,5 +1,6 @@
 import Filter from './Filter';
 import DatasetIcons from './DatasetIcons';
+import { isUndefined } from './Helper';
 
 class DatasetHub {
   constructor(filterBroadcasted) {
@@ -21,7 +22,34 @@ class DatasetHub {
    * @return {boolean} Loaded state
    */
   isLoaded(dataset) {
-    return this.datasets[dataset].loaded;
+    return this.datasetExists(dataset) ? this.datasets[dataset].loaded : false;
+  }
+
+  /**
+   * Check if dataset exists in dataset hub
+   * @param {String} dataset Dataset name
+   * @return {boolean} Dataset exists
+   */
+  datasetExists(dataset) {
+    return !isUndefined(this.datasets[dataset]);
+  }
+
+  /**
+   * Get loading state of dataset
+   * @param {string} dataset Name
+   * @return {boolean} Loading state
+   */
+  isLoading(dataset) {
+    return this.datasetExists(dataset) ? this.datasets[dataset].loading : false;
+  }
+
+  /**
+   * Get enabled state of dataset
+   * @param {string} dataset Name
+   * @return {boolean} Enabled state
+   */
+  isEnabled(dataset) {
+    return this.datasets[dataset].enabled;
   }
 
   /**
@@ -101,7 +129,7 @@ class DatasetHub {
     this.update();
     return (this.datasets[datasetName].loaded === false && enabled)
   }
-  
+
   update() {
     let names = Object.keys(this.datasets);
     let enabled = {};

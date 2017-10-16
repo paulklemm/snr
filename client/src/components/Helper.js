@@ -9,6 +9,15 @@ function isUndefined(x) {
   return (typeof x === 'undefined');
 }
 
+// From https://gist.github.com/yamadayuki/f1ea9ccacad7f1c140457b5877fb54cc
+const injectStyle = (style) => {
+  const styleElement = document.createElement('style');
+  let styleSheet = null;
+  document.head.appendChild(styleElement);
+  styleSheet = styleElement.sheet;
+  styleSheet.insertRule(style, styleSheet.cssRules.length);
+};
+
 /**
  * Map out value index for usage in for of loop
  * See [https://stackoverflow.com/questions/36108110/typescript-for-of-with-index-key](https://stackoverflow.com/questions/36108110/typescript-for-of-with-index-key)
@@ -99,5 +108,6 @@ export {
   objectValueToArray,
   getRandomInt,
   isUndefined,
-  toItemIndexes
+  toItemIndexes,
+  injectStyle
 };

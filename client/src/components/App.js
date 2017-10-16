@@ -49,6 +49,7 @@ class App extends React.Component {
   constructor() {
     super();
     this.setEnableDataset = this.setEnableDataset.bind(this);
+    this.toggleEnabledDataset = this.toggleEnabledDataset.bind(this);
     this.handleResize = this.handleResize.bind(this);
     this.setDatasetIcon = this.setDatasetIcon.bind(this);
     this.setPlotDimensions = this.setPlotDimensions.bind(this);
@@ -148,6 +149,14 @@ class App extends React.Component {
       xDimension: newDimension,
       yDimension: lastXDimension,
     });
+  }
+
+  /**
+   * Toggle enabled status using `setEnableDataset`
+   * @param {String} name Dataset name
+   */
+  toggleEnabledDataset(name) {
+    this.setEnableDataset(name, !this.datasetHub.isEnabled(name));
   }
 
   /**
@@ -630,6 +639,7 @@ class App extends React.Component {
               datasetHub={this.datasetHub}
               xPc={1}
               yPc={2}
+              toggleEnabledDataset={this.toggleEnabledDataset}
             />
             <Grid item xs={12}>
               <Table

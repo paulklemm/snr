@@ -2,14 +2,28 @@ import React from 'react';
 import Measure from 'react-measure';
 // Material UI
 import Scatterplot from './Scatterplot';
-import { isUndefined, objectValueToArray } from './Helper';
+import { isUndefined, objectValueToArray, injectStyle } from './Helper';
 import DatasetIcons from './DatasetIcons';
 
 const styleSheet = {
   datasetLoaded: {
-    color: 'orange'
+    color: '#EE6351'
+  },
+  datasetLoading: {
+    color: 'red',
+    animation: 'pulse 1s infinite ease-in-out'
   }
 };
+
+const pulse = `
+  @keyframes pulse {
+    0% { color: #001F3F; }
+    50% { color: #EE6351; }
+    100% { color: #001F3F; }
+  }
+`;
+
+injectStyle(pulse);
 
 class ScatterplotPCA extends Scatterplot {
   constructor(props) {
@@ -107,41 +121,53 @@ class ScatterplotPCA extends Scatterplot {
       if (isNaN(currentX) || isNaN(currentY))
         continue;
       // Check if we have to highlight the elements
-      let cx = this.xScale(currentX);
-      let cy = this.yScale(currentY);
+      const cx = this.xScale(currentX);
+      const cy = this.yScale(currentY);
       let newRadius = (!isUndefined(highlight) && cx >= highlight.minX && cx <= highlight.maxX && cy >= highlight.minY && cy <= highlight.maxY) ? radius + 1 : radius;
+      // Get style for the element
+      let divStyle = styleSheet.myPulse;
+      if (this.props.datasetHub.isLoaded(currentRowName)) {
+        divStyle = styleSheet.datasetLoaded;
+      } else if (this.props.datasetHub.isLoading(currentRowName)) {
+        divStyle = styleSheet.datasetLoading;
+      }
+
       if (this.icons.length > 0) {
         dots.push(
-          <g 
+          <g
             onMouseEnter={() => this.showTooltip(currentX, currentY, currentRowName)}
             onMouseLeave={() => this.hideTooltip()}
+            onClick={() => this.props.toggleEnabledDataset(currentRowName)}
+            key={`${currentX},${currentY},${i}`}
           >
             <foreignObject
               width="20"
               height="20"
-              key={`${currentX},${currentY},${i}`}
               x={
                 isUndefined(this.iconSize[currentRowName]) ?
-                8 : cx - (this.iconSize[currentRowName].width / 2)
+                cx - 8 : cx - (this.iconSize[currentRowName].width / 2)
               }
               y={
                 isUndefined(this.iconSize[currentRowName]) ?
-                8 : cy - (this.iconSize[currentRowName].height / 2)
+                cy - 8 : cy - (this.iconSize[currentRowName].height / 2)
               }
             >
-              <Measure
-                bounds
-                onMeasure={(measure) => {
-                  this.iconSize[currentRowName] = {
-                    width: measure.width,
-                    height: measure.height
-                  };
-                }}
-              >
-                <div style={this.props.datasetHub.isLoaded(currentRowName) ? styleSheet.datasetLoaded : {}}>
+                <div
+                  style={divStyle}
+                >
+                  <Measure
+                    bounds
+                    onMeasure={(measure) => {
+                      this.iconSize[currentRowName] = {
+                        width: measure.width,
+                        height: measure.height
+                      };
+                      console.log(`${currentRowName}: ${this.iconSize[currentRowName].width}, ${this.iconSize[currentRowName].height}`);
+                    }}
+                  >
                   {DatasetIcons[this.icons[i]]}
+                  </Measure>
                 </div>
-              </Measure>
             </foreignObject>
           </g>
         );
