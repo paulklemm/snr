@@ -32,11 +32,11 @@ class ScatterplotPCA extends Scatterplot {
     const y = objectValueToArray(pca, `PC${props.yPc}`);
     if (x.length <= 0 || y.length <= 0 || x.length !== y.length) { return false; }
     // Test for getting the images
-    pca.forEach((item) => {
-      if (item._row !== 'proportion_of_variance') {
-        console.log(props.datasetHub.getDatasetIcon(item._row));
-      }
-    });
+    // pca.forEach((item) => {
+    //   if (item._row !== 'proportion_of_variance') {
+    //     console.log(`${item._row}: ${props.datasetHub.getDatasetIcon(item._row)}`);
+    //   }
+    // });
     // Remove the last element. It contains the dimensions of the PCA
     if (pca[x.length - 1]._row !== 'proportion_of_variance') { return false; }
     // Get variance explained

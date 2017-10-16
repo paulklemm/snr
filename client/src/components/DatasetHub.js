@@ -1,4 +1,5 @@
 import Filter from './Filter';
+import DatasetIcons from './DatasetIcons';
 
 class DatasetHub {
   constructor(filterBroadcasted) {
@@ -66,6 +67,15 @@ class DatasetHub {
     this.datasets[datasetName].icon = icon;
   }
 
+  setDatasetIconDefault(name) {
+    const datasetIconNames = Object.keys(DatasetIcons);
+    let datasetCount = Object.keys(this.datasets).length;
+    // Decrement datasetCount by 1 if it is not 0
+    datasetCount = datasetCount === 0 ? datasetCount : datasetCount - 1;
+    console.log(`Set default for ${name} to ${datasetIconNames[datasetCount]}`);
+    this.setDatasetIcon(name, datasetIconNames[datasetCount]);
+  }
+
   setData(name, data, dimNames) {
     this.datasets[name].setData(data, dimNames);
     // 'Loading' changes, so update
@@ -87,11 +97,12 @@ class DatasetHub {
     let enabled = {};
     let loading = {};
     // Iterate over all data sets and update information
-    for (let i in names) {
-      let name = names[i];
+    names.forEach((name) => {
       enabled[name] = this.datasets[name].enabled;
       loading[name] = this.datasets[name].loading;
-    }
+      // Set dataset icon
+      if (this.datasets[name].icon === '') { this.setDatasetIconDefault(name); }
+    });
     this.names = names;
     this.enabled = enabled;
     this.loading = loading;

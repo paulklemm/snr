@@ -23,19 +23,15 @@ class IconSelect extends Component {
     this.iconsArray = Object.values(DatasetIcons);
     // Contains the index of the icon names
     this.iconNameToArrayIndex = {};
-    // Array index to icon name, used in handleManuItemClick to get the name of the icon from the array index
+    // Array index to icon name, used in handleManuItemClick to
+    // get the name of the icon from the array index
     this.arrayIndexToIconName = [];
     for (let i = 0; i < this.iconsArray.length; i++) {
       this.iconNameToArrayIndex[Object.keys(DatasetIcons)[i]] = i;
       this.arrayIndexToIconName.push(Object.keys(DatasetIcons)[i]);
     }
-    // Get the icon associated with the data set. If there is none set, get the default one
-    let iconName = this.props.getDatasetIcon(props.datasetName);
-    // If there is no icon set for the current dataset, add one
-    if (iconName === '') {
-      this.props.setDatasetIcon(this.props.datasetName, this.arrayIndexToIconName[this.props.defaultIconID]);
-      iconName = this.props.getDatasetIcon(props.datasetName);
-    }
+    // Get the icon associated with the data set
+    let iconName = props.getDatasetIcon(props.datasetName);
     const iconID = this.iconNameToArrayIndex[iconName];
     this.state = {
       anchorEl: undefined,
@@ -44,9 +40,9 @@ class IconSelect extends Component {
     };
   }
 
-  handleMenuItemClick (event, index) {
+  handleMenuItemClick (event, iconName, index) {
     this.setState({ selectedIndex: index, open: false });
-    this.props.setDatasetIcon(this.props.datasetName, this.arrayIndexToIconName[index]);
+    this.props.setDatasetIcon(this.props.datasetName, iconName);
   }
 
   handleRequestClose() {
@@ -74,7 +70,7 @@ class IconSelect extends Component {
             <MenuItem
               key={`${option}+${index}`}
               selected={index === this.state.selectedIndex}
-              onClick={event => this.handleMenuItemClick(event, index)}
+              onClick={event => this.handleMenuItemClick(event, Object.keys(DatasetIcons)[index], index)}
             >
               {option}
             </MenuItem>,

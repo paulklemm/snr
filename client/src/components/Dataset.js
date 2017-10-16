@@ -12,7 +12,7 @@ class Dataset {
     this.ensemblDataset = "mmusculus_gene_ensembl";
     this.ensemblVersion = "current";
     // HTML Element representing the dataset icon
-    this.icon = "";
+    this.icon = '';
   }
 
   /**
