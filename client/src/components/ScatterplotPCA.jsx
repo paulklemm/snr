@@ -1,5 +1,6 @@
 import React from 'react';
 import Measure from 'react-measure';
+// Material UI
 import Scatterplot from './Scatterplot';
 import { isUndefined, objectValueToArray } from './Helper';
 import DatasetIcons from './DatasetIcons';
@@ -100,24 +101,29 @@ class ScatterplotPCA extends Scatterplot {
       // Check whether the current element is filtered or not
       const currentIsFiltered = (isUndefined(filtered[i])) ? false : filtered[i];
       // Only create dot if x and y are numbers
-      if (!isNaN(currentX) && !isNaN(currentY)) {
-        // Check if we have to highlight the elements
-        let cx = this.xScale(currentX);
-        let cy = this.yScale(currentY);
-        let newRadius = (!isUndefined(highlight) && cx >= highlight.minX && cx <= highlight.maxX && cy >= highlight.minY && cy <= highlight.maxY) ? radius + 1 : radius;
-        if (this.icons.length > 0) {
-          dots.push(
-            <foreignObject 
+      if (isNaN(currentX) || isNaN(currentY))
+        continue;
+      // Check if we have to highlight the elements
+      let cx = this.xScale(currentX);
+      let cy = this.yScale(currentY);
+      let newRadius = (!isUndefined(highlight) && cx >= highlight.minX && cx <= highlight.maxX && cy >= highlight.minY && cy <= highlight.maxY) ? radius + 1 : radius;
+      if (this.icons.length > 0) {
+        dots.push(
+          <g 
+            onMouseEnter={() => this.showTooltip(currentX, currentY, currentRowName)}
+            onMouseLeave={() => this.hideTooltip()}
+          >
+            <foreignObject
               width="20"
               height="20"
               key={`${currentX},${currentY},${i}`}
               x={
                 isUndefined(this.iconSize[currentRowName]) ?
-                55 : cx - (this.iconSize[currentRowName].width / 2)
+                8 : cx - (this.iconSize[currentRowName].width / 2)
               }
               y={
                 isUndefined(this.iconSize[currentRowName]) ?
-                55 : cy - (this.iconSize[currentRowName].height / 2)
+                8 : cy - (this.iconSize[currentRowName].height / 2)
               }
             >
               <Measure
@@ -132,15 +138,36 @@ class ScatterplotPCA extends Scatterplot {
                 {DatasetIcons[this.icons[i]]}
               </Measure>
             </foreignObject>
-          );
-        }
-      }
-      else {
-        if (isNaN(currentX)) this.numberOfNaN.x++;
-        if (isNaN(currentY)) this.numberOfNaN.y++;
+          </g>
+        );
       }
     }
     return dots;
+  }
+
+  /**
+   * Hide tooltip
+   */
+  hideTooltip() {
+    this.setState({ tooltip: [] });
+  }
+
+  /**
+   * Show tooltip with information about the data set
+   * @param {float} x Tooltip position coordinate
+   * @param {float} y Tooltip position coordinate
+   * @param {string} name Dataset name
+   */
+  showTooltip(x, y, name) {
+    let tooltip = [];
+    let dx = this.xScale(x) + 5;
+    let dy = this.yScale(y) + 5;
+    tooltip.push(
+      <text x={dx} y={dy} key={`Tooltip: ${dx}, ${dy}, ${name}`}>
+        {name}
+      </text>
+    );
+    this.setState({ tooltip });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -164,9 +191,6 @@ class ScatterplotPCA extends Scatterplot {
           (<div ref={measureRef}>
             <svg
               className="scatterplot"
-              onMouseDown={e => this.handleMouseDown(e)}
-              onMouseMove={e => this.handleMouseMove(e)}
-              onMouseUp={e => this.handleMouseUp(e)}
               width={this.widthNoMargin + this.margin.left + this.margin.right}
               height={this.heightNoMargin + this.margin.top + this.margin.bottom}
             >
