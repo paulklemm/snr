@@ -15,7 +15,7 @@ import './App.css';
 import BarChart from './BarChart';
 // eslint-disable-next-line
 import Scatterplot from './Scatterplot';
-import ScatterplotPCA from './ScatterplotPCA';
+import ScatterplotPCA from './ScatterplotPCA.jsx';
 // eslint-disable-next-line
 import { objectValueToArray, isUndefined, getIris } from './Helper';
 // eslint-disable-next-line
@@ -626,8 +626,7 @@ class App extends React.Component {
             <ScatterplotPCA
               width={200}
               height={200}
-              x={isUndefined(this.state.pca) ? [] : objectValueToArray(this.state.pca, 'PC1')}
-              y={isUndefined(this.state.pca) ? [] : objectValueToArray(this.state.pca, 'PC2')}
+              pca={this.state.pca}
               xLabel="PC1"
               yLabel="PC2"
             />
