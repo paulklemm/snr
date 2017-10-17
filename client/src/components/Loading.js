@@ -1,28 +1,23 @@
 import React from 'react';
 import { CircularProgress } from 'material-ui/Progress';
-
-// const styleSheet = {
-//   progress: {
-//     marginLeft: 'auto',
-//     marginRight: 'auto',
-//     marginTop: 10,
-//     marginBottom: 10,
-//     width: 40,
-//     height: 40
-//   }
-// };
+import { isUndefined } from './Helper';
 
 class Loading extends React.Component{
   render() {
+    const label = !isUndefined(this.props.label) ?
+      <div style={{ marginLeft: '20px' }}> {this.props.label} </div> : '';
+
     return (
-      <div style={{ 
-        width: `${this.props.width}px`, 
+      <div style={{
+        width: `${this.props.width}px`,
         height: `${this.props.height}px`,
         display: 'flex',
-        justifyContent:'center',
-        alignItems:'center'
-      }}>
+        justifyContent: 'center',
+        alignItems: 'center'
+      }}
+      >
         <CircularProgress />
+        {label}
       </div>
     );
   }
