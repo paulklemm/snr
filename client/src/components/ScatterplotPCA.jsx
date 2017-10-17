@@ -4,6 +4,7 @@ import Measure from 'react-measure';
 import Scatterplot from './Scatterplot';
 import { isUndefined, objectValueToArray, injectStyle } from './Helper';
 import DatasetIcons from './DatasetIcons';
+import Loading from './Loading';
 
 const styleSheet = {
   datasetLoaded: {
@@ -185,7 +186,7 @@ class ScatterplotPCA extends Scatterplot {
 
   render() {
     if (!this.propsAreValid(this.props)) {
-      return (<div>no data</div>);
+      return (<Loading label="Loading Overview" />);
     }
     // reset margin and scale in case they changed
     this.setMargin();
