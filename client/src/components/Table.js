@@ -280,10 +280,7 @@ class Table extends React.Component{
   }
 
   render() {
-    console.log('Render');
     if (isUndefined(this.props.data) || isUndefined(this.state.filterSetting)) { return <div />; }
-    // console.log(this.props.data);
-    // console.log(this.props.dimNames);
     // Update the default height of the row to have precise calculations on the table and not rely on the style sheet
     if (this.tableBody !== undefined && this.tableBody.children[0] !== undefined) this.rowHeight = this.tableBody.children[0].clientHeight;
     if (this.debug) console.log(`Set rowHeight to ${this.rowHeight}`);

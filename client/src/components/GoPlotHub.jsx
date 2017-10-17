@@ -1,12 +1,10 @@
 import React from 'react';
-import { FormControl, FormControlLabel } from 'material-ui/Form';
+import { FormControl } from 'material-ui/Form';
 import Switch from 'material-ui/Switch';
 import TextField from 'material-ui/TextField';
-import { InputLabel } from 'material-ui/Input';
 import Select from 'material-ui/Select';
 import { MenuItem } from 'material-ui/Menu';
 import Paper from 'material-ui/Paper';
-import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
 import { max } from 'd3-array';
 import FlipMove from 'react-flip-move';
@@ -21,7 +19,7 @@ import List, {
 } from 'material-ui/List';
 // Own imports
 import GoPlot from './GoPlot';
-import { isUndefined, toItemIndexes } from './Helper';
+import { isUndefined } from './Helper';
 
 const styleSheet = {
   goOptionLabel: {

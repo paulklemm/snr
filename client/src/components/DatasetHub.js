@@ -109,7 +109,6 @@ class DatasetHub {
     let datasetCount = Object.keys(this.datasets).length;
     // Decrement datasetCount by 1 if it is not 0
     datasetCount = datasetCount === 0 ? datasetCount : datasetCount - 1;
-    console.log(`Set default for ${name} to ${datasetIconNames[datasetCount]}`);
     this.setDatasetIcon(name, datasetIconNames[datasetCount]);
   }
 
