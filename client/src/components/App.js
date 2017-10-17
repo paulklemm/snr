@@ -65,6 +65,7 @@ class App extends React.Component {
     this.setAxisValues = this.setAxisValues.bind(this);
     this.setZoom = this.setZoom.bind(this);
     this.login = this.login.bind(this);
+    this.toggleMainViewMode = this.toggleMainViewMode.bind(this);
     // Init datasethub and inject filterTriggered function
     this.datasetHub = new DatasetHub(this.filterBroadcasted);
     this.debug = false;
@@ -94,6 +95,7 @@ class App extends React.Component {
       axisValues: 'untransformed', // Can be 'both', 'transformed' or 'untransformed'
       zoom: true, // Zoom on filtering in the plots
       highlight: new Highlight('EnsemblID'),
+      viewMode: 'overview', // Steer the view mode of the main app
     };
   }
 
@@ -109,6 +111,14 @@ class App extends React.Component {
     } else {
       this.setState({ yTransformation: transformation });
     }
+  }
+
+  /**
+   * Toggle view mode between overview (PCA) and detailed (scatterplots with small multiples)
+   */
+  toggleMainViewMode() {
+    const viewMode = this.state.viewMode === 'overview' ? 'detailed' : 'overview';
+    this.setState({ viewMode });
   }
 
   /**
@@ -594,6 +604,8 @@ class App extends React.Component {
             busy={Object.keys(this.state.busy).length !== 0}
             toggleRightDrawer={this.toggleRightDrawer}
             toggleLeftDrawer={this.toggleLeftDrawer}
+            toggleMainViewMode={this.toggleMainViewMode}
+            mainViewMode={this.state.viewMode}
             invalidateLogin={this.invalidateLogin}
           />
         </div>

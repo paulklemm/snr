@@ -22,6 +22,19 @@ const styleSheet = {
 
 class Navbar extends React.Component {
   render() {
+    // Rather lengthy code to choose text and icon for main view
+    const cloudIcon = <Icon name="cloud" />;
+    const searchIcon = <Icon name="search" />;
+    let mainViewIcon;
+    let mainText;
+    if (this.props.mainViewMode === 'overview') {
+      mainViewIcon = searchIcon;
+      mainText = 'Small Multiples View';
+    } else {
+      mainViewIcon = cloudIcon;
+      mainText = 'Overview';
+    }
+
     return(
       <div style={styleSheet.navbar}>
         <Grid container spacing={24}>
@@ -30,11 +43,14 @@ class Navbar extends React.Component {
             <Logo pulse={ this.props.busy }></Logo>
           </Grid>
           <Grid item xs={8} style={styleSheet.buttons}>
+            <a style={styleSheet.button} onClick={this.props.toggleMainViewMode}>
+              {mainViewIcon} {mainText}
+            </a>
             <a style={styleSheet.button} onClick={this.props.toggleLeftDrawer}>
-              <Icon name="pie-chart" /> Show GO-Terms
+              <Icon name="pie-chart" /> GO-Terms
             </a>
             <a style={styleSheet.button} onClick={this.props.toggleRightDrawer}>
-              <Icon name="table" /> Show datasets
+              <Icon name="table" /> Datasets
             </a>
             <a style={styleSheet.button} onClick={this.props.invalidateLogin}>
               <Icon name="sign-out" /> Logout
@@ -44,6 +60,10 @@ class Navbar extends React.Component {
         </Grid>
       </div>
     );
+  }
+
+  componentWillReceiveProps(nextProps) {
+    
   }
 }
 
