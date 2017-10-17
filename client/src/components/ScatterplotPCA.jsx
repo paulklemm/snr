@@ -30,7 +30,6 @@ class ScatterplotPCA extends Scatterplot {
     super(props);
     // Collection holding the width and height of each icon to allow for exact positioning
     this.iconSize = {};
-    this.updateWithNewProps(props);
   }
 
   /**
@@ -80,22 +79,6 @@ class ScatterplotPCA extends Scatterplot {
     // Set icons array
     this.icons = icons;
     return true;
-  }
-
-  /**
-   * Update component state with newly received props
-   * @param {Object} nextProps React props element of object
-   */
-  updateWithNewProps(nextProps) {
-    if (!this.propsAreValid(nextProps)) { return; }
-    this.setScale(this.x, this.y);
-    this.axes = this.renderAxes();
-    this.dots = this.renderDots(3, this.x, this.y);
-    // Add axis labels rounded to two digits after comma
-    this.axisLabels = this.renderAxisLabels(
-      `PC${nextProps.xPc} (${Math.round(this.varianceExplainedX * 10000) / 100}%)`,
-      `PC${nextProps.yPc} (${Math.round(this.varianceExplainedY * 10000) / 100}%)`
-    );
   }
 
   /**
@@ -200,22 +183,24 @@ class ScatterplotPCA extends Scatterplot {
     this.setState({ tooltip });
   }
 
-  componentWillReceiveProps(nextProps) {
-    this.updateWithNewProps(nextProps);
-  }
-
   render() {
     if (!this.propsAreValid(this.props)) {
       return (<div>no data</div>);
     }
-
     // reset margin and scale in case they changed
     this.setMargin();
+    // SetScale is dependant on the width and height, therefore it belongs to render
+    this.setScale(this.x, this.y);
 
     return (
       <Measure
         bounds
-        onMeasure={this.onMeasure}
+        key={`ScatterplotPCA ${this.state.responsiveWidth}, ${this.state.responsiveHeight}`}
+        onMeasure={(measure) => {
+          if (measure.width !== this.state.responsiveWidth) {
+            this.setState({ responsiveWidth: measure.width });
+          }
+        }}
       >
         {({ measureRef }) =>
           (<div ref={measureRef}>
@@ -225,9 +210,12 @@ class ScatterplotPCA extends Scatterplot {
               height={this.heightNoMargin + this.margin.top + this.margin.bottom}
             >
               <g transform={`translate(${this.margin.left},${this.margin.top})`}>
-                {this.axes}
-                {this.dots}
-                {this.axisLabels}
+                {this.renderAxes()}
+                {this.renderDots(3, this.x, this.y)}
+                {this.renderAxisLabels(
+                  `PC${this.props.xPc} (${Math.round(this.varianceExplainedX * 10000) / 100}%)`,
+                  `PC${this.props.yPc} (${Math.round(this.varianceExplainedY * 10000) / 100}%)`
+                )}
                 {this.state.tooltip}
                 {this.state.selectionRectangle.getRectangle()}
               </g>

@@ -373,10 +373,16 @@ class Scatterplot extends React.Component {
    */
   onMeasure(measure) {
     if (this.props.responsiveWidth) {
-      this.setState({ responsiveWidth: measure.width });
+      // Only set state if responsiveWidth is not yet set or it was actually updated
+      if (isUndefined(this.state.responsiveWidth) || this.state.responsiveWidth !== measure.width) {
+        console.log(`Calling setstate on responsiveWidth and set it from ${this.state.responsiveWidth} to ${measure.width}`);
+        this.setState({ responsiveWidth: measure.width });
+      }
     }
     if (this.props.responsiveHeight) {
-      this.setState({ responsiveHeight: measure.height });
+      if (isUndefined(this.state.responsiveHeight) || this.state.responsiveHeight !== measure.height) {
+        this.setState({ responsiveHeight: measure.height });
+      }
     }
   }
 
