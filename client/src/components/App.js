@@ -560,18 +560,8 @@ class App extends React.Component {
     const primaryDatasetDimNames = this.state.primaryDataset.dimNames;
 
     // Create welcome text
-    let welcome = '';
-    if (isUndefined(this.state.primaryDataset.data)) {
-      welcome = [
-        <Grid item xs={12}>
-          <Welcome />
-        </Grid>,
-      ];
-    }
+    const welcome = isUndefined(this.state.primaryDataset.data) ? <Grid item xs={12}><Welcome /></Grid> : '';
 
-    // Add PCA
-    // TODO PCA Comment back in if doing the PCA
-    // let pcaImage = (typeof this.state.pcaImage === "undefined") ? pcaImage = <Loading width={800} height={400} /> : <img src={`${this.state.pcaImage}?width=7&height=5`} width={800} height={400} alt="R test PCA" />;
     let app = '';
     if (this.state.loginRequired) {
       app = <div><LoginScreen login={ this.login } /></div>;
@@ -614,8 +604,6 @@ class App extends React.Component {
           <Grid container spacing={16}>
             {welcome}
             <Grid item xs={8}>
-              {/*<center><p>{this.state.primaryDataset.name}</p></center>*/}
-              {/* <Hexplot height={this.layoutFactory.heights.mainView} width={600} responsiveWidth={true} rnaSeqData={this.state.primaryDataset} xName="pValueNegLog10" yName="fc" hexSize={4} hexMax={20} showRenderGenesOption={true} /> */}
               <Hexplot
                 height={this.layoutFactory.heights.mainView}
                 width={600}
@@ -643,7 +631,6 @@ class App extends React.Component {
                 {hexplots}
               </Grid>
             </Grid>
-            {/* Add Table on whole page length */}
             <ScatterplotPCA
               width={200}
               height={200}
@@ -653,6 +640,7 @@ class App extends React.Component {
               yPc={2}
               toggleEnabledDataset={this.toggleEnabledDataset}
             />
+            {/* Add Table on whole page length */}
             <Grid item xs={12}>
               <Table
                 data={primaryDatasetData}
@@ -665,22 +653,6 @@ class App extends React.Component {
               />
             </Grid>
           </Grid>
-          { /*
-            <Paper>
-              <Table
-                data={primaryDatasetData}
-                dimNames={primaryDatasetDimNames}
-                height={400}
-                onFilter={this.onFilter} />
-            </Paper>
-            <Grid item xs>
-              <Paper>
-                {pcaImage}
-              </Paper>
-            </Grid>
-            {hexplots}
-          */ }
-
         </div>
       </div>;
     }
