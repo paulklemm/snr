@@ -96,6 +96,7 @@ class App extends React.Component {
       zoom: true, // Zoom on filtering in the plots
       highlight: new Highlight('EnsemblID'),
       viewMode: 'overview', // Steer the view mode of the main app
+      toggleUpdate: true, // Dummy variable used for toggling an update in main app
     };
   }
 
@@ -412,7 +413,10 @@ class App extends React.Component {
    * functions e.g. to react to filtering changes.
    */
   forceUpdateApp() {
-    this.forceUpdate();
+    this.setState({
+      toggleUpdate: !this.state.toggleUpdate
+    });
+    // this.forceUpdate();
   }
 
   /**
@@ -525,20 +529,19 @@ class App extends React.Component {
     };
     // Create Hexplot dynamic from inbox data
     const hexplots = [];
-    for (let i in this.datasetHub.names) {
-      let name = this.datasetHub.names[i];
-      let dataset = this.datasetHub.datasets[name];
+    this.datasetHub.names.forEach((name) => {
+      const dataset = this.datasetHub.datasets[name];
       if (dataset.loaded) {
         hexplots.push(
           <Grid item xs={6} key={name}>
             <Hexplot
-              responsiveWidth={true} 
-              height={this.layoutFactory.heights.smallMultiples} 
-              width={0} 
-              rnaSeqData={dataset} 
-              highlight={this.state.highlight} 
-              xName={this.state.xDimension} 
-              yName={this.state.yDimension} 
+              responsiveWidth={true}
+              height={this.layoutFactory.heights.smallMultiples}
+              width={0}
+              rnaSeqData={dataset}
+              highlight={this.state.highlight}
+              xName={this.state.xDimension}
+              yName={this.state.yDimension}
               filter={this.datasetHub.filter}
               forceUpdateApp={this.forceUpdateApp}
               hexSize={2}
@@ -555,12 +558,81 @@ class App extends React.Component {
           </Grid>
         );
       }
-    }
+    });
     const primaryDatasetData = (this.state.primaryDataset.data === undefined) ? undefined : this.state.primaryDataset.getData();
     const primaryDatasetDimNames = this.state.primaryDataset.dimNames;
 
     // Create welcome text
     const welcome = isUndefined(this.state.primaryDataset.data) ? <Grid item xs={12}><Welcome /></Grid> : '';
+
+    // Choose between Small Multiples View and Overview
+    let appBody = '';
+    if (this.state.viewMode === 'detailed') {
+      appBody =
+        <Grid container spacing={16}>
+          {welcome}
+          <Grid item xs={8}>
+            <Hexplot
+              height={this.layoutFactory.heights.mainView}
+              width={600}
+              responsiveWidth={true}
+              highlight={this.state.highlight}
+              rnaSeqData={this.state.primaryDataset}
+              xName={this.state.xDimension}
+              yName={this.state.yDimension}
+              filter={this.datasetHub.filter}
+              forceUpdateApp={this.forceUpdateApp}
+              hexSize={4}
+              hexMax={20}
+              showRenderGenesOption={true}
+              setTransformation={this.setTransformation}
+              setZoom={this.setZoom}
+              xTransformation={this.state.xTransformation}
+              yTransformation={this.state.yTransformation}
+              zoom={this.state.zoom}
+              axisValues={this.state.axisValues}
+              setAxisValues={this.setAxisValues}
+            />
+          </Grid>
+          {/* Small multiples */}
+          <Grid item xs={4}>
+            <Grid container spacing={16}>
+              {hexplots}
+            </Grid>
+          </Grid>
+          {/* Add Table on whole page length */}
+          <Grid item xs={12}>
+            <Table
+              data={primaryDatasetData}
+              dimNames={primaryDatasetDimNames}
+              height={395}
+              highlight={this.state.highlight}
+              filter={this.datasetHub.filter}
+              forceUpdateApp={this.forceUpdateApp}
+              changePlotDimension={this.setPlotDimension}
+            />
+          </Grid>
+        </Grid>
+      ;
+    } else {
+      appBody =
+        <Grid container spacing={16}>
+          <Grid item xs={2} />
+          <Grid item xs={8}>
+            <ScatterplotPCA
+              width={200}
+              height={this.layoutFactory.heights.mainView}
+              responsiveWidth={true}
+              pca={this.state.pca}
+              datasetHub={this.datasetHub}
+              xPc={1}
+              yPc={2}
+              toggleEnabledDataset={this.toggleEnabledDataset}
+            />
+          </Grid>
+          <Grid item xs={2} />
+        </Grid>;
+    }
 
     let app = '';
     if (this.state.loginRequired) {
@@ -600,59 +672,7 @@ class App extends React.Component {
           />
         </div>
         <div style={styleSheet.appBody}>
-          {/* Main Plot for the interaction */}
-          <Grid container spacing={16}>
-            {welcome}
-            <Grid item xs={8}>
-              <Hexplot
-                height={this.layoutFactory.heights.mainView}
-                width={600}
-                responsiveWidth={true}
-                highlight={this.state.highlight}
-                rnaSeqData={this.state.primaryDataset}
-                xName={this.state.xDimension}
-                yName={this.state.yDimension}
-                filter={this.datasetHub.filter}
-                forceUpdateApp={this.forceUpdateApp}
-                hexSize={4}
-                hexMax={20}
-                showRenderGenesOption={true}
-                setTransformation={this.setTransformation}
-                setZoom={this.setZoom}
-                xTransformation={this.state.xTransformation}
-                yTransformation={this.state.yTransformation}
-                zoom={this.state.zoom}
-                axisValues={this.state.axisValues}
-                setAxisValues={this.setAxisValues}
-              />
-            </Grid>
-            <Grid item xs={4}>
-              <Grid container spacing={16}>
-                {hexplots}
-              </Grid>
-            </Grid>
-            <ScatterplotPCA
-              width={200}
-              height={200}
-              pca={this.state.pca}
-              datasetHub={this.datasetHub}
-              xPc={1}
-              yPc={2}
-              toggleEnabledDataset={this.toggleEnabledDataset}
-            />
-            {/* Add Table on whole page length */}
-            <Grid item xs={12}>
-              <Table
-                data={primaryDatasetData}
-                dimNames={primaryDatasetDimNames}
-                height={395}
-                highlight={this.state.highlight}
-                filter={this.datasetHub.filter}
-                forceUpdateApp={this.forceUpdateApp}
-                changePlotDimension={this.setPlotDimension}
-              />
-            </Grid>
-          </Grid>
+          {appBody}
         </div>
       </div>;
     }

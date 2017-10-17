@@ -3,6 +3,7 @@ import IconButton from 'material-ui/IconButton';
 import TextField from 'material-ui/TextField';
 import PropTypes from 'prop-types';
 import {DefaultFilterSetting} from './DimensionTypes.js';
+import { isUndefined, areIdentical } from './Helper';
 
 const styleSheet = {
   headerTR: {
@@ -39,25 +40,32 @@ const styleSheet = {
 // https://www.youtube.com/watch?v=Bx5JB2FcSnk
 // https://jsfiddle.net/vjeux/KbWJ2/9/
 class Table extends React.Component{
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.debug = false;
     // Somehow the height of the TH elements differ from the max-height. Therfore we have to update this as soon as the list is rendered the first time
     this.rowHeight = styleSheet.th.height;
     // We store the textFieldValues of the filter as class attribute since we need it when the operator changes
     this.textFieldValues = {};
+    const filterSetting = isUndefined(props.dimNames) ? undefined : this.getDefaultFilterSettings(props.dimNames);
     this.state = {
       rowTop: 0,
-      rowBottom: 40
+      rowBottom: 40,
+      filterSetting
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    // If we receive dimNames initialize them
-    if (typeof nextProps.dimNames !== "undefined") {
-      this.setState({
-        filterSetting: this.getDefaultFilterSettings(nextProps.dimNames)
-      });
+    // If dimNames is undefined, do nothing
+    if (isUndefined(nextProps.dimNames)) { return; }
+    // Check if dimnames match. If they do not match, we need to reset the filterSettingsState
+    const dimNamesMismatch = isUndefined(this.props.dimNames) ? true : !areIdentical(this.props.dimNames, nextProps.dimNames);
+
+    if (dimNamesMismatch || isUndefined(this.state.filterSetting)) {
+      console.log(`dimNamesMismatch: ${dimNamesMismatch}; Update with new props`);
+      const filterSetting = this.getDefaultFilterSettings(nextProps.dimNames);
+      console.log(filterSetting);
+      this.setState({ filterSetting });
     }
   }
 
@@ -100,8 +108,7 @@ class Table extends React.Component{
     let dimensions = this.props.dimNames;
     // Add header table
     let header = [];
-    for (let i in dimensions) {
-      const dimension = dimensions[i];
+    dimensions.forEach((dimension, index) => {
       // Check if there are filter available for the current dimension and set filter value accordingly
       const filter = this.props.filter.getFilterOfDimension(dimension);
       // Default filter value is an empty string
@@ -120,41 +127,41 @@ class Table extends React.Component{
       }
 
       header.push(
-        <th key={`header-th-${i}`}>
+        <th key={`header-th-${index}`}>
           <div style={(filter.length > 0) ? styleSheet.headerTHFiltered : styleSheet.headerTH}>
-            <div onClick={ (event) => {
+            <div onClick={(event) => {
               event.preventDefault();
               this.onHeaderClick(dimension);
             }}>
-            {/* <Typography noWrap type="body1"><Icon name="sort-desc" style={{fontSize:'100%'}} /> {dimension}</Typography> */}
-            {dimension}
+              {/* <Typography noWrap type="body1"><Icon name="sort-desc" style={{fontSize:'100%'}} /> {dimension}</Typography> */}
+              {dimension}
             </div>
             <div style={{ display: 'flex', whiteSpace: 'nowrap' }}>
-            <IconButton
-              style={{ marginTop: '-2px', width: '10px' }}
-              onClick={(event) => {
-                // Update filter
-                const currentOperator = event.target.textContent;
-                let filterSetting = this.state.filterSetting;
-                // Switch signs
-                if (currentOperator === '<') {
-                  filterSetting[dimension] = '>';
-                  this.setState({ filterSetting: filterSetting });
-                  this.handleFilter(dimension);
-                } else if (currentOperator === '>') {
-                  filterSetting[dimension] = '<';
-                  this.setState({ filterSetting: filterSetting });
-                  this.handleFilter(dimension);
+              <IconButton
+                style={{ marginTop: '-2px', width: '10px' }}
+                onClick={(event) => {
+                  // Update filter
+                  const currentOperator = event.target.textContent;
+                  let filterSetting = this.state.filterSetting;
+                  // Switch signs
+                  if (currentOperator === '<') {
+                    filterSetting[dimension] = '>';
+                    this.setState({ filterSetting: filterSetting });
+                    this.handleFilter(dimension);
+                  } else if (currentOperator === '>') {
+                    filterSetting[dimension] = '<';
+                    this.setState({ filterSetting: filterSetting });
+                    this.handleFilter(dimension);
+                  }
+                }}
+              >
+                {
+                  this.state.filterSetting[dimension]
                 }
-              }}
-            >
-              {
-                this.state.filterSetting[dimension]
-              }
-            </IconButton>
-              <TextField 
-              style={{ width: '100% important!', marginLeft: '5px'}}
-                id="filter" 
+              </IconButton>
+              <TextField
+                style={{ width: '100% important!', marginLeft: '5px' }}
+                id="filter"
                 label="Filter"
                 type="search"
                 value={filterValue}
@@ -168,7 +175,7 @@ class Table extends React.Component{
           </div>
         </th>
       );
-    }
+    });
     return(
       <table style={styleSheet.table}>
         <tbody>
@@ -273,7 +280,8 @@ class Table extends React.Component{
   }
 
   render() {
-    if (this.props.data === undefined) { return <div />; }
+    console.log('Render');
+    if (isUndefined(this.props.data) || isUndefined(this.state.filterSetting)) { return <div />; }
     // console.log(this.props.data);
     // console.log(this.props.dimNames);
     // Update the default height of the row to have precise calculations on the table and not rely on the style sheet

@@ -372,10 +372,12 @@ class Scatterplot extends React.Component {
    * @param {object} measure Object created by react-measure component containing element width and height
    */
   onMeasure(measure) {
-    if (this.props.responsiveWidth)
-      this.setState({ responsiveWidth: measure.width })
-    if (this.props.responsiveHeight)
-      this.setState({ responsiveHeight: measure.height })
+    if (this.props.responsiveWidth) {
+      this.setState({ responsiveWidth: measure.width });
+    }
+    if (this.props.responsiveHeight) {
+      this.setState({ responsiveHeight: measure.height });
+    }
   }
 
   render() {

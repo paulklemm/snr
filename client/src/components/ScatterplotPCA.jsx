@@ -162,7 +162,6 @@ class ScatterplotPCA extends Scatterplot {
                         width: measure.width,
                         height: measure.height
                       };
-                      console.log(`${currentRowName}: ${this.iconSize[currentRowName].width}, ${this.iconSize[currentRowName].height}`);
                     }}
                   >
                   {DatasetIcons[this.icons[i]]}
