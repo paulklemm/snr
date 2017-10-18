@@ -41,8 +41,8 @@ import Welcome from './Welcome';
 // Create theme (https://material-ui-1dab0.firebaseapp.com/customization/themes)
 const theme = createMuiTheme({
   palette: {
-    primary: orange,
-  },
+    primary: orange
+  }
 });
 
 class App extends React.Component {
@@ -99,7 +99,7 @@ class App extends React.Component {
       zoom: true, // Zoom on filtering in the plots
       highlight: new Highlight('EnsemblID'),
       viewMode: 'overview', // Steer the view mode of the main app
-      toggleUpdate: true, // Dummy variable used for toggling an update in main app
+      toggleUpdate: true // Dummy variable used for toggling an update in main app
     };
   }
 
@@ -121,7 +121,8 @@ class App extends React.Component {
    * Toggle view mode between overview (PCA) and detailed (scatterplots with small multiples)
    */
   toggleMainViewMode() {
-    const viewMode = this.state.viewMode === 'overview' ? 'detailed' : 'overview';
+    const viewMode =
+      this.state.viewMode === 'overview' ? 'detailed' : 'overview';
     this.setState({ viewMode });
   }
 
@@ -138,7 +139,7 @@ class App extends React.Component {
    * @param {string} axisValues Axis value rendering option. Can be 'both', 'transformed' or 'untransformed'.
    */
   setAxisValues(axisValues) {
-    this.setState({axisValues});
+    this.setState({ axisValues });
   }
 
   /**
@@ -149,7 +150,7 @@ class App extends React.Component {
   setPlotDimensions(xDimension, yDimension) {
     this.setState({
       xDimension,
-      yDimension,
+      yDimension
     });
   }
 
@@ -161,7 +162,7 @@ class App extends React.Component {
     const lastXDimension = this.state.xDimension;
     this.setState({
       xDimension: newDimension,
-      yDimension: lastXDimension,
+      yDimension: lastXDimension
     });
   }
 
@@ -182,10 +183,12 @@ class App extends React.Component {
     // TODO: Handle removal of 'enabled'
     const requiresLoading = this.datasetHub.setEnable(name, enabled);
     this.setState({
-      datasetEnabled: this.datasetHub.enabled,
+      datasetEnabled: this.datasetHub.enabled
     });
     // Update the count of the small multiples
-    this.layoutFactory.setSmallMultiplesCount(this.datasetHub.getCountOfEnabledDatasets());
+    this.layoutFactory.setSmallMultiplesCount(
+      this.datasetHub.getCountOfEnabledDatasets()
+    );
     if (requiresLoading) {
       this.loadDataset(name);
     }
@@ -206,7 +209,9 @@ class App extends React.Component {
   async getMetadata(name) {
     // If metadata is defined in datasethub, return it
     const metadataHub = this.datasetHub.getMetadata(name);
-    if (!isUndefined(metadataHub)) { return metadataHub; }
+    if (!isUndefined(metadataHub)) {
+      return metadataHub;
+    }
     // When not defined, retrieve it from the server
     let metadataResponse = await this.nodeBridge.getMetadata(name);
     // Handle errors
@@ -243,7 +248,9 @@ class App extends React.Component {
    */
   async applyGoTerms() {
     // Check if we have a primary dataset
-    if (isUndefined(this.state.primaryDataset.data)) { return; }
+    if (isUndefined(this.state.primaryDataset.data)) {
+      return;
+    }
     // Get the (filtered) primary dataset
     const primaryDatasetData = this.state.primaryDataset.getData();
     // console.log(`Filtered dataset size: ${primaryDatasetData.length}`);
@@ -252,14 +259,13 @@ class App extends React.Component {
     // Get ensembl-ID array
     const ensemblIds = objectValueToArray(primaryDatasetData, 'EnsemblID');
     // Only proceed if the selection of ensembl IDs is not 0
-    if (ensemblIds.length === 0)
-      return;
-    
+    if (ensemblIds.length === 0) return;
+
     // Get collection pointing GO-ids to arrays of ensembl-ids in the filter
     const goTerms = await this.goTermHub.getGoTerms(ensemblIds);
     // Sort the GOTermArray
     this.setState({
-      'goTerms': this.goTermHub.sortGoTerms(goTerms)
+      goTerms: this.goTermHub.sortGoTerms(goTerms)
     });
   }
 
@@ -288,7 +294,10 @@ class App extends React.Component {
    */
   async getPCA() {
     console.log('Get loadings of PCA');
-    const loadings = await this.nodeBridge.getPcaLoadings('mmusculus_gene_ensembl', 'current');
+    const loadings = await this.nodeBridge.getPcaLoadings(
+      'mmusculus_gene_ensembl',
+      'current'
+    );
     this.setState({
       pca: loadings.loadings['.val']
     });
@@ -300,15 +309,17 @@ class App extends React.Component {
     // Check if we ned to login or not
     await this.checkLogin();
     // If we need to login, then there is no local user or token saved. Therefore initSession needs to exit
-    if (this.state.loginRequired)
-      return;
+    if (this.state.loginRequired) return;
 
     // PCA Plot
     this.getPCA();
 
     // Get GO-Term description
     // TODO: This "current" thing needs to go away, because this will change!
-    this.goTermHub = new GoTermHub(this.nodeBridge.getGoSummary, this.nodeBridge.getGoPerGene);
+    this.goTermHub = new GoTermHub(
+      this.nodeBridge.getGoSummary,
+      this.nodeBridge.getGoPerGene
+    );
     this.goTermHub.addGeneToGo('mmusculus_gene_ensembl', 'current');
     this.goTermHub.addSummary('mmusculus_gene_ensembl', 'current');
     // DEBUG
@@ -364,7 +375,12 @@ class App extends React.Component {
 
     // Run the command
     if (debug) console.log(runKey);
-    const response = await this.nodeBridge.sendRCommand(rpackage, rfunction, params, valformat);
+    const response = await this.nodeBridge.sendRCommand(
+      rpackage,
+      rfunction,
+      params,
+      valformat
+    );
     if (debug) console.log(response);
 
     // If Response is negative because of invalid token, invalidate login
@@ -412,8 +428,7 @@ class App extends React.Component {
       loginRequired: !loginSuccessful
     });
     // If login is successful, init the session
-    if (loginSuccessful)
-      await this.initSession()
+    if (loginSuccessful) await this.initSession();
     return loginSuccessful;
   }
 
@@ -421,13 +436,14 @@ class App extends React.Component {
    * Start debug session to not require manual input
    */
   async debugSession() {
-    console.log("Entering Debug mode. Data will be loaded automatically. To disable, set `App.debug` to `false`");
+    console.log(
+      'Entering Debug mode. Data will be loaded automatically. To disable, set `App.debug` to `false`'
+    );
     // Set default plotting dimensions
     this.setPlotDimensions('pValueNegLog10', 'fc');
     // Login Required
     const loginRequired = await this.authentication.loginRequired();
-    if (loginRequired)
-      console.log("Login required");
+    if (loginRequired) console.log('Login required');
     this.setState({
       loginRequired: loginRequired
     });
@@ -467,7 +483,11 @@ class App extends React.Component {
     this.setState({ datasetLoading: this.datasetHub.loading });
     // Load dataset
     const response = await this.nodeBridge.getDataset(name);
-    this.datasetHub.setData(name, response.dataset['.val'].dataset, response.dataset['.val'].dimNames);
+    this.datasetHub.setData(
+      name,
+      response.dataset['.val'].dataset,
+      response.dataset['.val'].dimNames
+    );
     // Loading is done, so update it again
     this.setState({ datasetLoading: this.datasetHub.loading });
     this.setState({ primaryDataset: this.datasetHub.datasets[name] });
@@ -481,7 +501,10 @@ class App extends React.Component {
 
   /** https://stackoverflow.com/questions/19014250/reactjs-rerender-on-browser-resize */
   handleResize(event, debug = false) {
-    if (debug) console.log(`Resize Window, width: ${window.innerWidth}, height: ${window.innerHeight}`);
+    if (debug)
+      console.log(
+        `Resize Window, width: ${window.innerWidth}, height: ${window.innerHeight}`
+      );
     this.layoutFactory.updateWindowSize(window.innerWidth, window.innerHeight);
     this.forceUpdate();
   }
@@ -518,8 +541,8 @@ class App extends React.Component {
   }
 
   getGoDrawer(leftDrawerWidth) {
-    const goPlotHub = this.state.openDrawer.left ?
-      (<GoPlotHub
+    const goPlotHub = this.state.openDrawer.left ? (
+      <GoPlotHub
         goTerms={this.state.goTerms}
         dataset={this.state.primaryDataset}
         datasetHub={this.datasetHub}
@@ -527,14 +550,12 @@ class App extends React.Component {
         forceUpdateApp={this.forceUpdateApp}
         goTermHub={this.goTermHub}
         width={leftDrawerWidth}
-      />) :
-      '';
+      />
+    ) : (
+      ''
+    );
     return (
-      <Drawer
-        anchor="left"
-        type="persistent"
-        open={this.state.openDrawer.left}
-      >
+      <Drawer anchor="left" type="persistent" open={this.state.openDrawer.left}>
         <div
           style={{
             maxWidth: `${leftDrawerWidth}px`,
@@ -542,7 +563,12 @@ class App extends React.Component {
             padding: '10px'
           }}
         >
-          <IconButton style={{ float: 'right' }} onClick={this.toggleLeftDrawer}><Icon name="times" /></IconButton>
+          <IconButton
+            style={{ float: 'right' }}
+            onClick={this.toggleLeftDrawer}
+          >
+            <Icon name="times" />
+          </IconButton>
           {goPlotHub}
         </div>
       </Drawer>
@@ -556,11 +582,11 @@ class App extends React.Component {
         marginRight: 100,
         marginLeft: 100,
         paddingLeft: this.state.openDrawer.left ? leftDrawerWidth : 0
-      },
+      }
     };
     // Create Hexplot dynamic from inbox data
     const hexplots = [];
-    this.datasetHub.names.forEach((name) => {
+    this.datasetHub.names.forEach(name => {
       const dataset = this.datasetHub.datasets[name];
       if (dataset.loaded) {
         hexplots.push(
@@ -590,16 +616,25 @@ class App extends React.Component {
         );
       }
     });
-    const primaryDatasetData = (this.state.primaryDataset.data === undefined) ? undefined : this.state.primaryDataset.getData();
+    const primaryDatasetData =
+      this.state.primaryDataset.data === undefined
+        ? undefined
+        : this.state.primaryDataset.getData();
     const primaryDatasetDimNames = this.state.primaryDataset.dimNames;
 
     // Create welcome text
-    const welcome = isUndefined(this.state.primaryDataset.data) ? <Grid item xs={12}><Welcome /></Grid> : '';
+    const welcome = isUndefined(this.state.primaryDataset.data) ? (
+      <Grid item xs={12}>
+        <Welcome />
+      </Grid>
+    ) : (
+      ''
+    );
 
     // Choose between Small Multiples View and Overview
     let appBody = '';
     if (this.state.viewMode === 'detailed') {
-      appBody =
+      appBody = (
         <Grid container spacing={16}>
           {welcome}
           <Grid item xs={8}>
@@ -644,12 +679,12 @@ class App extends React.Component {
             />
           </Grid>
         </Grid>
-      ;
+      );
     } else {
-      appBody =
+      appBody = (
         <Grid container spacing={16}>
-          <Grid item xs={2} />
-          <Grid item xs={8}>
+          <Grid item xs={1} />
+          <Grid item xs={10}>
             <ScatterplotPCA
               width={200}
               height={this.layoutFactory.heights.mainView}
@@ -662,26 +697,41 @@ class App extends React.Component {
               getMetadataPromise={this.getMetadataPromise}
             />
           </Grid>
-          <Grid item xs={2} />
-        </Grid>;
+          <Grid item xs={1} />
+        </Grid>
+      );
     }
 
     let app = '';
     if (this.state.loginRequired) {
-      app = <div><LoginScreen login={ this.login } /></div>;
+      app = (
+        <div>
+          <LoginScreen login={this.login} />
+        </div>
+      );
     } else {
-      app =
-      <div>
-        {this.getGoDrawer(leftDrawerWidth)}
-        <Drawer
-          anchor="right"
-          open={this.state.openDrawer.right}
-          onRequestClose={this.handleRightClose}
-          onClick={this.handleRightClose}
-        >
-          <Card style={{ maxWidth: `${this.layoutFactory.windowWidth / 2}px`, minWidth: `${this.layoutFactory.windowWidth / 3}px` }}>
-            <CardContent>
-              <IconButton style={{ float: 'right' }} onClick={this.toggleRightDrawer}><Icon name="times" /></IconButton>
+      app = (
+        <div>
+          {this.getGoDrawer(leftDrawerWidth)}
+          <Drawer
+            anchor="right"
+            open={this.state.openDrawer.right}
+            onRequestClose={this.handleRightClose}
+            onClick={this.handleRightClose}
+          >
+            <Card
+              style={{
+                maxWidth: `${this.layoutFactory.windowWidth / 2}px`,
+                minWidth: `${this.layoutFactory.windowWidth / 3}px`
+              }}
+            >
+              <CardContent>
+                <IconButton
+                  style={{ float: 'right' }}
+                  onClick={this.toggleRightDrawer}
+                >
+                  <Icon name="times" />
+                </IconButton>
                 <DatasetSelect
                   getMetadata={this.nodeBridge.getMetadata}
                   getDatasetIcon={this.datasetHub.getDatasetIcon}
@@ -690,29 +740,28 @@ class App extends React.Component {
                   datasetLoading={this.state.datasetLoading}
                   setEnableDataset={this.setEnableDataset}
                 />
-            </CardContent>
-          </Card>
-        </Drawer>
-        <div style={{ marginLeft: this.state.openDrawer.left ? leftDrawerWidth : 0 }}>
-          <Navbar
-            busy={Object.keys(this.state.busy).length !== 0}
-            toggleRightDrawer={this.toggleRightDrawer}
-            toggleLeftDrawer={this.toggleLeftDrawer}
-            toggleMainViewMode={this.toggleMainViewMode}
-            mainViewMode={this.state.viewMode}
-            invalidateLogin={this.invalidateLogin}
-          />
+              </CardContent>
+            </Card>
+          </Drawer>
+          <div
+            style={{
+              marginLeft: this.state.openDrawer.left ? leftDrawerWidth : 0
+            }}
+          >
+            <Navbar
+              busy={Object.keys(this.state.busy).length !== 0}
+              toggleRightDrawer={this.toggleRightDrawer}
+              toggleLeftDrawer={this.toggleLeftDrawer}
+              toggleMainViewMode={this.toggleMainViewMode}
+              mainViewMode={this.state.viewMode}
+              invalidateLogin={this.invalidateLogin}
+            />
+          </div>
+          <div style={styleSheet.appBody}>{appBody}</div>
         </div>
-        <div style={styleSheet.appBody}>
-          {appBody}
-        </div>
-      </div>;
+      );
     }
-    return (
-      <MuiThemeProvider theme={theme}>
-        { app }
-      </MuiThemeProvider>
-    );
+    return <MuiThemeProvider theme={theme}>{app}</MuiThemeProvider>;
   }
 }
 
