@@ -207,11 +207,14 @@ class App extends React.Component {
     // If metadata is defined in datasethub, return it
     const metadataHub = this.datasetHub.getMetadata(name);
     if (!isUndefined(metadataHub)) { return metadataHub; }
-    // 
     // When not defined, retrieve it from the server
-    const metadata = await this.nodeBridge.getMetadata(name);
+    let metadataResponse = await this.nodeBridge.getMetadata(name);
+    // Handle errors
+    if (!metadataResponse.success) {
+      metadataResponse.metadata = { Error: [`Cannot derive data for ${name}`] };
+    }
     // Push metadata to DatasetHub
-    this.datasetHub.setMetadata(name, metadata);
+    this.datasetHub.setMetadata(name, metadataResponse.metadata);
     // Return processed metadata
     return this.datasetHub.getMetadata(name);
   }
