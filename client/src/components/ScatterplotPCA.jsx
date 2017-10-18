@@ -6,7 +6,6 @@ import { isUndefined, objectValueToArray, injectStyle } from './Helper';
 import DatasetIcons from './DatasetIcons';
 import Loading from './Loading';
 import DatasetInfo from './DatasetInfo';
-import Paper from 'material-ui/Paper';
 
 const styleSheet = {
   datasetLoaded: {
@@ -181,18 +180,16 @@ class ScatterplotPCA extends Scatterplot {
     const metadata = this.props.getMetadataPromise(name);
     tooltip.push(
       <foreignObject
-        width={100}
-        height={100}
+        width="1"
+        height="1"
         x={dx}
         y={dy}
         key={`Tooltip: ${dx}, ${dy}, ${name}`}
       >
-        <Paper style={{ padding: '10px' }}>
-          <DatasetInfo
-            metadata={metadata}
-            name={name}
-          />
-        </Paper>
+        <DatasetInfo
+          metadata={metadata}
+          name={name}
+        />
       </foreignObject>
       // <text x={dx} y={dy} key={`Tooltip: ${dx}, ${dy}, ${name}`}>
       //   {name}

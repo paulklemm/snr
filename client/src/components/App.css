@@ -11,6 +11,15 @@ body {
 	/* Set default font family */
 }
 
+foreignObject {
+	overflow: visible;
+}
+
+.smalltext {
+	font-size: 11px;
+	font-family: "Roboto",
+}
+
 .gosummarytable {
 	font-size: 11px;
 	font-family: "Roboto",
