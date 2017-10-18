@@ -23,7 +23,9 @@ class DatasetHub {
    * @return {array} Metadata array
    */
   getMetadata(name) {
-    return (Object.keys(this.metadata).indexOf(name) === -1) ? undefined : this.metadata[name];
+    return Object.keys(this.metadata).indexOf(name) === -1
+      ? undefined
+      : this.metadata[name];
   }
 
   /**
@@ -78,8 +80,7 @@ class DatasetHub {
   getCountOfEnabledDatasets() {
     let count = 0;
     for (let dataset in this.enabled)
-      if (this.enabled[dataset] === true)
-        count = count + 1
+      if (this.enabled[dataset] === true) count = count + 1;
     return count;
   }
 
@@ -109,9 +110,10 @@ class DatasetHub {
    */
   getDatasetIcon(datasetName) {
     if (Object.keys(this.datasets).indexOf(datasetName) === -1)
-      throw (new Error(`Could not get icon for ${datasetName}, dataset does not exist in DatasetHub`));
-    else
-      return (this.datasets[datasetName].icon);
+      throw new Error(
+        `Could not get icon for ${datasetName}, dataset does not exist in DatasetHub`
+      );
+    else return this.datasets[datasetName].icon;
   }
 
   /**
@@ -145,7 +147,7 @@ class DatasetHub {
   setEnable(datasetName, enabled) {
     this.datasets[datasetName].enabled = enabled;
     this.update();
-    return (this.datasets[datasetName].loaded === false && enabled)
+    return this.datasets[datasetName].loaded === false && enabled;
   }
 
   update() {
@@ -153,11 +155,13 @@ class DatasetHub {
     let enabled = {};
     let loading = {};
     // Iterate over all data sets and update information
-    names.forEach((name) => {
+    names.forEach(name => {
       enabled[name] = this.datasets[name].enabled;
       loading[name] = this.datasets[name].loading;
       // Set dataset icon
-      if (this.datasets[name].icon === '') { this.setDatasetIconDefault(name); }
+      if (this.datasets[name].icon === '') {
+        this.setDatasetIconDefault(name);
+      }
     });
     this.names = names;
     this.enabled = enabled;

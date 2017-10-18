@@ -41,9 +41,11 @@ class ScatterplotPCA extends Scatterplot {
    */
   propsAreValid(nextProps) {
     // When PCA object is not defined, return false
-    if (isUndefined(nextProps.pca)) { return false; }
+    if (isUndefined(nextProps.pca)) {
+      return false;
+    }
     // Get dimensions from PCA and return success state
-    return (this.getDimensionsFromPca(nextProps.pca, nextProps));
+    return this.getDimensionsFromPca(nextProps.pca, nextProps);
   }
 
   /**
@@ -56,19 +58,25 @@ class ScatterplotPCA extends Scatterplot {
     const x = objectValueToArray(pca, `PC${props.xPc}`);
     const y = objectValueToArray(pca, `PC${props.yPc}`);
     const rowNames = objectValueToArray(pca, '_row');
-    if (x.length <= 0 || y.length <= 0 || x.length !== y.length) { return false; }
+    if (x.length <= 0 || y.length <= 0 || x.length !== y.length) {
+      return false;
+    }
     // Get the images from PCA object
     const icons = [];
-    pca.forEach((item) => {
+    pca.forEach(item => {
       if (item._row !== 'proportion_of_variance') {
         try {
           const icon = props.datasetHub.getDatasetIcon(item._row);
           icons.push(icon);
-        } catch (error) { console.log(`${item._row} not yet defined`); }
+        } catch (error) {
+          console.log(`${item._row} not yet defined`);
+        }
       }
     });
     // Remove the last element. It contains the dimensions of the PCA
-    if (pca[x.length - 1]._row !== 'proportion_of_variance') { return false; }
+    if (pca[x.length - 1]._row !== 'proportion_of_variance') {
+      return false;
+    }
     // Get variance explained
     this.varianceExplainedX = x.pop();
     this.varianceExplainedY = y.pop();
@@ -101,14 +109,20 @@ class ScatterplotPCA extends Scatterplot {
       const currentY = y[i];
       const currentRowName = this.rowNames[i];
       // Check whether the current element is filtered or not
-      const currentIsFiltered = (isUndefined(filtered[i])) ? false : filtered[i];
+      const currentIsFiltered = isUndefined(filtered[i]) ? false : filtered[i];
       // Only create dot if x and y are numbers
-      if (isNaN(currentX) || isNaN(currentY))
-        continue;
+      if (isNaN(currentX) || isNaN(currentY)) continue;
       // Check if we have to highlight the elements
       const cx = this.xScale(currentX);
       const cy = this.yScale(currentY);
-      let newRadius = (!isUndefined(highlight) && cx >= highlight.minX && cx <= highlight.maxX && cy >= highlight.minY && cy <= highlight.maxY) ? radius + 1 : radius;
+      let newRadius =
+        !isUndefined(highlight) &&
+        cx >= highlight.minX &&
+        cx <= highlight.maxX &&
+        cy >= highlight.minY &&
+        cy <= highlight.maxY
+          ? radius + 1
+          : radius;
       // Get style for the element
       let divStyle = styleSheet.myPulse;
       if (this.props.datasetHub.isLoaded(currentRowName)) {
@@ -120,7 +134,8 @@ class ScatterplotPCA extends Scatterplot {
       if (this.icons.length > 0) {
         dots.push(
           <g
-            onMouseEnter={() => this.showTooltip(currentX, currentY, currentRowName)}
+            onMouseEnter={() =>
+              this.showTooltip(currentX, currentY, currentRowName)}
             onMouseLeave={() => this.hideTooltip()}
             onClick={() => this.props.toggleEnabledDataset(currentRowName)}
             key={`${currentX},${currentY},${i}`}
@@ -129,29 +144,29 @@ class ScatterplotPCA extends Scatterplot {
               width="20"
               height="20"
               x={
-                isUndefined(this.iconSize[currentRowName]) ?
-                cx - 8 : cx - (this.iconSize[currentRowName].width / 2)
+                isUndefined(this.iconSize[currentRowName])
+                  ? cx - 8
+                  : cx - this.iconSize[currentRowName].width / 2
               }
               y={
-                isUndefined(this.iconSize[currentRowName]) ?
-                cy - 8 : cy - (this.iconSize[currentRowName].height / 2)
+                isUndefined(this.iconSize[currentRowName])
+                  ? cy - 8
+                  : cy - this.iconSize[currentRowName].height / 2
               }
             >
-                <div
-                  style={divStyle}
+              <div style={divStyle}>
+                <Measure
+                  bounds
+                  onMeasure={measure => {
+                    this.iconSize[currentRowName] = {
+                      width: measure.width,
+                      height: measure.height
+                    };
+                  }}
                 >
-                  <Measure
-                    bounds
-                    onMeasure={(measure) => {
-                      this.iconSize[currentRowName] = {
-                        width: measure.width,
-                        height: measure.height
-                      };
-                    }}
-                  >
                   {DatasetIcons[this.icons[i]]}
-                  </Measure>
-                </div>
+                </Measure>
+              </div>
             </foreignObject>
           </g>
         );
@@ -186,10 +201,7 @@ class ScatterplotPCA extends Scatterplot {
         y={dy}
         key={`Tooltip: ${dx}, ${dy}, ${name}`}
       >
-        <DatasetInfo
-          metadata={metadata}
-          name={name}
-        />
+        <DatasetInfo metadata={metadata} name={name} />
       </foreignObject>
       // <text x={dx} y={dy} key={`Tooltip: ${dx}, ${dy}, ${name}`}>
       //   {name}
@@ -200,7 +212,7 @@ class ScatterplotPCA extends Scatterplot {
 
   render() {
     if (!this.propsAreValid(this.props)) {
-      return (<Loading label="Loading Overview" />);
+      return <Loading label="Loading Overview" />;
     }
     // reset margin and scale in case they changed
     this.setMargin();
@@ -210,33 +222,42 @@ class ScatterplotPCA extends Scatterplot {
     return (
       <Measure
         bounds
-        key={`ScatterplotPCA ${this.state.responsiveWidth}, ${this.state.responsiveHeight}`}
-        onMeasure={(measure) => {
+        key={`ScatterplotPCA ${this.state.responsiveWidth}, ${this.state
+          .responsiveHeight}`}
+        onMeasure={measure => {
           if (measure.width !== this.state.responsiveWidth) {
             this.setState({ responsiveWidth: measure.width });
           }
         }}
       >
-        {({ measureRef }) =>
-          (<div ref={measureRef}>
+        {({ measureRef }) => (
+          <div ref={measureRef}>
             <svg
               className="scatterplot"
               width={this.widthNoMargin + this.margin.left + this.margin.right}
-              height={this.heightNoMargin + this.margin.top + this.margin.bottom}
+              height={
+                this.heightNoMargin + this.margin.top + this.margin.bottom
+              }
             >
-              <g transform={`translate(${this.margin.left},${this.margin.top})`}>
+              <g
+                transform={`translate(${this.margin.left},${this.margin.top})`}
+              >
                 {this.renderAxes()}
                 {this.renderDots(3, this.x, this.y)}
                 {this.renderAxisLabels(
-                  `PC${this.props.xPc} (${Math.round(this.varianceExplainedX * 10000) / 100}%)`,
-                  `PC${this.props.yPc} (${Math.round(this.varianceExplainedY * 10000) / 100}%)`
+                  `PC${this.props.xPc} (${Math.round(
+                    this.varianceExplainedX * 10000
+                  ) / 100}%)`,
+                  `PC${this.props.yPc} (${Math.round(
+                    this.varianceExplainedY * 10000
+                  ) / 100}%)`
                 )}
                 {this.state.tooltip}
                 {this.state.selectionRectangle.getRectangle()}
               </g>
             </svg>
-          </div>)
-        }
+          </div>
+        )}
       </Measure>
     );
   }

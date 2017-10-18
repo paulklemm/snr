@@ -8,7 +8,7 @@ import Menu, { MenuItem } from 'material-ui/Menu';
 import IconButton from 'material-ui/IconButton';
 
 const styleSheet = {
-  root: { },
+  root: {},
   iconSelect: {
     fontSize: '90%'
   }
@@ -28,7 +28,7 @@ class IconSelect extends Component {
     };
   }
 
-  handleMenuItemClick (event, iconName) {
+  handleMenuItemClick(event, iconName) {
     this.setState({ selectedIndex: iconName, open: false });
     this.props.setDatasetIcon(this.props.datasetName, iconName);
   }
@@ -45,7 +45,7 @@ class IconSelect extends Component {
     const classes = this.props.classes;
     return (
       <div>
-        <IconButton 
+        <IconButton
           className={classes.iconSelect}
           aria-owns="simple-menu"
           aria-haspopup="true"
@@ -59,15 +59,21 @@ class IconSelect extends Component {
           open={this.state.open}
           onRequestClose={this.handleRequestClose}
         >
-          {Object.values(DatasetIcons).map((icon, index) =>
+          {Object.values(DatasetIcons).map((icon, index) => (
             <MenuItem
               key={`${Object.keys(DatasetIcons)[index]}+${index}`}
-              selected={Object.keys(DatasetIcons)[index] === this.state.selectedIndex}
-              onClick={event => this.handleMenuItemClick(event, Object.keys(DatasetIcons)[index])}
+              selected={
+                Object.keys(DatasetIcons)[index] === this.state.selectedIndex
+              }
+              onClick={event =>
+                this.handleMenuItemClick(
+                  event,
+                  Object.keys(DatasetIcons)[index]
+                )}
             >
               {icon}
-            </MenuItem>,
-          )}
+            </MenuItem>
+          ))}
         </Menu>
       </div>
     );
@@ -75,7 +81,7 @@ class IconSelect extends Component {
 }
 
 IconSelect.propTypes = {
-  classes: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styleSheet, {name: 'IconSelect'})(IconSelect);
+export default withStyles(styleSheet, { name: 'IconSelect' })(IconSelect);

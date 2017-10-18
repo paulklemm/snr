@@ -33,7 +33,7 @@ class GoTermHub {
     const summary = await summaryPromise;
     // Create dictionary for go term based on its id
     let summaryDict = {};
-    summary['go']['.val'].forEach((element) => {
+    summary['go']['.val'].forEach(element => {
       // Reference element by go-id
       summaryDict[element.go_id] = element;
       // Add empty genes array that will be filled when we get the geneToGo values
@@ -57,7 +57,7 @@ class GoTermHub {
     // Await the promise
     await addSummaryPromise;
     // Give status ouput
-    console.log("Summary added");
+    console.log('Summary added');
   }
 
   /**
@@ -76,10 +76,19 @@ class GoTermHub {
     // }
 
     // If it could not be retreived locally, download it form the server and add it to the localStorage
-    let summary = await this._getSummary(this.nodeBridgeGetGoSummary(ensemblDataset, ensemblVersion));
-    this.summary = await this.addWithEnsemblAndVersion(this.summary, summary, ensemblDataset, ensemblVersion);
+    let summary = await this._getSummary(
+      this.nodeBridgeGetGoSummary(ensemblDataset, ensemblVersion)
+    );
+    this.summary = await this.addWithEnsemblAndVersion(
+      this.summary,
+      summary,
+      ensemblDataset,
+      ensemblVersion
+    );
     // Count the maximum GO-Term size
-    this.maxGeneCount = this.getMaximumGoTermSize(this.summary[ensemblDataset][ensemblVersion]);
+    this.maxGeneCount = this.getMaximumGoTermSize(
+      this.summary[ensemblDataset][ensemblVersion]
+    );
     // Add to localstorage
     // localStorage.setItem(localStorageKey, JSON.stringify(this.summary));
   }
@@ -94,8 +103,7 @@ class GoTermHub {
    * @return {Object} Updated dictionary
    */
   addWithEnsemblAndVersion(dict, value, ensemblDataset, ensemblVersion) {
-    if (!(ensemblDataset in Object.keys(dict)))
-      dict[ensemblDataset] = {};
+    if (!(ensemblDataset in Object.keys(dict))) dict[ensemblDataset] = {};
     if (!(ensemblVersion in Object.keys(dict[ensemblDataset])))
       dict[ensemblDataset][ensemblVersion] = {};
     dict[ensemblDataset][ensemblVersion] = value;
@@ -129,13 +137,16 @@ class GoTermHub {
    */
   async addGeneToGo(ensemblDataset, ensemblVersion) {
     // Call addGeneToGoPromise and get the Promise
-    const addGeneToGoPromise = this._addGeneToGo(ensemblDataset, ensemblVersion);
+    const addGeneToGoPromise = this._addGeneToGo(
+      ensemblDataset,
+      ensemblVersion
+    );
     // Push the promise to the local promise array
     this.promisePush(addGeneToGoPromise, 'geneToGo');
     // Await the promise
     await addGeneToGoPromise;
     // Give status ouput
-    console.log("Gene to Go added");
+    console.log('Gene to Go added');
   }
 
   /**
@@ -154,22 +165,31 @@ class GoTermHub {
     // }
 
     // If local storage retrieval fails, proceed
-    const goPerGene = await this.nodeBridgeGetGoPerGene(ensemblDataset, ensemblVersion);
+    const goPerGene = await this.nodeBridgeGetGoPerGene(
+      ensemblDataset,
+      ensemblVersion
+    );
     let newGeneToGo = {};
     // Make dictionary pointing gene IDs to GO-terms
-    goPerGene['go']['.val'].forEach((elem) => {
-      if (elem['go_id'] === '')
-        return;
+    goPerGene['go']['.val'].forEach(elem => {
+      if (elem['go_id'] === '') return;
       // Create a new array to store the GO-terms in
       if (isUndefined(newGeneToGo[elem['ensembl_gene_id']]))
         newGeneToGo[elem['ensembl_gene_id']] = [];
       // Add GO-term to the dictionary
       newGeneToGo[elem['ensembl_gene_id']].push(elem['go_id']);
       // Push the gene to the GO-term summary
-      this.summary[ensemblDataset][ensemblVersion][elem['go_id']]['genes'].push(elem['ensembl_gene_id']);
+      this.summary[ensemblDataset][ensemblVersion][elem['go_id']]['genes'].push(
+        elem['ensembl_gene_id']
+      );
     });
-    this.geneToGo = await this.addWithEnsemblAndVersion(this.geneToGo, newGeneToGo, ensemblDataset, ensemblVersion);
-    
+    this.geneToGo = await this.addWithEnsemblAndVersion(
+      this.geneToGo,
+      newGeneToGo,
+      ensemblDataset,
+      ensemblVersion
+    );
+
     // // Save the result to localstorage
     // localStorage.setItem(localStorageKey, JSON.stringify(this.geneToGo));
   }
@@ -182,7 +202,11 @@ class GoTermHub {
    * @param {String} ensemblVersion Ensembl version ('release')
    * @return {Array} Array of GO-terms
    */
-  async getGoTerms(ensemblIDs, ensemblDataset = 'mmusculus_gene_ensembl', ensemblVersion = 'current') {
+  async getGoTerms(
+    ensemblIDs,
+    ensemblDataset = 'mmusculus_gene_ensembl',
+    ensemblVersion = 'current'
+  ) {
     // Await running operation pulling data from the server
     await Promise.all(this.promiseGet());
     // Initialize dictionary pointing GO-terms to the provided ensembl-IDs
@@ -190,10 +214,11 @@ class GoTermHub {
     // Iterate over all ensembl ids
     ensemblIDs.forEach(ensemblID => {
       // Get all GO-Terms the gene is associated with
-      const goTermsOfGene = this.geneToGo[ensemblDataset][ensemblVersion][ensemblID];
+      const goTermsOfGene = this.geneToGo[ensemblDataset][ensemblVersion][
+        ensemblID
+      ];
       // When the gene is not associated with GO terms, do nothing
-      if (isUndefined(goTermsOfGene))
-        return;
+      if (isUndefined(goTermsOfGene)) return;
       // Iterate over all GO-terms the gene is associated with and add it to goTerms object
       goTermsOfGene.forEach(goTerm => {
         // When GO-term is not in the dictionary, initialize it
@@ -206,8 +231,10 @@ class GoTermHub {
       });
     });
     // Iterate again over all goTerms and calculate the percentage of elements in the GO-terms
-    Object.keys(goTerms).forEach( goTermKey => {
-      goTerms[goTermKey]['percentage'] = goTerms[goTermKey]['ids'].length / this.summary[ensemblDataset][ensemblVersion][goTermKey]['count_genes'];
+    Object.keys(goTerms).forEach(goTermKey => {
+      goTerms[goTermKey]['percentage'] =
+        goTerms[goTermKey]['ids'].length /
+        this.summary[ensemblDataset][ensemblVersion][goTermKey]['count_genes'];
     });
 
     // Convert the collection to an array

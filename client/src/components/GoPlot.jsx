@@ -11,7 +11,6 @@ import { objectValueToArray, isUndefined } from './Helper.js';
 import DatasetIcons from './DatasetIcons';
 
 class GoPlot extends React.Component {
-
   constructor() {
     super();
     // Bind `this` to the individual functions
@@ -34,23 +33,26 @@ class GoPlot extends React.Component {
   render() {
     return (
       <div>
-        <Tooltip id="tooltip-icon" title={this.props.goTermSummary.go_term_name} placement="top">
+        <Tooltip
+          id="tooltip-icon"
+          title={this.props.goTermSummary.go_term_name}
+          placement="top"
+        >
           <span
             className="gotermlabel"
             onClick={() => this.props.toggleGOTerm(this.props.goTerm.goId)}
           >
-            <span style={{ 
-              marginRight: this.props.drawIcon ? '5' : '0'
-            }}>
+            <span
+              style={{
+                marginRight: this.props.drawIcon ? '5' : '0'
+              }}
+            >
               {this.props.drawIcon ? DatasetIcons[this.props.icon] : undefined}
             </span>
             {this.props.goTerm.goId}
           </span>
         </Tooltip>
-        <svg
-          width={this.props.maxWidth}
-          height={this.props.height}
-        >
+        <svg width={this.props.maxWidth} height={this.props.height}>
           {this.renderBars()}
         </svg>
         {this.state.tooltip}
@@ -80,8 +82,9 @@ class GoPlot extends React.Component {
       dy -= domNode.parentElement.offsetTop;
     }
     console.log(`${dx}, ${dy}`);
-    let tooltip =
-      <div className="tooltip"
+    let tooltip = (
+      <div
+        className="tooltip"
         style={{
           position: 'absolute',
           left: dx,
@@ -90,6 +93,7 @@ class GoPlot extends React.Component {
       >
         {`${id}, ${this.props.dimension}: ${val}`}
       </div>
+    );
 
     this.setState({
       tooltip: tooltip
@@ -101,7 +105,7 @@ class GoPlot extends React.Component {
    */
   onMouseLeaveRect() {
     this.setState({
-      tooltip: ""
+      tooltip: ''
     });
   }
 
@@ -117,12 +121,12 @@ class GoPlot extends React.Component {
     // Initialitze empty data array
     let data = [];
     // Iterate over all ids and get the values of `dimension` out of it
+    // Get the index of the
+    // data.push(dataset.getEntry(id, dimension));
     for (const id of ids)
-      // Get the index of the 
-      // data.push(dataset.getEntry(id, dimension));
       data.push({
-        'val': dataset.getEntry(id, dimension),
-        'id': id
+        val: dataset.getEntry(id, dimension),
+        id: id
       });
 
     // Update the state
@@ -137,10 +141,18 @@ class GoPlot extends React.Component {
     // Get the data
     if (this.props.drawWholeGO)
       // Derive the data from all genes in the GO-term
-      this.convertData(this.props.dataset, this.props.dimension, this.props.goTermSummary['genes'])
+      this.convertData(
+        this.props.dataset,
+        this.props.dimension,
+        this.props.goTermSummary['genes']
+      );
     else
       // Derive data from all selected genes in GO-term
-      this.convertData(this.props.dataset, this.props.dimension, this.props.goTerm['ids'])
+      this.convertData(
+        this.props.dataset,
+        this.props.dimension,
+        this.props.goTerm['ids']
+      );
     // Sort the data
     this.dataSorted = this.data.sort((a, b) => {
       // Sort undefined values at the very beginning
@@ -166,11 +178,15 @@ class GoPlot extends React.Component {
       domainMean = mean([this.props.dimensionMin, this.props.dimensionMax]);
       domainMax = this.props.dimensionMax;
     }
-    if (this.state.debug) console.log(`GoPlot ${this.props.goTerm.goId}: domainMin: ${domainMin}, domainMean: ${domainMean}, domainMax: ${domainMax}`);
+    if (this.state.debug)
+      console.log(
+        `GoPlot ${this.props.goTerm
+          .goId}: domainMin: ${domainMin}, domainMean: ${domainMean}, domainMax: ${domainMax}`
+      );
     // Update scales
     this.colorScale = scaleLinear()
       .domain([domainMin, domainMean, domainMax])
-      .range(["blue", "rgba(0, 0, 0, 0)", "#ee6351"])
+      .range(['blue', 'rgba(0, 0, 0, 0)', '#ee6351'])
       .interpolate(interpolateLab);
     // Width scale
     this.widthScale = scaleLinear()
@@ -199,7 +215,7 @@ class GoPlot extends React.Component {
           x={barWidth * index}
           y={0}
           key={`Value ${val} + Index ${index} + ${this.props.goTerm.goId}`}
-          onMouseMove={(e) => this.onMouseMoveRect(e, val['id'], val['val'])}
+          onMouseMove={e => this.onMouseMoveRect(e, val['id'], val['val'])}
           onMouseLeave={this.onMouseLeaveRect}
         />
       );

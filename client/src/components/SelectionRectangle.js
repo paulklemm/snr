@@ -6,7 +6,7 @@ const styleSheet = {
   rectangle: {
     fillOpacity: '0.1'
   }
-}
+};
 
 /**
  * Class for building the selection Rectangle
@@ -40,7 +40,7 @@ class SelectionRectangle {
     this.startY = startY;
     this.calculateBounds();
   }
-  
+
   /**
    * Set the end coordinates, usually on mouse-move
    * @param {Integer} currentX: End coordinate in x
@@ -72,21 +72,32 @@ class SelectionRectangle {
    * @param {Function} yScale yScale function mapping Y dimension space to pixel space
    * @param {Filter} filter: Filter object
    */
-  setRectangleByFilter(dimensionX, dimensionY, xScale, yScale, filter, xTransformation, yTransformation) {
+  setRectangleByFilter(
+    dimensionX,
+    dimensionY,
+    xScale,
+    yScale,
+    filter,
+    xTransformation,
+    yTransformation
+  ) {
     if (!this.isDrawing) {
       // Reset the current drawing
       this.reset();
-      const filterX = filter.getFilterOfDimension(dimensionX)
-      const filterY = filter.getFilterOfDimension(dimensionY)
-      let minDefault = 0, maxXDefault = this.canvasWidth, maxYDefault = this.canvasHeight;
-      let minX = minDefault, maxX = maxXDefault;
-      let minY = minDefault, maxY = maxYDefault;
+      const filterX = filter.getFilterOfDimension(dimensionX);
+      const filterY = filter.getFilterOfDimension(dimensionY);
+      let minDefault = 0,
+        maxXDefault = this.canvasWidth,
+        maxYDefault = this.canvasHeight;
+      let minX = minDefault,
+        maxX = maxXDefault;
+      let minY = minDefault,
+        maxY = maxYDefault;
       if (filterX.length > 0) {
         // Iterate over filter
         for (let i in filterX) {
           const value = applyTransformation(filterX[i].value, xTransformation);
-          if (filterX[i].operator === '<')
-            maxX = xScale(value);
+          if (filterX[i].operator === '<') maxX = xScale(value);
           else if (filterX[i].operator === '>') {
             minX = xScale(value);
           }
@@ -96,8 +107,7 @@ class SelectionRectangle {
         // Iterate over filter
         for (let i in filterY) {
           const value = applyTransformation(filterY[i].value, yTransformation);
-          if (filterY[i].operator === '<')
-            minY = yScale(value);
+          if (filterY[i].operator === '<') minY = yScale(value);
           else if (filterY[i].operator === '>') {
             maxY = yScale(value);
           }
@@ -105,7 +115,12 @@ class SelectionRectangle {
       }
 
       // If all values do not correspond to the default values, draw the rectangle
-      if (minX !== minDefault || maxX !== maxXDefault || minY !== minDefault || maxY !== maxYDefault) {
+      if (
+        minX !== minDefault ||
+        maxX !== maxXDefault ||
+        minY !== minDefault ||
+        maxY !== maxYDefault
+      ) {
         this.setStart(minX, minY);
         this.setEnd(maxX, maxY);
       }
@@ -117,8 +132,13 @@ class SelectionRectangle {
    */
   calculateBounds() {
     // If start or end positions are not set, return nothing
-    if (this.startX === '' ||  this.startY === '' ||  this.currentX === '' ||  this.currentY === '')
-      return
+    if (
+      this.startX === '' ||
+      this.startY === '' ||
+      this.currentX === '' ||
+      this.currentY === ''
+    )
+      return;
     let x = 0;
     let width = 0;
     let y = 0;
@@ -158,8 +178,7 @@ class SelectionRectangle {
     }
 
     // Handle negative x and width
-    if (width < 0 ||  height < 0)
-      return;
+    if (width < 0 || height < 0) return;
 
     // Set global bounds to be used for filtering
     this.bounds = { minX: x, maxX: x + width, minY: y, maxY: y + height };
@@ -172,7 +191,15 @@ class SelectionRectangle {
    */
   getRectangle() {
     if (this.boundsSet)
-      return (<rect x={this.bounds.minX} y={this.bounds.minY} width={this.bounds.maxX - this.bounds.minX} height={this.bounds.maxY - this.bounds.minY} style={styleSheet.rectangle} />);
+      return (
+        <rect
+          x={this.bounds.minX}
+          y={this.bounds.minY}
+          width={this.bounds.maxX - this.bounds.minX}
+          height={this.bounds.maxY - this.bounds.minY}
+          style={styleSheet.rectangle}
+        />
+      );
   }
 }
 

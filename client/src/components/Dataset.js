@@ -9,8 +9,8 @@ class Dataset {
     this.loading = false;
     this.dimNames = [];
     // TODO: Derive this from metadata!
-    this.ensemblDataset = "mmusculus_gene_ensembl";
-    this.ensemblVersion = "current";
+    this.ensemblDataset = 'mmusculus_gene_ensembl';
+    this.ensemblVersion = 'current';
     // HTML Element representing the dataset icon
     this.icon = '';
   }
@@ -41,13 +41,12 @@ class Dataset {
     this.dimNames = dimNames;
     // Attach 'filtered' element
     this.filtered = [];
-    for (let i in this.data)
-      this.filtered[i] = false
-    
+    for (let i in this.data) this.filtered[i] = false;
+
     // Setup collection associating id of each entry with row-id for fast access
     this.ensemblToArrayIndex = this._updateEnsemblToArrayIndex(this.data);
     // Keep a copy of the unfiltered one
-    this.ensemblToArrayIndexUnfiltered = {...this.ensemblToArrayIndex};
+    this.ensemblToArrayIndexUnfiltered = { ...this.ensemblToArrayIndex };
   }
 
   /**
@@ -57,7 +56,9 @@ class Dataset {
    * @return {Object} Collection mapping row id to index in the array
    */
   _getEnsemblToArrayIndex(wholeData = false) {
-    return wholeData ? this.ensemblToArrayIndexUnfiltered : this.ensemblToArrayIndex;
+    return wholeData
+      ? this.ensemblToArrayIndexUnfiltered
+      : this.ensemblToArrayIndex;
   }
 
   /**
@@ -72,10 +73,14 @@ class Dataset {
     const dataPosition = this._getEnsemblToArrayIndex(true)[id];
     // if dimension is defined, return only the dimension
     if (!isUndefined(dimension)) {
-      return isUndefined(this.data[dataPosition]) ? undefined : this.data[dataPosition][dimension];
+      return isUndefined(this.data[dataPosition])
+        ? undefined
+        : this.data[dataPosition][dimension];
     }
     // If dimension is undefined, return the whole row
-    return isUndefined(this.data[dataPosition]) ? undefined : this.data[dataPosition];
+    return isUndefined(this.data[dataPosition])
+      ? undefined
+      : this.data[dataPosition];
   }
 
   /**
@@ -89,7 +94,7 @@ class Dataset {
     // Iterate over all entries in the data and create the index
     for (let rowIndex in data)
       ensemblToArrayIndex[data[rowIndex]['EnsemblID']] = parseInt(rowIndex, 10);
-    
+
     return ensemblToArrayIndex;
   }
 
@@ -125,8 +130,7 @@ class Dataset {
     // If the data is filtered, apply the filter
     let dataFiltered = [];
     for (let i in this.data)
-      if (!this.filtered[i])
-        dataFiltered.push(this.data[i]);
+      if (!this.filtered[i]) dataFiltered.push(this.data[i]);
 
     // Update element-ID to array index
     this.ensemblToArrayIndex = this._updateEnsemblToArrayIndex(dataFiltered);
@@ -148,7 +152,7 @@ class Dataset {
       this.filtered[i] = false;
       for (let j in filterKeys) {
         const filterKey = filterKeys[j];
-        const dimName = filter[filterKey].name
+        const dimName = filter[filterKey].name;
         // Added a dirty check on FPKM value names. Every variable with `FPKM` in it will be classified as number
         if (DimensionTypes[dimName] === 'number' || /FPKM/i.test(dimName)) {
           // Process Numbers
@@ -159,9 +163,12 @@ class Dataset {
             if (this.data[i][dimName] <= filter[filterKey].value)
               this.filtered[i] = true;
           }
-        // Not a number
-      } else {
-          if (typeof this.data[i][dimName] === "undefined" || this.data[i][dimName].indexOf(filter[filterKey].value) === -1)
+          // Not a number
+        } else {
+          if (
+            typeof this.data[i][dimName] === 'undefined' ||
+            this.data[i][dimName].indexOf(filter[filterKey].value) === -1
+          )
             this.filtered[i] = true;
         }
       }
@@ -178,9 +185,7 @@ class Dataset {
    * @return {Boolean} `isFiltered` status
    */
   isFiltered() {
-    for (let i in this.filtered)
-      if (this.filtered[i] === true)
-        return true;
+    for (let i in this.filtered) if (this.filtered[i] === true) return true;
     return false;
   }
 }

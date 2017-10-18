@@ -1,65 +1,62 @@
 tr.odd {
-	background-color: #f2f2f2;
+  background-color: #f2f2f2;
 }
 
 tr:hover {
-	background-color: #fdecea;
+  background-color: #fdecea;
 }
 
 body {
-	background-color: #fcfcfc;
-	/* Set default font family */
+  background-color: #fcfcfc;
+  /* Set default font family */
 }
 
-foreignObject {
-	overflow: visible;
+foreignobject {
+  overflow: visible;
 }
 
 .smalltext {
-	font-size: 11px;
-	font-family: "Roboto",
+  font-size: 11px;
+  font-family: 'Roboto';
 }
 
 .gosummarytable {
-	font-size: 11px;
-	font-family: "Roboto",
-	"Helvetica",
-	"Arial",
-	sans-serif
+  font-size: 11px;
+  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
 }
 
 .gotermlabel {
-	text-align: center;
-	vertical-align: middle;
-	font-size: 10px;
-	margin-right: 10px;
-	color: #363636;
-	cursor: pointer;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 10px;
+  margin-right: 10px;
+  color: #363636;
+  cursor: pointer;
 }
 
 .tooltip {
   background-color: black;
   color: white;
   padding: 7px;
-	min-width: 250px;
-	transform: translate(-28.5%);
-	text-align: center;
+  min-width: 250px;
+  transform: translate(-28.5%);
+  text-align: center;
   border-radius: 5px;
-	font-size: 12px;
+  font-size: 12px;
 }
 
 /* Tooltip arrow from http://www.cssarrowplease.com/ */
 .tooltip:after {
-	top: 100%;
-	left: 50%;
-	border: solid transparent;
-	content: " ";
-	height: 0;
-	width: 0;
-	position: absolute;
-	pointer-events: none;
-	border-color: rgba(0, 0, 0, 0);
-	border-top-color: #000000;
-	border-width: 5px;
-	margin-left: -5px;
+  top: 100%;
+  left: 50%;
+  border: solid transparent;
+  content: ' ';
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+  border-color: rgba(0, 0, 0, 0);
+  border-top-color: #000000;
+  border-width: 5px;
+  margin-left: -5px;
 }

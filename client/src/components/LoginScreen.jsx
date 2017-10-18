@@ -16,8 +16,8 @@ const style = {
     position: 'absolute'
   },
   masterMiddle: {
-  display: 'table-cell',
-  verticalAlign: 'middle'
+    display: 'table-cell',
+    verticalAlign: 'middle'
   },
   masterInner: {
     marginLeft: 'auto',
@@ -58,19 +58,19 @@ class LoginScreen extends React.Component {
 
   render() {
     const errorMessage = this.state.error ? 'Wrong user or password.' : '';
-    return(
-      <div style={ style.master }>
+    return (
+      <div style={style.master}>
         <div style={style.masterMiddle}>
           <div style={style.masterInner}>
             <Logo />
             <Typography gutterBottom style={style.error}>
-              { errorMessage }
+              {errorMessage}
             </Typography>
             <TextField
               id="user"
               label="User name"
               value={this.state.name}
-              onChange={ event => this.setState({ user: event.target.value }) }
+              onChange={event => this.setState({ user: event.target.value })}
               margin="normal"
             />
             <br />
@@ -79,11 +79,16 @@ class LoginScreen extends React.Component {
               label="Password"
               type="password"
               autoComplete="current-password"
-              onChange={ event => this.setState({ password: event.target.value }) }
+              onChange={event =>
+                this.setState({ password: event.target.value })}
               margin="normal"
             />
             <br />
-            <Button style={ style.loginButton } raised onClick={this.onLoginClick}>
+            <Button
+              style={style.loginButton}
+              raised
+              onClick={this.onLoginClick}
+            >
               Login
             </Button>
           </div>
@@ -95,6 +100,6 @@ class LoginScreen extends React.Component {
 
 LoginScreen.propTypes = {
   login: PropTypes.func
-}
+};
 
 export default LoginScreen;

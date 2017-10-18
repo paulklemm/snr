@@ -2,7 +2,7 @@ import React from 'react';
 import IconButton from 'material-ui/IconButton';
 import TextField from 'material-ui/TextField';
 import PropTypes from 'prop-types';
-import {DefaultFilterSetting} from './DimensionTypes.js';
+import { DefaultFilterSetting } from './DimensionTypes.js';
 import { isUndefined, areIdentical } from './Helper';
 
 const styleSheet = {
@@ -33,13 +33,13 @@ const styleSheet = {
     borderCollapse: 'collapse',
     fontSize: '10px',
     width: '100%',
-    tableLayout:'fixed'
+    tableLayout: 'fixed'
   }
-}
+};
 
 // https://www.youtube.com/watch?v=Bx5JB2FcSnk
 // https://jsfiddle.net/vjeux/KbWJ2/9/
-class Table extends React.Component{
+class Table extends React.Component {
   constructor(props) {
     super(props);
     this.debug = false;
@@ -47,7 +47,9 @@ class Table extends React.Component{
     this.rowHeight = styleSheet.th.height;
     // We store the textFieldValues of the filter as class attribute since we need it when the operator changes
     this.textFieldValues = {};
-    const filterSetting = isUndefined(props.dimNames) ? undefined : this.getDefaultFilterSettings(props.dimNames);
+    const filterSetting = isUndefined(props.dimNames)
+      ? undefined
+      : this.getDefaultFilterSettings(props.dimNames);
     this.state = {
       rowTop: 0,
       rowBottom: 40,
@@ -57,12 +59,18 @@ class Table extends React.Component{
 
   componentWillReceiveProps(nextProps) {
     // If dimNames is undefined, do nothing
-    if (isUndefined(nextProps.dimNames)) { return; }
+    if (isUndefined(nextProps.dimNames)) {
+      return;
+    }
     // Check if dimnames match. If they do not match, we need to reset the filterSettingsState
-    const dimNamesMismatch = isUndefined(this.props.dimNames) ? true : !areIdentical(this.props.dimNames, nextProps.dimNames);
+    const dimNamesMismatch = isUndefined(this.props.dimNames)
+      ? true
+      : !areIdentical(this.props.dimNames, nextProps.dimNames);
 
     if (dimNamesMismatch || isUndefined(this.state.filterSetting)) {
-      console.log(`dimNamesMismatch: ${dimNamesMismatch}; Update with new props`);
+      console.log(
+        `dimNamesMismatch: ${dimNamesMismatch}; Update with new props`
+      );
       const filterSetting = this.getDefaultFilterSettings(nextProps.dimNames);
       console.log(filterSetting);
       this.setState({ filterSetting });
@@ -82,7 +90,7 @@ class Table extends React.Component{
         filterSetting[dim] = filterSetting.FPKM;
       }
     }
-    return(filterSetting);
+    return filterSetting;
   }
 
   handleFilter(dimension) {
@@ -90,7 +98,11 @@ class Table extends React.Component{
     this.refs.scrollable.scrollTop = 0;
     // Remove all filters of this dimension
     this.props.filter.removeFilter(dimension);
-    this.props.filter.setFilter(dimension, this.textFieldValues[dimension], this.state.filterSetting[dimension])
+    this.props.filter.setFilter(
+      dimension,
+      this.textFieldValues[dimension],
+      this.state.filterSetting[dimension]
+    );
     // Update the app
     this.props.forceUpdateApp();
   }
@@ -128,18 +140,26 @@ class Table extends React.Component{
 
       header.push(
         <th key={`header-th-${index}`}>
-          <div style={(filter.length > 0) ? styleSheet.headerTHFiltered : styleSheet.headerTH}>
-            <div onClick={(event) => {
-              event.preventDefault();
-              this.onHeaderClick(dimension);
-            }}>
+          <div
+            style={
+              filter.length > 0
+                ? styleSheet.headerTHFiltered
+                : styleSheet.headerTH
+            }
+          >
+            <div
+              onClick={event => {
+                event.preventDefault();
+                this.onHeaderClick(dimension);
+              }}
+            >
               {/* <Typography noWrap type="body1"><Icon name="sort-desc" style={{fontSize:'100%'}} /> {dimension}</Typography> */}
               {dimension}
             </div>
             <div style={{ display: 'flex', whiteSpace: 'nowrap' }}>
               <IconButton
                 style={{ marginTop: '-2px', width: '10px' }}
-                onClick={(event) => {
+                onClick={event => {
                   // Update filter
                   const currentOperator = event.target.textContent;
                   let filterSetting = this.state.filterSetting;
@@ -155,9 +175,7 @@ class Table extends React.Component{
                   }
                 }}
               >
-                {
-                  this.state.filterSetting[dimension]
-                }
+                {this.state.filterSetting[dimension]}
               </IconButton>
               <TextField
                 style={{ width: '100% important!', marginLeft: '5px' }}
@@ -165,7 +183,7 @@ class Table extends React.Component{
                 label="Filter"
                 type="search"
                 value={filterValue}
-                onChange={(event) => {
+                onChange={event => {
                   // Update the textfieldValue object with the newly changed value
                   this.textFieldValues[dimension] = event.target.value;
                   this.handleFilter(dimension);
@@ -176,10 +194,12 @@ class Table extends React.Component{
         </th>
       );
     });
-    return(
+    return (
       <table style={styleSheet.table}>
         <tbody>
-          <tr key="header-tr" style={styleSheet.headerTR}>{header}</tr>
+          <tr key="header-tr" style={styleSheet.headerTR}>
+            {header}
+          </tr>
         </tbody>
       </table>
     );
@@ -192,12 +212,11 @@ class Table extends React.Component{
     // Iterate over the top and bottom element
     for (let i = this.state.rowTop; i <= this.state.rowBottom; i++) {
       // Avoid rendering empty rows (can happen in small lists or filters yielding empty lists)
-      if (i > this.props.data.length - 1)
-        break;
+      if (i > this.props.data.length - 1) break;
       // Initialize an empty row element
       let row = [];
       // Iterate through all dimensions (columns) in the data
-      let dimensionKey = "";
+      let dimensionKey = '';
       for (let j in dimensions) {
         const dimension = dimensions[j];
         dimensionKey += this.props.data[i][dimension];
@@ -206,47 +225,75 @@ class Table extends React.Component{
           <th key={`row_${this.props.data[i][dimension]}-${i}-${j}`}>
             <div style={styleSheet.th}>
               {/* <Typography type="body1"> */}
-                {this.props.data[i][dimension]}
+              {this.props.data[i][dimension]}
               {/* </Typography> */}
             </div>
           </th>
         );
       }
       // Push the columns as new row to the table
-      const evenClass = (i % 2 === 0) ? 'odd' : '';
+      const evenClass = i % 2 === 0 ? 'odd' : '';
       // Push the new table entry as well as the onClick events
-      table.push(<tr key={`tr_${dimensionKey}_${i}`} className={evenClass}
-        onClick={() => {
-          if (i === this.lastSelectedEntry) {
-            this.props.highlight.clear()
-            this.lastSelectedEntry = undefined;
-          } else {
-            this.props.highlight.push('selection', [this.props.data[i]]);
-            this.lastSelectedEntry = i;
-          }
-          this.props.forceUpdateApp();
-        }}
-      >{row}</tr>);
+      table.push(
+        <tr
+          key={`tr_${dimensionKey}_${i}`}
+          className={evenClass}
+          onClick={() => {
+            if (i === this.lastSelectedEntry) {
+              this.props.highlight.clear();
+              this.lastSelectedEntry = undefined;
+            } else {
+              this.props.highlight.push('selection', [this.props.data[i]]);
+              this.lastSelectedEntry = i;
+            }
+            this.props.forceUpdateApp();
+          }}
+        >
+          {row}
+        </tr>
+      );
     }
     // The top spacer must not exceed the maximum length of the table minus the visible table window
-    let topSpacerHeight = (this.state.rowBottom < this.props.data.length ? this.state.rowTop * this.rowHeight : (this.props.data.length - 1 - (this.state.rowBottom - this.state.rowTop)) * this.rowHeight);
+    let topSpacerHeight =
+      this.state.rowBottom < this.props.data.length
+        ? this.state.rowTop * this.rowHeight
+        : (this.props.data.length -
+            1 -
+            (this.state.rowBottom - this.state.rowTop)) *
+          this.rowHeight;
     // When the elements do not fill the entire height the spacer height would get negative. Fix this by setting it to 0
     if (topSpacerHeight < 0) topSpacerHeight = 0;
-    const topSpacer = [<div key={`topSpacer`} style={{height: topSpacerHeight}}></div>];
+    const topSpacer = [
+      <div key={`topSpacer`} style={{ height: topSpacerHeight }} />
+    ];
     // Bottom spacer is set to 0 when the bottom end is reached
-    const bottomSpacerHeight = (this.state.rowBottom < this.props.data.length - 1 ? (this.props.data.length - (this.state.rowBottom + 2)) * this.rowHeight : 0);
-    const bottomSpacer = (bottomSpacerHeight === 0 ? [] : [<div key={`bottomSpacer`} style={{height: bottomSpacerHeight}}></div>])
-    
+    const bottomSpacerHeight =
+      this.state.rowBottom < this.props.data.length - 1
+        ? (this.props.data.length - (this.state.rowBottom + 2)) * this.rowHeight
+        : 0;
+    const bottomSpacer =
+      bottomSpacerHeight === 0
+        ? []
+        : [<div key={`bottomSpacer`} style={{ height: bottomSpacerHeight }} />];
+
     if (this.debug) {
-      console.log("------------------------");
-      console.log(`Data length: ${this.props.data.length}, Topmost element:${this.state.rowTop}, Bottom element: ${this.state.rowBottom}, Bottom spacer height: ${bottomSpacerHeight}, Top spacer height: ${topSpacerHeight}`);
+      console.log('------------------------');
+      console.log(
+        `Data length: ${this.props.data.length}, Topmost element:${this.state
+          .rowTop}, Bottom element: ${this.state
+          .rowBottom}, Bottom spacer height: ${bottomSpacerHeight}, Top spacer height: ${topSpacerHeight}`
+      );
     }
 
-    return(
+    return (
       <div>
         {topSpacer}
         <table style={styleSheet.table}>
-          <tbody ref={(body) => { this.tableBody = body; }}>
+          <tbody
+            ref={body => {
+              this.tableBody = body;
+            }}
+          >
             {/* {this.constructTableHeader(dimensions)} */}
             {table}
           </tbody>
@@ -261,15 +308,20 @@ class Table extends React.Component{
     // if (this.state.rowBottom >= this.props.data.length - 1 && newRowBottom >= this.props.data.length - 1)
     //   return false;
     // Only return true when the visible cells differ
-    if (newRowTop === this.state.rowTop && newRowBottom === this.state.rowBottom)
+    if (
+      newRowTop === this.state.rowTop &&
+      newRowBottom === this.state.rowBottom
+    )
       return false;
-    else
-      return true;
+    else return true;
   }
 
   setScrollState() {
     const rowTop = Math.floor(this.refs.scrollable.scrollTop / this.rowHeight);
-    const rowBottom = Math.floor((this.refs.scrollable.scrollTop + this.refs.scrollable.clientHeight) / this.rowHeight);
+    const rowBottom = Math.floor(
+      (this.refs.scrollable.scrollTop + this.refs.scrollable.clientHeight) /
+        this.rowHeight
+    );
     // Only change state if re-rendering is required
     if (this.renderRequired(rowTop, rowBottom)) {
       this.setState({
@@ -280,32 +332,45 @@ class Table extends React.Component{
   }
 
   render() {
-    if (isUndefined(this.props.data) || isUndefined(this.state.filterSetting)) { return <div />; }
+    if (isUndefined(this.props.data) || isUndefined(this.state.filterSetting)) {
+      return <div />;
+    }
     // Update the default height of the row to have precise calculations on the table and not rely on the style sheet
-    if (this.tableBody !== undefined && this.tableBody.children[0] !== undefined) this.rowHeight = this.tableBody.children[0].clientHeight;
+    if (
+      this.tableBody !== undefined &&
+      this.tableBody.children[0] !== undefined
+    )
+      this.rowHeight = this.tableBody.children[0].clientHeight;
     if (this.debug) console.log(`Set rowHeight to ${this.rowHeight}`);
     return (
       <div>
-       <div><p>{`Rendering ${this.props.data.length} rows`}</p></div> 
-      {this.constructTableHeader()}
-      <div 
-        ref="scrollable" 
-        style={{height:this.props.height, 'overflowX': 'hidden', 'overflowY': 'auto'}} 
-        onScroll={() => {
-          this.setScrollState();
-        }}>
-        {this.constructTableDynamic()}
-      </div>
+        <div>
+          <p>{`Rendering ${this.props.data.length} rows`}</p>
+        </div>
+        {this.constructTableHeader()}
+        <div
+          ref="scrollable"
+          style={{
+            height: this.props.height,
+            overflowX: 'hidden',
+            overflowY: 'auto'
+          }}
+          onScroll={() => {
+            this.setScrollState();
+          }}
+        >
+          {this.constructTableDynamic()}
+        </div>
       </div>
     );
   }
 }
 
-Table.propTypes = { 
-  data: PropTypes.array, 
-  dimNames: PropTypes.array, 
-  height: PropTypes.number, 
+Table.propTypes = {
+  data: PropTypes.array,
+  dimNames: PropTypes.array,
+  height: PropTypes.number,
   filter: PropTypes.object,
-  changePlotDimension: PropTypes.func 
-} 
+  changePlotDimension: PropTypes.func
+};
 export default Table;

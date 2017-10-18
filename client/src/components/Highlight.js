@@ -19,7 +19,7 @@ class Highlight {
   push(name, datapoints) {
     this.groups[name] = [];
     // Iterate over all data points and add only the Id
-    datapoints.forEach((point) => {
+    datapoints.forEach(point => {
       // Make sure point is not undefined and push it to the list
       if (!isUndefined(point)) {
         this.groups[name].push(point[this.idName]);

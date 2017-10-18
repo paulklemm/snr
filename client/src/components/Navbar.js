@@ -6,11 +6,11 @@ import Logo from './Logo';
 const styleSheet = {
   navbar: {
     marginBottom: '60px',
-    marginTop: '40px',
+    marginTop: '40px'
   },
   button: {
     color: '#333',
-    fontFamily: "Helvetica Neue",
+    fontFamily: 'Helvetica Neue',
     fontSize: '11pt',
     cursor: 'pointer',
     marginRight: '30px'
@@ -35,15 +35,18 @@ class Navbar extends React.Component {
       mainText = 'Overview';
     }
 
-    return(
+    return (
       <div style={styleSheet.navbar}>
         <Grid container spacing={24}>
-          <Grid item xs={1}></Grid>
+          <Grid item xs={1} />
           <Grid item xs={2}>
-            <Logo pulse={ this.props.busy }></Logo>
+            <Logo pulse={this.props.busy} />
           </Grid>
           <Grid item xs={8} style={styleSheet.buttons}>
-            <a style={styleSheet.button} onClick={this.props.toggleMainViewMode}>
+            <a
+              style={styleSheet.button}
+              onClick={this.props.toggleMainViewMode}
+            >
               {mainViewIcon} {mainText}
             </a>
             <a style={styleSheet.button} onClick={this.props.toggleLeftDrawer}>
@@ -56,15 +59,13 @@ class Navbar extends React.Component {
               <Icon name="sign-out" /> Logout
             </a>
           </Grid>
-          <Grid item xs={1}></Grid>
+          <Grid item xs={1} />
         </Grid>
       </div>
     );
   }
 
-  componentWillReceiveProps(nextProps) {
-    
-  }
+  componentWillReceiveProps(nextProps) {}
 }
 
 export default Navbar;

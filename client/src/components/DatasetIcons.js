@@ -1,4 +1,4 @@
-import {Icon} from 'react-fa';
+import { Icon } from 'react-fa';
 import React from 'react';
 
 export const DatasetIcons = {

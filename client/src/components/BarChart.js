@@ -1,18 +1,45 @@
 import React from 'react';
-import {scaleLinear} from 'd3-scale';
-import {range} from 'd3-array';
+import { scaleLinear } from 'd3-scale';
+import { range } from 'd3-array';
 
 let value = range(26).map((value, i) => Math.random());
 let data = {
-      name: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'],
-      value: value
-  }
+  name: [
+    'A',
+    'B',
+    'C',
+    'D',
+    'E',
+    'F',
+    'G',
+    'H',
+    'I',
+    'J',
+    'K',
+    'L',
+    'M',
+    'N',
+    'O',
+    'P',
+    'Q',
+    'R',
+    'S',
+    'T',
+    'U',
+    'V',
+    'W',
+    'X',
+    'Y',
+    'Z'
+  ],
+  value: value
+};
 
 class BarChart extends React.Component {
-  constructor(){
+  constructor() {
     super();
     this._update = this._update.bind(this);
-    this.state = ({data})
+    this.state = { data };
   }
 
   _update() {
@@ -21,12 +48,14 @@ class BarChart extends React.Component {
     var data = {
       name: this.state.data.name,
       value: value
-    }
-    this.setState( {data} )
+    };
+    this.setState({ data });
   }
 
   componentDidMount() {
-    this.handle = window.setInterval(() => { this._update(); }, 2000);
+    this.handle = window.setInterval(() => {
+      this._update();
+    }, 2000);
   }
 
   render() {
@@ -47,10 +76,11 @@ class BarChart extends React.Component {
       bars.push(
         <g transform={`translate(${i * barWidth}, 0)`} key={name}>
           <rect y={y(value)} height={height - y(value)} width={barWidth - 1} />
-          <text x={(barWidth / 2) - 6} y={y(value) - 15} dy=".75em">
+          <text x={barWidth / 2 - 6} y={y(value) - 15} dy=".75em">
             {name}
           </text>
-        </g>);
+        </g>
+      );
     }
     return (
       <svg width={width} height={height}>

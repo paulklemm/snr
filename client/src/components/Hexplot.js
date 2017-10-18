@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import SelectionRectangle from './SelectionRectangle';
-import {hexbin as D3Hexbin} from 'd3-hexbin';
-import {interpolateLab} from 'd3-interpolate';
-import {scaleLinear} from 'd3-scale';
+import { hexbin as D3Hexbin } from 'd3-hexbin';
+import { interpolateLab } from 'd3-interpolate';
+import { scaleLinear } from 'd3-scale';
 import Popover from 'material-ui/Popover';
 import { findDOMNode } from 'react-dom';
 import { Icon } from 'react-fa';
@@ -21,7 +21,7 @@ import List, {
   ListItemIcon,
   ListItemSecondaryAction,
   ListItemText,
-  ListSubheader,
+  ListSubheader
 } from 'material-ui/List';
 
 // Important Links
@@ -57,7 +57,7 @@ class Hexplot extends Scatterplot {
     let hexbin = D3Hexbin().radius(hexRadius);
     let color = scaleLinear()
       .domain([0, maximum])
-      .range(["rgba(0, 0, 0, 0)", "#ee6351"])
+      .range(['rgba(0, 0, 0, 0)', '#ee6351'])
       .interpolate(interpolateLab);
 
     const hexagons = hexbin(pointArray).map(point => (
@@ -78,7 +78,7 @@ class Hexplot extends Scatterplot {
   getOptionsPane() {
     return (
       <div
-        ref={(node) => {
+        ref={node => {
           this.optionIconRef = node;
         }}
       >
@@ -96,27 +96,28 @@ class Hexplot extends Scatterplot {
             });
           }}
         >
-          <Icon
-            name="bars"
-          />
+          <Icon name="bars" />
         </IconButton>
         <Popover
           open={this.state.popoverOpen}
           anchorEl={this.optionIconRef}
-          onRequestClose={() => { this.setState({ popoverOpen: false }); }}
+          onRequestClose={() => {
+            this.setState({ popoverOpen: false });
+          }}
           anchorOrigin={{
             vertical: 'bottom',
-            horizontal: 'right',
+            horizontal: 'right'
           }}
           transformOrigin={{
             vertical: 'top',
-            horizontal: 'right',
+            horizontal: 'right'
           }}
         >
-          <div style={{
-            padding: '10px',
-            width: '320px'
-          }}
+          <div
+            style={{
+              padding: '10px',
+              width: '320px'
+            }}
           >
             <List subheader={<ListSubheader>Plot Settings</ListSubheader>}>
               <ListItem>
@@ -127,7 +128,8 @@ class Hexplot extends Scatterplot {
                 <ListItemSecondaryAction>
                   <Select
                     value={this.props.xTransformation}
-                    onChange={(event) => this.props.setTransformation('x', event.target.value)}
+                    onChange={event =>
+                      this.props.setTransformation('x', event.target.value)}
                     input={<Input />}
                   >
                     <MenuItem value="linear">linear</MenuItem>
@@ -149,7 +151,8 @@ class Hexplot extends Scatterplot {
                 <ListItemSecondaryAction>
                   <Select
                     value={this.props.yTransformation}
-                    onChange={event => this.props.setTransformation('y', event.target.value)}
+                    onChange={event =>
+                      this.props.setTransformation('y', event.target.value)}
                     input={<Input />}
                   >
                     <MenuItem value="linear">linear</MenuItem>
@@ -171,7 +174,8 @@ class Hexplot extends Scatterplot {
                 <ListItemSecondaryAction>
                   <Select
                     value={this.props.axisValues}
-                    onChange={event => this.props.setAxisValues(event.target.value)}
+                    onChange={event =>
+                      this.props.setAxisValues(event.target.value)}
                     input={<Input />}
                   >
                     <MenuItem value="both">both</MenuItem>
@@ -188,7 +192,8 @@ class Hexplot extends Scatterplot {
                 <ListItemSecondaryAction>
                   <Switch
                     checked={this.state.renderDots}
-                    onChange={(event, checked) => this.setState({ renderDots: checked })}
+                    onChange={(event, checked) =>
+                      this.setState({ renderDots: checked })}
                   />
                 </ListItemSecondaryAction>
               </ListItem>
@@ -201,7 +206,8 @@ class Hexplot extends Scatterplot {
                   <Switch
                     disabled={this.state.renderDots}
                     checked={this.state.renderDotsOnZoom}
-                    onChange={(event, checked) => this.setState({ renderDotsOnZoom: checked })}
+                    onChange={(event, checked) =>
+                      this.setState({ renderDotsOnZoom: checked })}
                   />
                 </ListItemSecondaryAction>
               </ListItem>
@@ -220,12 +226,16 @@ class Hexplot extends Scatterplot {
             </List>
           </div>
         </Popover>
-      </div>);
+      </div>
+    );
   }
 
   render() {
     // Check if there is data available
-    if (this.props.rnaSeqData.data === undefined || isUndefined(this.props.filter)) {
+    if (
+      this.props.rnaSeqData.data === undefined ||
+      isUndefined(this.props.filter)
+    ) {
       return <div />;
     }
     // reset margin and scale in case they changed
@@ -249,17 +259,33 @@ class Hexplot extends Scatterplot {
     if (this.props.zoom && !this.state.selectionRectangle.isDrawing) {
       this.state.selectionRectangle.reset();
     } else {
-      this.state.selectionRectangle.setRectangleByFilter(this.props.xName, this.props.yName, this.xScale, this.yScale, this.props.filter, this.props.xTransformation, this.props.yTransformation);
+      this.state.selectionRectangle.setRectangleByFilter(
+        this.props.xName,
+        this.props.yName,
+        this.xScale,
+        this.yScale,
+        this.props.filter,
+        this.props.xTransformation,
+        this.props.yTransformation
+      );
     }
 
     let axes = this.renderAxes();
     let dots = [];
     if (
       this.state.renderDots ||
-      (this.state.renderDotsOnZoom && this.props.zoom && this.props.filter.doesFilter())
+      (this.state.renderDotsOnZoom &&
+        this.props.zoom &&
+        this.props.filter.doesFilter())
     ) {
       if (this.state.selectionRectangle.boundsSet) {
-        dots = this.renderDots(1, xArray, yArray, filter, this.state.selectionRectangle.bounds);
+        dots = this.renderDots(
+          1,
+          xArray,
+          yArray,
+          filter,
+          this.state.selectionRectangle.bounds
+        );
       } else {
         dots = this.renderDots(1, xArray, yArray, filter);
       }
@@ -268,9 +294,10 @@ class Hexplot extends Scatterplot {
     const axisLabelPattern = (transformation, name) => {
       // If linear, use name, else use transformation(name)
       // If `this.props.axisValues` is set to untransformed, also use name
-      return transformation !== 'linear' && this.props.axisValues !== 'untransformed' ?
-        `${transformation}(${name})` :
-        name;
+      return transformation !== 'linear' &&
+        this.props.axisValues !== 'untransformed'
+        ? `${transformation}(${name})`
+        : name;
     };
     const axisLabels = this.renderAxisLabels(
       axisLabelPattern(this.props.xTransformation, this.props.xName),
@@ -278,7 +305,11 @@ class Hexplot extends Scatterplot {
     );
     const pointArray = this.createPointArray(xArray, yArray);
 
-    const hexagons = Hexplot.printHexagons(pointArray, this.props.hexSize, this.props.hexMax);
+    const hexagons = Hexplot.printHexagons(
+      pointArray,
+      this.props.hexSize,
+      this.props.hexMax
+    );
     // UI Element for enabling FormControlLabel
     const renderGenesOption = this.getOptionsPane();
 
@@ -288,38 +319,43 @@ class Hexplot extends Scatterplot {
     if (!isUndefined(highlight)) {
       // Only proceed if the array is equal to one
       if (highlight.length === 1) {
-        highlightObj = this.renderDot(highlight[0], this.props.highlight.idName);
+        highlightObj = this.renderDot(
+          highlight[0],
+          this.props.highlight.idName
+        );
       }
     }
 
     return (
-      <Measure
-        bounds
-        onMeasure={this.onMeasure}
-      >
-        {({ measureRef }) =>
-        <div ref={measureRef}>
-          {this.props.showRenderGenesOption ? renderGenesOption : ''}
-          <svg 
+      <Measure bounds onMeasure={this.onMeasure}>
+        {({ measureRef }) => (
+          <div ref={measureRef}>
+            {this.props.showRenderGenesOption ? renderGenesOption : ''}
+            <svg
               className="hexagons"
-              onMouseDown={(e) => this.handleMouseDown(e)}
-              onMouseMove={(e) => this.handleMouseMove(e)}
-              onMouseUp={(e) => this.handleMouseUp(e)}
-              width={this.widthNoMargin + this.margin.left + this.margin.right} 
-              height={this.heightNoMargin + this.margin.top + this.margin.bottom}>
-            <g transform={`translate(${this.margin.left},${this.margin.top})`}>
-              {hexagons}
-              {dots}
-              {axes}
-              {axisLabels}
-              {highlightObj}
-              {this.state.tooltip}
-              {this.state.selectionRectangle.getRectangle()}
-              />
-            </g>
-          </svg>
-        </div>
-        }
+              onMouseDown={e => this.handleMouseDown(e)}
+              onMouseMove={e => this.handleMouseMove(e)}
+              onMouseUp={e => this.handleMouseUp(e)}
+              width={this.widthNoMargin + this.margin.left + this.margin.right}
+              height={
+                this.heightNoMargin + this.margin.top + this.margin.bottom
+              }
+            >
+              <g
+                transform={`translate(${this.margin.left},${this.margin.top})`}
+              >
+                {hexagons}
+                {dots}
+                {axes}
+                {axisLabels}
+                {highlightObj}
+                {this.state.tooltip}
+                {this.state.selectionRectangle.getRectangle()}
+                />
+              </g>
+            </svg>
+          </div>
+        )}
       </Measure>
     );
   }
@@ -334,6 +370,6 @@ Hexplot.propTypes = {
   hexSize: PropTypes.number.isRequired,
   hexMax: PropTypes.number.isRequired,
   showRenderGenesOption: PropTypes.bool.isRequired
-}
+};
 
 export default Hexplot;

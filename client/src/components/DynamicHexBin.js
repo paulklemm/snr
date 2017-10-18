@@ -1,9 +1,9 @@
 import React from 'react';
-import {range} from 'd3-array';
-import {hexbin as d3hexbin} from 'd3-hexbin';
-import {randomNormal} from 'd3-random';
-import {scaleLinear} from 'd3-scale';
-import {interpolateLab} from 'd3-interpolate';
+import { range } from 'd3-array';
+import { hexbin as d3hexbin } from 'd3-hexbin';
+import { randomNormal } from 'd3-random';
+import { scaleLinear } from 'd3-scale';
+import { interpolateLab } from 'd3-interpolate';
 
 const width = 960;
 const height = 500;
@@ -13,12 +13,15 @@ const deltaTheta = 0.3;
 const n = 2000;
 const k = 100;
 
-let randomX = randomNormal(width / 2, 80); let randomY = randomNormal(height / 2, 80);
-let points = range(n).map(function() { return [randomX(), randomY()]; });
+let randomX = randomNormal(width / 2, 80);
+let randomY = randomNormal(height / 2, 80);
+let points = range(n).map(function() {
+  return [randomX(), randomY()];
+});
 
 const color = scaleLinear()
   .domain([0, 10])
-  .range(["rgba(0, 0, 0, 0)", "steelblue"])
+  .range(['rgba(0, 0, 0, 0)', 'steelblue'])
   .interpolate(interpolateLab);
 
 const hexbin = d3hexbin().radius(5);
@@ -26,11 +29,13 @@ const hexbin = d3hexbin().radius(5);
 export default class DynamicHexbin extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {points};
+    this.state = { points };
   }
 
   componentDidMount() {
-    this.handle = window.setInterval(() => { this._update(); }, 50000000);
+    this.handle = window.setInterval(() => {
+      this._update();
+    }, 50000000);
   }
 
   componentWillUnmount() {
@@ -52,7 +57,7 @@ export default class DynamicHexbin extends React.Component {
   }
 
   render() {
-    console.log("Hexbin");
+    console.log('Hexbin');
     console.log(hexbin(this.state.points));
     const hexagons = hexbin(this.state.points).map(point => (
       <path
@@ -64,9 +69,7 @@ export default class DynamicHexbin extends React.Component {
 
     return (
       <svg width={width} height={height}>
-        <g className="hexagons">
-          {hexagons}
-        </g>
+        <g className="hexagons">{hexagons}</g>
       </svg>
     );
   }

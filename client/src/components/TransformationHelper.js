@@ -33,7 +33,7 @@ function inverseTransformation(point, transformation = 'linear') {
       return Math.pow(10, point * -1);
     case 'log2':
       return Math.pow(2, point);
-      // return Math.log2(point);
+    // return Math.log2(point);
     case '-log2':
       return Math.pow(2, point * -1);
     default:
@@ -77,7 +77,9 @@ function applyTransformation(point, transformation = 'linear') {
   * @param {string} transformation Type of transformation. Defaults to linear
   */
 function applyTransformationArray(data, transformation = 'linear') {
-  if (transformation === 'linear') { return data; }
+  if (transformation === 'linear') {
+    return data;
+  }
   return data.map(elem => applyTransformation(elem, transformation));
 }
 

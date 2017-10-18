@@ -1,4 +1,3 @@
-
 /**
  * Bridge to Node Backend
  * Code organized using the following posts:
@@ -22,7 +21,10 @@ class NodeBridge {
    * @return {Object} { user: UserName, token: UserToken }
    */
   _getUserAndToken() {
-    return ({ user: this.authentication.getUser(), token: this.authentication.getToken() })
+    return {
+      user: this.authentication.getUser(),
+      token: this.authentication.getToken()
+    };
   }
 
   /**
@@ -42,8 +44,10 @@ class NodeBridge {
     const { user, token } = this._getUserAndToken();
     // Some functions like the getData functions do not take aruments, therefore we have to omit the first `&`
     const andSymbol = fetchUrl.endsWith('?') ? '' : '&';
-    let response = await fetch(`${fetchUrl}${andSymbol}user=${user}&token=${token}`, { accept: 'application/json' })
-      .then(this.parseJSON)
+    let response = await fetch(
+      `${fetchUrl}${andSymbol}user=${user}&token=${token}`,
+      { accept: 'application/json' }
+    ).then(this.parseJSON);
 
     // Set busy state of the app
     this.removeBusyState(fetchUrl);
@@ -108,9 +112,13 @@ class NodeBridge {
   async sendRCommand(rpackage, rfunction, params, valformat) {
     // Get user and token
     const { user, token } = this._getUserAndToken();
-    let response = fetch(`api/runrcommand?rpackage=${rpackage}&rfunction=${rfunction}&params=${JSON.stringify(params)}&valformat=${valformat}&user=${user}&token=${token}`, { accept: 'application/json' })
-      .then(this.parseJSON)
-    
+    let response = fetch(
+      `api/runrcommand?rpackage=${rpackage}&rfunction=${rfunction}&params=${JSON.stringify(
+        params
+      )}&valformat=${valformat}&user=${user}&token=${token}`,
+      { accept: 'application/json' }
+    ).then(this.parseJSON);
+
     return response;
   }
 
@@ -151,7 +159,9 @@ class NodeBridge {
    * @return {Object} Server response
    */
   getGoSummary(ensemblDataset, ensemblVersion) {
-    return this._fetchWithUserAndToken(`api/getgosummary?ensembldataset=${ensemblDataset}&ensemblversion=${ensemblVersion}`);
+    return this._fetchWithUserAndToken(
+      `api/getgosummary?ensembldataset=${ensemblDataset}&ensemblversion=${ensemblVersion}`
+    );
   }
 
   /**
@@ -162,7 +172,9 @@ class NodeBridge {
    * @return {Object} Server response
    */
   getGoPerGene(ensemblDataset, ensemblVersion) {
-    return this._fetchWithUserAndToken(`api/getgopergene?ensembldataset=${ensemblDataset}&ensemblversion=${ensemblVersion}`);
+    return this._fetchWithUserAndToken(
+      `api/getgopergene?ensembldataset=${ensemblDataset}&ensemblversion=${ensemblVersion}`
+    );
   }
 
   /**
@@ -173,7 +185,9 @@ class NodeBridge {
    * @return {Object} Server response
    */
   getPcaLoadings(ensemblDataset, ensemblVersion) {
-    return this._fetchWithUserAndToken(`api/getpcaloadings?ensembldataset=${ensemblDataset}&ensemblversion=${ensemblVersion}`);
+    return this._fetchWithUserAndToken(
+      `api/getpcaloadings?ensembldataset=${ensemblDataset}&ensemblversion=${ensemblVersion}`
+    );
   }
 
   /**

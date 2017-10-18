@@ -1,4 +1,4 @@
-import {csv} from 'd3-request';
+import { csv } from 'd3-request';
 
 // Default Mapping for NCD/HFD data set
 const columnsNameMappingDefault = {
@@ -15,7 +15,7 @@ const dataType = {
   name: 'string',
   fc: 'float',
   biotype: 'string'
-}
+};
 
 class RNASeqData {
   constructor(path, columnsNameMapping, name, debug = false) {
@@ -24,7 +24,9 @@ class RNASeqData {
     this.debug = debug;
     if (this.debug) console.log(`Reading RNASeq data ${path}`);
     // Set columnsmapping to default if default is specified, otherwise set it as the object it is
-    columnsNameMapping === 'default' ? this.columnsNameMapping = columnsNameMappingDefault : this.columnsNameMapping = columnsNameMapping;
+    columnsNameMapping === 'default'
+      ? (this.columnsNameMapping = columnsNameMappingDefault)
+      : (this.columnsNameMapping = columnsNameMapping);
     this.readPromise = this.read();
   }
 
@@ -33,7 +35,7 @@ class RNASeqData {
    * If the read is successfull, the data will be stored in `data` member
    * @return {Promise} fulfilling after csv read is done
    */
-  read(){
+  read() {
     if (this.debug) console.time('Loading and processing RNASeq Data');
     let readPromise = new Promise((resolve, reject) => {
       csv(this.path, (error, data) => {
@@ -44,7 +46,7 @@ class RNASeqData {
         if (this.debug) console.timeEnd('Loading and processing RNASeq Data');
         this.data = data;
         resolve();
-      })
+      });
     });
     return readPromise;
   }
@@ -67,7 +69,7 @@ class RNASeqData {
       // Iterate over the column names and add the values
       for (let j in columnNames) {
         // Get the value - e.g. columnName: 'pValue' => value = data[i][columnsNameMapping.pValue]
-        let value = data[i][this.columnsNameMapping[columnNames[j]]]
+        let value = data[i][this.columnsNameMapping[columnNames[j]]];
         // Check if data type conversion is required
         if (dataType[columnNames[j]] === 'float')
           // e.g. entry.pValue = parseFloat(value)

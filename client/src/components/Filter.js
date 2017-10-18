@@ -1,13 +1,13 @@
 import DimensionTypes from './DimensionTypes';
 
 class Filter {
-  constructor (broadcastFilter) {
+  constructor(broadcastFilter) {
     this.operator = {
-      "<": 'smaller',
-      ">": 'larger',
-      "<=": 'smallerThan',
-      ">=": 'largerThan',
-      "=": 'equals'
+      '<': 'smaller',
+      '>': 'larger',
+      '<=': 'smallerThan',
+      '>=': 'largerThan',
+      '=': 'equals'
     };
     this.filter = {};
     // broadcastFilter function from DatasetHub
@@ -17,21 +17,25 @@ class Filter {
   _filterIsValid(name, val) {
     // Get type from the static object
     const type = DimensionTypes[name];
-    let isValid = (type === "number") ? !isNaN(val) : true;
+    let isValid = type === 'number' ? !isNaN(val) : true;
     return isValid;
   }
 
   _parseFilterValue(name, val) {
-    return (DimensionTypes[name] === "number") ? parseFloat(val) : val;
+    return DimensionTypes[name] === 'number' ? parseFloat(val) : val;
   }
 
   _getFilterKey(dimension, operator) {
-    return (dimension + this.operator[operator]);
+    return dimension + this.operator[operator];
   }
 
   _addFilter(dimension, val, operator) {
     const filterKey = this._getFilterKey(dimension, operator);
-    this.filter[filterKey] = { name: dimension, value: val, operator: operator };
+    this.filter[filterKey] = {
+      name: dimension,
+      value: val,
+      operator: operator
+    };
   }
 
   /**
@@ -64,11 +68,13 @@ class Filter {
    * @param  {boolean} broadcastFilter Broadcast filter to all datasets
    */
   removeFilter(dimension, broadcastFilter = true) {
-    console.log(`Broadcast: Remove filter for dimension ${dimension}`)
+    console.log(`Broadcast: Remove filter for dimension ${dimension}`);
     for (const filterKey in this.filter)
       if (this.filter[filterKey].name === dimension)
         delete this.filter[filterKey];
-    if (broadcastFilter) { this.broadcastFilter(); }
+    if (broadcastFilter) {
+      this.broadcastFilter();
+    }
   }
 
   /**
@@ -77,7 +83,7 @@ class Filter {
    * @param {String} operator: Operator to remove
    */
   removeFilterWithOperator(dimension, operator) {
-    console.log(`Broadcast: Remove filter with op for dimension ${dimension}`)
+    console.log(`Broadcast: Remove filter with op for dimension ${dimension}`);
     const filterKey = this._getFilterKey(dimension, operator);
     delete this.filter[filterKey];
     this.broadcastFilter();
@@ -105,19 +111,15 @@ class Filter {
    */
   setFilters(...filters) {
     console.log(filters);
-    filters.forEach((filter) => {
-      console.log(`Set Filter ${filter.name}, ${filter.val}, ${filter.operator}`);
-      this.setFilter(
-        filter.name,
-        filter.val,
-        filter.operator,
-        false,
-        false
+    filters.forEach(filter => {
+      console.log(
+        `Set Filter ${filter.name}, ${filter.val}, ${filter.operator}`
       );
+      this.setFilter(filter.name, filter.val, filter.operator, false, false);
     });
     this.broadcastFilter();
   }
-  
+
   /**
    * Filter function usable by elements that provide a filter for data. If `val` is not a valid input, e.g. it is empty, the filter will be reset.
    * @param  {String} name: Dimension name to be filtered
@@ -135,7 +137,9 @@ class Filter {
       // Delete the filter
       this.removeFilterWithOperator(name, operator);
     }
-    if (broadcastFilter) { this.broadcastFilter(); }
+    if (broadcastFilter) {
+      this.broadcastFilter();
+    }
   }
 }
 

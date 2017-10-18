@@ -49,27 +49,42 @@ class DatasetSelect extends React.Component {
     for (let i in Object.keys(this.props.datasetEnabled)) {
       let datasetName = Object.keys(this.props.datasetEnabled)[i];
       datasetCheckboxes.push(
-        <ListItem dense button key={`DatasetSelect_${datasetName}`} onClick={() => this.handleListItemClick(datasetName)}>
+        <ListItem
+          dense
+          button
+          key={`DatasetSelect_${datasetName}`}
+          onClick={() => this.handleListItemClick(datasetName)}
+        >
           <Checkbox
-            onChange={(event, checked) => this.props.setEnableDataset(datasetName, checked) }
+            onChange={(event, checked) =>
+              this.props.setEnableDataset(datasetName, checked)}
             checked={this.props.datasetEnabled[datasetName]}
             disabled={this.props.datasetLoading[datasetName]}
           />
           <ListItemText primary={`Name: ${datasetName}`} />
           {/* Icon to see whether the data set is primary on or not */}
           {/* TODO: Get the status from the current session */}
-          <IconButton aria-owns="simple-menu" style={styleSheet.primaryDatasetIcon} onClick={this.handleButtonClick}>
-              <Icon name="check-circle-o" />
+          <IconButton
+            aria-owns="simple-menu"
+            style={styleSheet.primaryDatasetIcon}
+            onClick={this.handleButtonClick}
+          >
+            <Icon name="check-circle-o" />
           </IconButton>
 
-          <IconSelect defaultIconID={i} datasetName={datasetName} setDatasetIcon={this.props.setDatasetIcon} getDatasetIcon={this.props.getDatasetIcon} />
+          <IconSelect
+            defaultIconID={i}
+            datasetName={datasetName}
+            setDatasetIcon={this.props.setDatasetIcon}
+            getDatasetIcon={this.props.getDatasetIcon}
+          />
         </ListItem>
       );
     }
     if (datasetCheckboxes.length === 0)
-      datasetCheckboxes.push(<Loading key="CircularProgress_getCheckboxes" />)
+      datasetCheckboxes.push(<Loading key="CircularProgress_getCheckboxes" />);
 
-    return(datasetCheckboxes);
+    return datasetCheckboxes;
   }
 
   getMetadataList() {
@@ -79,11 +94,15 @@ class DatasetSelect extends React.Component {
       // Check what kind of element we have
       const value = this.state.metadata[metadataKeys[i]];
       // Check if value is an array or length is grater than 1
-      const valueToPrint = (Object.prototype.toString.call(value) === "[object Array]" && value.length === 1) ? value[0] : value;
+      const valueToPrint =
+        Object.prototype.toString.call(value) === '[object Array]' &&
+        value.length === 1
+          ? value[0]
+          : value;
       metadataListEntries.push(
-        <ListItem button key={`Metadata_${metadataKeys[i]}`}> 
-          <ListItemText 
-            primary={`${metadataKeys[i]}: ${JSON.stringify(valueToPrint)}` }
+        <ListItem button key={`Metadata_${metadataKeys[i]}`}>
+          <ListItemText
+            primary={`${metadataKeys[i]}: ${JSON.stringify(valueToPrint)}`}
           />
         </ListItem>
       );
@@ -94,16 +113,15 @@ class DatasetSelect extends React.Component {
   render() {
     const checkboxes = this.getCheckboxes();
     const metadata = this.getMetadataList();
-    return(
+    return (
       <div>
-        <Typography type="headline" gutterBottom>Available Datasets</Typography>
-        <List>
-          {checkboxes}
-        </List>
-        <Typography type="headline" gutterBottom>{`Dataset Info ${this.state.metadataDatasetName}`}</Typography>
-        <List>
-          {metadata}
-        </List>
+        <Typography type="headline" gutterBottom>
+          Available Datasets
+        </Typography>
+        <List>{checkboxes}</List>
+        <Typography type="headline" gutterBottom>{`Dataset Info ${this.state
+          .metadataDatasetName}`}</Typography>
+        <List>{metadata}</List>
         {/* <Typography type="body1" gutterBottom align="left">{JSON.stringify(this.state.metadata, null, 2)}</Typography> */}
       </div>
     );
@@ -117,6 +135,6 @@ DatasetSelect.propTypes = {
   getMetadata: PropTypes.func,
   setDatasetIcon: PropTypes.func,
   getDatasetIcon: PropTypes.func
-}
+};
 
 export default DatasetSelect;
