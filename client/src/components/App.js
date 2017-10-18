@@ -66,6 +66,8 @@ class App extends React.Component {
     this.setZoom = this.setZoom.bind(this);
     this.login = this.login.bind(this);
     this.toggleMainViewMode = this.toggleMainViewMode.bind(this);
+    this.getMetadata = this.getMetadata.bind(this);
+    this.getMetadataPromise = this.getMetadataPromise.bind(this);
     // Init datasethub and inject filterTriggered function
     this.datasetHub = new DatasetHub(this.filterBroadcasted);
     this.debug = false;
@@ -76,6 +78,7 @@ class App extends React.Component {
     this.authentication = new Authentication(this.nodeBridge);
     // Set Authenticator object for the Node Bridge
     this.nodeBridge.setAuthentication(this.authentication);
+    this.promises = {}; // Collection of promises
     this.state = {
       datasetEnabled: {},
       datasetLoading: {},
@@ -186,6 +189,31 @@ class App extends React.Component {
     if (requiresLoading) {
       this.loadDataset(name);
     }
+  }
+
+  getMetadataPromise(name) {
+    if (isUndefined(this.promises.name)) {
+      this.promises.name = this.getMetadata(name);
+    }
+    return this.promises.name;
+  }
+
+  /**
+   * Get meta data for dataset
+   * @param {string} name Dataset
+   * @return {array} metadata
+   */
+  async getMetadata(name) {
+    // If metadata is defined in datasethub, return it
+    const metadataHub = this.datasetHub.getMetadata(name);
+    if (!isUndefined(metadataHub)) { return metadataHub; }
+    // 
+    // When not defined, retrieve it from the server
+    const metadata = await this.nodeBridge.getMetadata(name);
+    // Push metadata to DatasetHub
+    this.datasetHub.setMetadata(name, metadata);
+    // Return processed metadata
+    return this.datasetHub.getMetadata(name);
   }
 
   /**
@@ -628,6 +656,7 @@ class App extends React.Component {
               xPc={1}
               yPc={2}
               toggleEnabledDataset={this.toggleEnabledDataset}
+              getMetadataPromise={this.getMetadataPromise}
             />
           </Grid>
           <Grid item xs={2} />

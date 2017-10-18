@@ -10,10 +10,29 @@ class DatasetHub {
     this.loading = {};
     this.broadcastFilter = this.broadcastFilter.bind(this);
     this.getDatasetIcon = this.getDatasetIcon.bind(this);
+    this.metadata = {};
     // Init filter object and inject broadcastFilter function
     this.filter = new Filter(this.broadcastFilter);
     // filterTriggered function from App.js
     this.filterBroadcasted = filterBroadcasted;
+  }
+
+  /**
+   * Get metadata for dataset
+   * @param {string} name Dataset name
+   * @return {array} Metadata array
+   */
+  getMetadata(name) {
+    return (Object.keys(this.metadata).indexOf(name) === -1) ? undefined : this.metadata[name];
+  }
+
+  /**
+   * Set metadata for datataset
+   * @param {string} name Dataset name
+   * @param {array} metadata Metadata array
+   */
+  setMetadata(name, metadata) {
+    this.metadata[name] = metadata;
   }
 
   /**

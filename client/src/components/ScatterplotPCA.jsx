@@ -5,6 +5,8 @@ import Scatterplot from './Scatterplot';
 import { isUndefined, objectValueToArray, injectStyle } from './Helper';
 import DatasetIcons from './DatasetIcons';
 import Loading from './Loading';
+import DatasetInfo from './DatasetInfo';
+import Paper from 'material-ui/Paper';
 
 const styleSheet = {
   datasetLoaded: {
@@ -176,10 +178,25 @@ class ScatterplotPCA extends Scatterplot {
     let tooltip = [];
     let dx = this.xScale(x) + 5;
     let dy = this.yScale(y) + 5;
+    const metadata = this.props.getMetadataPromise(name);
     tooltip.push(
-      <text x={dx} y={dy} key={`Tooltip: ${dx}, ${dy}, ${name}`}>
-        {name}
-      </text>
+      <foreignObject
+        width={100}
+        height={100}
+        x={dx}
+        y={dy}
+        key={`Tooltip: ${dx}, ${dy}, ${name}`}
+      >
+        <Paper style={{ padding: '10px' }}>
+          <DatasetInfo
+            metadata={metadata}
+            name={name}
+          />
+        </Paper>
+      </foreignObject>
+      // <text x={dx} y={dy} key={`Tooltip: ${dx}, ${dy}, ${name}`}>
+      //   {name}
+      // </text>
     );
     this.setState({ tooltip });
   }
