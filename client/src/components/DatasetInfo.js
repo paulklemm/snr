@@ -1,6 +1,5 @@
 import React from 'react';
 import { isUndefined } from './Helper';
-import Loading from './Loading';
 import Paper from 'material-ui/Paper';
 
 class DatasetInfo extends React.Component {
@@ -60,7 +59,10 @@ class DatasetInfo extends React.Component {
     if (isUndefined(this.state.metadata)) {
       body = (
         <div className="smalltext" style={{ minWidth: '100px' }}>
-          Let me get get this for you quickly 💪🏽
+          Let me get get this for you quickly{' '}
+          <span role="img" aria-label="Hell Yeah">
+            💪🏽
+          </span>
         </div>
       );
     } else {
