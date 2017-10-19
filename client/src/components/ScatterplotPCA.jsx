@@ -9,12 +9,12 @@ import DatasetInfo from './DatasetInfo';
 
 const styleSheet = {
   datasetLoaded: {
-    color: '#EE6351'
+    color: '#EE6351',
   },
   datasetLoading: {
     color: 'red',
-    animation: 'pulse 1s infinite ease-in-out'
-  }
+    animation: 'pulse 1s infinite ease-in-out',
+  },
 };
 
 const pulse = `
@@ -104,8 +104,8 @@ class ScatterplotPCA extends Scatterplot {
   renderDots(radius, x, y, filtered = [], highlight = undefined) {
     // Keep track of the number of elements where one variable shows NaN
     this.numberOfNaN = { x: 0, y: 0 };
-    let dots = [];
-    for (let i in x) {
+    const dots = [];
+    for (const i in x) {
       const currentX = x[i];
       const currentY = y[i];
       const currentRowName = this.rowNames[i];
@@ -116,7 +116,7 @@ class ScatterplotPCA extends Scatterplot {
       // Check if we have to highlight the elements
       const cx = this.xScale(currentX);
       const cy = this.yScale(currentY);
-      let newRadius =
+      const newRadius =
         !isUndefined(highlight) &&
         cx >= highlight.minX &&
         cx <= highlight.maxX &&
@@ -135,8 +135,7 @@ class ScatterplotPCA extends Scatterplot {
       if (this.icons.length > 0) {
         dots.push(
           <g
-            onMouseEnter={() =>
-              this.showTooltip(currentX, currentY, currentRowName)}
+            onMouseEnter={() => this.showTooltip(currentX, currentY, currentRowName)}
             onMouseLeave={() => this.hideTooltip()}
             onClick={() => this.props.toggleEnabledDataset(currentRowName)}
             key={`${currentX},${currentY},${i}`}
@@ -161,7 +160,7 @@ class ScatterplotPCA extends Scatterplot {
                   onMeasure={measure => {
                     this.iconSize[currentRowName] = {
                       width: measure.width,
-                      height: measure.height
+                      height: measure.height,
                     };
                   }}
                 >
@@ -169,7 +168,7 @@ class ScatterplotPCA extends Scatterplot {
                 </Measure>
               </div>
             </foreignObject>
-          </g>
+          </g>,
         );
       }
     }
@@ -190,20 +189,14 @@ class ScatterplotPCA extends Scatterplot {
    * @param {string} name Dataset name
    */
   showTooltip(x, y, name) {
-    let tooltip = [];
-    let dx = this.xScale(x) + 5;
-    let dy = this.yScale(y) + 5;
+    const tooltip = [];
+    const dx = this.xScale(x) + 5;
+    const dy = this.yScale(y) + 5;
     const metadata = this.props.getMetadataPromise(name);
     tooltip.push(
-      <foreignObject
-        width="1"
-        height="1"
-        x={dx}
-        y={dy}
-        key={`Tooltip: ${dx}, ${dy}, ${name}`}
-      >
+      <foreignObject width="1" height="1" x={dx} y={dy} key={`Tooltip: ${dx}, ${dy}, ${name}`}>
         <DatasetInfo metadata={metadata} name={name} />
-      </foreignObject>
+      </foreignObject>,
       // <text x={dx} y={dy} key={`Tooltip: ${dx}, ${dy}, ${name}`}>
       //   {name}
       // </text>
@@ -219,12 +212,12 @@ class ScatterplotPCA extends Scatterplot {
     this.setMargin();
     // SetScale is dependant on the width and height, therefore it belongs to render
     this.setScale(this.x, this.y);
+    // this.setScale([-1, 1], [-1, 1]);
 
     return (
       <Measure
         bounds
-        key={`ScatterplotPCA ${this.state.responsiveWidth}, ${this.state
-          .responsiveHeight}`}
+        key={`ScatterplotPCA ${this.state.responsiveWidth}, ${this.state.responsiveHeight}`}
         onMeasure={measure => {
           if (measure.width !== this.state.responsiveWidth) {
             this.setState({ responsiveWidth: measure.width });
@@ -236,22 +229,14 @@ class ScatterplotPCA extends Scatterplot {
             <svg
               className="scatterplot"
               width={this.widthNoMargin + this.margin.left + this.margin.right}
-              height={
-                this.heightNoMargin + this.margin.top + this.margin.bottom
-              }
+              height={this.heightNoMargin + this.margin.top + this.margin.bottom}
             >
-              <g
-                transform={`translate(${this.margin.left},${this.margin.top})`}
-              >
+              <g transform={`translate(${this.margin.left},${this.margin.top})`}>
                 {this.renderAxes()}
                 {this.renderDots(3, this.x, this.y)}
                 {this.renderAxisLabels(
-                  `PC${this.props.xPc} (${Math.round(
-                    this.varianceExplainedX * 10000
-                  ) / 100}%)`,
-                  `PC${this.props.yPc} (${Math.round(
-                    this.varianceExplainedY * 10000
-                  ) / 100}%)`
+                  `PC${this.props.xPc} (${Math.round(this.varianceExplainedX * 10000) / 100}%)`,
+                  `PC${this.props.yPc} (${Math.round(this.varianceExplainedY * 10000) / 100}%)`,
                 )}
                 {this.state.tooltip}
                 {this.state.selectionRectangle.getRectangle()}
