@@ -1,18 +1,22 @@
 // Access to local file system
-const fs = require("fs");
+const fs = require('fs');
 
 /**
  * Log string with server time stamp
  * @param {String} content: String to log with timestamp
  * @param {Boolean} asError: Output message as error
  */
-function timeStampLog (content, asError=false) {
+function timeStampLog(content, asError = false) {
   let currentdate = new Date();
-  let output = `${twoDigits(currentdate.getDate())}/${twoDigits(currentdate.getMonth() + 1)}/${currentdate.getFullYear()} @ ${twoDigits(currentdate.getHours())}:${twoDigits(currentdate.getMinutes())}:${twoDigits(currentdate.getSeconds())} ${content}`;
-  if (asError)
-    console.error(output);
-  else
-    console.log(output);
+  let output = `${twoDigits(currentdate.getDate())}/${twoDigits(
+    currentdate.getMonth() + 1
+  )}/${currentdate.getFullYear()} @ ${twoDigits(
+    currentdate.getHours()
+  )}:${twoDigits(currentdate.getMinutes())}:${twoDigits(
+    currentdate.getSeconds()
+  )} ${content}`;
+  if (asError) console.error(output);
+  else console.log(output);
 }
 
 /**
@@ -21,7 +25,7 @@ function timeStampLog (content, asError=false) {
  * @return {Boolean} isUndefined
  */
 function isUndefined(x) {
-  return (typeof x === 'undefined');
+  return typeof x === 'undefined';
 }
 
 /**
@@ -31,7 +35,7 @@ function isUndefined(x) {
  * @return {String} Two-digit number as string
  */
 function twoDigits(number) {
-  return (number < 10 ? '0' : '') + number
+  return (number < 10 ? '0' : '') + number;
 }
 
 /**
@@ -39,12 +43,14 @@ function twoDigits(number) {
  * @param {String} path to file to read
  * @return {Object} of file in path
  */
-function readJSONFSSync (path) {
+function readJSONFSSync(path) {
   try {
     const filebuffer = fs.readFileSync(path);
-    return (JSON.parse(filebuffer));
+    return JSON.parse(filebuffer);
   } catch (readOrJsonErr) {
-    timeStampLog(`readJSONFSSync: Cannot find file ${path}. Error: ${readOrJsonErr}`);
+    timeStampLog(
+      `readJSONFSSync: Cannot find file ${path}. Error: ${readOrJsonErr}`
+    );
   }
 }
 
@@ -57,10 +63,12 @@ function readJSONFSSync (path) {
 function writeFSSync(path, obj) {
   try {
     fs.writeFileSync(path, obj);
-    return(true);
+    return true;
   } catch (writeError) {
-    timeStampLog(`writeFSSync: Cannot write file ${path}. Error: ${writeError}`);
-    return(false);
+    timeStampLog(
+      `writeFSSync: Cannot write file ${path}. Error: ${writeError}`
+    );
+    return false;
   }
 }
 
