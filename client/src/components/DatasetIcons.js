@@ -31,7 +31,7 @@ export const DatasetIcons = {
   ban: <Icon name="ban" />,
   archive: <Icon name="archive" />,
   bath: <Icon name="bath" />,
-  shower: <Icon name="shower" />
+  shower: <Icon name="shower" />,
 };
 
 export default DatasetIcons;

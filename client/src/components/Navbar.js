@@ -6,18 +6,18 @@ import Logo from './Logo';
 const styleSheet = {
   navbar: {
     marginBottom: '60px',
-    marginTop: '40px'
+    marginTop: '40px',
   },
   button: {
     color: '#333',
     fontFamily: 'Helvetica Neue',
     fontSize: '11pt',
     cursor: 'pointer',
-    marginRight: '30px'
+    marginRight: '30px',
   },
   buttons: {
-    textAlign: 'right'
-  }
+    textAlign: 'right',
+  },
 };
 
 class Navbar extends React.Component {
@@ -43,10 +43,7 @@ class Navbar extends React.Component {
             <Logo pulse={this.props.busy} />
           </Grid>
           <Grid item xs={8} style={styleSheet.buttons}>
-            <a
-              style={styleSheet.button}
-              onClick={this.props.toggleMainViewMode}
-            >
+            <a style={styleSheet.button} onClick={this.props.toggleMainViewMode}>
               {mainViewIcon} {mainText}
             </a>
             <a style={styleSheet.button} onClick={this.props.toggleLeftDrawer}>

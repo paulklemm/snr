@@ -7,14 +7,14 @@ const columnsNameMappingDefault = {
   qValue: 'q_value',
   name: 'gene_short_name',
   fc: 'log2(fold_change)',
-  biotype: 'gene_biotype'
+  biotype: 'gene_biotype',
 };
 const dataType = {
   pValue: 'float',
   qValue: 'float',
   name: 'string',
   fc: 'float',
-  biotype: 'string'
+  biotype: 'string',
 };
 
 class RNASeqData {
@@ -37,7 +37,7 @@ class RNASeqData {
    */
   read() {
     if (this.debug) console.time('Loading and processing RNASeq Data');
-    let readPromise = new Promise((resolve, reject) => {
+    const readPromise = new Promise((resolve, reject) => {
       csv(this.path, (error, data) => {
         if (error) {
           reject(error);
@@ -59,22 +59,21 @@ class RNASeqData {
    * @return {Object} processed result from D3 `csv`
    */
   removeUnusedColumnsAndFixDataTypes(data) {
-    let dataTidy = [];
+    const dataTidy = [];
     // Get the array of valid columns so that we only have to define it in the constructor
-    let columnNames = Object.keys(this.columnsNameMapping);
+    const columnNames = Object.keys(this.columnsNameMapping);
     // Iterate over all genes and add only required information to the new data frame
-    for (let i in data) {
+    for (const i in data) {
       // Empty entry that will now be populated
-      let entry = {};
+      const entry = {};
       // Iterate over the column names and add the values
-      for (let j in columnNames) {
+      for (const j in columnNames) {
         // Get the value - e.g. columnName: 'pValue' => value = data[i][columnsNameMapping.pValue]
-        let value = data[i][this.columnsNameMapping[columnNames[j]]];
+        const value = data[i][this.columnsNameMapping[columnNames[j]]];
         // Check if data type conversion is required
         if (dataType[columnNames[j]] === 'float')
           // e.g. entry.pValue = parseFloat(value)
-          entry[columnNames[j]] = parseFloat(value);
-        else {
+          { entry[columnNames[j]] = parseFloat(value); } else {
           // e.g. entry.pValue = value
           entry[columnNames[j]] = value;
         }

@@ -9,11 +9,11 @@ class LayoutFactory {
     this.spacingSize = spacingSize;
     this.staticElementsHeights = {
       table: 500,
-      header: 64
+      header: 64,
     };
     this.heights = {
       mainView: -1,
-      smallMultiples: -1
+      smallMultiples: -1,
     };
   }
 
@@ -45,24 +45,21 @@ class LayoutFactory {
     // Weirdly enough the height must be adjusted by a constant factor
     this.heights.smallMultiples =
       // eslint-disable-next-line no-mixed-operators
-      (this.heights.mainView + 10 - this.spacingSize * numTileRows) /
-      numTileRows;
+      (this.heights.mainView + 10 - this.spacingSize * numTileRows) / numTileRows;
     if (debug) {
       console.log('--------------------------------------');
       console.log(`smallMultiplesCount: ${this.smallMultiplesCount}`);
+      console.log(`numTileRows: ${numTileRows}, spacingSize: ${this.spacingSize}`);
       console.log(
-        `numTileRows: ${numTileRows}, spacingSize: ${this.spacingSize}`
+        `MainView height: ${this.heights.mainView}, SmallMultiplesHeight: ${this.heights
+          .smallMultiples}`,
       );
       console.log(
-        `MainView height: ${this.heights.mainView}, SmallMultiplesHeight: ${this
-          .heights.smallMultiples}`
-      );
-      console.log(
-        'this.heights.smallMultiples = (this.heights.mainView - (this.spacingSize * numTileRows)) / numTileRows'
+        'this.heights.smallMultiples = (this.heights.mainView - (this.spacingSize * numTileRows)) / numTileRows',
       );
       console.log(
         `${this.heights.smallMultiples} = (${this.heights.mainView} - (${this
-          .spacingSize} * ${numTileRows})) / ${numTileRows}`
+          .spacingSize} * ${numTileRows})) / ${numTileRows}`,
       );
     }
   }

@@ -11,12 +11,12 @@ import { Icon } from 'react-fa';
 const styleSheet = {
   primaryDatasetIcon: {
     fontSize: '130%',
-    color: 'red'
+    color: 'red',
   },
   standardDatasetIcon: {
     fontSize: '90%',
-    color: 'gray'
-  }
+    color: 'gray',
+  },
 };
 
 class DatasetSelect extends React.Component {
@@ -24,30 +24,30 @@ class DatasetSelect extends React.Component {
     super();
     this.state = {
       metadata: {},
-      metadataDatasetName: ''
+      metadataDatasetName: '',
     };
   }
 
   /**
    * Fetch the metadata from server and renders it in the client
-   * 
+   *
    * @param {String} datasetName Name of clicked data set
    */
   async handleListItemClick(datasetName) {
     // Get metadata from back-end
-    let metadata = await this.props.getMetadata(datasetName);
+    const metadata = await this.props.getMetadata(datasetName);
     if (metadata.success) {
       this.setState({
         metadata: metadata.metadata,
-        metadataDatasetName: datasetName
+        metadataDatasetName: datasetName,
       });
     }
   }
 
   getCheckboxes() {
-    let datasetCheckboxes = [];
-    for (let i in Object.keys(this.props.datasetEnabled)) {
-      let datasetName = Object.keys(this.props.datasetEnabled)[i];
+    const datasetCheckboxes = [];
+    for (const i in Object.keys(this.props.datasetEnabled)) {
+      const datasetName = Object.keys(this.props.datasetEnabled)[i];
       datasetCheckboxes.push(
         <ListItem
           dense
@@ -56,8 +56,7 @@ class DatasetSelect extends React.Component {
           onClick={() => this.handleListItemClick(datasetName)}
         >
           <Checkbox
-            onChange={(event, checked) =>
-              this.props.setEnableDataset(datasetName, checked)}
+            onChange={(event, checked) => this.props.setEnableDataset(datasetName, checked)}
             checked={this.props.datasetEnabled[datasetName]}
             disabled={this.props.datasetLoading[datasetName]}
           />
@@ -78,33 +77,29 @@ class DatasetSelect extends React.Component {
             setDatasetIcon={this.props.setDatasetIcon}
             getDatasetIcon={this.props.getDatasetIcon}
           />
-        </ListItem>
+        </ListItem>,
       );
     }
-    if (datasetCheckboxes.length === 0)
-      datasetCheckboxes.push(<Loading key="CircularProgress_getCheckboxes" />);
+    if (datasetCheckboxes.length === 0) { datasetCheckboxes.push(<Loading key="CircularProgress_getCheckboxes" />); }
 
     return datasetCheckboxes;
   }
 
   getMetadataList() {
     const metadataKeys = Object.keys(this.state.metadata);
-    let metadataListEntries = [];
-    for (let i in metadataKeys) {
+    const metadataListEntries = [];
+    for (const i in metadataKeys) {
       // Check what kind of element we have
       const value = this.state.metadata[metadataKeys[i]];
       // Check if value is an array or length is grater than 1
       const valueToPrint =
-        Object.prototype.toString.call(value) === '[object Array]' &&
-        value.length === 1
+        Object.prototype.toString.call(value) === '[object Array]' && value.length === 1
           ? value[0]
           : value;
       metadataListEntries.push(
         <ListItem button key={`Metadata_${metadataKeys[i]}`}>
-          <ListItemText
-            primary={`${metadataKeys[i]}: ${JSON.stringify(valueToPrint)}`}
-          />
-        </ListItem>
+          <ListItemText primary={`${metadataKeys[i]}: ${JSON.stringify(valueToPrint)}`} />
+        </ListItem>,
       );
     }
     return metadataListEntries;
@@ -134,7 +129,7 @@ DatasetSelect.propTypes = {
   setEnableDataset: PropTypes.func,
   getMetadata: PropTypes.func,
   setDatasetIcon: PropTypes.func,
-  getDatasetIcon: PropTypes.func
+  getDatasetIcon: PropTypes.func,
 };
 
 export default DatasetSelect;

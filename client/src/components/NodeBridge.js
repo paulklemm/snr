@@ -23,7 +23,7 @@ class NodeBridge {
   _getUserAndToken() {
     return {
       user: this.authentication.getUser(),
-      token: this.authentication.getToken()
+      token: this.authentication.getToken(),
     };
   }
 
@@ -33,8 +33,8 @@ class NodeBridge {
    * Examples:
    *   _fetchWithUserAndToken(`api/loaddata?`);
    *   _fetchWithUserAndToken(`api/getdataset?name=${name}`);
-   * 
-   * @param {String} fetchUrl URL to call. User and token will be appended with 
+   *
+   * @param {String} fetchUrl URL to call. User and token will be appended with
    * @return {Object} Response from the server containing name of the call, success boolean and data
    */
   async _fetchWithUserAndToken(fetchUrl) {
@@ -44,10 +44,9 @@ class NodeBridge {
     const { user, token } = this._getUserAndToken();
     // Some functions like the getData functions do not take aruments, therefore we have to omit the first `&`
     const andSymbol = fetchUrl.endsWith('?') ? '' : '&';
-    let response = await fetch(
-      `${fetchUrl}${andSymbol}user=${user}&token=${token}`,
-      { accept: 'application/json' }
-    ).then(this.parseJSON);
+    const response = await fetch(`${fetchUrl}${andSymbol}user=${user}&token=${token}`, {
+      accept: 'application/json',
+    }).then(this.parseJSON);
 
     // Set busy state of the app
     this.removeBusyState(fetchUrl);
@@ -56,8 +55,8 @@ class NodeBridge {
 
   /**
    * Set Authentication object for verifying local user and token
-   * 
-   * @param {Object} authenticator 
+   *
+   * @param {Object} authenticator
    */
   setAuthentication(authentication) {
     this.authentication = authentication;
@@ -68,7 +67,7 @@ class NodeBridge {
    * @return {Promise} of Check
    */
   checkServer() {
-    return fetch(`api/isonline`).then(() => {
+    return fetch('api/isonline').then(() => {
       this.isOnline = true;
     });
   }
@@ -82,7 +81,7 @@ class NodeBridge {
    */
   sendLogin(user, password, cb) {
     return fetch(`api/login?user=${user}&password=${password}`, {
-      accept: 'application/json'
+      accept: 'application/json',
     })
       .then(this.parseJSON)
       .then(cb);
@@ -95,14 +94,14 @@ class NodeBridge {
    * @return {Object} Response object of server
    */
   echoToken(query, debug = false) {
-    let response = this._fetchWithUserAndToken(`api/echotoken?q=${query}`);
+    const response = this._fetchWithUserAndToken(`api/echotoken?q=${query}`);
     if (debug) console.log(response);
     return response;
   }
 
   /**
    * Execute R command on OpenCPU backend and receive the result in specified valformat
-   * 
+   *
    * @param {String} rpackage R package name
    * @param {String} rfunction Function of R package
    * @param {Object} params Params for function as JSON
@@ -112,11 +111,11 @@ class NodeBridge {
   async sendRCommand(rpackage, rfunction, params, valformat) {
     // Get user and token
     const { user, token } = this._getUserAndToken();
-    let response = fetch(
+    const response = fetch(
       `api/runrcommand?rpackage=${rpackage}&rfunction=${rfunction}&params=${JSON.stringify(
-        params
+        params,
       )}&valformat=${valformat}&user=${user}&token=${token}`,
-      { accept: 'application/json' }
+      { accept: 'application/json' },
     ).then(this.parseJSON);
 
     return response;
@@ -124,16 +123,16 @@ class NodeBridge {
 
   /**
    * Load data for user.
-   * 
+   *
    * @return {Object} Server response
    */
   loadData() {
-    return this._fetchWithUserAndToken(`api/loaddata?`);
+    return this._fetchWithUserAndToken('api/loaddata?');
   }
 
   /**
    * Get dataset
-   * 
+   *
    * @param {String} name Dataset to load
    * @return {Object} Response
    */
@@ -143,7 +142,7 @@ class NodeBridge {
 
   /**
    * Get metadata for dataset
-   * 
+   *
    * @param {String} name Dataset to load
    * @return {Object} Response
    */
@@ -160,7 +159,7 @@ class NodeBridge {
    */
   getGoSummary(ensemblDataset, ensemblVersion) {
     return this._fetchWithUserAndToken(
-      `api/getgosummary?ensembldataset=${ensemblDataset}&ensemblversion=${ensemblVersion}`
+      `api/getgosummary?ensembldataset=${ensemblDataset}&ensemblversion=${ensemblVersion}`,
     );
   }
 
@@ -173,7 +172,7 @@ class NodeBridge {
    */
   getGoPerGene(ensemblDataset, ensemblVersion) {
     return this._fetchWithUserAndToken(
-      `api/getgopergene?ensembldataset=${ensemblDataset}&ensemblversion=${ensemblVersion}`
+      `api/getgopergene?ensembldataset=${ensemblDataset}&ensemblversion=${ensemblVersion}`,
     );
   }
 
@@ -186,24 +185,24 @@ class NodeBridge {
    */
   getPcaLoadings(ensemblDataset, ensemblVersion) {
     return this._fetchWithUserAndToken(
-      `api/getpcaloadings?ensembldataset=${ensemblDataset}&ensemblversion=${ensemblVersion}`
+      `api/getpcaloadings?ensembldataset=${ensemblDataset}&ensemblversion=${ensemblVersion}`,
     );
   }
 
   /**
    * Send login credentials to server and receive success status and token
-   * 
-   * @param {String} user 
-   * @param {String} hashedPassword 
+   *
+   * @param {String} user
+   * @param {String} hashedPassword
    */
   async login(user, hashedPassword) {
-    let response = await this.sendLogin(user, hashedPassword);
+    const response = await this.sendLogin(user, hashedPassword);
     return response;
   }
 
   /**
    * Parse json from node response object.
-   * 
+   *
    * @param {Object} response: Response from fetch on node server
    * @return Object containing the server answer
    */

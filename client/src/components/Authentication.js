@@ -53,18 +53,15 @@ class Authentication {
     if (
       localStorage.getItem('sonarLoginToken') == null ||
       localStorage.getItem('sonarLoginUser') == null
-    )
-      return true;
+    ) { return true; }
     // Check if login works
-    const response = await this.nodeBridge.echoToken(
-      `User and token handshake`
-    );
+    const response = await this.nodeBridge.echoToken('User and token handshake');
     // Invert the success boolean and return it
     return !response.success;
   }
 
   /**
-   * Logs in user and returns boolean success. 
+   * Logs in user and returns boolean success.
    * If successfull, set localStorage items `sonarLoginToken` and `sonarLoginUser`
    * @param {String} user: User to log in
    * @param {String} password: Password for user
@@ -76,10 +73,9 @@ class Authentication {
       localStorage.setItem('sonarLoginToken', response.token);
       localStorage.setItem('sonarLoginUser', user);
       return true;
-    } else {
-      console.error(`Login failed, reason: ${response.reason}`);
-      return false;
     }
+    console.error(`Login failed, reason: ${response.reason}`);
+    return false;
   }
 }
 

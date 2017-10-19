@@ -63,7 +63,7 @@ class ScatterplotPCA extends Scatterplot {
     }
     // Get the images from PCA object
     const icons = [];
-    pca.forEach(item => {
+    pca.forEach((item) => {
       if (item._row !== 'proportion_of_variance') {
         try {
           const icon = props.datasetHub.getDatasetIcon(item._row);
@@ -157,7 +157,7 @@ class ScatterplotPCA extends Scatterplot {
               <div style={divStyle}>
                 <Measure
                   bounds
-                  onMeasure={measure => {
+                  onMeasure={(measure) => {
                     this.iconSize[currentRowName] = {
                       width: measure.width,
                       height: measure.height,
@@ -218,7 +218,7 @@ class ScatterplotPCA extends Scatterplot {
       <Measure
         bounds
         key={`ScatterplotPCA ${this.state.responsiveWidth}, ${this.state.responsiveHeight}`}
-        onMeasure={measure => {
+        onMeasure={(measure) => {
           if (measure.width !== this.state.responsiveWidth) {
             this.setState({ responsiveWidth: measure.width });
           }

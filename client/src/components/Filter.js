@@ -7,7 +7,7 @@ class Filter {
       '>': 'larger',
       '<=': 'smallerThan',
       '>=': 'largerThan',
-      '=': 'equals'
+      '=': 'equals',
     };
     this.filter = {};
     // broadcastFilter function from DatasetHub
@@ -17,7 +17,7 @@ class Filter {
   _filterIsValid(name, val) {
     // Get type from the static object
     const type = DimensionTypes[name];
-    let isValid = type === 'number' ? !isNaN(val) : true;
+    const isValid = type === 'number' ? !isNaN(val) : true;
     return isValid;
   }
 
@@ -34,7 +34,7 @@ class Filter {
     this.filter[filterKey] = {
       name: dimension,
       value: val,
-      operator: operator
+      operator,
     };
   }
 
@@ -44,7 +44,7 @@ class Filter {
    * @return {Array} Array of filter objects
    */
   getFilterOfDimension(dimension) {
-    let filter = [];
+    const filter = [];
     for (const filterKey in this.filter) {
       if (this.filter[filterKey].name === dimension) {
         filter.push(this.filter[filterKey]);
@@ -69,9 +69,7 @@ class Filter {
    */
   removeFilter(dimension, broadcastFilter = true) {
     console.log(`Broadcast: Remove filter for dimension ${dimension}`);
-    for (const filterKey in this.filter)
-      if (this.filter[filterKey].name === dimension)
-        delete this.filter[filterKey];
+    for (const filterKey in this.filter) { if (this.filter[filterKey].name === dimension) delete this.filter[filterKey]; }
     if (broadcastFilter) {
       this.broadcastFilter();
     }
@@ -111,10 +109,8 @@ class Filter {
    */
   setFilters(...filters) {
     console.log(filters);
-    filters.forEach(filter => {
-      console.log(
-        `Set Filter ${filter.name}, ${filter.val}, ${filter.operator}`
-      );
+    filters.forEach((filter) => {
+      console.log(`Set Filter ${filter.name}, ${filter.val}, ${filter.operator}`);
       this.setFilter(filter.name, filter.val, filter.operator, false, false);
     });
     this.broadcastFilter();

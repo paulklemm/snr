@@ -1,12 +1,7 @@
 // Require bcrypt for authentication
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
-const {
-  timeStampLog,
-  readJSONFSSync,
-  writeFSSync,
-  isUndefined
-} = require('./Helper');
+const { timeStampLog, readJSONFSSync, writeFSSync, isUndefined } = require('./Helper');
 
 class UserManager {
   constructor(userPath) {
@@ -26,9 +21,7 @@ class UserManager {
     timeStampLog('Checking password that should work');
     timeStampLog(this.checkPassword(password, this.getPasswordHash(user)));
     timeStampLog('Checking password that should not work');
-    timeStampLog(
-      this.checkPassword(Math.random().toString(), this.getPasswordHash(user))
-    );
+    timeStampLog(this.checkPassword(Math.random().toString(), this.getPasswordHash(user)));
   }
   /**
    * Wrapper function for requests containing a token check for a user.
@@ -51,7 +44,7 @@ class UserManager {
       name,
       success: false,
       loginInvalid: true,
-      message: 'Invalid token or user'
+      message: 'Invalid token or user',
     };
   }
 
@@ -86,13 +79,13 @@ class UserManager {
       timeStampLog(
         `Error, tokens of user ${user} exceed the maximum number of allowed tokens (${this
           .maximumTokensPerUser})`,
-        true
+        true,
       );
       return false;
     }
     // Check if token is in the keys of users token object
     if (tokens.indexOf(token) != -1) return true;
-    else return false;
+    return false;
   }
 
   /**
@@ -105,22 +98,18 @@ class UserManager {
   storeToken(user, tokenHash) {
     // Construct the new token object
     const token = {
-      created: Date.now()
+      created: Date.now(),
     };
     // Get user settings
     const userSettings = this.getUserSettings(user);
     // Create tokens object if it doesn't already exist
     if (typeof userSettings.tokens !== 'object') userSettings.tokens = {};
     // Remove oldest tokens until it is smaller than the number of valid tokens
-    while (Object.keys(userSettings.tokens).length >= this.maximumTokensPerUser)
-      userSettings.tokens = this.removeOldestToken(userSettings.tokens);
+    while (Object.keys(userSettings.tokens).length >= this.maximumTokensPerUser) { userSettings.tokens = this.removeOldestToken(userSettings.tokens); }
     // Add the new token
     userSettings.tokens[tokenHash] = token;
     // Store the token to disk and return success
-    return writeFSSync(
-      this.getUserConfigPath(user),
-      JSON.stringify(userSettings, null, 2)
-    );
+    return writeFSSync(this.getUserConfigPath(user), JSON.stringify(userSettings, null, 2));
   }
 
   /**
@@ -131,7 +120,7 @@ class UserManager {
     let tokens = {
       a: { created: now },
       b: { created: now - 10 },
-      c: { created: now + 10 }
+      c: { created: now + 10 },
     };
     // b is the oldest one, so we should end up a and c
     tokens = this.removeOldestToken(tokens);
@@ -139,7 +128,7 @@ class UserManager {
     return isUndefined(tokens.b);
   }
 
-  /**
+  /** 
    * Removes the oldest token by comparing the `created` times
    * @param {Object} tokens is the token list where each token consists of `created` property
    * @return {Object} tokens object without oldest one
@@ -149,7 +138,7 @@ class UserManager {
     // Set oldest entry time to the first token
     let oldestEntryTime = tokens[tokenKeys[0]].created;
     let oldestEntryId = 0;
-    for (let keyId in tokenKeys) {
+    for (const keyId in tokenKeys) {
       const token = tokens[tokenKeys[keyId]];
       // Check if the current token is older
       if (token.created < oldestEntryTime) {
@@ -208,7 +197,7 @@ class UserManager {
     if (isUndefined(userSettings) || isUndefined(userSettings.passwd)) {
       timeStampLog(`Password or user not defined for ${user}`, true);
       return '';
-    } else return userSettings.passwd;
+    } return userSettings.passwd;
   }
 
   /**
@@ -220,14 +209,13 @@ class UserManager {
     // Read the user settings
     const userSettings = readJSONFSSync(this.getUserConfigPath(user));
     // If settings are empty, show error
-    if (isUndefined(userSettings))
+    if (isUndefined(userSettings)) {
       timeStampLog(
-        `Cannot find user ${user} at ${this.getUserConfigPath(
-          user
-        )}. Either user folder (${this
+        `Cannot find user ${user} at ${this.getUserConfigPath(user)}. Either user folder (${this
           .userPath}) is wrong or user does not exist.`,
-        true
+        true,
       );
+    }
     // Return user Settings if everything works properly
     return userSettings;
   }

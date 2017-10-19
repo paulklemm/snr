@@ -23,9 +23,7 @@ class DatasetHub {
    * @return {array} Metadata array
    */
   getMetadata(name) {
-    return Object.keys(this.metadata).indexOf(name) === -1
-      ? undefined
-      : this.metadata[name];
+    return Object.keys(this.metadata).indexOf(name) === -1 ? undefined : this.metadata[name];
   }
 
   /**
@@ -79,8 +77,7 @@ class DatasetHub {
    */
   getCountOfEnabledDatasets() {
     let count = 0;
-    for (let dataset in this.enabled)
-      if (this.enabled[dataset] === true) count = count + 1;
+    for (const dataset in this.enabled) if (this.enabled[dataset] === true) count += 1;
     return count;
   }
 
@@ -88,12 +85,11 @@ class DatasetHub {
    * Propagate the current filter to all datasets
    */
   broadcastFilter() {
-    for (let i in this.names) {
-      let name = this.names[i];
-      let dataset = this.datasets[name];
+    for (const i in this.names) {
+      const name = this.names[i];
+      const dataset = this.datasets[name];
       // Only apply filter if the data set is really loaded
-      if (dataset.loaded)
-        this.datasets[name].setFilter(this.filter.getFilter());
+      if (dataset.loaded) this.datasets[name].setFilter(this.filter.getFilter());
     }
     // Call triggered function to run follow-up tasks
     this.filterBroadcasted();
@@ -109,16 +105,16 @@ class DatasetHub {
    * @param {string} datasetName Name of the dataset to retreive
    */
   getDatasetIcon(datasetName) {
-    if (Object.keys(this.datasets).indexOf(datasetName) === -1)
+    if (Object.keys(this.datasets).indexOf(datasetName) === -1) {
       throw new Error(
-        `Could not get icon for ${datasetName}, dataset does not exist in DatasetHub`
+        `Could not get icon for ${datasetName}, dataset does not exist in DatasetHub`,
       );
-    else return this.datasets[datasetName].icon;
+    } else return this.datasets[datasetName].icon;
   }
 
   /**
    * Set icon of dataset
-   * @param {String} datasetName 
+   * @param {String} datasetName
    * @param {String} icon name, get icon from DatasetIcons
    */
   setDatasetIcon(datasetName, icon) {
@@ -151,11 +147,11 @@ class DatasetHub {
   }
 
   update() {
-    let names = Object.keys(this.datasets);
-    let enabled = {};
-    let loading = {};
+    const names = Object.keys(this.datasets);
+    const enabled = {};
+    const loading = {};
     // Iterate over all data sets and update information
-    names.forEach(name => {
+    names.forEach((name) => {
       enabled[name] = this.datasets[name].enabled;
       loading[name] = this.datasets[name].loading;
       // Set dataset icon

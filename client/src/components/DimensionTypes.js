@@ -11,7 +11,7 @@ export const DimensionTypes = {
   controlMean: 'number',
   strand: 'string',
   Start: 'number',
-  End: 'number'
+  End: 'number',
 };
 
 export const DefaultFilterSetting = {
@@ -28,7 +28,7 @@ export const DefaultFilterSetting = {
   biotype: '=',
   strand: '=',
   Start: '>',
-  End: '<'
+  End: '<',
 };
 
 export default DimensionTypes;

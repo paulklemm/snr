@@ -7,14 +7,12 @@ const fs = require('fs');
  * @param {Boolean} asError: Output message as error
  */
 function timeStampLog(content, asError = false) {
-  let currentdate = new Date();
-  let output = `${twoDigits(currentdate.getDate())}/${twoDigits(
-    currentdate.getMonth() + 1
-  )}/${currentdate.getFullYear()} @ ${twoDigits(
-    currentdate.getHours()
-  )}:${twoDigits(currentdate.getMinutes())}:${twoDigits(
-    currentdate.getSeconds()
-  )} ${content}`;
+  const currentdate = new Date();
+  const output = `${twoDigits(currentdate.getDate())}/${twoDigits(
+    currentdate.getMonth() + 1,
+  )}/${currentdate.getFullYear()} @ ${twoDigits(currentdate.getHours())}:${twoDigits(
+    currentdate.getMinutes(),
+  )}:${twoDigits(currentdate.getSeconds())} ${content}`;
   if (asError) console.error(output);
   else console.log(output);
 }
@@ -48,9 +46,7 @@ function readJSONFSSync(path) {
     const filebuffer = fs.readFileSync(path);
     return JSON.parse(filebuffer);
   } catch (readOrJsonErr) {
-    timeStampLog(
-      `readJSONFSSync: Cannot find file ${path}. Error: ${readOrJsonErr}`
-    );
+    timeStampLog(`readJSONFSSync: Cannot find file ${path}. Error: ${readOrJsonErr}`);
   }
 }
 
@@ -65,9 +61,7 @@ function writeFSSync(path, obj) {
     fs.writeFileSync(path, obj);
     return true;
   } catch (writeError) {
-    timeStampLog(
-      `writeFSSync: Cannot write file ${path}. Error: ${writeError}`
-    );
+    timeStampLog(`writeFSSync: Cannot write file ${path}. Error: ${writeError}`);
     return false;
   }
 }

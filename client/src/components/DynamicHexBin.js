@@ -15,9 +15,7 @@ const k = 100;
 
 let randomX = randomNormal(width / 2, 80);
 let randomY = randomNormal(height / 2, 80);
-let points = range(n).map(function() {
-  return [randomX(), randomY()];
-});
+const points = range(n).map(() => [randomX(), randomY()]);
 
 const color = scaleLinear()
   .domain([0, 10])

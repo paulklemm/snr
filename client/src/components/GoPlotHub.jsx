@@ -20,7 +20,7 @@ import List, {
 // Own imports
 import GoPlot from './GoPlot';
 import { isUndefined } from './Helper';
-
+ 
 const styleSheet = {
   goOptionLabel: {
     marginTop: '16px'

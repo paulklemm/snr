@@ -17,7 +17,7 @@ class Loading extends React.Component {
           height: `${this.props.height}px`,
           display: 'flex',
           justifyContent: 'center',
-          alignItems: 'center'
+          alignItems: 'center',
         }}
       >
         <CircularProgress />

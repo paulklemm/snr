@@ -2,8 +2,8 @@ import React from 'react';
 import { scaleLinear } from 'd3-scale';
 import { range } from 'd3-array';
 
-let value = range(26).map((value, i) => Math.random());
-let data = {
+const value = range(26).map((value, i) => Math.random());
+const data = {
   name: [
     'A',
     'B',
@@ -30,9 +30,9 @@ let data = {
     'W',
     'X',
     'Y',
-    'Z'
+    'Z',
   ],
-  value: value
+  value,
 };
 
 class BarChart extends React.Component {
@@ -43,11 +43,11 @@ class BarChart extends React.Component {
   }
 
   _update() {
-    var value = range(26).map((value, i) => Math.random());
+    const value = range(26).map((value, i) => Math.random());
 
-    var data = {
+    const data = {
       name: this.state.data.name,
-      value: value
+      value,
     };
     this.setState({ data });
   }
@@ -70,7 +70,7 @@ class BarChart extends React.Component {
 
     const barWidth = width / this.state.data.name.length;
     const bars = [];
-    for (var i = 0; i < this.state.data.name.length; i++) {
+    for (let i = 0; i < this.state.data.name.length; i++) {
       const name = this.state.data.name[i];
       const value = this.state.data.value[i];
       bars.push(
@@ -79,7 +79,7 @@ class BarChart extends React.Component {
           <text x={barWidth / 2 - 6} y={y(value) - 15} dy=".75em">
             {name}
           </text>
-        </g>
+        </g>,
       );
     }
     return (

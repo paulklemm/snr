@@ -14,7 +14,7 @@ class GoTermHub {
 
   /**
    * Get the maximum size of GO-terms
-   * 
+   *
    * @param {object} summary Collection named by GO-id
    * @return {integer} Number of genes in the largest GO-term
    */
@@ -32,12 +32,12 @@ class GoTermHub {
   async _getSummary(summaryPromise) {
     const summary = await summaryPromise;
     // Create dictionary for go term based on its id
-    let summaryDict = {};
-    summary['go']['.val'].forEach(element => {
+    const summaryDict = {};
+    summary.go['.val'].forEach((element) => {
       // Reference element by go-id
       summaryDict[element.go_id] = element;
       // Add empty genes array that will be filled when we get the geneToGo values
-      summaryDict[element.go_id]['genes'] = [];
+      summaryDict[element.go_id].genes = [];
     });
     return summaryDict;
   }
@@ -62,7 +62,7 @@ class GoTermHub {
 
   /**
    * Get GO summary for ensembl dataset and release and add it to GoTersm.summary
-   * 
+   *
    * @param {String} ensemblDataset Ensembl dataset to query GO term summary from
    * @param {String} ensemblVersion Ensembl version/release
    */
@@ -76,26 +76,24 @@ class GoTermHub {
     // }
 
     // If it could not be retreived locally, download it form the server and add it to the localStorage
-    let summary = await this._getSummary(
-      this.nodeBridgeGetGoSummary(ensemblDataset, ensemblVersion)
+    const summary = await this._getSummary(
+      this.nodeBridgeGetGoSummary(ensemblDataset, ensemblVersion),
     );
     this.summary = await this.addWithEnsemblAndVersion(
       this.summary,
       summary,
       ensemblDataset,
-      ensemblVersion
+      ensemblVersion,
     );
     // Count the maximum GO-Term size
-    this.maxGeneCount = this.getMaximumGoTermSize(
-      this.summary[ensemblDataset][ensemblVersion]
-    );
+    this.maxGeneCount = this.getMaximumGoTermSize(this.summary[ensemblDataset][ensemblVersion]);
     // Add to localstorage
     // localStorage.setItem(localStorageKey, JSON.stringify(this.summary));
   }
 
   /**
    * Attach value to a dictionary consisting of ensembl dataset and version
-   * 
+   *
    * @param {Object} dict Already existing dictionary
    * @param {Object} value Value to add
    * @param {String} ensemblDataset Ensembl dataset to add the value to
@@ -104,15 +102,14 @@ class GoTermHub {
    */
   addWithEnsemblAndVersion(dict, value, ensemblDataset, ensemblVersion) {
     if (!(ensemblDataset in Object.keys(dict))) dict[ensemblDataset] = {};
-    if (!(ensemblVersion in Object.keys(dict[ensemblDataset])))
-      dict[ensemblDataset][ensemblVersion] = {};
+    if (!(ensemblVersion in Object.keys(dict[ensemblDataset]))) { dict[ensemblDataset][ensemblVersion] = {}; }
     dict[ensemblDataset][ensemblVersion] = value;
     return dict;
   }
 
   /**
    * Push promise to array
-   * 
+   *
    * @param {promise} promise Promise to push
    * @param {string} name Name for promise
    */
@@ -131,16 +128,13 @@ class GoTermHub {
   /**
    * Wrapper function for `_addGoTerms`
    * Add GO terms as object mapping Gene-IDs to GO-term ids
-   * 
+   *
    * @param {String} ensemblDataset Ensembl dataset
    * @param {String} ensemblVersion Ensembl version ('release')
    */
   async addGeneToGo(ensemblDataset, ensemblVersion) {
     // Call addGeneToGoPromise and get the Promise
-    const addGeneToGoPromise = this._addGeneToGo(
-      ensemblDataset,
-      ensemblVersion
-    );
+    const addGeneToGoPromise = this._addGeneToGo(ensemblDataset, ensemblVersion);
     // Push the promise to the local promise array
     this.promisePush(addGeneToGoPromise, 'geneToGo');
     // Await the promise
@@ -151,7 +145,7 @@ class GoTermHub {
 
   /**
    * Add GO terms as object mapping Gene-IDs to GO-term ids
-   * 
+   *
    * @param {String} ensemblDataset Ensembl dataset
    * @param {String} ensemblVersion Ensembl version ('release')
    */
@@ -165,29 +159,25 @@ class GoTermHub {
     // }
 
     // If local storage retrieval fails, proceed
-    const goPerGene = await this.nodeBridgeGetGoPerGene(
-      ensemblDataset,
-      ensemblVersion
-    );
-    let newGeneToGo = {};
+    const goPerGene = await this.nodeBridgeGetGoPerGene(ensemblDataset, ensemblVersion);
+    const newGeneToGo = {};
     // Make dictionary pointing gene IDs to GO-terms
-    goPerGene['go']['.val'].forEach(elem => {
-      if (elem['go_id'] === '') return;
+    goPerGene.go['.val'].forEach((elem) => {
+      if (elem.go_id === '') return;
       // Create a new array to store the GO-terms in
-      if (isUndefined(newGeneToGo[elem['ensembl_gene_id']]))
-        newGeneToGo[elem['ensembl_gene_id']] = [];
+      if (isUndefined(newGeneToGo[elem.ensembl_gene_id])) { newGeneToGo[elem.ensembl_gene_id] = []; }
       // Add GO-term to the dictionary
-      newGeneToGo[elem['ensembl_gene_id']].push(elem['go_id']);
+      newGeneToGo[elem.ensembl_gene_id].push(elem.go_id);
       // Push the gene to the GO-term summary
-      this.summary[ensemblDataset][ensemblVersion][elem['go_id']]['genes'].push(
-        elem['ensembl_gene_id']
+      this.summary[ensemblDataset][ensemblVersion][elem.go_id].genes.push(
+        elem.ensembl_gene_id,
       );
     });
     this.geneToGo = await this.addWithEnsemblAndVersion(
       this.geneToGo,
       newGeneToGo,
       ensemblDataset,
-      ensemblVersion
+      ensemblVersion,
     );
 
     // // Save the result to localstorage
@@ -196,7 +186,7 @@ class GoTermHub {
 
   /**
    * Array of GO-IDs of the provided Ensembl-IDs
-   * 
+   *
    * @param {Array} ensemblIDs EnsemblIDs to get GO-Terms for
    * @param {String} ensemblDataset Ensembl dataset
    * @param {String} ensemblVersion Ensembl version ('release')
@@ -205,45 +195,43 @@ class GoTermHub {
   async getGoTerms(
     ensemblIDs,
     ensemblDataset = 'mmusculus_gene_ensembl',
-    ensemblVersion = 'current'
+    ensemblVersion = 'current',
   ) {
     // Await running operation pulling data from the server
     await Promise.all(this.promiseGet());
     // Initialize dictionary pointing GO-terms to the provided ensembl-IDs
-    let goTerms = {};
+    const goTerms = {};
     // Iterate over all ensembl ids
-    ensemblIDs.forEach(ensemblID => {
+    ensemblIDs.forEach((ensemblID) => {
       // Get all GO-Terms the gene is associated with
-      const goTermsOfGene = this.geneToGo[ensemblDataset][ensemblVersion][
-        ensemblID
-      ];
+      const goTermsOfGene = this.geneToGo[ensemblDataset][ensemblVersion][ensemblID];
       // When the gene is not associated with GO terms, do nothing
       if (isUndefined(goTermsOfGene)) return;
       // Iterate over all GO-terms the gene is associated with and add it to goTerms object
-      goTermsOfGene.forEach(goTerm => {
+      goTermsOfGene.forEach((goTerm) => {
         // When GO-term is not in the dictionary, initialize it
         if (isUndefined(goTerms[goTerm])) {
           goTerms[goTerm] = {};
-          goTerms[goTerm]['ids'] = [];
+          goTerms[goTerm].ids = [];
         }
         // Push the GO-term
-        goTerms[goTerm]['ids'].push(ensemblID);
+        goTerms[goTerm].ids.push(ensemblID);
       });
     });
     // Iterate again over all goTerms and calculate the percentage of elements in the GO-terms
-    Object.keys(goTerms).forEach(goTermKey => {
-      goTerms[goTermKey]['percentage'] =
-        goTerms[goTermKey]['ids'].length /
-        this.summary[ensemblDataset][ensemblVersion][goTermKey]['count_genes'];
+    Object.keys(goTerms).forEach((goTermKey) => {
+      goTerms[goTermKey].percentage =
+        goTerms[goTermKey].ids.length /
+        this.summary[ensemblDataset][ensemblVersion][goTermKey].count_genes;
     });
 
     // Convert the collection to an array
-    let goTermsArray = [];
+    const goTermsArray = [];
     // Iterate over all GO-Terms and add them to the array
-    Object.keys(goTerms).forEach(goTermKey => {
-      let newEntry = goTerms[goTermKey];
+    Object.keys(goTerms).forEach((goTermKey) => {
+      const newEntry = goTerms[goTermKey];
       // To still know which goTerm we have, keep the ID
-      newEntry['goId'] = goTermKey;
+      newEntry.goId = goTermKey;
       goTermsArray.push(newEntry);
     });
 
@@ -252,12 +240,12 @@ class GoTermHub {
 
   /**
    * Sort GO-terms, currently only by percentage
-   * 
-   * @param {Object} goTerms 
+   *
+   * @param {Object} goTerms
    */
   sortGoTerms(goTerms) {
     // Sort it
-    goTerms = goTerms.sort((a, b) => b['percentage'] - a['percentage']);
+    goTerms = goTerms.sort((a, b) => b.percentage - a.percentage);
     return goTerms;
   }
 }

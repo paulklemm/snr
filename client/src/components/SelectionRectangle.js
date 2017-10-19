@@ -4,8 +4,8 @@ import { applyTransformation } from './TransformationHelper';
 // https://www.w3schools.com/graphics/svg_rect.asp
 const styleSheet = {
   rectangle: {
-    fillOpacity: '0.1'
-  }
+    fillOpacity: '0.1',
+  },
 };
 
 /**
@@ -32,7 +32,7 @@ class SelectionRectangle {
 
   /**
    * Set the start coordinates, usually on mouse-down
-   * @param {Integer} startX: Start coordinate in x 
+   * @param {Integer} startX: Start coordinate in x
    * @param {Integer} startY: Start coordinate in y
    */
   setStart(startX, startY) {
@@ -66,8 +66,8 @@ class SelectionRectangle {
 
   /**
    * Set rectangle according to the filters set in the `Filter` object.
-   * @param {String} dimensionX: Name of X dimension 
-   * @param {String} dimensionY: Name of Y dimension 
+   * @param {String} dimensionX: Name of X dimension
+   * @param {String} dimensionY: Name of Y dimension
    * @param {Function} xScale: xScale function mapping X dimension space to pixel space
    * @param {Function} yScale yScale function mapping Y dimension space to pixel space
    * @param {Filter} filter: Filter object
@@ -79,7 +79,7 @@ class SelectionRectangle {
     yScale,
     filter,
     xTransformation,
-    yTransformation
+    yTransformation,
   ) {
     if (!this.isDrawing) {
       // Reset the current drawing
@@ -95,7 +95,7 @@ class SelectionRectangle {
         maxY = maxYDefault;
       if (filterX.length > 0) {
         // Iterate over filter
-        for (let i in filterX) {
+        for (const i in filterX) {
           const value = applyTransformation(filterX[i].value, xTransformation);
           if (filterX[i].operator === '<') maxX = xScale(value);
           else if (filterX[i].operator === '>') {
@@ -105,7 +105,7 @@ class SelectionRectangle {
       }
       if (filterY.length > 0) {
         // Iterate over filter
-        for (let i in filterY) {
+        for (const i in filterY) {
           const value = applyTransformation(filterY[i].value, yTransformation);
           if (filterY[i].operator === '<') minY = yScale(value);
           else if (filterY[i].operator === '>') {
@@ -132,13 +132,7 @@ class SelectionRectangle {
    */
   calculateBounds() {
     // If start or end positions are not set, return nothing
-    if (
-      this.startX === '' ||
-      this.startY === '' ||
-      this.currentX === '' ||
-      this.currentY === ''
-    )
-      return;
+    if (this.startX === '' || this.startY === '' || this.currentX === '' || this.currentY === '') { return; }
     let x = 0;
     let width = 0;
     let y = 0;
@@ -169,11 +163,11 @@ class SelectionRectangle {
 
     // Limit minimum size
     if (x < 0) {
-      width = width - Math.abs(x);
+      width -= Math.abs(x);
       x = 0;
     }
     if (y < 0) {
-      height = height - Math.abs(y);
+      height -= Math.abs(y);
       y = 0;
     }
 
@@ -190,7 +184,7 @@ class SelectionRectangle {
    * @return {HTML} rectangle
    */
   getRectangle() {
-    if (this.boundsSet)
+    if (this.boundsSet) {
       return (
         <rect
           x={this.bounds.minX}
@@ -200,6 +194,7 @@ class SelectionRectangle {
           style={styleSheet.rectangle}
         />
       );
+    }
   }
 }
 

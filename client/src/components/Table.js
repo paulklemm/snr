@@ -8,33 +8,33 @@ import { isUndefined, areIdentical } from './Helper';
 const styleSheet = {
   headerTR: {
     borderBottom: '2px solid #ee6351',
-    backgroundColor: '#f2f2f2'
+    backgroundColor: '#f2f2f2',
   },
   headerTH: {
     textAlign: 'left',
     height: 63,
     overflow: 'hidden',
-    cursor: 'pointer'
+    cursor: 'pointer',
   },
   headerTHFiltered: {
     textAlign: 'left',
     height: 63,
     overflow: 'hidden',
     cursor: 'pointer',
-    backgroundColor: '#fdecea'
+    backgroundColor: '#fdecea',
   },
   th: {
     textAlign: 'left',
     height: 10,
     fontWeight: 'normal',
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   table: {
     borderCollapse: 'collapse',
     fontSize: '10px',
     width: '100%',
-    tableLayout: 'fixed'
-  }
+    tableLayout: 'fixed',
+  },
 };
 
 // https://www.youtube.com/watch?v=Bx5JB2FcSnk
@@ -53,7 +53,7 @@ class Table extends React.Component {
     this.state = {
       rowTop: 0,
       rowBottom: 40,
-      filterSetting
+      filterSetting,
     };
   }
 
@@ -68,9 +68,7 @@ class Table extends React.Component {
       : !areIdentical(this.props.dimNames, nextProps.dimNames);
 
     if (dimNamesMismatch || isUndefined(this.state.filterSetting)) {
-      console.log(
-        `dimNamesMismatch: ${dimNamesMismatch}; Update with new props`
-      );
+      console.log(`dimNamesMismatch: ${dimNamesMismatch}; Update with new props`);
       const filterSetting = this.getDefaultFilterSettings(nextProps.dimNames);
       console.log(filterSetting);
       this.setState({ filterSetting });
@@ -81,9 +79,9 @@ class Table extends React.Component {
    * @param {Array} dimNames Array of dimension names
   */
   getDefaultFilterSettings(dimNames) {
-    let filterSetting = DefaultFilterSetting;
+    const filterSetting = DefaultFilterSetting;
     // Iterate through the values and look for FPKM values
-    for (let i in dimNames) {
+    for (const i in dimNames) {
       const dim = dimNames[i];
       // Check if the dim name contains FPKM and if so, add the FPKM settings
       if (/FPKM/i.test(dim)) {
@@ -101,7 +99,7 @@ class Table extends React.Component {
     this.props.filter.setFilter(
       dimension,
       this.textFieldValues[dimension],
-      this.state.filterSetting[dimension]
+      this.state.filterSetting[dimension],
     );
     // Update the app
     this.props.forceUpdateApp();
@@ -117,9 +115,9 @@ class Table extends React.Component {
 
   constructTableHeader() {
     // let dimensions = Object.keys(DimensionTypes);
-    let dimensions = this.props.dimNames;
+    const dimensions = this.props.dimNames;
     // Add header table
-    let header = [];
+    const header = [];
     dimensions.forEach((dimension, index) => {
       // Check if there are filter available for the current dimension and set filter value accordingly
       const filter = this.props.filter.getFilterOfDimension(dimension);
@@ -131,24 +129,18 @@ class Table extends React.Component {
         // Update filterValue to proper value
         filterValue = filter[0].value;
         // Update Operator if necessary
-        let filterSetting = this.state.filterSetting;
+        const filterSetting = this.state.filterSetting;
         if (filterSetting[dimension] !== filter[0].operator) {
           filterSetting[dimension] = filter[0].operator;
-          this.setState({ filterSetting: filterSetting });
+          this.setState({ filterSetting });
         }
       }
 
       header.push(
         <th key={`header-th-${index}`}>
-          <div
-            style={
-              filter.length > 0
-                ? styleSheet.headerTHFiltered
-                : styleSheet.headerTH
-            }
-          >
+          <div style={filter.length > 0 ? styleSheet.headerTHFiltered : styleSheet.headerTH}>
             <div
-              onClick={event => {
+              onClick={(event) => {
                 event.preventDefault();
                 this.onHeaderClick(dimension);
               }}
@@ -159,18 +151,18 @@ class Table extends React.Component {
             <div style={{ display: 'flex', whiteSpace: 'nowrap' }}>
               <IconButton
                 style={{ marginTop: '-2px', width: '10px' }}
-                onClick={event => {
+                onClick={(event) => {
                   // Update filter
                   const currentOperator = event.target.textContent;
-                  let filterSetting = this.state.filterSetting;
+                  const filterSetting = this.state.filterSetting;
                   // Switch signs
                   if (currentOperator === '<') {
                     filterSetting[dimension] = '>';
-                    this.setState({ filterSetting: filterSetting });
+                    this.setState({ filterSetting });
                     this.handleFilter(dimension);
                   } else if (currentOperator === '>') {
                     filterSetting[dimension] = '<';
-                    this.setState({ filterSetting: filterSetting });
+                    this.setState({ filterSetting });
                     this.handleFilter(dimension);
                   }
                 }}
@@ -183,7 +175,7 @@ class Table extends React.Component {
                 label="Filter"
                 type="search"
                 value={filterValue}
-                onChange={event => {
+                onChange={(event) => {
                   // Update the textfieldValue object with the newly changed value
                   this.textFieldValues[dimension] = event.target.value;
                   this.handleFilter(dimension);
@@ -191,7 +183,7 @@ class Table extends React.Component {
               />
             </div>
           </div>
-        </th>
+        </th>,
       );
     });
     return (
@@ -207,17 +199,17 @@ class Table extends React.Component {
 
   constructTableDynamic() {
     // let dimensions = Object.keys(DimensionTypes);
-    let dimensions = this.props.dimNames;
-    let table = [];
+    const dimensions = this.props.dimNames;
+    const table = [];
     // Iterate over the top and bottom element
     for (let i = this.state.rowTop; i <= this.state.rowBottom; i++) {
       // Avoid rendering empty rows (can happen in small lists or filters yielding empty lists)
       if (i > this.props.data.length - 1) break;
       // Initialize an empty row element
-      let row = [];
+      const row = [];
       // Iterate through all dimensions (columns) in the data
       let dimensionKey = '';
-      for (let j in dimensions) {
+      for (const j in dimensions) {
         const dimension = dimensions[j];
         dimensionKey += this.props.data[i][dimension];
         // row.push(<th key={`row_${i}${j}`}><div style={styleSheet.th}>{this.props.data[i][dimension]}</div></th>);
@@ -228,7 +220,7 @@ class Table extends React.Component {
               {this.props.data[i][dimension]}
               {/* </Typography> */}
             </div>
-          </th>
+          </th>,
         );
       }
       // Push the columns as new row to the table
@@ -250,22 +242,18 @@ class Table extends React.Component {
           }}
         >
           {row}
-        </tr>
+        </tr>,
       );
     }
     // The top spacer must not exceed the maximum length of the table minus the visible table window
     let topSpacerHeight =
       this.state.rowBottom < this.props.data.length
         ? this.state.rowTop * this.rowHeight
-        : (this.props.data.length -
-            1 -
-            (this.state.rowBottom - this.state.rowTop)) *
+        : (this.props.data.length - 1 - (this.state.rowBottom - this.state.rowTop)) *
           this.rowHeight;
     // When the elements do not fill the entire height the spacer height would get negative. Fix this by setting it to 0
     if (topSpacerHeight < 0) topSpacerHeight = 0;
-    const topSpacer = [
-      <div key={`topSpacer`} style={{ height: topSpacerHeight }} />
-    ];
+    const topSpacer = [<div key={'topSpacer'} style={{ height: topSpacerHeight }} />];
     // Bottom spacer is set to 0 when the bottom end is reached
     const bottomSpacerHeight =
       this.state.rowBottom < this.props.data.length - 1
@@ -274,14 +262,14 @@ class Table extends React.Component {
     const bottomSpacer =
       bottomSpacerHeight === 0
         ? []
-        : [<div key={`bottomSpacer`} style={{ height: bottomSpacerHeight }} />];
+        : [<div key={'bottomSpacer'} style={{ height: bottomSpacerHeight }} />];
 
     if (this.debug) {
       console.log('------------------------');
       console.log(
         `Data length: ${this.props.data.length}, Topmost element:${this.state
           .rowTop}, Bottom element: ${this.state
-          .rowBottom}, Bottom spacer height: ${bottomSpacerHeight}, Top spacer height: ${topSpacerHeight}`
+          .rowBottom}, Bottom spacer height: ${bottomSpacerHeight}, Top spacer height: ${topSpacerHeight}`,
       );
     }
 
@@ -290,7 +278,7 @@ class Table extends React.Component {
         {topSpacer}
         <table style={styleSheet.table}>
           <tbody
-            ref={body => {
+            ref={(body) => {
               this.tableBody = body;
             }}
           >
@@ -308,25 +296,20 @@ class Table extends React.Component {
     // if (this.state.rowBottom >= this.props.data.length - 1 && newRowBottom >= this.props.data.length - 1)
     //   return false;
     // Only return true when the visible cells differ
-    if (
-      newRowTop === this.state.rowTop &&
-      newRowBottom === this.state.rowBottom
-    )
-      return false;
-    else return true;
+    if (newRowTop === this.state.rowTop && newRowBottom === this.state.rowBottom) return false;
+    return true;
   }
 
   setScrollState() {
     const rowTop = Math.floor(this.refs.scrollable.scrollTop / this.rowHeight);
     const rowBottom = Math.floor(
-      (this.refs.scrollable.scrollTop + this.refs.scrollable.clientHeight) /
-        this.rowHeight
+      (this.refs.scrollable.scrollTop + this.refs.scrollable.clientHeight) / this.rowHeight,
     );
     // Only change state if re-rendering is required
     if (this.renderRequired(rowTop, rowBottom)) {
       this.setState({
-        rowTop: rowTop,
-        rowBottom: rowBottom
+        rowTop,
+        rowBottom,
       });
     }
   }
@@ -336,11 +319,7 @@ class Table extends React.Component {
       return <div />;
     }
     // Update the default height of the row to have precise calculations on the table and not rely on the style sheet
-    if (
-      this.tableBody !== undefined &&
-      this.tableBody.children[0] !== undefined
-    )
-      this.rowHeight = this.tableBody.children[0].clientHeight;
+    if (this.tableBody !== undefined && this.tableBody.children[0] !== undefined) { this.rowHeight = this.tableBody.children[0].clientHeight; }
     if (this.debug) console.log(`Set rowHeight to ${this.rowHeight}`);
     return (
       <div>
@@ -353,7 +332,7 @@ class Table extends React.Component {
           style={{
             height: this.props.height,
             overflowX: 'hidden',
-            overflowY: 'auto'
+            overflowY: 'auto',
           }}
           onScroll={() => {
             this.setScrollState();
@@ -371,6 +350,6 @@ Table.propTypes = {
   dimNames: PropTypes.array,
   height: PropTypes.number,
   filter: PropTypes.object,
-  changePlotDimension: PropTypes.func
+  changePlotDimension: PropTypes.func,
 };
 export default Table;

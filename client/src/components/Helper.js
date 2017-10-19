@@ -59,7 +59,7 @@ function createDummyDataScatterplot(entryCount = 25) {
 function createDummySettingsScatterplot() {
   return {
     x: { variableName: 'xValues', label: 'dummy x values' },
-    y: { variableName: 'yValues', label: 'dummy y values' }
+    y: { variableName: 'yValues', label: 'dummy y values' },
   };
 }
 
@@ -229,7 +229,7 @@ function getIris() {
       6.3,
       6.5,
       6.2,
-      5.9
+      5.9,
     ],
     sepalWidth: [
       3.5,
@@ -381,7 +381,7 @@ function getIris() {
       2.5,
       3.0,
       3.4,
-      3.0
+      3.0,
     ],
     petalLength: [
       1.4,
@@ -533,7 +533,7 @@ function getIris() {
       5.0,
       5.2,
       5.4,
-      5.1
+      5.1,
     ],
     petalWidth: [
       0.2,
@@ -685,7 +685,7 @@ function getIris() {
       1.9,
       2.0,
       2.3,
-      1.8
+      1.8,
     ],
     species: [
       'setosa',
@@ -837,17 +837,14 @@ function getIris() {
       'virginica',
       'virginica',
       'virginica',
-      'virginica'
-    ]
+      'virginica',
+    ],
   };
 }
-function getIrisSettingsScatterplot(
-  variableX = 'sepalWidth',
-  variableY = 'sepalLength'
-) {
+function getIrisSettingsScatterplot(variableX = 'sepalWidth', variableY = 'sepalLength') {
   return {
     x: { variableName: variableX, label: 'Sepal Width (cm)' },
-    y: { variableName: variableY, label: 'Sepal Length (cm)' }
+    y: { variableName: variableY, label: 'Sepal Length (cm)' },
   };
 }
 
@@ -891,5 +888,5 @@ export {
   isUndefined,
   toItemIndexes,
   injectStyle,
-  areIdentical
+  areIdentical,
 };

@@ -21,7 +21,7 @@ import List, {
   ListItemIcon,
   ListItemSecondaryAction,
   ListItemText,
-  ListSubheader
+  ListSubheader,
 } from 'material-ui/List';
 
 // Important Links
@@ -37,15 +37,15 @@ class Hexplot extends Scatterplot {
       renderDots: false,
       renderDotsOnZoom: true,
       selectionRectangle: new SelectionRectangle(),
-      popoverOpen: false
+      popoverOpen: false,
     };
     this.onMeasure = this.onMeasure.bind(this);
   }
 
   createPointArray(x, y) {
-    let pointArray = [];
+    const pointArray = [];
     x.map((entry, i) => {
-      let point = [this.xScale(x[i]), this.yScale(y[i])];
+      const point = [this.xScale(x[i]), this.yScale(y[i])];
       pointArray.push(point);
       // We do not need to return anything here, but 'map' expects a return
       return point;
@@ -54,8 +54,8 @@ class Hexplot extends Scatterplot {
   }
 
   static printHexagons(pointArray, hexRadius, maximum) {
-    let hexbin = D3Hexbin().radius(hexRadius);
-    let color = scaleLinear()
+    const hexbin = D3Hexbin().radius(hexRadius);
+    const color = scaleLinear()
       .domain([0, maximum])
       .range(['rgba(0, 0, 0, 0)', '#ee6351'])
       .interpolate(interpolateLab);
@@ -78,7 +78,7 @@ class Hexplot extends Scatterplot {
   getOptionsPane() {
     return (
       <div
-        ref={node => {
+        ref={(node) => {
           this.optionIconRef = node;
         }}
       >
@@ -87,12 +87,12 @@ class Hexplot extends Scatterplot {
           style={{
             fontSize: 15,
             position: 'absolute',
-            marginLeft: this.widthNoMargin
+            marginLeft: this.widthNoMargin,
           }}
           onClick={() => {
             this.setState({
               popoverOpen: !this.state.popoverOpen,
-              anchorElPopoverY: findDOMNode(this.optionIconRef)
+              anchorElPopoverY: findDOMNode(this.optionIconRef),
             });
           }}
         >
@@ -106,17 +106,17 @@ class Hexplot extends Scatterplot {
           }}
           anchorOrigin={{
             vertical: 'bottom',
-            horizontal: 'right'
+            horizontal: 'right',
           }}
           transformOrigin={{
             vertical: 'top',
-            horizontal: 'right'
+            horizontal: 'right',
           }}
         >
           <div
             style={{
               padding: '10px',
-              width: '320px'
+              width: '320px',
             }}
           >
             <List subheader={<ListSubheader>Plot Settings</ListSubheader>}>
@@ -128,8 +128,7 @@ class Hexplot extends Scatterplot {
                 <ListItemSecondaryAction>
                   <Select
                     value={this.props.xTransformation}
-                    onChange={event =>
-                      this.props.setTransformation('x', event.target.value)}
+                    onChange={event => this.props.setTransformation('x', event.target.value)}
                     input={<Input />}
                   >
                     <MenuItem value="linear">linear</MenuItem>
@@ -151,8 +150,7 @@ class Hexplot extends Scatterplot {
                 <ListItemSecondaryAction>
                   <Select
                     value={this.props.yTransformation}
-                    onChange={event =>
-                      this.props.setTransformation('y', event.target.value)}
+                    onChange={event => this.props.setTransformation('y', event.target.value)}
                     input={<Input />}
                   >
                     <MenuItem value="linear">linear</MenuItem>
@@ -174,8 +172,7 @@ class Hexplot extends Scatterplot {
                 <ListItemSecondaryAction>
                   <Select
                     value={this.props.axisValues}
-                    onChange={event =>
-                      this.props.setAxisValues(event.target.value)}
+                    onChange={event => this.props.setAxisValues(event.target.value)}
                     input={<Input />}
                   >
                     <MenuItem value="both">both</MenuItem>
@@ -192,8 +189,7 @@ class Hexplot extends Scatterplot {
                 <ListItemSecondaryAction>
                   <Switch
                     checked={this.state.renderDots}
-                    onChange={(event, checked) =>
-                      this.setState({ renderDots: checked })}
+                    onChange={(event, checked) => this.setState({ renderDots: checked })}
                   />
                 </ListItemSecondaryAction>
               </ListItem>
@@ -206,8 +202,7 @@ class Hexplot extends Scatterplot {
                   <Switch
                     disabled={this.state.renderDots}
                     checked={this.state.renderDotsOnZoom}
-                    onChange={(event, checked) =>
-                      this.setState({ renderDotsOnZoom: checked })}
+                    onChange={(event, checked) => this.setState({ renderDotsOnZoom: checked })}
                   />
                 </ListItemSecondaryAction>
               </ListItem>
@@ -232,10 +227,7 @@ class Hexplot extends Scatterplot {
 
   render() {
     // Check if there is data available
-    if (
-      this.props.rnaSeqData.data === undefined ||
-      isUndefined(this.props.filter)
-    ) {
+    if (this.props.rnaSeqData.data === undefined || isUndefined(this.props.filter)) {
       return <div />;
     }
     // reset margin and scale in case they changed
@@ -266,63 +258,46 @@ class Hexplot extends Scatterplot {
         this.yScale,
         this.props.filter,
         this.props.xTransformation,
-        this.props.yTransformation
+        this.props.yTransformation,
       );
     }
 
-    let axes = this.renderAxes();
+    const axes = this.renderAxes();
     let dots = [];
     if (
       this.state.renderDots ||
-      (this.state.renderDotsOnZoom &&
-        this.props.zoom &&
-        this.props.filter.doesFilter())
+      (this.state.renderDotsOnZoom && this.props.zoom && this.props.filter.doesFilter())
     ) {
       if (this.state.selectionRectangle.boundsSet) {
-        dots = this.renderDots(
-          1,
-          xArray,
-          yArray,
-          filter,
-          this.state.selectionRectangle.bounds
-        );
+        dots = this.renderDots(1, xArray, yArray, filter, this.state.selectionRectangle.bounds);
       } else {
         dots = this.renderDots(1, xArray, yArray, filter);
       }
     }
     // Rename the labels based on the transformation
-    const axisLabelPattern = (transformation, name) => {
+    const axisLabelPattern = (transformation, name) =>
       // If linear, use name, else use transformation(name)
       // If `this.props.axisValues` is set to untransformed, also use name
-      return transformation !== 'linear' &&
-        this.props.axisValues !== 'untransformed'
+       transformation !== 'linear' && this.props.axisValues !== 'untransformed'
         ? `${transformation}(${name})`
         : name;
-    };
     const axisLabels = this.renderAxisLabels(
       axisLabelPattern(this.props.xTransformation, this.props.xName),
-      axisLabelPattern(this.props.yTransformation, this.props.yName)
+      axisLabelPattern(this.props.yTransformation, this.props.yName),
     );
     const pointArray = this.createPointArray(xArray, yArray);
 
-    const hexagons = Hexplot.printHexagons(
-      pointArray,
-      this.props.hexSize,
-      this.props.hexMax
-    );
+    const hexagons = Hexplot.printHexagons(pointArray, this.props.hexSize, this.props.hexMax);
     // UI Element for enabling FormControlLabel
     const renderGenesOption = this.getOptionsPane();
 
     // Get highlights if there are any
-    const highlight = this.props.highlight.groups['selection'];
+    const highlight = this.props.highlight.groups.selection;
     let highlightObj = '';
     if (!isUndefined(highlight)) {
       // Only proceed if the array is equal to one
       if (highlight.length === 1) {
-        highlightObj = this.renderDot(
-          highlight[0],
-          this.props.highlight.idName
-        );
+        highlightObj = this.renderDot(highlight[0], this.props.highlight.idName);
       }
     }
 
@@ -337,13 +312,9 @@ class Hexplot extends Scatterplot {
               onMouseMove={e => this.handleMouseMove(e)}
               onMouseUp={e => this.handleMouseUp(e)}
               width={this.widthNoMargin + this.margin.left + this.margin.right}
-              height={
-                this.heightNoMargin + this.margin.top + this.margin.bottom
-              }
+              height={this.heightNoMargin + this.margin.top + this.margin.bottom}
             >
-              <g
-                transform={`translate(${this.margin.left},${this.margin.top})`}
-              >
+              <g transform={`translate(${this.margin.left},${this.margin.top})`}>
                 {hexagons}
                 {dots}
                 {axes}
@@ -369,7 +340,7 @@ Hexplot.propTypes = {
   rnaSeqData: PropTypes.object.isRequired,
   hexSize: PropTypes.number.isRequired,
   hexMax: PropTypes.number.isRequired,
-  showRenderGenesOption: PropTypes.bool.isRequired
+  showRenderGenesOption: PropTypes.bool.isRequired,
 };
 
 export default Hexplot;

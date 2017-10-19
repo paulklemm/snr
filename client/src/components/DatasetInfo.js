@@ -6,7 +6,7 @@ class DatasetInfo extends React.Component {
   constructor() {
     super();
     this.state = {
-      metadata: undefined
+      metadata: undefined,
     };
   }
 
@@ -16,7 +16,7 @@ class DatasetInfo extends React.Component {
   async getMetadata() {
     const metadata = await this.props.metadata;
     this.setState({
-      metadata
+      metadata,
     });
   }
 
@@ -39,7 +39,7 @@ class DatasetInfo extends React.Component {
           </tr>
         </thead>
         <tbody>
-          {Object.keys(data).map(key => {
+          {Object.keys(data).map((key) => {
             const value = data[key];
             return (
               <tr>
@@ -73,7 +73,7 @@ class DatasetInfo extends React.Component {
       <Paper
         style={{
           padding: '10px',
-          display: 'inline-block'
+          display: 'inline-block',
         }}
       >
         <div style={{ marginBottom: '10px' }}>{this.props.name}</div>

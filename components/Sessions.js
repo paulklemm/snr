@@ -36,7 +36,7 @@ class Sessions {
       timeStampLog(
         `Cannot find session file ${this
           .sessionsPath}. Error: "${readOrJsonErr}". Attempt to create it.`,
-        true
+        true,
       );
       sessions = {};
     }
@@ -51,7 +51,7 @@ class Sessions {
    */
   writeSession(sessionName, sessionId) {
     // Read existing sessions file
-    let sessions = this.readSessions();
+    const sessions = this.readSessions();
     sessions[sessionName] = sessionId;
     // Write the sessions file
     fs.writeFileSync(this.sessionsPath, JSON.stringify(sessions, null, 2));

@@ -13,23 +13,23 @@ const style = {
     height: '100vh',
     width: '100vw',
     display: 'table',
-    position: 'absolute'
+    position: 'absolute',
   },
   masterMiddle: {
     display: 'table-cell',
-    verticalAlign: 'middle'
+    verticalAlign: 'middle',
   },
   masterInner: {
     marginLeft: 'auto',
-    marginRight: 'auto'
+    marginRight: 'auto',
   },
   loginButton: {
-    marginTop: '30px'
+    marginTop: '30px',
   },
   error: {
     color: 'red',
-    marginTop: '20px'
-  }
+    marginTop: '20px',
+  },
 };
 
 /**
@@ -42,7 +42,7 @@ class LoginScreen extends React.Component {
     this.state = {
       user: '',
       password: '',
-      error: false
+      error: false,
     };
   }
 
@@ -52,7 +52,7 @@ class LoginScreen extends React.Component {
   async onLoginClick() {
     const result = await this.props.login(this.state.user, this.state.password);
     this.setState({
-      error: !result
+      error: !result,
     });
   }
 
@@ -79,16 +79,11 @@ class LoginScreen extends React.Component {
               label="Password"
               type="password"
               autoComplete="current-password"
-              onChange={event =>
-                this.setState({ password: event.target.value })}
+              onChange={event => this.setState({ password: event.target.value })}
               margin="normal"
             />
             <br />
-            <Button
-              style={style.loginButton}
-              raised
-              onClick={this.onLoginClick}
-            >
+            <Button style={style.loginButton} raised onClick={this.onLoginClick}>
               Login
             </Button>
           </div>
@@ -99,7 +94,7 @@ class LoginScreen extends React.Component {
 }
 
 LoginScreen.propTypes = {
-  login: PropTypes.func
+  login: PropTypes.func,
 };
 
 export default LoginScreen;

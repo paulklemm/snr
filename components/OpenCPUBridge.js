@@ -32,13 +32,7 @@ class OpenCPUBridge {
    * @param  {boolean} retreiveVal - Retreive .val object
    * @return {Object} openCPU output
    */
-  async runRCommand(
-    rpackage,
-    rfunction,
-    params,
-    valFormat = 'json',
-    keys = undefined
-  ) {
+  async runRCommand(rpackage, rfunction, params, valFormat = 'json', keys = undefined) {
     // Only proceed with the request when the OpenCPU server is online
     await this.isOnlinePromise;
     // let response = await post(`${this.address}/ocpu/library/${rpackage}/R/${rfunction}`, params);
@@ -47,26 +41,22 @@ class OpenCPUBridge {
       response = await ajax({
         url: `${this.address}/ocpu/library/${rpackage}/R/${rfunction}`,
         type: 'POST',
-        data: params
+        data: params,
       });
     } catch (error) {
       timeStampLog(
-        `Error in runRCommand: ${rpackage}, ${rfunction}, ${JSON.stringify(
-          params
-        )}, ${valFormat}`
+        `Error in runRCommand: ${rpackage}, ${rfunction}, ${JSON.stringify(params)}, ${valFormat}`,
       );
       timeStampLog(JSON.stringify(error, null, 2));
       throw error;
     }
-    let openCpuOutput = this.getOcpuOutput(response, valFormat, keys);
+    const openCpuOutput = this.getOcpuOutput(response, valFormat, keys);
     // Now we have URLs for the output of the openCPU command, we get the output of those
     try {
       await Promise.all(openCpuOutput.promises);
     } catch (error) {
       timeStampLog(
-        `Error in runRCommand: ${rpackage}, ${rfunction}, ${JSON.stringify(
-          params
-        )}, ${valFormat}`
+        `Error in runRCommand: ${rpackage}, ${rfunction}, ${JSON.stringify(params)}, ${valFormat}`,
       );
       timeStampLog(JSON.stringify(error, null, 2));
       throw error;
@@ -83,20 +73,19 @@ class OpenCPUBridge {
   */
   checkServer() {
     return get(`${this.address}/ocpu`)
-      .then(response => {
+      .then((response) => {
         // If status is 200, everything is fine, otherwise return error
         if (response.status === 200) {
-          timeStampLog(
-            `Established connection to OpenCPU server @ ${this.address}/ocpu`
-          );
+          timeStampLog(`Established connection to OpenCPU server @ ${this.address}/ocpu`);
           this.isOnline = true;
-        } else
+        } else {
           timeStampLog(
             `OpenCPU returns status ${response.status}, connection cannot be established`,
-            true
+            true,
           );
+        }
       })
-      .catch(error => {
+      .catch((error) => {
         // Server cannot be reached
         timeStampLog(`OpenCPU Server ${this.address} cannot be reached`, true);
         timeStampLog(error, true);
@@ -131,10 +120,9 @@ class OpenCPUBridge {
     // Data is provided as relative URLs divided by newlines
     data = data.split('\n');
     // prepare empty result as well as the associated promises
-    let result = { promises: [] };
+    const result = { promises: [] };
     // First, add the OpenCPU session ID
-    result.sessionID =
-      data.length > 0 ? data[0].match(/\/ocpu\/tmp\/(.*)\/R/)[1] : undefined;
+    result.sessionID = data.length > 0 ? data[0].match(/\/ocpu\/tmp\/(.*)\/R/)[1] : undefined;
     for (let url of data) {
       // Only proceed if the URL contains non-whitespaces
       if (/\S/.test(url)) {
@@ -161,10 +149,10 @@ class OpenCPUBridge {
 
         // Initiate the get for the current key
         const promise = get(this.address + url)
-          .then(response => {
+          .then((response) => {
             result[key] = response.data;
           })
-          .catch(error => {
+          .catch((error) => {
             console.error(`Could not access ${url}`);
           });
         result.promises.push(promise);

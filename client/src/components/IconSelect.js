@@ -10,8 +10,8 @@ import IconButton from 'material-ui/IconButton';
 const styleSheet = {
   root: {},
   iconSelect: {
-    fontSize: '90%'
-  }
+    fontSize: '90%',
+  },
 };
 
 /** Adapted from [https://material-ui-1dab0.firebaseapp.com/component-demos/menus](https://material-ui-1dab0.firebaseapp.com/component-demos/menus) */
@@ -24,7 +24,7 @@ class IconSelect extends Component {
     this.state = {
       anchorEl: undefined,
       open: false,
-      selectedIndex: iconName
+      selectedIndex: iconName,
     };
   }
 
@@ -62,14 +62,8 @@ class IconSelect extends Component {
           {Object.values(DatasetIcons).map((icon, index) => (
             <MenuItem
               key={`${Object.keys(DatasetIcons)[index]}+${index}`}
-              selected={
-                Object.keys(DatasetIcons)[index] === this.state.selectedIndex
-              }
-              onClick={event =>
-                this.handleMenuItemClick(
-                  event,
-                  Object.keys(DatasetIcons)[index]
-                )}
+              selected={Object.keys(DatasetIcons)[index] === this.state.selectedIndex}
+              onClick={event => this.handleMenuItemClick(event, Object.keys(DatasetIcons)[index])}
             >
               {icon}
             </MenuItem>
@@ -81,7 +75,7 @@ class IconSelect extends Component {
 }
 
 IconSelect.propTypes = {
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
 };
 
 export default withStyles(styleSheet, { name: 'IconSelect' })(IconSelect);

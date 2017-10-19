@@ -10,13 +10,13 @@ const styleSheet = {
     fontSize: '30px',
     color: '#333',
     fontFamily: 'Helvetica Neue',
-    fontWeight: 'lighter'
+    fontWeight: 'lighter',
   },
   dot: {
     fontSize: '30px',
     marginLeft: '1px',
     marginRight: '1px',
-    color: '#ee6351'
+    color: '#ee6351',
   },
   spinner: {
     // left: '-0.9px',
@@ -31,8 +31,8 @@ const styleSheet = {
     backgroundColor: '#ee6351',
     borderRadius: '100%',
     WebkitAnimation: 'sk-scaleout 1.0s infinite ease-in-out',
-    animation: 'sk-scaleout 1.0s infinite ease-in-out'
-  }
+    animation: 'sk-scaleout 1.0s infinite ease-in-out',
+  },
 };
 
 const skScaleout = `

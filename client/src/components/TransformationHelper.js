@@ -87,5 +87,5 @@ export {
   applyTransformation,
   applyTransformationArray,
   inverseTransformation,
-  transformationNegates
+  transformationNegates,
 };

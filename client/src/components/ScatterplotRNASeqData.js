@@ -10,19 +10,13 @@ class ScatterplotRNASeqData extends Scatterplot {
     this.setMargin();
     // setScale requires an array of numeric values for each dimension
     // therefore we have to convert it
-    let xArray = objectValueToArray(
-      this.props.rnaSeqData.data,
-      this.props.xName
-    );
-    let yArray = objectValueToArray(
-      this.props.rnaSeqData.data,
-      this.props.yName
-    );
+    const xArray = objectValueToArray(this.props.rnaSeqData.data, this.props.xName);
+    const yArray = objectValueToArray(this.props.rnaSeqData.data, this.props.yName);
     this.setScale(xArray, yArray);
 
-    let axes = this.renderAxes();
-    let dots = this.renderDots(3, xArray, yArray);
-    let axisLabels = this.renderAxisLabels(this.props.xName, this.props.yName);
+    const axes = this.renderAxes();
+    const dots = this.renderDots(3, xArray, yArray);
+    const axisLabels = this.renderAxisLabels(this.props.xName, this.props.yName);
 
     return (
       <div>
