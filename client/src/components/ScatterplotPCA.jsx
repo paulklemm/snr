@@ -1,6 +1,6 @@
 import React from 'react';
 import Measure from 'react-measure';
-// Material UI
+import { Icon } from 'react-fa';
 import Scatterplot from './Scatterplot';
 import { isUndefined, objectValueToArray, injectStyle } from './Helper';
 import DatasetIcons from './DatasetIcons';
@@ -69,6 +69,7 @@ class ScatterplotPCA extends Scatterplot {
           const icon = props.datasetHub.getDatasetIcon(item._row);
           icons.push(icon);
         } catch (error) {
+          icons.push('archive');
           console.log(`${item._row} not yet defined`);
         }
       }

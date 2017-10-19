@@ -268,20 +268,35 @@ app.get('/api/getpcaloadings', async (req, res) => {
       const { user, ensembldataset, ensemblversion } = req.query;
       // Check the user session and reload if required
       await checkUserSession(user);
+      // Check user session for quickngs
+      await checkUserSession('quickngs');
       // Get the GO summary from OpenCPU
       timeStampLog(
-        `Get PCA loadings for: \n  ensembl dataset '${ensembldataset}'\n  ensembl version: '${ensemblversion}'`
+        `Get PCA loadings for: \n  user: ${user}\n  ensembl dataset: '${ensembldataset}'\n  ensembl version: '${ensemblversion}'`
+      );
+      // Concatinate the user's dataset as well as the quickngs dataset
+      const concat = await openCPU.runRCommand(
+        'sonaR',
+        'concat_two',
+        {
+          x: sessions.getSession(user),
+          y: sessions.getSession('quickngs')
+        },
+        'json',
+        ['sessionID']
       );
       const loadings = await openCPU.runRCommand(
         'sonaR',
         'get_pca_loadings',
         {
-          x: sessions.getSession(user),
+          x: concat.sessionID,
           ensembl_dataset: `'${ensembldataset}'`,
           ensembl_version: `'${ensemblversion}'`
         },
-        'json'
+        'json',
+        ['.val']
       );
+      timeStampLog('Getting PCA loadings done');
       return { name: 'getpcaloadings', success: true, loadings };
     }
   );
@@ -334,7 +349,8 @@ app.get('/api/loaddata', async (req, res) => {
         'sonaR',
         'get_loaded_filenames',
         { datasets: sessions.getSession(user) },
-        'json'
+        'json',
+        ['.val']
       );
       filenames = filenames['.val'];
       // Return result response in case of success
