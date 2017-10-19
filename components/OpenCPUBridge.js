@@ -1,4 +1,4 @@
-const { timeStampLog } = require('./Helper');
+const { timeStampLog, isUndefined } = require('./Helper');
 const { get } = require('axios');
 // Because the post from axios is not able to properly submit `R` code, which cost me far too many hours of my life
 // jquery cannot be loaded in node, therefore we use a method that reimplements the ajax function in node
@@ -29,9 +29,16 @@ class OpenCPUBridge {
    * @param  {String} rfunction: Name of the `R` function ("rnorm")
    * @param  {Object} params: JSON object of the parameters ("{ n: 10, mean: 5 }"")
    * @param  {String} valFormat: Format of .val attribute (ascii, json, tsv), refer to `https://opencpu.github.io/server-manual/opencpu-server.pdf`
+   * @param  {boolean} retreiveVal - Retreive .val object
    * @return {Object} openCPU output
    */
-  async runRCommand(rpackage, rfunction, params, valFormat = 'json') {
+  async runRCommand(
+    rpackage,
+    rfunction,
+    params,
+    valFormat = 'json',
+    keys = undefined
+  ) {
     // Only proceed with the request when the OpenCPU server is online
     await this.isOnlinePromise;
     // let response = await post(`${this.address}/ocpu/library/${rpackage}/R/${rfunction}`, params);
@@ -51,7 +58,7 @@ class OpenCPUBridge {
       timeStampLog(JSON.stringify(error, null, 2));
       throw error;
     }
-    let openCpuOutput = this.getOcpuOutput(response, valFormat);
+    let openCpuOutput = this.getOcpuOutput(response, valFormat, keys);
     // Now we have URLs for the output of the openCPU command, we get the output of those
     try {
       await Promise.all(openCpuOutput.promises);
@@ -73,8 +80,7 @@ class OpenCPUBridge {
   /**
   /* Checks availability of the OpenCPU server and returns a promise
   /* @return: {Promise} isOnline
-  **/
-
+  */
   checkServer() {
     return get(`${this.address}/ocpu`)
       .then(response => {
@@ -118,9 +124,10 @@ class OpenCPUBridge {
    * Note: Images are stored in the array 'graphics', contain only their URL and are not fetched from the server
    * @param  {Object} Answer from OpenCPU request
    * @param  {String} valFormat: Format of .val attribute (ascii, json, tsv), refer to `https://opencpu.github.io/server-manual/opencpu-server.pdf`
+   * @param  {array} keys - Only retreive opencpu keys that are in 'keys'
    * @return {Object} Data from OpenCPU request as well as associated promises
-   **/
-  getOcpuOutput(data, valFormat) {
+   */
+  getOcpuOutput(data, valFormat, keys) {
     // Data is provided as relative URLs divided by newlines
     data = data.split('\n');
     // prepare empty result as well as the associated promises
@@ -128,13 +135,17 @@ class OpenCPUBridge {
     // First, add the OpenCPU session ID
     result.sessionID =
       data.length > 0 ? data[0].match(/\/ocpu\/tmp\/(.*)\/R/)[1] : undefined;
-    for (let i in data) {
-      let url = data[i];
+    for (let url of data) {
       // Only proceed if the URL contains non-whitespaces
       if (/\S/.test(url)) {
         // Split at forward slashes and get the last element as key /ocpu/tmp/x028712f57c/R/.val => .val
         let key = url.split('/');
         key = key[key.length - 1];
+        // If keys are defined, check if the key is in there and if not, exit
+        if (!isUndefined(keys) && keys.indexOf(key) === -1) {
+          console.log(`Key ${key} not in keys, continue;`);
+          continue;
+        }
         // We have to handle graphics output separately
         if (/graphics/.test(url)) {
           // If we find a graphics object we only store the URL in a separate "graphics" object
@@ -144,7 +155,10 @@ class OpenCPUBridge {
           continue;
         }
         // When we query the .val element, get it as required format, e.g. `json` or `ascii`
-        if (/\.val/.test(url)) url = `${url}/${valFormat}`;
+        if (/\.val/.test(url)) {
+          url = `${url}/${valFormat}`;
+        }
+
         // Initiate the get for the current key
         const promise = get(this.address + url)
           .then(response => {
