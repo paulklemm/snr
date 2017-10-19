@@ -55,8 +55,12 @@ class ScatterplotPCA extends Scatterplot {
    */
   getDimensionsFromPca(pca, props) {
     // PCA to scatterplot dimensions
-    const x = objectValueToArray(pca, `PC${props.xPc}`);
-    const y = objectValueToArray(pca, `PC${props.yPc}`);
+    let x = objectValueToArray(pca, `PC${props.xPc}`);
+    let y = objectValueToArray(pca, `PC${props.yPc}`);
+    // Convert x and y to arrays of floats
+    const toFloat = array => array.map(value => parseFloat(value));
+    x = toFloat(x);
+    y = toFloat(y);
     const rowNames = objectValueToArray(pca, '_row');
     if (x.length <= 0 || y.length <= 0 || x.length !== y.length) {
       return false;
