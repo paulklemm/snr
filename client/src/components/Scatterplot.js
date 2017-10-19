@@ -4,16 +4,12 @@ import PropTypes from 'prop-types';
 import { scaleLinear } from 'd3-scale';
 import { axisBottom, axisLeft } from 'd3-axis';
 import { max, min } from 'd3-array';
-import {
-  createDummyDataScatterplot,
-  createDummySettingsScatterplot,
-  isUndefined
-} from './Helper';
+import { createDummyDataScatterplot, createDummySettingsScatterplot, isUndefined } from './Helper';
 import SelectionRectangle from './SelectionRectangle';
 import {
   transformationNegates,
   inverseTransformation,
-  applyTransformation
+  applyTransformation,
 } from './TransformationHelper';
 // eslint-disable-next-line
 import { mouse, select } from 'd3-selection';
@@ -30,15 +26,15 @@ const margin = { top: 10, right: 15, bottom: 20, left: 30 };
 
 const styleSheet = {
   filteredCircle: {
-    fillOpacity: '0.1'
+    fillOpacity: '0.1',
   },
   highlightedCircle: {
     fillOpacity: '1',
-    fill: 'red'
+    fill: 'red',
   },
   circle: {
-    fillOpacity: '0.5'
-  }
+    fillOpacity: '0.5',
+  },
 };
 
 class Scatterplot extends React.Component {
@@ -46,7 +42,7 @@ class Scatterplot extends React.Component {
     super(props);
     this.state = {
       tooltip: [],
-      selectionRectangle: new SelectionRectangle()
+      selectionRectangle: new SelectionRectangle(),
     };
     this.onMouseLeaveTooltip = this.onMouseLeaveTooltip.bind(this);
     this.onMeasure = this.onMeasure.bind(this);
@@ -69,17 +65,13 @@ class Scatterplot extends React.Component {
     this.widthNoMargin = width - margin.left - margin.right;
     this.heightNoMargin = height - margin.top - margin.bottom;
     // Set the size of the selection rectangle
-    this.state.selectionRectangle.setCanvasSize(
-      this.widthNoMargin,
-      this.heightNoMargin
-    );
+    this.state.selectionRectangle.setCanvasSize(this.widthNoMargin, this.heightNoMargin);
   }
 
   setScale(x, y) {
     this.xScale = scaleLinear()
       .range([0, this.widthNoMargin])
       .domain([min(x), max(x)]);
-
     this.xScaleReverse = scaleLinear()
       .range([min(x), max(x)])
       .domain([0, this.widthNoMargin]);
@@ -93,13 +85,10 @@ class Scatterplot extends React.Component {
       .domain([this.heightNoMargin, 0]);
   }
 
-  //// Stresstest //////////////////
+  // // Stresstest //////////////////
 
   attachStresstest() {
-    this.timer = setInterval(
-      () => this.stresstestTick(),
-      this.props.stressTest.milliseconds
-    );
+    this.timer = setInterval(() => this.stresstestTick(), this.props.stressTest.milliseconds);
   }
 
   componentDidMount() {
@@ -117,15 +106,15 @@ class Scatterplot extends React.Component {
   }
 
   stresstestTick() {
-    let data = createDummyDataScatterplot(this.props.stressTest.elementCount);
-    let settings = createDummySettingsScatterplot();
+    const data = createDummyDataScatterplot(this.props.stressTest.elementCount);
+    const settings = createDummySettingsScatterplot();
     this.setState({
-      settings: settings,
-      data: data
+      settings,
+      data,
     });
   }
 
-  //// End Stresstest //////////////////
+  // // End Stresstest //////////////////
 
   /**
    * Return tick value based on `this.props.axisValues` settings
@@ -156,19 +145,15 @@ class Scatterplot extends React.Component {
   }
   // renderAxes expects xScale and yScale to be set prior to this call using setScale
   renderAxes() {
-    let xAxis = axisBottom()
+    const xAxis = axisBottom()
       .scale(this.xScale)
-      .tickFormat(x => {
-        return this.renderAxisTickHelper(x, this.props.xTransformation);
-      });
+      .tickFormat(x => this.renderAxisTickHelper(x, this.props.xTransformation));
 
-    let yAxis = axisLeft()
+    const yAxis = axisLeft()
       .scale(this.yScale)
-      .tickFormat(y => {
-        return this.renderAxisTickHelper(y, this.props.yTransformation);
-      });
+      .tickFormat(y => this.renderAxisTickHelper(y, this.props.yTransformation));
 
-    let fauxAxes = new ReactFauxDOM.Element('g');
+    const fauxAxes = new ReactFauxDOM.Element('g');
     select(fauxAxes)
       .append('g')
       .attr('class', 'x axis')
@@ -182,27 +167,27 @@ class Scatterplot extends React.Component {
   }
 
   onMouseEnterTooltip(e, x, y) {
-    let tooltip = [];
-    let dx = this.xScale(x) + 5;
-    let dy = this.yScale(y) + 5;
+    const tooltip = [];
+    const dx = this.xScale(x) + 5;
+    const dy = this.yScale(y) + 5;
     tooltip.push(
       <text x={dx} y={dy} key={`${dx},${dy}`}>
         {`${x}, ${y}`}
-      </text>
+      </text>,
     );
     this.setState({
-      tooltip: tooltip
+      tooltip,
     });
   }
 
   onMouseLeaveTooltip() {
     this.setState({
-      tooltip: []
+      tooltip: [],
     });
   }
 
   renderDot(datapoint, idName, radius = 5) {
-    for (let i in this.props.rnaSeqData.data)
+    for (const i in this.props.rnaSeqData.data) {
       if (this.props.rnaSeqData.data[i][idName] === datapoint) {
         let x = this.props.rnaSeqData.data[i][this.props.xName];
         let y = this.props.rnaSeqData.data[i][this.props.yName];
@@ -231,7 +216,7 @@ class Scatterplot extends React.Component {
           );
         }
       }
-    return;
+    }
   }
 
   /**
@@ -246,22 +231,20 @@ class Scatterplot extends React.Component {
   renderDots(radius, x, y, filtered = [], highlight = undefined) {
     // Keep track of the number of elements where one variable shows NaN
     this.numberOfNaN = { x: 0, y: 0 };
-    let dots = [];
-    for (let i in x) {
-      let currentX = x[i];
-      let currentY = y[i];
+    const dots = [];
+    for (const i in x) {
+      const currentX = x[i];
+      const currentY = y[i];
       // Check whether the current element is filtered or not
       const currentIsFiltered = isUndefined(filtered[i]) ? false : filtered[i];
       // If the element is filtered, render the elements accordingly
-      const currentStyle = currentIsFiltered
-        ? styleSheet.filteredCircle
-        : styleSheet.circle;
+      const currentStyle = currentIsFiltered ? styleSheet.filteredCircle : styleSheet.circle;
       // Only create dot if x and y are numbers
       if (!isNaN(currentX) && !isNaN(currentY)) {
         // Check if we have to highlight the elements
-        let cx = this.xScale(currentX);
-        let cy = this.yScale(currentY);
-        let newRadius =
+        const cx = this.xScale(currentX);
+        const cy = this.yScale(currentY);
+        const newRadius =
           !isUndefined(highlight) &&
           cx >= highlight.minX &&
           cx <= highlight.maxX &&
@@ -280,7 +263,7 @@ class Scatterplot extends React.Component {
             onMouseEnter={e => this.onMouseEnterTooltip(e, currentX, currentY)}
             onMouseLeave={this.onMouseLeaveTooltip}
             style={currentStyle}
-          />
+          />,
         );
       } else {
         if (isNaN(currentX)) this.numberOfNaN.x++;
@@ -291,7 +274,7 @@ class Scatterplot extends React.Component {
   }
 
   renderAxisLabels(xLabel, yLabel) {
-    let axisLabels = [];
+    const axisLabels = [];
     // x-axis
     axisLabels.push(
       <text
@@ -303,7 +286,7 @@ class Scatterplot extends React.Component {
         key={`yaxis_${yLabel}`}
       >
         {yLabel}
-      </text>
+      </text>,
     );
     // y-Axis
     axisLabels.push(
@@ -315,7 +298,7 @@ class Scatterplot extends React.Component {
         key={`xaxis_${xLabel}`}
       >
         {xLabel}
-      </text>
+      </text>,
     );
     return axisLabels;
   }
@@ -332,7 +315,7 @@ class Scatterplot extends React.Component {
   handleMouseDown(event) {
     event.preventDefault();
     // Get the selection rectangle object
-    let selectionRectangle = this.state.selectionRectangle;
+    const selectionRectangle = this.state.selectionRectangle;
     selectionRectangle.reset();
     selectionRectangle.isDrawing = true;
     // Tell the selection rectangle the size of the plot in case the window resized
@@ -340,9 +323,9 @@ class Scatterplot extends React.Component {
     // Set start of the rectangle
     selectionRectangle.setStart(
       event.nativeEvent.offsetX - margin.left,
-      event.nativeEvent.offsetY - margin.top
+      event.nativeEvent.offsetY - margin.top,
     );
-    this.setState({ selectionRectangle: selectionRectangle });
+    this.setState({ selectionRectangle });
   }
 
   /**
@@ -351,13 +334,13 @@ class Scatterplot extends React.Component {
    */
   handleMouseMove(event) {
     event.preventDefault();
-    let selectionRectangle = this.state.selectionRectangle;
+    const selectionRectangle = this.state.selectionRectangle;
     if (selectionRectangle.isDrawing) {
       selectionRectangle.setEnd(
         event.nativeEvent.offsetX - margin.left,
-        event.nativeEvent.offsetY - margin.top
+        event.nativeEvent.offsetY - margin.top,
       );
-      this.setState({ selectionRectangle: selectionRectangle });
+      this.setState({ selectionRectangle });
     }
   }
 
@@ -367,10 +350,10 @@ class Scatterplot extends React.Component {
    */
   handleMouseUp(event) {
     event.preventDefault();
-    let selectionRectangle = this.state.selectionRectangle;
+    const selectionRectangle = this.state.selectionRectangle;
     selectionRectangle.isDrawing = false;
     this.setState({
-      selectionRectangle: selectionRectangle
+      selectionRectangle,
     });
     // Propagate the filter with the current bounds of the rectangle
     if (this.state.selectionRectangle.boundsSet) {
@@ -394,7 +377,7 @@ class Scatterplot extends React.Component {
         { name: this.props.xName, val: minX, operator: '>' },
         { name: this.props.xName, val: maxX, operator: '<' },
         { name: this.props.yName, val: minY, operator: '>' },
-        { name: this.props.yName, val: maxY, operator: '<' }
+        { name: this.props.yName, val: maxY, operator: '<' },
       ];
       // Set all the filters at once
       this.props.filter.setFilters(...filters);
@@ -413,13 +396,10 @@ class Scatterplot extends React.Component {
   onMeasure(measure) {
     if (this.props.responsiveWidth) {
       // Only set state if responsiveWidth is not yet set or it was actually updated
-      if (
-        isUndefined(this.state.responsiveWidth) ||
-        this.state.responsiveWidth !== measure.width
-      ) {
+      if (isUndefined(this.state.responsiveWidth) || this.state.responsiveWidth !== measure.width) {
         console.log(
           `Calling setstate on responsiveWidth and set it from ${this.state
-            .responsiveWidth} to ${measure.width}`
+            .responsiveWidth} to ${measure.width}`,
         );
         this.setState({ responsiveWidth: measure.width });
       }
@@ -443,12 +423,9 @@ class Scatterplot extends React.Component {
     this.setMargin();
     this.setScale(this.props.x, this.props.y);
 
-    let axes = this.renderAxes();
-    let dots = this.renderDots(3, this.props.x, this.props.y);
-    let axisLabels = this.renderAxisLabels(
-      this.props.xLabel,
-      this.props.yLabel
-    );
+    const axes = this.renderAxes();
+    const dots = this.renderDots(3, this.props.x, this.props.y);
+    const axisLabels = this.renderAxisLabels(this.props.xLabel, this.props.yLabel);
 
     return (
       <Measure bounds onMeasure={this.onMeasure}>
@@ -461,13 +438,9 @@ class Scatterplot extends React.Component {
               onMouseMove={e => this.handleMouseMove(e)}
               onMouseUp={e => this.handleMouseUp(e)}
               width={this.widthNoMargin + this.margin.left + this.margin.right}
-              height={
-                this.heightNoMargin + this.margin.top + this.margin.bottom
-              }
+              height={this.heightNoMargin + this.margin.top + this.margin.bottom}
             >
-              <g
-                transform={`translate(${this.margin.left},${this.margin.top})`}
-              >
+              <g transform={`translate(${this.margin.left},${this.margin.top})`}>
                 {axes}
                 {dots}
                 {axisLabels}
@@ -488,7 +461,7 @@ Scatterplot.propTypes = {
   xLabel: PropTypes.string.isRequired,
   yLabel: PropTypes.string.isRequired,
   x: PropTypes.array.isRequired,
-  y: PropTypes.array.isRequired
+  y: PropTypes.array.isRequired,
 };
 
 export default Scatterplot;
