@@ -1,19 +1,21 @@
 {
-    "env": {
-        "browser": true,
-        "commonjs": false,
-        "es6": true,
-        "node": true
+  "env": {
+    "browser": true,
+    "commonjs": false,
+    "es6": true,
+    "node": true
+  },
+  "extends": "airbnb",
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
     },
-    "extends": "airbnb",
-    "parserOptions": {
-        "ecmaFeatures": {
-            "jsx": true
-        },
-        "sourceType": "module"
-    },
-    "rules": {
-        "no-console": "off",
-        "comma-dangle": "off"
-    }
+    "sourceType": "module"
+  },
+  "rules": {
+    "no-console": "off",
+    "comma-dangle": "off",
+    "arrow-parens": "off",
+    "no-restricted-syntax": "off"
+  }
 }
