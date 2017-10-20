@@ -143,10 +143,11 @@ class NodeBridge {
    * Get dataset
    *
    * @param {String} name Dataset to load
+   * @param {boolean} isPublic Dataset is public
    * @return {Object} Response
    */
-  getDataset(name) {
-    return this._fetchWithUserAndToken(`api/getdataset?name=${name}`);
+  getDataset(name, isPublic = false) {
+    return this._fetchWithUserAndToken(`api/getdataset?name=${name}&ispublic=${isPublic}`);
   }
 
   /**

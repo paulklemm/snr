@@ -196,12 +196,13 @@ app.get('/api/echo', (req, res) => {
  */
 app.get('/api/getdataset', async (req, res) => {
   const result = await userManager.tokenApiFunction('getdataset', req, async (req) => {
-    const { name, user } = req.query;
+    const { name, user, ispublic } = req.query;
+    const datasets = ispublic ? sessions.getSession('quickngs') : sessions.getSession(user);
     // Load the data set using OpenCPU
     dataset = await openCPU.runRCommand(
       'sonaR',
       'get_dataset',
-      { datasets: sessions.getSession(user), name: `'${name}'` },
+      { datasets, name: `'${name}'` },
       'json',
     );
     return { name: 'getdataset', success: true, dataset };

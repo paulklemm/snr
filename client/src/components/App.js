@@ -496,7 +496,7 @@ class App extends React.Component {
     this.datasetHub.setLoading(name);
     this.setState({ datasetLoading: this.datasetHub.loading });
     // Load dataset
-    const response = await this.nodeBridge.getDataset(name);
+    const response = await this.nodeBridge.getDataset(name, this.datasetHub.datasets[name].isPublic);
     this.datasetHub.setData(
       name,
       response.dataset['.val'].dataset,

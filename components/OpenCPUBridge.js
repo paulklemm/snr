@@ -131,7 +131,6 @@ class OpenCPUBridge {
         key = key[key.length - 1];
         // If keys are defined, check if the key is in there and if not, exit
         if (!isUndefined(keys) && keys.indexOf(key) === -1) {
-          console.log(`Key ${key} not in keys, continue;`);
           continue;
         }
         // We have to handle graphics output separately

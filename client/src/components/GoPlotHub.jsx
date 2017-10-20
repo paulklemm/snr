@@ -361,7 +361,7 @@ class GoPlotHub extends React.Component {
    */
   getMenuItems() {
     // Check if dataset is properly initialized
-    if (isUndefined(this.props.dataset.getDimensionNames)) return '';
+    if (isUndefined(this.props.dataset) || isUndefined(this.props.dataset.getDimensionNames)) return '';
 
     const dimensions = this.props.dataset.getDimensionNames();
     const menuItems = [];
