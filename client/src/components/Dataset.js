@@ -2,11 +2,12 @@ import DimensionTypes from './DimensionTypes';
 import { isUndefined } from './Helper';
 
 class Dataset {
-  constructor(name, enabled = false) {
+  constructor(name, enabled = false, isPublic = false) {
     this.name = name;
     this.enabled = enabled;
     this.loaded = false;
     this.loading = false;
+    this.isPublic = isPublic;
     this.dimNames = [];
     // TODO: Derive this from metadata!
     this.ensemblDataset = 'mmusculus_gene_ensembl';
@@ -86,7 +87,9 @@ class Dataset {
   _updateEnsemblToArrayIndex(data) {
     const ensemblToArrayIndex = {};
     // Iterate over all entries in the data and create the index
-    for (const rowIndex in data) { ensemblToArrayIndex[data[rowIndex].EnsemblID] = parseInt(rowIndex, 10); }
+    for (const rowIndex in data) {
+      ensemblToArrayIndex[data[rowIndex].EnsemblID] = parseInt(rowIndex, 10);
+    }
 
     return ensemblToArrayIndex;
   }
@@ -155,9 +158,11 @@ class Dataset {
           }
           // Not a number
         } else if (
-            typeof this.data[i][dimName] === 'undefined' ||
-            this.data[i][dimName].indexOf(filter[filterKey].value) === -1
-          ) { this.filtered[i] = true; }
+          typeof this.data[i][dimName] === 'undefined' ||
+          this.data[i][dimName].indexOf(filter[filterKey].value) === -1
+        ) {
+          this.filtered[i] = true;
+        }
       }
     }
     // Apply the filter to the data to be able to retrieve it fast

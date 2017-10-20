@@ -342,13 +342,14 @@ class App extends React.Component {
     // Load Data from userFolder and get Session ID for the associated object
     const busyStateString = `loadData privateData: ${privateData}`;
     this.addBusyState(busyStateString);
-    let filenames = privateData 
+    let filenames = privateData
       ? await this.nodeBridge.loadData()
       : await this.nodeBridge.loadPublicData();
     filenames = filenames.filenames;
     // Attach the dataset array to the datasetHub
     for (const datasetName of filenames) {
-      this.datasetHub.push(new Dataset(datasetName));
+      // Set name, enabled status and public/private flag
+      this.datasetHub.push(new Dataset(datasetName, false, !privateData));
     }
     // Load setEnabled Status
     for (const datasetName of filenames) {

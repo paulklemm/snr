@@ -121,7 +121,16 @@ class DatasetHub {
     this.datasets[datasetName].icon = icon;
   }
 
+  /**
+   * Give default icon to dataset based on the total dataset count
+   * @param {string} name Name of dataset to set icon for
+   */
   setDatasetIconDefault(name) {
+    // If dataset is public, give it the default archive icon
+    if (this.datasets[name].isPublic) {
+      this.setDatasetIcon(name, 'archive');
+      return;
+    }
     const datasetIconNames = Object.keys(DatasetIcons);
     let datasetCount = Object.keys(this.datasets).length;
     // Decrement datasetCount by 1 if it is not 0
@@ -152,10 +161,11 @@ class DatasetHub {
     const loading = {};
     // Iterate over all data sets and update information
     names.forEach((name) => {
-      enabled[name] = this.datasets[name].enabled;
-      loading[name] = this.datasets[name].loading;
+      const dataset = this.datasets[name];
+      enabled[name] = dataset.enabled;
+      loading[name] = dataset.loading;
       // Set dataset icon
-      if (this.datasets[name].icon === '') {
+      if (dataset.icon === '') {
         this.setDatasetIconDefault(name);
       }
     });
