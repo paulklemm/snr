@@ -328,10 +328,23 @@ class App extends React.Component {
     // Set default plotting dimensions
     this.setPlotDimensions('pValue', 'fc');
 
+    // Load private and public data into the system
+    this.loadData(true);
+    this.loadData(false);
+  }
+
+  /**
+   * Load data from server and store it in datasetHub
+   * @param {boolean} privateData Load private data. If false, load public data
+   */
+  async loadData(privateData = true) {
     // Add busy state for loading data
     // Load Data from userFolder and get Session ID for the associated object
-    this.addBusyState('loadData');
-    let filenames = await this.nodeBridge.loadData();
+    const busyStateString = `loadData privateData: ${privateData}`;
+    this.addBusyState(busyStateString);
+    let filenames = privateData 
+      ? await this.nodeBridge.loadData()
+      : await this.nodeBridge.loadPublicData();
     filenames = filenames.filenames;
     // Attach the dataset array to the datasetHub
     for (const datasetName of filenames) {
@@ -344,7 +357,7 @@ class App extends React.Component {
     }
 
     // Remove busy state
-    this.removeBusyState('loadData');
+    this.removeBusyState(busyStateString);
   }
 
   /**

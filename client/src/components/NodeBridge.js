@@ -131,6 +131,15 @@ class NodeBridge {
   }
 
   /**
+   * Load public data
+   *
+   * @return {Object} Server response
+   */
+  loadPublicData() {
+    return this._fetchWithUserAndToken('api/loadpublicdata?');
+  }
+
+  /**
    * Get dataset
    *
    * @param {String} name Dataset to load

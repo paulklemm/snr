@@ -320,6 +320,21 @@ async function loadData(user) {
 }
 
 /**
+ * Load public data function
+ */
+app.get('/api/loadpublicdata', async (req, res) => {
+  // TokenAPIFunction returns a result object for authentication failure
+  const result = await userManager.tokenApiFunction('loadpublicdata', req, async (req) => {
+    timeStampLog('Load public data');
+    const filenames = await loadData('quickngs');
+    // Return result response in case of success
+    return { name: 'loadpublicdata', success: true, filenames };
+  });
+  // Return result of TokenApi function, either success or failure
+  res.json(result);
+});
+
+/**
  * Load data function
  */
 app.get('/api/loaddata', async (req, res) => {
