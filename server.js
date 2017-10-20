@@ -167,12 +167,12 @@ app.get('/api/login', (req, res) => {
         success: false,
         reason: 'Access token cannot be created on server, please contact the admins',
       });
-    } else
-    // If everything works fine, return result
-    { res.json({ name: 'login', success: true, token }); }
-  } else
-  // When login is not successfull
-  {
+    } else {
+      // If everything works fine, return result
+      res.json({ name: 'login', success: true, token });
+    }
+  } else {
+    // When login is not successfull
     res.json({
       name: 'login',
       success: false,
@@ -300,6 +300,26 @@ app.get('/api/getgopergene', async (req, res) => {
 });
 
 /**
+ * Load data for user
+ * @param {string} user User to load data for
+ * @return {object} Collection containing the data sets keyed by dataset name
+ */
+async function loadData(user) {
+  // Check the user session and reload if required
+  await checkUserSession(user);
+  // Get filenames from datasets object
+  let filenames = await openCPU.runRCommand(
+    'sonaR',
+    'get_loaded_filenames',
+    { datasets: sessions.getSession(user) },
+    'json',
+    ['.val'],
+  );
+  filenames = filenames['.val'];
+  return filenames;
+}
+
+/**
  * Load data function
  */
 app.get('/api/loaddata', async (req, res) => {
@@ -307,17 +327,7 @@ app.get('/api/loaddata', async (req, res) => {
   const result = await userManager.tokenApiFunction('loaddata', req, async (req) => {
     const user = req.query.user;
     timeStampLog(`Load data for user '${user}'`);
-    // Check the user session and reload if required
-    await checkUserSession(user);
-    // Get filenames from datasets object
-    let filenames = await openCPU.runRCommand(
-      'sonaR',
-      'get_loaded_filenames',
-      { datasets: sessions.getSession(user) },
-      'json',
-      ['.val'],
-    );
-    filenames = filenames['.val'];
+    const filenames = await loadData(user);
     // Return result response in case of success
     return { name: 'loaddata', success: true, filenames };
   });
