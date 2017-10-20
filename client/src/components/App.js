@@ -753,6 +753,7 @@ class App extends React.Component {
                   datasetEnabled={this.state.datasetEnabled}
                   datasetLoading={this.state.datasetLoading}
                   setEnableDataset={this.setEnableDataset}
+                  datasetHub={this.datasetHub}
                 />
               </CardContent>
             </Card>

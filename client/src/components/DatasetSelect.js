@@ -1,12 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Loading from './Loading';
-import IconSelect from './IconSelect';
 import Checkbox from 'material-ui/Checkbox';
 import List, { ListItem, ListItemText } from 'material-ui/List';
 import Typography from 'material-ui/Typography';
 import IconButton from 'material-ui/IconButton';
 import { Icon } from 'react-fa';
+import Loading from './Loading';
+import IconSelect from './IconSelect';
+import { toItemIndexes } from './Helper';
 
 const styleSheet = {
   primaryDatasetIcon: {
@@ -44,10 +45,18 @@ class DatasetSelect extends React.Component {
     }
   }
 
-  getCheckboxes() {
+  getCheckboxes(mode = 'public') {
     const datasetCheckboxes = [];
-    for (const i in Object.keys(this.props.datasetEnabled)) {
-      const datasetName = Object.keys(this.props.datasetEnabled)[i];
+    let index = 0;
+    for (const datasetName of Object.keys(this.props.datasetEnabled)) {
+      console.log(`DatasetName: ${datasetName}`);
+      // Check if we should render public or private data
+      if (mode === 'public' && !this.props.datasetHub.datasets[datasetName].isPublic) {
+        continue;
+      }
+      if (mode === 'private' && this.props.datasetHub.datasets[datasetName].isPublic) {
+        continue;
+      }
       datasetCheckboxes.push(
         <ListItem
           dense
@@ -72,15 +81,18 @@ class DatasetSelect extends React.Component {
           </IconButton>
 
           <IconSelect
-            defaultIconID={i}
+            defaultIconID={index}
             datasetName={datasetName}
             setDatasetIcon={this.props.setDatasetIcon}
             getDatasetIcon={this.props.getDatasetIcon}
           />
         </ListItem>,
       );
+      index += index;
     }
-    if (datasetCheckboxes.length === 0) { datasetCheckboxes.push(<Loading key="CircularProgress_getCheckboxes" />); }
+    if (datasetCheckboxes.length === 0) {
+      datasetCheckboxes.push(<Loading key="CircularProgress_getCheckboxes" />);
+    }
 
     return datasetCheckboxes;
   }
@@ -106,14 +118,19 @@ class DatasetSelect extends React.Component {
   }
 
   render() {
-    const checkboxes = this.getCheckboxes();
+    const checkboxesPrivate = this.getCheckboxes('private');
+    const checkboxesPublic = this.getCheckboxes('public');
     const metadata = this.getMetadataList();
     return (
       <div>
         <Typography type="headline" gutterBottom>
-          Available Datasets
+          My Datasets
         </Typography>
-        <List>{checkboxes}</List>
+        <List>{checkboxesPrivate}</List>
+        <Typography type="headline" gutterBottom>
+          Public Datasets
+        </Typography>
+        <List>{checkboxesPublic}</List>
         <Typography type="headline" gutterBottom>{`Dataset Info ${this.state
           .metadataDatasetName}`}</Typography>
         <List>{metadata}</List>
