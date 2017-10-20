@@ -15,36 +15,36 @@ import List, {
   ListItemIcon,
   ListItemSecondaryAction,
   ListItemText,
-  ListSubheader
+  ListSubheader,
 } from 'material-ui/List';
 // Own imports
 import GoPlot from './GoPlot';
 import { isUndefined } from './Helper';
- 
+
 const styleSheet = {
   goOptionLabel: {
-    marginTop: '16px'
+    marginTop: '16px',
   },
   paperGo: {
-    padding: '10px'
+    padding: '10px',
   },
   formControl: {
-    margin: '10px'
+    margin: '10px',
   },
   formNumPlots: {
-    width: '45px'
+    width: '45px',
   },
   formTransfer: {
-    width: '50px'
+    width: '50px',
   },
   colorBy: {
-    minWidth: '100px'
+    minWidth: '100px',
   },
   goPlotSummaryPaper: {
     padding: '10px',
     marginTop: '2px',
-    marginBottom: '2px'
-  }
+    marginBottom: '2px',
+  },
 };
 
 class GoPlotHub extends React.Component {
@@ -60,7 +60,7 @@ class GoPlotHub extends React.Component {
       numberTransferMax: 2,
       dynamicTransferFunction: false,
       colorByDimension: 'fc',
-      selectedGoTerms: {}
+      selectedGoTerms: {},
     };
   }
 
@@ -73,11 +73,11 @@ class GoPlotHub extends React.Component {
    * @return {array} Filtered list of goTerms
    */
   filter(goTerms, minIdsInGo, maxPlots) {
-    let filteredGoTerms = [];
+    const filteredGoTerms = [];
     // Iterate over GO terms and check if they satisfy the criteria
     for (const goTerm of goTerms) {
       // Check for minimum size
-      if (goTerm['ids'].length < minIdsInGo) continue;
+      if (goTerm.ids.length < minIdsInGo) continue;
       // Push the new goTerm
       filteredGoTerms.push(goTerm);
       // If the size exceeds maxPlots, break the for loop
@@ -94,13 +94,13 @@ class GoPlotHub extends React.Component {
    * [2]:Object {ids: Array(38), percentage: 12.666666666666666, goId: "GO:0050816"}
    * [3]:Object {ids: Array(38), percentage: 12.666666666666666, goId: "GO:1990452"}
    * [4]:Object {ids: Array(37), percentage: 12.333333333333334, goId: "GO:1903378"}
-   * 
+   *
    * @param {array} goTerms Array of goTerms to determin max size for
    * @return {integer} Size of largest go-Term in the array
    */
   getMaxGoTermSize(goTerms, arrayMember) {
     const goTermsSizes = [];
-    goTerms.forEach(goTerm => {
+    goTerms.forEach((goTerm) => {
       goTermsSizes.push(goTerm[arrayMember].length);
     });
     return max(goTermsSizes);
@@ -161,24 +161,21 @@ class GoPlotHub extends React.Component {
     const filteredGoTerms = this.filter(
       this.props.goTerms,
       this.state.numberMinIdsInGo,
-      this.state.numberGoPlots
+      this.state.numberGoPlots,
     );
     let maxGoTermSize;
     // Get the maximum GO size in the filtered GO terms
     if (this.state.drawWholeGO) {
       // If we want to draw the whole GO-terms, we have to get the summary of all of the filtered GO terms
-      let filteredGoTermSummaries = [];
+      const filteredGoTermSummaries = [];
       for (const filteredGoTerm of filteredGoTerms) {
         filteredGoTermSummaries.push(
           this.props.goTermHub.summary[this.props.dataset.ensemblDataset][
             this.props.dataset.ensemblVersion
-          ][filteredGoTerm['goId']]
+          ][filteredGoTerm.goId],
         );
       }
-      maxGoTermSize = this.getMaxGoTermSize(
-        Object.values(filteredGoTermSummaries),
-        'genes'
-      );
+      maxGoTermSize = this.getMaxGoTermSize(Object.values(filteredGoTermSummaries), 'genes');
     } else {
       // Otherwise, just count the filtered ids per GO
       maxGoTermSize = this.getMaxGoTermSize(filteredGoTerms, 'ids');
@@ -186,13 +183,13 @@ class GoPlotHub extends React.Component {
     if (this.state.debug) console.log(`maxGoTermSize: ${maxGoTermSize}`);
     // Iterate over goTerm elements
     const goPlots = [];
-    filteredGoTerms.forEach(goTerm => {
+    filteredGoTerms.forEach((goTerm) => {
       // Check if the goTerm is selected, if so render it for all datasets
       if (this.state.selectedGoTerms[goTerm.goId] === true) {
         // Attach GO-Term information
-        const currentSummary = this.props.goTermHub.summary[
-          this.props.dataset.ensemblDataset
-        ][this.props.dataset.ensemblVersion][goTerm['goId']];
+        const currentSummary = this.props.goTermHub.summary[this.props.dataset.ensemblDataset][
+          this.props.dataset.ensemblVersion
+        ][goTerm.goId];
         const url = `http://amigo.geneontology.org/amigo/term/${goTerm.goId}`;
         const summaryTable = (
           <table className="gosummarytable">
@@ -217,9 +214,8 @@ class GoPlotHub extends React.Component {
               </tr>
               <tr>
                 <td>Filtered Gene Count</td>
-                <td>{`${goTerm.ids
-                  .length}/${currentSummary.count_genes}(${Math.round(
-                  parseFloat(goTerm.percentage) * 100
+                <td>{`${goTerm.ids.length}/${currentSummary.count_genes}(${Math.round(
+                  parseFloat(goTerm.percentage) * 100,
                 )}%)`}</td>
               </tr>
               <tr>
@@ -239,19 +235,14 @@ class GoPlotHub extends React.Component {
         );
         // Iterate over all datasets
         const goPlotsPerDataset = [];
-        Object.values(this.props.datasetHub.datasets).forEach(dataset => {
+        Object.values(this.props.datasetHub.datasets).forEach((dataset) => {
           if (dataset.loaded) {
-            goPlotsPerDataset.push(
-              this.getGoPlot(dataset, goTerm, maxGoTermSize, true)
-            );
+            goPlotsPerDataset.push(this.getGoPlot(dataset, goTerm, maxGoTermSize, true));
           }
         });
         // Push the table and GoPlots to a paper element
         goPlots.push(
-          <Paper
-            style={styleSheet.goPlotSummaryPaper}
-            key={`${goTerm.goId} Summary Paper`}
-          >
+          <Paper style={styleSheet.goPlotSummaryPaper} key={`${goTerm.goId} Summary Paper`}>
             <Typography
               type="subheading"
               style={{ cursor: 'pointer' }}
@@ -262,7 +253,7 @@ class GoPlotHub extends React.Component {
             </Typography>
             {summaryTable}
             {goPlotsPerDataset}
-          </Paper>
+          </Paper>,
         );
         // If not, add the standard dataset
       } else {
@@ -307,9 +298,7 @@ class GoPlotHub extends React.Component {
         dataset={dataset}
         goTerm={goTerm}
         goTermSummary={
-          this.props.goTermHub.summary[dataset.ensemblDataset][
-            dataset.ensemblVersion
-          ][goTerm['goId']]
+          this.props.goTermHub.summary[dataset.ensemblDataset][dataset.ensemblVersion][goTerm.goId]
         }
         dimension={this.state.colorByDimension}
         icon={this.props.datasetHub.getDatasetIcon(dataset.name)}
@@ -339,7 +328,7 @@ class GoPlotHub extends React.Component {
 
   /**
    * Get static linear gradient rect for UI to adjust transfer function
-   * 
+   *
    * @param {boolean} disabled Print element as disabled or not
    * @param {integer} width Width of element in pixel
    * @param {integer} height Height of element in pixel
@@ -361,13 +350,7 @@ class GoPlotHub extends React.Component {
             <stop offset="100%" stopColor={disabled ? 'gray' : '#ee6351'} />
           </linearGradient>
         </defs>
-        <rect
-          rx="2"
-          ry="2"
-          width={width}
-          height={height}
-          fill="url(#Gradient1)"
-        />
+        <rect rx="2" ry="2" width={width} height={height} fill="url(#Gradient1)" />
       </svg>
     );
   }
@@ -381,14 +364,15 @@ class GoPlotHub extends React.Component {
     if (isUndefined(this.props.dataset.getDimensionNames)) return '';
 
     const dimensions = this.props.dataset.getDimensionNames();
-    let menuItems = [];
+    const menuItems = [];
     // Add Menu item for each dimension
-    for (const dimension of dimensions)
+    for (const dimension of dimensions) {
       menuItems.push(
         <MenuItem key={`MenuItem Dimension ${dimension}`} value={dimension}>
           {dimension}
-        </MenuItem>
+        </MenuItem>,
       );
+    }
 
     return menuItems;
   }
@@ -399,7 +383,7 @@ class GoPlotHub extends React.Component {
         <List subheader={<ListSubheader>Settings</ListSubheader>}>
           <ListItem>
             <ListItemIcon>
-              <Icon name="bar-chart-o" />
+              <Icon name="bars" />
             </ListItemIcon>
             <ListItemText primary="Number of GO Plots" />
             <ListItemSecondaryAction>
@@ -414,7 +398,7 @@ class GoPlotHub extends React.Component {
           </ListItem>
           <ListItem>
             <ListItemIcon>
-              <Icon name="bar-chart-o" />
+              <Icon name="filter" />
             </ListItemIcon>
             <ListItemText primary="Minimum #filtered" />
             <ListItemSecondaryAction>
@@ -422,22 +406,20 @@ class GoPlotHub extends React.Component {
                 id="numberMinIdsInGo"
                 label="# Mininum"
                 value={this.state.numberMinIdsInGo}
-                onChange={e =>
-                  this.setState({ numberMinIdsInGo: e.target.value })}
+                onChange={e => this.setState({ numberMinIdsInGo: e.target.value })}
                 type="number"
               />
             </ListItemSecondaryAction>
           </ListItem>
           <ListItem>
             <ListItemIcon>
-              <Icon name="bar-chart-o" />
+              <Icon name="globe" />
             </ListItemIcon>
             <ListItemText primary="Draw whole GO-Term" />
             <ListItemSecondaryAction>
               <Switch
                 checked={this.state.drawWholeGO}
-                onChange={(event, checked) =>
-                  this.setState({ drawWholeGO: checked })}
+                onChange={(event, checked) => this.setState({ drawWholeGO: checked })}
               />
             </ListItemSecondaryAction>
           </ListItem>
@@ -451,22 +433,20 @@ class GoPlotHub extends React.Component {
             <ListItemSecondaryAction>
               <Switch
                 checked={this.state.dynamicTransferFunction}
-                onChange={(event, checked) =>
-                  this.setState({ dynamicTransferFunction: checked })}
+                onChange={(event, checked) => this.setState({ dynamicTransferFunction: checked })}
               />
             </ListItemSecondaryAction>
           </ListItem>
           {/* Color-encoding dimension */}
           <ListItem>
             <ListItemIcon>
-              <Icon name="bar-chart-o" />
+              <Icon name="magic" />
             </ListItemIcon>
             <ListItemText primary="Color-encoding dimension" />
             <ListItemSecondaryAction>
               <Select
                 value={this.state.colorByDimension}
-                onChange={event =>
-                  this.setState({ colorByDimension: event.target.value })}
+                onChange={event => this.setState({ colorByDimension: event.target.value })}
               >
                 {this.getMenuItems()}
               </Select>
@@ -475,40 +455,32 @@ class GoPlotHub extends React.Component {
           {/* Transfer */}
           <ListItem>
             <ListItemIcon>
-              <Icon name="bar-chart-o" />
+              <Icon name="eye" />
             </ListItemIcon>
             <ListItemText primary="Transfer" />
             <ListItemSecondaryAction>
               <FormControl
-                style={Object.assign(
-                  ...styleSheet.formControl,
-                  styleSheet.formTransfer
-                )}
+                style={Object.assign(...styleSheet.formControl, styleSheet.formTransfer)}
               >
                 <TextField
                   disabled={this.state.dynamicTransferFunction}
                   id="numberTransferMin"
                   label="Min"
                   value={this.state.numberTransferMin}
-                  onChange={e =>
-                    this.setState({ numberTransferMin: e.target.value })}
+                  onChange={e => this.setState({ numberTransferMin: e.target.value })}
                   type="number"
                 />
               </FormControl>
               {this.getGradient(this.state.dynamicTransferFunction, 100, 8)}
               <FormControl
-                style={Object.assign(
-                  ...styleSheet.formControl,
-                  styleSheet.formTransfer
-                )}
+                style={Object.assign(...styleSheet.formControl, styleSheet.formTransfer)}
               >
                 <TextField
                   disabled={this.state.dynamicTransferFunction}
                   id="numberTransferMax"
                   label="Max"
                   value={this.state.numberTransferMax}
-                  onChange={e =>
-                    this.setState({ numberTransferMax: e.target.value })}
+                  onChange={e => this.setState({ numberTransferMax: e.target.value })}
                   type="number"
                 />
               </FormControl>
@@ -533,16 +505,12 @@ class GoPlotHub extends React.Component {
       toRender = (
         <div>
           <div style={{ marginTop: '60px' }}>{this.getOptionsPane()}</div>
-          <Typography
-            style={{ marginTop: '20px' }}
-            type="headline"
-            gutterBottom
-          >
+          <Typography style={{ marginTop: '20px' }} type="headline" gutterBottom>
             GO-Terms
           </Typography>
           <div
             style={{
-              marginTop: '10px'
+              marginTop: '10px',
             }}
           >
             {goPlots}
