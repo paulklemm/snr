@@ -230,15 +230,13 @@ class Table extends React.Component {
         <tr
           key={`tr_${dimensionKey}_${i}`}
           className={evenClass}
-          onClick={() => {
-            if (i === this.lastSelectedEntry) {
-              this.props.highlight.clear();
-              this.lastSelectedEntry = undefined;
-            } else {
-              this.props.highlight.push('selection', [this.props.data[i]]);
-              this.lastSelectedEntry = i;
-            }
+          onMouseEnter={() => {
+            this.props.highlight.push('selection', [this.props.data[i]]);
             this.props.forceUpdateApp();
+          }}
+          onMouseLeave={() => {
+            this.props.highlight.clear();
+            this.props.forceUpdateApp;
           }}
         >
           {row}
@@ -319,7 +317,9 @@ class Table extends React.Component {
       return <div />;
     }
     // Update the default height of the row to have precise calculations on the table and not rely on the style sheet
-    if (this.tableBody !== undefined && this.tableBody.children[0] !== undefined) { this.rowHeight = this.tableBody.children[0].clientHeight; }
+    if (this.tableBody !== undefined && this.tableBody.children[0] !== undefined) {
+      this.rowHeight = this.tableBody.children[0].clientHeight;
+    }
     if (this.debug) console.log(`Set rowHeight to ${this.rowHeight}`);
     return (
       <div>
