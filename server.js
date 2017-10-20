@@ -2,11 +2,7 @@
 // Node classes: https://stackoverflow.com/questions/42684177/node-js-es6-classes-with-require
 const express = require('express');
 // const UserManager = require("./UserManager");
-const {
-  timeStampLog,
-  readJSONFSSync,
-  isUndefined
-} = require('./Components/Helper');
+const { timeStampLog, readJSONFSSync, isUndefined } = require('./Components/Helper');
 const { UserManager } = require('./Components/UserManager');
 const { OpenCPUBridge } = require('./Components/OpenCPUBridge');
 const { Sessions } = require('./Components/Sessions');
@@ -44,8 +40,8 @@ async function sessionValid(session, dataFolder) {
     return (await openCPU.runRCommand(
       'sonaR',
       'session_valid',
-      { session: session, data_folder: `'${dataFolder}'` },
-      'json'
+      { session, data_folder: `'${dataFolder}'` },
+      'json',
     ))['.val'][0];
   } catch (error) {
     return false;
@@ -71,17 +67,17 @@ async function checkUserSession(user) {
       'sonaR',
       'load_data',
       { data_folder: `'${userManager.getUserSettings(user).path}'` },
-      'json'
+      'json',
     );
     timeStampLog(
-      `Loading data for user ${user} successful, Session-ID: ${response.sessionID}. Note that for many files the JSON export may fail because the R child process of exporting JSON will die.`
+      `Loading data for user ${user} successful, Session-ID: ${response.sessionID}. Note that for many files the JSON export may fail because the R child process of exporting JSON will die.`,
     );
     // Save session Id
     sessions.writeSession(user, response.sessionID);
   }
 }
 
-//////////// End of function declarations
+// ////////// End of function declarations
 
 // Read in the settings
 const settings = getSettings();
@@ -133,31 +129,18 @@ app.get('/api/isonline', (req, res) => {
  * Request R function to be executed on OpenCPU server
  */
 app.get('/api/runrcommand', async (req, res) => {
-  const result = await userManager.tokenApiFunction(
-    'runrcommand',
-    req,
-    async req => {
-      // Destructure required commands in query
-      const { rpackage, rfunction, valformat } = req.query;
-      // Params come as JSON strings
-      const params = JSON.parse(req.query.params);
-      // Log the command for debugging
-      timeStampLog(
-        `${rpackage}.${rfunction}(${JSON.stringify(
-          params
-        )}), valformat: ${valformat}`
-      );
-      // Run the command
-      const result = await openCPU.runRCommand(
-        rpackage,
-        rfunction,
-        params,
-        valformat
-      );
-      // Return success response
-      return { name: 'runrcommand', success: true, result: result };
-    }
-  );
+  const result = await userManager.tokenApiFunction('runrcommand', req, async (req) => {
+    // Destructure required commands in query
+    const { rpackage, rfunction, valformat } = req.query;
+    // Params come as JSON strings
+    const params = JSON.parse(req.query.params);
+    // Log the command for debugging
+    timeStampLog(`${rpackage}.${rfunction}(${JSON.stringify(params)}), valformat: ${valformat}`);
+    // Run the command
+    const result = await openCPU.runRCommand(rpackage, rfunction, params, valformat);
+    // Return success response
+    return { name: 'runrcommand', success: true, result };
+  });
   // Respond result
   res.json(result);
 });
@@ -178,23 +161,24 @@ app.get('/api/login', (req, res) => {
     // Create the token on disk
     const token = userManager.createToken(user);
     // When creating the token fails, token will be undefined
-    if (isUndefined(token))
+    if (isUndefined(token)) {
       res.json({
         name: 'login',
         success: false,
-        reason:
-          'Access token cannot be created on server, please contact the admins'
+        reason: 'Access token cannot be created on server, please contact the admins',
       });
-    else
-      // If everything works fine, return result
-      res.json({ name: 'login', success: true, token: token });
+    } else
+    // If everything works fine, return result
+    { res.json({ name: 'login', success: true, token }); }
   } else
-    // When login is not successfull
+  // When login is not successfull
+  {
     res.json({
       name: 'login',
       success: false,
-      reason: 'User and password do not match'
+      reason: 'User and password do not match',
     });
+  }
 });
 
 /**
@@ -211,21 +195,17 @@ app.get('/api/echo', (req, res) => {
  * TODO: To reduce load on OpenCPU server, this could also be done by reading the raw CSV files
  */
 app.get('/api/getdataset', async (req, res) => {
-  const result = await userManager.tokenApiFunction(
-    'getdataset',
-    req,
-    async req => {
-      const { name, user } = req.query;
-      // Load the data set using OpenCPU
-      dataset = await openCPU.runRCommand(
-        'sonaR',
-        'get_dataset',
-        { datasets: sessions.getSession(user), name: `'${name}'` },
-        'json'
-      );
-      return { name: 'getdataset', success: true, dataset: dataset };
-    }
-  );
+  const result = await userManager.tokenApiFunction('getdataset', req, async (req) => {
+    const { name, user } = req.query;
+    // Load the data set using OpenCPU
+    dataset = await openCPU.runRCommand(
+      'sonaR',
+      'get_dataset',
+      { datasets: sessions.getSession(user), name: `'${name}'` },
+      'json',
+    );
+    return { name: 'getdataset', success: true, dataset };
+  });
   res.json(result);
 });
 
@@ -233,27 +213,23 @@ app.get('/api/getdataset', async (req, res) => {
  * Get GO Summary for all GO terms
  */
 app.get('/api/getgosummary', async (req, res) => {
-  const result = await userManager.tokenApiFunction(
-    'getgosummary',
-    req,
-    async req => {
-      const { name, user, ensembldataset, ensemblversion } = req.query;
-      // Get the GO summary from OpenCPU
-      timeStampLog(
-        `Get GO summary for: \n \ \ ensembl dataset '${ensembldataset}'\n \ \ ensembl version: '${ensemblversion}'`
-      );
-      summary = await openCPU.runRCommand(
-        'sonaRGO',
-        'get_go_summary',
-        {
-          ensembl_dataset: `'${ensembldataset}'`,
-          ensembl_version: `'${ensemblversion}'`
-        },
-        'json'
-      );
-      return { name: 'getgosummary', success: true, go: summary };
-    }
-  );
+  const result = await userManager.tokenApiFunction('getgosummary', req, async (req) => {
+    const { name, user, ensembldataset, ensemblversion } = req.query;
+    // Get the GO summary from OpenCPU
+    timeStampLog(
+      `Get GO summary for: \n \ \ ensembl dataset '${ensembldataset}'\n \ \ ensembl version: '${ensemblversion}'`,
+    );
+    summary = await openCPU.runRCommand(
+      'sonaRGO',
+      'get_go_summary',
+      {
+        ensembl_dataset: `'${ensembldataset}'`,
+        ensembl_version: `'${ensemblversion}'`,
+      },
+      'json',
+    );
+    return { name: 'getgosummary', success: true, go: summary };
+  });
   res.json(result);
 });
 
@@ -261,45 +237,41 @@ app.get('/api/getgosummary', async (req, res) => {
  * Get PCA-loadings
  */
 app.get('/api/getpcaloadings', async (req, res) => {
-  const result = await userManager.tokenApiFunction(
-    'getpcaloadings',
-    req,
-    async req => {
-      const { user, ensembldataset, ensemblversion } = req.query;
-      // Check the user session and reload if required
-      await checkUserSession(user);
-      // Check user session for quickngs
-      await checkUserSession('quickngs');
-      // Get the GO summary from OpenCPU
-      timeStampLog(
-        `Get PCA loadings for: \n  user: ${user}\n  ensembl dataset: '${ensembldataset}'\n  ensembl version: '${ensemblversion}'`
-      );
-      // Concatinate the user's dataset as well as the quickngs dataset
-      const concat = await openCPU.runRCommand(
-        'sonaR',
-        'concat_two',
-        {
-          x: sessions.getSession(user),
-          y: sessions.getSession('quickngs')
-        },
-        'json',
-        ['sessionID']
-      );
-      const loadings = await openCPU.runRCommand(
-        'sonaR',
-        'get_pca_loadings',
-        {
-          x: concat.sessionID,
-          ensembl_dataset: `'${ensembldataset}'`,
-          ensembl_version: `'${ensemblversion}'`
-        },
-        'json',
-        ['.val']
-      );
-      timeStampLog('Getting PCA loadings done');
-      return { name: 'getpcaloadings', success: true, loadings };
-    }
-  );
+  const result = await userManager.tokenApiFunction('getpcaloadings', req, async (req) => {
+    const { user, ensembldataset, ensemblversion } = req.query;
+    // Check the user session and reload if required
+    await checkUserSession(user);
+    // Check user session for quickngs
+    await checkUserSession('quickngs');
+    // Get the GO summary from OpenCPU
+    timeStampLog(
+      `Get PCA loadings for: \n  user: ${user}\n  ensembl dataset: '${ensembldataset}'\n  ensembl version: '${ensemblversion}'`,
+    );
+    // Concatinate the user's dataset as well as the quickngs dataset
+    const concat = await openCPU.runRCommand(
+      'sonaR',
+      'concat_two',
+      {
+        x: sessions.getSession(user),
+        y: sessions.getSession('quickngs'),
+      },
+      'json',
+      ['sessionID'],
+    );
+    const loadings = await openCPU.runRCommand(
+      'sonaR',
+      'get_pca_loadings',
+      {
+        x: concat.sessionID,
+        ensembl_dataset: `'${ensembldataset}'`,
+        ensembl_version: `'${ensemblversion}'`,
+      },
+      'json',
+      ['.val'],
+    );
+    timeStampLog('Getting PCA loadings done');
+    return { name: 'getpcaloadings', success: true, loadings };
+  });
   res.json(result);
 });
 
@@ -307,27 +279,23 @@ app.get('/api/getpcaloadings', async (req, res) => {
  * Get GO Terms per Gene
  */
 app.get('/api/getgopergene', async (req, res) => {
-  const result = await userManager.tokenApiFunction(
-    'getgopergene',
-    req,
-    async req => {
-      const { name, user, ensembldataset, ensemblversion } = req.query;
-      // Get the GO terms from OpenCPU
-      timeStampLog(
-        `Get GO per Gene for: \n \ \ ensembl dataset '${ensembldataset}'\n \ \ ensembl version: '${ensemblversion}'`
-      );
-      goPerGene = await openCPU.runRCommand(
-        'sonaRGO',
-        'get_go_per_gene',
-        {
-          ensembl_dataset: `'${ensembldataset}'`,
-          ensembl_version: `'${ensemblversion}'`
-        },
-        'json'
-      );
-      return { name: 'getgopergene', success: true, go: goPerGene };
-    }
-  );
+  const result = await userManager.tokenApiFunction('getgopergene', req, async (req) => {
+    const { name, user, ensembldataset, ensemblversion } = req.query;
+    // Get the GO terms from OpenCPU
+    timeStampLog(
+      `Get GO per Gene for: \n \ \ ensembl dataset '${ensembldataset}'\n \ \ ensembl version: '${ensemblversion}'`,
+    );
+    goPerGene = await openCPU.runRCommand(
+      'sonaRGO',
+      'get_go_per_gene',
+      {
+        ensembl_dataset: `'${ensembldataset}'`,
+        ensembl_version: `'${ensemblversion}'`,
+      },
+      'json',
+    );
+    return { name: 'getgopergene', success: true, go: goPerGene };
+  });
   res.json(result);
 });
 
@@ -336,27 +304,23 @@ app.get('/api/getgopergene', async (req, res) => {
  */
 app.get('/api/loaddata', async (req, res) => {
   // TokenAPIFunction returns a result object for authentication failure
-  const result = await userManager.tokenApiFunction(
-    'loaddata',
-    req,
-    async req => {
-      const user = req.query.user;
-      timeStampLog(`Load data for user '${user}'`);
-      // Check the user session and reload if required
-      await checkUserSession(user);
-      // Get filenames from datasets object
-      let filenames = await openCPU.runRCommand(
-        'sonaR',
-        'get_loaded_filenames',
-        { datasets: sessions.getSession(user) },
-        'json',
-        ['.val']
-      );
-      filenames = filenames['.val'];
-      // Return result response in case of success
-      return { name: 'loaddata', success: true, filenames };
-    }
-  );
+  const result = await userManager.tokenApiFunction('loaddata', req, async (req) => {
+    const user = req.query.user;
+    timeStampLog(`Load data for user '${user}'`);
+    // Check the user session and reload if required
+    await checkUserSession(user);
+    // Get filenames from datasets object
+    let filenames = await openCPU.runRCommand(
+      'sonaR',
+      'get_loaded_filenames',
+      { datasets: sessions.getSession(user) },
+      'json',
+      ['.val'],
+    );
+    filenames = filenames['.val'];
+    // Return result response in case of success
+    return { name: 'loaddata', success: true, filenames };
+  });
   // Return result of TokenApi function, either success or failure
   res.json(result);
 });
@@ -365,39 +329,32 @@ app.get('/api/loaddata', async (req, res) => {
  * Load metadata for data set
  */
 app.get('/api/getmetadata', async (req, res) => {
-  const result = await userManager.tokenApiFunction(
-    'loadmetadata',
-    req,
-    async req => {
-      const { name, user } = req.query;
-      timeStampLog(`Received metadata query for file ${name}`);
-      timeStampLog(
-        `filename: ${name}, data_folder: '${userManager.getUserSettings(user)
-          .path}'`
+  const result = await userManager.tokenApiFunction('loadmetadata', req, async (req) => {
+    const { name, user } = req.query;
+    timeStampLog(`Received metadata query for file ${name}`);
+    timeStampLog(`filename: ${name}, data_folder: '${userManager.getUserSettings(user).path}'`);
+    // Load meta data through OpenCPU
+    let metadata;
+    try {
+      metadata = await openCPU.runRCommand(
+        'sonaR',
+        'get_metadata',
+        {
+          filename: `'${name}'`,
+          data_folder: `'${userManager.getUserSettings(user).path}'`,
+        },
+        'json',
       );
-      // Load meta data through OpenCPU
-      let metadata;
-      try {
-        metadata = await openCPU.runRCommand(
-          'sonaR',
-          'get_metadata',
-          {
-            filename: `'${name}'`,
-            data_folder: `'${userManager.getUserSettings(user).path}'`
-          },
-          'json'
-        );
-      } catch (e) {
-        return { name: 'loadmetadata', success: false, reason: e };
-      }
-
-      return {
-        name: 'loadmetadata',
-        success: true,
-        metadata: metadata['.val']
-      };
+    } catch (e) {
+      return { name: 'loadmetadata', success: false, reason: e };
     }
-  );
+
+    return {
+      name: 'loadmetadata',
+      success: true,
+      metadata: metadata['.val'],
+    };
+  });
   // Return result of TokenApi function, either success or failure
   res.json(result);
 });
@@ -406,18 +363,12 @@ app.get('/api/getmetadata', async (req, res) => {
  * Simple echo function to see if the server works as expected with user providing a token
  */
 app.get('/api/echotoken', async (req, res) => {
-  const result = await userManager.tokenApiFunction(
-    'echotoken',
-    req,
-    async req => {
-      const { user, token } = req.query;
-      const param = req.query.q;
-      timeStampLog(
-        `Received echo Token '${param}' of User '${user}', Token '${token}'`
-      );
-      return { name: 'echo', success: true, echo: param };
-    }
-  );
+  const result = await userManager.tokenApiFunction('echotoken', req, async (req) => {
+    const { user, token } = req.query;
+    const param = req.query.q;
+    timeStampLog(`Received echo Token '${param}' of User '${user}', Token '${token}'`);
+    return { name: 'echo', success: true, echo: param };
+  });
   res.json(result);
 });
 
