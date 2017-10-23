@@ -19,7 +19,7 @@ import List, {
 } from 'material-ui/List';
 // Own imports
 import GoPlot from './GoPlot';
-import { isUndefined } from './Helper';
+import { isUndefined, getPercentageFromFloat } from './Helper';
 
 const styleSheet = {
   goOptionLabel: {
@@ -183,6 +183,8 @@ class GoPlotHub extends React.Component {
     if (this.state.debug) console.log(`maxGoTermSize: ${maxGoTermSize}`);
     // Iterate over goTerm elements
     const goPlots = [];
+    // Sort the filtered GO-Terms by percentage
+    filteredGoTerms.sort((a, b) => b.percentage - a.percentage);
     filteredGoTerms.forEach((goTerm) => {
       // Check if the goTerm is selected, if so render it for all datasets
       if (this.state.selectedGoTerms[goTerm.goId] === true) {
@@ -214,9 +216,7 @@ class GoPlotHub extends React.Component {
               </tr>
               <tr>
                 <td>Filtered Gene Count</td>
-                <td>{`${goTerm.ids.length}/${currentSummary.count_genes}(${Math.round(
-                  parseFloat(goTerm.percentage) * 100,
-                )}%)`}</td>
+                <td>{`${goTerm.ids.length}/${currentSummary.count_genes} (${getPercentageFromFloat(goTerm.percentage)}%)`}</td>
               </tr>
               <tr>
                 <td>Transcript Count</td>
@@ -361,7 +361,9 @@ class GoPlotHub extends React.Component {
    */
   getMenuItems() {
     // Check if dataset is properly initialized
-    if (isUndefined(this.props.dataset) || isUndefined(this.props.dataset.getDimensionNames)) return '';
+    if (isUndefined(this.props.dataset) || isUndefined(this.props.dataset.getDimensionNames)) {
+      return '';
+    }
 
     const dimensions = this.props.dataset.getDimensionNames();
     const menuItems = [];

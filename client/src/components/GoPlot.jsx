@@ -7,7 +7,7 @@ import { interpolateLab } from 'd3-interpolate';
 // Material-UI Imports
 import Tooltip from 'material-ui/Tooltip';
 // Own components
-import { objectValueToArray, isUndefined } from './Helper.js';
+import { objectValueToArray, isUndefined, getPercentageFromFloat } from './Helper.js';
 import DatasetIcons from './DatasetIcons';
 
 class GoPlot extends React.Component {
@@ -45,7 +45,7 @@ class GoPlot extends React.Component {
             >
               {this.props.drawIcon ? DatasetIcons[this.props.icon] : undefined}
             </span>
-            {this.props.goTerm.goId}
+            {`${getPercentageFromFloat(this.props.goTerm.percentage)}%: ${this.props.goTerm.goId}`}
           </span>
         </Tooltip>
         <svg width={this.props.maxWidth} height={this.props.height}>
@@ -136,11 +136,13 @@ class GoPlot extends React.Component {
    */
   update() {
     // Get the data
-    if (this.props.drawWholeGO)
+    if (this.props.drawWholeGO) {
       // Derive the data from all genes in the GO-term
-      { this.convertData(this.props.dataset, this.props.dimension, this.props.goTermSummary.genes); } else
+      this.convertData(this.props.dataset, this.props.dimension, this.props.goTermSummary.genes);
+    } else {
       // Derive data from all selected genes in GO-term
-      { this.convertData(this.props.dataset, this.props.dimension, this.props.goTerm.ids); }
+      this.convertData(this.props.dataset, this.props.dimension, this.props.goTerm.ids);
+    }
     // Sort the data
     this.dataSorted = this.data.sort((a, b) => {
       // Sort undefined values at the very beginning

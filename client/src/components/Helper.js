@@ -10,6 +10,15 @@ function isUndefined(x) {
 }
 
 /**
+ * Convert floating point percentage scaled between 0 and 1 to percentage between 0 and 100
+ * @param {float} x 
+ * @return {integer} Converted percentage
+ */
+function getPercentageFromFloat(x) {
+  return Math.round(parseFloat(x) * 100);
+}
+
+/**
  * Compare two arrays and check if their contents are identical
  * @param {array} a Array a
  * @param {array} b Array b
@@ -889,4 +898,5 @@ export {
   toItemIndexes,
   injectStyle,
   areIdentical,
+  getPercentageFromFloat,
 };
