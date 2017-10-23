@@ -126,6 +126,8 @@ class OpenCPUBridge {
         }
         // When we query the .val element, get it as required format, e.g. `json` or `ascii`
         if (/\.val/.test(url)) url = `${url}/${valFormat}`;
+        // If valformat json, set pretty to false - https://www.opencpu.org/posts/publishing-data-with-opencpu/
+        url = valFormat === 'json' ? `${url}?pretty=false` : url;
         // Initiate the get for the current key
         const promise = get(this.address + url)
           .then((response) => {
