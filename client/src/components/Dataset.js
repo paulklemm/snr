@@ -148,6 +148,11 @@ class Dataset {
       for (const j in filterKeys) {
         const filterKey = filterKeys[j];
         const dimName = filter[filterKey].name;
+        // If data is undefined, filter it out!
+        if (isUndefined(this.data[i][dimName])) {
+          this.filtered[i] = true;
+          continue;
+        }
         // Added a dirty check on FPKM value names. Every variable with `FPKM` in it will be classified as number
         if (DimensionTypes[dimName] === 'number' || /FPKM/i.test(dimName)) {
           // Process Numbers
