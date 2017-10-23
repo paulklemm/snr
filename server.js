@@ -1,11 +1,29 @@
 // Conjunction with create-react-app from [https://github.com/fullstackreact/food-lookup-demo](https://github.com/fullstackreact/food-lookup-demo)
 // Node classes: https://stackoverflow.com/questions/42684177/node-js-es6-classes-with-require
 const express = require('express');
-// const UserManager = require("./UserManager");
 const { timeStampLog, readJSONFSSync, isUndefined } = require('./Components/Helper');
 const { UserManager } = require('./Components/UserManager');
 const { OpenCPUBridge } = require('./Components/OpenCPUBridge');
 const { Sessions } = require('./Components/Sessions');
+// Promises Collection
+const promises = {};
+
+/**
+ * Remove Job from promises array
+ * @param {string} name Jobname
+ */
+function removeJob(name) {
+  delete promises[name];
+}
+
+/**
+ * Check for running job in promises array
+ * @param {string} name Jobname
+ * @return {boolean} Job is still running
+ */
+function alreadyRunning(name) {
+  return !isUndefined(promises[name]);
+}
 
 /**
  * Read settings from file. Settings should contain:
@@ -61,20 +79,38 @@ async function checkUserSession(user) {
     ? await sessionValid(session, userManager.getUserSettings(user).path)
     : false;
   if (!sessionIsValid) {
+    // Check if data is already loading
+    const jobName = `Loading ${user}`;
+    if (alreadyRunning(jobName)) {
+      timeStampLog(
+        `Call R to load data for user quickngs. Data for ${user} is already loading, waiting for job to finish`,
+      );
+      await promises[jobName];
+      return;
+    }
     timeStampLog(`Call R to load data for user ${user}`);
     // We have to load the data with OpenCPU
-    const response = await openCPU.runRCommand(
-      'sonaR',
-      'load_data',
-      { data_folder: `'${userManager.getUserSettings(user).path}'` },
-      'json',
-    );
-    timeStampLog(
-      `Loading data for user ${user} successful, Session-ID: ${response.sessionID}. Note that for many files the JSON export may fail because the R child process of exporting JSON will die.`,
-    );
-    // Save session Id
-    sessions.writeSession(user, response.sessionID);
+    await loadDataUser(user, jobName);
   }
+}
+
+async function loadDataUser(user, jobName) {
+  const job = openCPU.runRCommand(
+    'sonaR',
+    'load_data',
+    { data_folder: `'${userManager.getUserSettings(user).path}'` },
+    'json',
+  );
+  // Add job to promise
+  promises[jobName] = job;
+  const response = await job;
+  timeStampLog(
+    `Loading data for user ${user} successful, Session-ID: ${response.sessionID}. Note that for many files the JSON export may fail because the R child process of exporting JSON will die.`,
+  );
+  sessions.writeSession(user, response.sessionID);
+  // Remove job from promises list
+  removeJob(jobName);
+  return response;
 }
 
 // ////////// End of function declarations
