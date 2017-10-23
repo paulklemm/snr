@@ -95,18 +95,18 @@ async function checkUserSession(user) {
 }
 
 async function loadDataUser(user, jobName) {
+  // Only get the sessionID which should fix getting the JSON file of the output
   const job = openCPU.runRCommand(
     'sonaR',
     'load_data',
     { data_folder: `'${userManager.getUserSettings(user).path}'` },
     'json',
+    ['sessionID'],
   );
   // Add job to promise
   promises[jobName] = job;
   const response = await job;
-  timeStampLog(
-    `Loading data for user ${user} successful, Session-ID: ${response.sessionID}. Note that for many files the JSON export may fail because the R child process of exporting JSON will die.`,
-  );
+  timeStampLog(`Loading data for user ${user} successful, Session-ID: ${response.sessionID}`);
   sessions.writeSession(user, response.sessionID);
   // Remove job from promises list
   removeJob(jobName);
