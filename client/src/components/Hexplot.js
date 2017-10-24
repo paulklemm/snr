@@ -88,6 +88,7 @@ class Hexplot extends Scatterplot {
             fontSize: 15,
             position: 'absolute',
             marginLeft: this.widthNoMargin,
+            marginTop: 20,
           }}
           onClick={() => {
             this.setState({
@@ -314,9 +315,20 @@ class Hexplot extends Scatterplot {
                 color: 'gray',
                 position: 'absolute',
                 marginLeft: this.widthNoMargin - 50,
+                marginTop: 12,
               }}
             >
               {`${pointArray.length}/${dataCount} valid points`}
+            </span>
+            <span
+              style={{
+                fontSize: 9,
+                color: 'gray',
+                position: 'absolute',
+                marginLeft: this.widthNoMargin - 50,
+              }}
+            >
+              {`${this.props.rnaSeqData.name}`}
             </span>
             <svg
               className="hexagons"
