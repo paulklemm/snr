@@ -278,7 +278,7 @@ class Hexplot extends Scatterplot {
     const axisLabelPattern = (transformation, name) =>
       // If linear, use name, else use transformation(name)
       // If `this.props.axisValues` is set to untransformed, also use name
-       transformation !== 'linear' && this.props.axisValues !== 'untransformed'
+      transformation !== 'linear' && this.props.axisValues !== 'untransformed'
         ? `${transformation}(${name})`
         : name;
     const axisLabels = this.renderAxisLabels(

@@ -83,6 +83,7 @@ class Scatterplot extends React.Component {
     this.yScaleReverse = scaleLinear()
       .range([min(y), max(y)])
       .domain([this.heightNoMargin, 0]);
+    console.log(`min(x): ${min(x)}, max(x): ${max(x)}, min(y): ${min(y)}, max(y): ${max(y)}`);
   }
 
   // // Stresstest //////////////////
@@ -137,7 +138,14 @@ class Scatterplot extends React.Component {
       case 'untransformed': {
         // Get the inverse value
         const inverse = inverseTransformation(value, transformation);
-        return Math.round(inverse * 100) / 100;
+        if (isUndefined(inverse)) {
+          return 'undefined';
+        }
+        const inverseRounded = Math.round(inverse * 100) / 100;
+        // Convert to exponential notation to avoid rendering 0s for small values
+        // which will cause D3 to omit rendering the axis value
+        // Render a 0 when the inverse value is exactly 0.
+        return inverseRounded === 0 && inverse !== 0 ? inverse.toExponential(2) : inverseRounded;
       }
       default:
         return value;

@@ -76,11 +76,16 @@ function applyTransformation(point, transformation = 'linear') {
   * @param {array} data Dimension as vector of values
   * @param {string} transformation Type of transformation. Defaults to linear
   */
-function applyTransformationArray(data, transformation = 'linear') {
+function applyTransformationArray(data, transformation = 'linear', removeInfinite = true) {
   if (transformation === 'linear') {
     return data;
   }
-  return data.map(elem => applyTransformation(elem, transformation));
+  return data.map(elem => applyTransformation(elem, transformation)).filter((elem) => {
+    if (!removeInfinite) {
+      return true;
+    }
+    return isFinite(elem);
+  });
 }
 
 export {
