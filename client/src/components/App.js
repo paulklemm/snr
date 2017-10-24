@@ -41,8 +41,8 @@ import Welcome from './Welcome';
 // Create theme (https://material-ui-1dab0.firebaseapp.com/customization/themes)
 const theme = createMuiTheme({
   palette: {
-    primary: orange
-  }
+    primary: orange,
+  },
 });
 
 class App extends React.Component {
@@ -89,7 +89,7 @@ class App extends React.Component {
       busy: {},
       openDrawer: {
         right: false,
-        left: false
+        left: false,
       },
       xDimension: '',
       yDimension: '',
@@ -99,7 +99,7 @@ class App extends React.Component {
       zoom: true, // Zoom on filtering in the plots
       highlight: new Highlight('EnsemblID'),
       viewMode: 'overview', // Steer the view mode of the main app
-      toggleUpdate: true // Dummy variable used for toggling an update in main app
+      toggleUpdate: true, // Dummy variable used for toggling an update in main app
     };
   }
 
@@ -121,8 +121,7 @@ class App extends React.Component {
    * Toggle view mode between overview (PCA) and detailed (scatterplots with small multiples)
    */
   toggleMainViewMode() {
-    const viewMode =
-      this.state.viewMode === 'overview' ? 'detailed' : 'overview';
+    const viewMode = this.state.viewMode === 'overview' ? 'detailed' : 'overview';
     this.setState({ viewMode });
   }
 
@@ -150,7 +149,7 @@ class App extends React.Component {
   setPlotDimensions(xDimension, yDimension) {
     this.setState({
       xDimension,
-      yDimension
+      yDimension,
     });
   }
 
@@ -162,7 +161,7 @@ class App extends React.Component {
     const lastXDimension = this.state.xDimension;
     this.setState({
       xDimension: newDimension,
-      yDimension: lastXDimension
+      yDimension: lastXDimension,
     });
   }
 
@@ -183,12 +182,10 @@ class App extends React.Component {
     // TODO: Handle removal of 'enabled'
     const requiresLoading = this.datasetHub.setEnable(name, enabled);
     this.setState({
-      datasetEnabled: this.datasetHub.enabled
+      datasetEnabled: this.datasetHub.enabled,
     });
     // Update the count of the small multiples
-    this.layoutFactory.setSmallMultiplesCount(
-      this.datasetHub.getCountOfEnabledDatasets()
-    );
+    this.layoutFactory.setSmallMultiplesCount(this.datasetHub.getCountOfEnabledDatasets());
     if (requiresLoading) {
       this.loadDataset(name);
     }
@@ -213,7 +210,7 @@ class App extends React.Component {
       return metadataHub;
     }
     // When not defined, retrieve it from the server
-    let metadataResponse = await this.nodeBridge.getMetadata(name);
+    const metadataResponse = await this.nodeBridge.getMetadata(name);
     // Handle errors
     if (!metadataResponse.success) {
       metadataResponse.metadata = { Error: [`Cannot derive data for ${name}`] };
@@ -265,7 +262,7 @@ class App extends React.Component {
     const goTerms = await this.goTermHub.getGoTerms(ensemblIds);
     // Sort the GOTermArray
     this.setState({
-      goTerms: this.goTermHub.sortGoTerms(goTerms)
+      goTerms: this.goTermHub.sortGoTerms(goTerms),
     });
   }
 
@@ -285,7 +282,7 @@ class App extends React.Component {
     const loginRequired = await this.authentication.loginRequired();
     // Set state
     this.setState({
-      loginRequired: loginRequired
+      loginRequired,
     });
   }
 
@@ -294,12 +291,9 @@ class App extends React.Component {
    */
   async getPCA() {
     console.log('Get loadings of PCA');
-    const loadings = await this.nodeBridge.getPcaLoadings(
-      'mmusculus_gene_ensembl',
-      'current'
-    );
+    const loadings = await this.nodeBridge.getPcaLoadings('mmusculus_gene_ensembl', 'current');
     this.setState({
-      pca: loadings.loadings['.val']
+      pca: loadings.loadings['.val'],
     });
     console.log(loadings);
   }
@@ -316,15 +310,12 @@ class App extends React.Component {
 
     // Get GO-Term description
     // TODO: This "current" thing needs to go away, because this will change!
-    this.goTermHub = new GoTermHub(
-      this.nodeBridge.getGoSummary,
-      this.nodeBridge.getGoPerGene
-    );
+    this.goTermHub = new GoTermHub(this.nodeBridge.getGoSummary, this.nodeBridge.getGoPerGene);
     this.goTermHub.addGeneToGo('mmusculus_gene_ensembl', 'current');
     this.goTermHub.addSummary('mmusculus_gene_ensembl', 'current');
     // DEBUG
-    // this.datasetHub.push(new Dataset('Dataset_2.csv'));
-    // this.setEnableDataset('Dataset_2.csv', true);
+    this.datasetHub.push(new Dataset('1043114.differential.csv'));
+    this.setEnableDataset('1043114.differential.csv', true);
     // Set default plotting dimensions
     this.setPlotDimensions('pValue', 'fc');
 
@@ -389,17 +380,13 @@ class App extends React.Component {
 
     // Run the command
     if (debug) console.log(runKey);
-    const response = await this.nodeBridge.sendRCommand(
-      rpackage,
-      rfunction,
-      params,
-      valformat
-    );
+    const response = await this.nodeBridge.sendRCommand(rpackage, rfunction, params, valformat);
     if (debug) console.log(response);
 
     // If Response is negative because of invalid token, invalidate login
-    if (isUndefined(response.loginInvalid) && response.loginInvalid === true)
+    if (isUndefined(response.loginInvalid) && response.loginInvalid === true) {
       this.setState({ loginRequired: true });
+    }
     // Delete the runKey from the busy array
     this.removeBusyState(runKey);
     // Return resulting object
@@ -412,21 +399,21 @@ class App extends React.Component {
    * @param {String} busyKey Unique key for busy state
    */
   addBusyState(busyKey) {
-    let busy = this.state.busy;
+    const busy = this.state.busy;
     busy[busyKey] = true;
-    this.setState({ busy: busy });
+    this.setState({ busy });
   }
 
   /**
    * The busy state indicates that there are still requests made to the node back-end where no answers have been received yet.
    * This function removes a busy state with `busyKey` and updates the react state.
-   * 
-   * @param {String} busyKey 
+   *
+   * @param {String} busyKey
    */
   removeBusyState(busyKey) {
-    let busy = this.state.busy;
+    const busy = this.state.busy;
     delete busy[busyKey];
-    this.setState({ busy: busy });
+    this.setState({ busy });
   }
 
   /**
@@ -439,7 +426,7 @@ class App extends React.Component {
     // const loginSuccessful = await this.authentication.login('paul', 'bla');
     const loginSuccessful = await this.authentication.login(user, password);
     this.setState({
-      loginRequired: !loginSuccessful
+      loginRequired: !loginSuccessful,
     });
     // If login is successful, init the session
     if (loginSuccessful) await this.initSession();
@@ -451,7 +438,7 @@ class App extends React.Component {
    */
   async debugSession() {
     console.log(
-      'Entering Debug mode. Data will be loaded automatically. To disable, set `App.debug` to `false`'
+      'Entering Debug mode. Data will be loaded automatically. To disable, set `App.debug` to `false`',
     );
     // Set default plotting dimensions
     this.setPlotDimensions('pValueNegLog10', 'fc');
@@ -459,7 +446,7 @@ class App extends React.Component {
     const loginRequired = await this.authentication.loginRequired();
     if (loginRequired) console.log('Login required');
     this.setState({
-      loginRequired: loginRequired
+      loginRequired,
     });
     // TODO: Debug Login
     // const loginSuccessful = await this.authentication.login('paul', 'bla');
@@ -475,7 +462,7 @@ class App extends React.Component {
    */
   forceUpdateApp() {
     this.setState({
-      toggleUpdate: !this.state.toggleUpdate
+      toggleUpdate: !this.state.toggleUpdate,
     });
     // this.forceUpdate();
   }
@@ -496,11 +483,14 @@ class App extends React.Component {
     this.datasetHub.setLoading(name);
     this.setState({ datasetLoading: this.datasetHub.loading });
     // Load dataset
-    const response = await this.nodeBridge.getDataset(name, this.datasetHub.datasets[name].isPublic);
+    const response = await this.nodeBridge.getDataset(
+      name,
+      this.datasetHub.datasets[name].isPublic,
+    );
     this.datasetHub.setData(
       name,
       response.dataset['.val'].dataset,
-      response.dataset['.val'].dimNames
+      response.dataset['.val'].dimNames,
     );
     // Loading is done, so update it again
     this.setState({ datasetLoading: this.datasetHub.loading });
@@ -515,10 +505,9 @@ class App extends React.Component {
 
   /** https://stackoverflow.com/questions/19014250/reactjs-rerender-on-browser-resize */
   handleResize(event, debug = false) {
-    if (debug)
-      console.log(
-        `Resize Window, width: ${window.innerWidth}, height: ${window.innerHeight}`
-      );
+    if (debug) {
+      console.log(`Resize Window, width: ${window.innerWidth}, height: ${window.innerHeight}`);
+    }
     this.layoutFactory.updateWindowSize(window.innerWidth, window.innerHeight);
     this.forceUpdate();
   }
@@ -574,13 +563,10 @@ class App extends React.Component {
           style={{
             maxWidth: `${leftDrawerWidth}px`,
             minWidth: `${leftDrawerWidth}px`,
-            padding: '10px'
+            padding: '10px',
           }}
         >
-          <IconButton
-            style={{ float: 'right' }}
-            onClick={this.toggleLeftDrawer}
-          >
+          <IconButton style={{ float: 'right' }} onClick={this.toggleLeftDrawer}>
             <Icon name="times" />
           </IconButton>
           {goPlotHub}
@@ -595,18 +581,18 @@ class App extends React.Component {
       appBody: {
         marginRight: 100,
         marginLeft: 100,
-        paddingLeft: this.state.openDrawer.left ? leftDrawerWidth : 0
-      }
+        paddingLeft: this.state.openDrawer.left ? leftDrawerWidth : 0,
+      },
     };
     // Create Hexplot dynamic from inbox data
     const hexplots = [];
-    this.datasetHub.names.forEach(name => {
+    this.datasetHub.names.forEach((name) => {
       const dataset = this.datasetHub.datasets[name];
       if (dataset.loaded) {
         hexplots.push(
           <Grid item xs={6} key={name}>
             <Hexplot
-              responsiveWidth={true}
+              responsiveWidth
               height={this.layoutFactory.heights.smallMultiples}
               width={0}
               rnaSeqData={dataset}
@@ -626,7 +612,7 @@ class App extends React.Component {
               axisValues={this.state.axisValues}
               setAxisValues={this.setAxisValues}
             />
-          </Grid>
+          </Grid>,
         );
       }
     });
@@ -655,7 +641,7 @@ class App extends React.Component {
             <Hexplot
               height={this.layoutFactory.heights.mainView}
               width={600}
-              responsiveWidth={true}
+              responsiveWidth
               highlight={this.state.highlight}
               rnaSeqData={this.state.primaryDataset}
               xName={this.state.xDimension}
@@ -664,7 +650,7 @@ class App extends React.Component {
               forceUpdateApp={this.forceUpdateApp}
               hexSize={4}
               hexMax={20}
-              showRenderGenesOption={true}
+              showRenderGenesOption
               setTransformation={this.setTransformation}
               setZoom={this.setZoom}
               xTransformation={this.state.xTransformation}
@@ -702,7 +688,7 @@ class App extends React.Component {
             <ScatterplotPCA
               width={200}
               height={this.layoutFactory.heights.mainView}
-              responsiveWidth={true}
+              responsiveWidth
               pca={this.state.pca}
               datasetHub={this.datasetHub}
               xPc={1}
@@ -736,14 +722,11 @@ class App extends React.Component {
             <Card
               style={{
                 maxWidth: `${this.layoutFactory.windowWidth / 2}px`,
-                minWidth: `${this.layoutFactory.windowWidth / 3}px`
+                minWidth: `${this.layoutFactory.windowWidth / 3}px`,
               }}
             >
               <CardContent>
-                <IconButton
-                  style={{ float: 'right' }}
-                  onClick={this.toggleRightDrawer}
-                >
+                <IconButton style={{ float: 'right' }} onClick={this.toggleRightDrawer}>
                   <Icon name="times" />
                 </IconButton>
                 <DatasetSelect
@@ -760,7 +743,7 @@ class App extends React.Component {
           </Drawer>
           <div
             style={{
-              marginLeft: this.state.openDrawer.left ? leftDrawerWidth : 0
+              marginLeft: this.state.openDrawer.left ? leftDrawerWidth : 0,
             }}
           >
             <Navbar
