@@ -241,6 +241,8 @@ class Hexplot extends Scatterplot {
     // therefore we have to convert it
     let xArray = objectValueToArray(data, this.props.xName);
     let yArray = objectValueToArray(data, this.props.yName);
+    // Get count of x and y array
+    const dataCount = xArray.length === yArray.length ? xArray.length : 'data count mismatch';
     // Apply transformations
     xArray = applyTransformationArray(xArray, this.props.xTransformation);
     yArray = applyTransformationArray(yArray, this.props.yTransformation);
@@ -306,6 +308,16 @@ class Hexplot extends Scatterplot {
         {({ measureRef }) => (
           <div ref={measureRef}>
             {this.props.showRenderGenesOption ? renderGenesOption : ''}
+            <span
+              style={{
+                fontSize: 9,
+                color: 'gray',
+                position: 'absolute',
+                marginLeft: this.widthNoMargin - 50,
+              }}
+            >
+              {`${pointArray.length}/${dataCount} valid points`}
+            </span>
             <svg
               className="hexagons"
               onMouseDown={e => this.handleMouseDown(e)}
