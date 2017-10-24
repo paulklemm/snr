@@ -12,6 +12,13 @@ export const DimensionTypes = {
   strand: 'string',
   Start: 'number',
   End: 'number',
+  baseMeanSample: 'number',
+  baseMeanControl: 'number',
+  baseMean: 'number',
+  log2FoldChange: 'number',
+  lfcSE: 'number',
+  stat: 'number',
+  pValueAdj: 'number',
 };
 
 export const DefaultFilterSetting = {
@@ -29,6 +36,13 @@ export const DefaultFilterSetting = {
   strand: '=',
   Start: '>',
   End: '<',
+  baseMeanSample: '<',
+  baseMeanControl: '<',
+  baseMean: '<',
+  log2FoldChange: '<',
+  lfcSE: '<',
+  stat: '<',
+  pValueAdj: '<',
 };
 
 export default DimensionTypes;
