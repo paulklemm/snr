@@ -139,8 +139,6 @@ class GoTermHub {
     this.promisePush(addGeneToGoPromise, 'geneToGo');
     // Await the promise
     await addGeneToGoPromise;
-    // Give status ouput
-    console.log('Gene to Go added');
   }
 
   /**

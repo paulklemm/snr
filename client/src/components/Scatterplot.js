@@ -83,7 +83,6 @@ class Scatterplot extends React.Component {
     this.yScaleReverse = scaleLinear()
       .range([min(y), max(y)])
       .domain([this.heightNoMargin, 0]);
-    console.log(`min(x): ${min(x)}, max(x): ${max(x)}, min(y): ${min(y)}, max(y): ${max(y)}`);
   }
 
   // // Stresstest //////////////////
@@ -380,7 +379,7 @@ class Scatterplot extends React.Component {
       if (transformationNegates(this.props.yTransformation)) {
         [minY, maxY] = [maxY, minY];
       }
-      console.log(`X: > ${minX} | < ${maxX}; Y: > ${minY} | < ${maxY}`);
+      // console.log(`X: > ${minX} | < ${maxX}; Y: > ${minY} | < ${maxY}`);
       const filters = [
         { name: this.props.xName, val: minX, operator: '>' },
         { name: this.props.xName, val: maxX, operator: '<' },
@@ -405,10 +404,6 @@ class Scatterplot extends React.Component {
     if (this.props.responsiveWidth) {
       // Only set state if responsiveWidth is not yet set or it was actually updated
       if (isUndefined(this.state.responsiveWidth) || this.state.responsiveWidth !== measure.width) {
-        console.log(
-          `Calling setstate on responsiveWidth and set it from ${this.state
-            .responsiveWidth} to ${measure.width}`,
-        );
         this.setState({ responsiveWidth: measure.width });
       }
     }

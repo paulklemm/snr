@@ -7,7 +7,6 @@ import IconButton from 'material-ui/IconButton';
 import { Icon } from 'react-fa';
 import Loading from './Loading';
 import IconSelect from './IconSelect';
-import { toItemIndexes } from './Helper';
 
 const styleSheet = {
   primaryDatasetIcon: {
@@ -49,7 +48,6 @@ class DatasetSelect extends React.Component {
     const datasetCheckboxes = [];
     let index = 0;
     for (const datasetName of Object.keys(this.props.datasetEnabled)) {
-      console.log(`DatasetName: ${datasetName}`);
       // Check if we should render public or private data
       if (mode === 'public' && !this.props.datasetHub.datasets[datasetName].isPublic) {
         continue;

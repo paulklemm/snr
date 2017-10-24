@@ -139,7 +139,7 @@ class Dataset {
    * @param {Object} filter: Filter object in the Format `{name: 'fc', value: '3', operator: '>'}`
    * @param {Boolean} debug: Print out debug statements
    */
-  setFilter(filter, debug = true) {
+  setFilter(filter, debug = false) {
     const filterKeys = Object.keys(filter);
     if (debug) console.log(`Setfilter for ${this.name}`);
     for (const i in this.data) {

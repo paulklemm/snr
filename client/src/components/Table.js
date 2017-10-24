@@ -68,9 +68,7 @@ class Table extends React.Component {
       : !areIdentical(this.props.dimNames, nextProps.dimNames);
 
     if (dimNamesMismatch || isUndefined(this.state.filterSetting)) {
-      console.log(`dimNamesMismatch: ${dimNamesMismatch}; Update with new props`);
       const filterSetting = this.getDefaultFilterSettings(nextProps.dimNames);
-      console.log(filterSetting);
       this.setState({ filterSetting });
     }
   }
@@ -236,7 +234,7 @@ class Table extends React.Component {
           }}
           onMouseLeave={() => {
             this.props.highlight.clear();
-            this.props.forceUpdateApp;
+            this.props.forceUpdateApp();
           }}
         >
           {row}

@@ -503,7 +503,6 @@ class GoPlotHub extends React.Component {
       toRender = <div>GO-Term Hub not initialized</div>;
     } else {
       const goPlots = this.getGoPlots();
-      console.log(`GoPlots Length: ${goPlots.length}`);
       toRender = (
         <div>
           <div style={{ marginTop: '60px' }}>{this.getOptionsPane()}</div>

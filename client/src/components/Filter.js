@@ -68,8 +68,10 @@ class Filter {
    * @param  {boolean} broadcastFilter Broadcast filter to all datasets
    */
   removeFilter(dimension, broadcastFilter = true) {
-    console.log(`Broadcast: Remove filter for dimension ${dimension}`);
-    for (const filterKey in this.filter) { if (this.filter[filterKey].name === dimension) delete this.filter[filterKey]; }
+    // console.log(`Broadcast: Remove filter for dimension ${dimension}`);
+    for (const filterKey in this.filter) {
+      if (this.filter[filterKey].name === dimension) delete this.filter[filterKey];
+    }
     if (broadcastFilter) {
       this.broadcastFilter();
     }
@@ -108,9 +110,9 @@ class Filter {
    * @param {Object} filters Any number of filter Objects containing of `name`, `val` and `operator`
    */
   setFilters(...filters) {
-    console.log(filters);
+    // console.log(filters);
     filters.forEach((filter) => {
-      console.log(`Set Filter ${filter.name}, ${filter.val}, ${filter.operator}`);
+      // console.log(`Set Filter ${filter.name}, ${filter.val}, ${filter.operator}`);
       this.setFilter(filter.name, filter.val, filter.operator, false, false);
     });
     this.broadcastFilter();

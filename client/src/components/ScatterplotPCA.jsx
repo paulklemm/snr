@@ -1,6 +1,5 @@
 import React from 'react';
 import Measure from 'react-measure';
-import { Icon } from 'react-fa';
 import Scatterplot from './Scatterplot';
 import { isUndefined, objectValueToArray, injectStyle } from './Helper';
 import DatasetIcons from './DatasetIcons';
@@ -114,20 +113,20 @@ class ScatterplotPCA extends Scatterplot {
       const currentY = y[i];
       const currentRowName = this.rowNames[i];
       // Check whether the current element is filtered or not
-      const currentIsFiltered = isUndefined(filtered[i]) ? false : filtered[i];
+      // const currentIsFiltered = isUndefined(filtered[i]) ? false : filtered[i];
       // Only create dot if x and y are numbers
       if (isNaN(currentX) || isNaN(currentY)) continue;
       // Check if we have to highlight the elements
       const cx = this.xScale(currentX);
       const cy = this.yScale(currentY);
-      const newRadius =
-        !isUndefined(highlight) &&
-        cx >= highlight.minX &&
-        cx <= highlight.maxX &&
-        cy >= highlight.minY &&
-        cy <= highlight.maxY
-          ? radius + 1
-          : radius;
+      // const newRadius =
+      //   !isUndefined(highlight) &&
+      //   cx >= highlight.minX &&
+      //   cx <= highlight.maxX &&
+      //   cy >= highlight.minY &&
+      //   cy <= highlight.maxY
+      //     ? radius + 1
+      //     : radius;
       // Get style for the element
       let divStyle = styleSheet.myPulse;
       if (this.props.datasetHub.isLoaded(currentRowName)) {
