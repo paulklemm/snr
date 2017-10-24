@@ -312,8 +312,8 @@ class App extends React.Component {
     this.goTermHub.addGeneToGo('mmusculus_gene_ensembl', 'current');
     this.goTermHub.addSummary('mmusculus_gene_ensembl', 'current');
     // DEBUG
-    this.datasetHub.push(new Dataset('1043114.differential.csv'));
-    this.setEnableDataset('1043114.differential.csv', true);
+    // this.datasetHub.push(new Dataset('1043114.differential.csv'));
+    // this.setEnableDataset('1043114.differential.csv', true);
     // Set default plotting dimensions
     this.setPlotDimensions('pValue', 'fc');
 
@@ -584,7 +584,11 @@ class App extends React.Component {
     };
     // Create Hexplot dynamic from inbox data
     const hexplots = [];
-    this.datasetHub.names.forEach((name) => {
+    for (const name of this.datasetHub.names) {
+      // Omit the primary dataset as small multiple if it is available
+      if (!isUndefined(this.state.primaryDataset.data) && this.state.primaryDataset.name === name) {
+        continue;
+      }
       const dataset = this.datasetHub.datasets[name];
       if (dataset.loaded) {
         hexplots.push(
@@ -613,7 +617,7 @@ class App extends React.Component {
           </Grid>,
         );
       }
-    });
+    }
     const primaryDatasetData =
       this.state.primaryDataset.data === undefined
         ? undefined
