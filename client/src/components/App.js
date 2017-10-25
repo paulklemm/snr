@@ -149,7 +149,7 @@ class App extends React.Component {
   }
 
   /**
-   * Should plots zoom into selection.
+   * Should Small Multiple plots zoom into selection.
    * @param {boolean} zoomSmallMultiples Zoom status
    */
   setZoomSmallMultiples(zoomSmallMultiples) {
@@ -638,6 +638,7 @@ class App extends React.Component {
               zoomSmallMultiples={this.state.zoomSmallMultiples}
               axisValues={this.state.axisValues}
               setAxisValues={this.setAxisValues}
+              setPrimaryDataset={this.setPrimaryDataset}
             />
           </Grid>,
         );
@@ -687,6 +688,7 @@ class App extends React.Component {
               zoomSmallMultiples={this.state.zoomSmallMultiples}
               axisValues={this.state.axisValues}
               setAxisValues={this.setAxisValues}
+              setPrimaryDataset={this.setPrimaryDataset}
             />
           </Grid>
           {/* Small multiples */}

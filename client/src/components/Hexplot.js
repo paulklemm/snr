@@ -13,9 +13,6 @@ import Measure from 'react-measure';
 import Select from 'material-ui/Select';
 import { MenuItem } from 'material-ui/Menu';
 import Input from 'material-ui/Input';
-import { applyTransformationArray } from './TransformationHelper';
-import Scatterplot from './Scatterplot';
-import { objectValueToArray, isUndefined } from './Helper';
 import List, {
   ListItem,
   ListItemIcon,
@@ -23,6 +20,9 @@ import List, {
   ListItemText,
   ListSubheader,
 } from 'material-ui/List';
+import { applyTransformationArray } from './TransformationHelper';
+import Scatterplot from './Scatterplot';
+import { objectValueToArray, isUndefined } from './Helper';
 
 // Important Links
 // https://github.com/d3/d3-hexbin
@@ -238,6 +238,13 @@ class Hexplot extends Scatterplot {
     );
   }
 
+  /**
+   * Call App.js to set primary dataset to the one represented by this hexplot
+   */
+  setPrimaryDataset() {
+    this.props.setPrimaryDataset(this.props.rnaSeqData.name);
+  }
+
   render() {
     // Check if there is data available
     if (this.props.rnaSeqData.data === undefined || isUndefined(this.props.filter)) {
@@ -328,7 +335,9 @@ class Hexplot extends Scatterplot {
                 position: 'absolute',
                 marginLeft: this.widthNoMargin - 50,
                 marginTop: 12,
+                cursor: 'pointer',
               }}
+              onClick={() => this.setPrimaryDataset()}
             >
               {`${pointArray.length}/${dataCount} valid points`}
             </span>
@@ -338,8 +347,11 @@ class Hexplot extends Scatterplot {
                 color: 'gray',
                 position: 'absolute',
                 marginLeft: this.widthNoMargin - 50,
+                cursor: 'pointer',
               }}
+              onClick={() => this.setPrimaryDataset()}
             >
+              <Icon name={this.props.rnaSeqData.icon} />
               {`${this.props.rnaSeqData.name}`}
             </span>
             <svg
