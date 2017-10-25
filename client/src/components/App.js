@@ -735,7 +735,7 @@ class App extends React.Component {
             onRequestClose={this.handleRightClose}
             onClick={this.handleRightClose}
           >
-            <Card
+            <div
               style={{
                 maxWidth: `${this.layoutFactory.windowWidth / 2}px`,
                 minWidth: `${this.layoutFactory.windowWidth / 3}px`,
@@ -746,7 +746,6 @@ class App extends React.Component {
                   <Icon name="times" />
                 </IconButton>
                 <DatasetSelect
-                  getMetadata={this.nodeBridge.getMetadata}
                   getDatasetIcon={this.datasetHub.getDatasetIcon}
                   setDatasetIcon={this.setDatasetIcon}
                   datasetEnabled={this.state.datasetEnabled}
@@ -758,7 +757,7 @@ class App extends React.Component {
                   getMetadataPromise={this.getMetadataPromise}
                 />
               </CardContent>
-            </Card>
+            </div>
           </Drawer>
           <div
             style={{

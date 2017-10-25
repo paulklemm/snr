@@ -24,26 +24,8 @@ class DatasetSelect extends React.Component {
   constructor() {
     super();
     this.state = {
-      metadata: {},
-      metadataDatasetName: '',
       tooltip: '',
     };
-  }
-
-  /**
-   * Fetch the metadata from server and renders it in the client
-   *
-   * @param {String} datasetName Name of clicked data set
-   */
-  async handleListItemClick(datasetName) {
-    // Get metadata from back-end
-    const metadata = await this.props.getMetadata(datasetName);
-    if (metadata.success) {
-      this.setState({
-        metadata: metadata.metadata,
-        metadataDatasetName: datasetName,
-      });
-    }
   }
 
   getCheckboxes(mode = 'public') {
@@ -62,9 +44,9 @@ class DatasetSelect extends React.Component {
           dense
           button
           key={`DatasetSelect_${datasetName}`}
-          onClick={() => this.handleListItemClick(datasetName)}
           onMouseLeave={() => this.setState({ tooltip: [] })}
           onMouseOver={(event) => {
+            // Add tooltip event
             const tooltip = [];
             const metadata = this.props.getMetadataPromise(datasetName);
             tooltip.push(
@@ -117,30 +99,9 @@ class DatasetSelect extends React.Component {
     return datasetCheckboxes;
   }
 
-  getMetadataList() {
-    const metadataKeys = Object.keys(this.state.metadata);
-    const metadataListEntries = [];
-    for (const i in metadataKeys) {
-      // Check what kind of element we have
-      const value = this.state.metadata[metadataKeys[i]];
-      // Check if value is an array or length is grater than 1
-      const valueToPrint =
-        Object.prototype.toString.call(value) === '[object Array]' && value.length === 1
-          ? value[0]
-          : value;
-      metadataListEntries.push(
-        <ListItem button key={`Metadata_${metadataKeys[i]}`}>
-          <ListItemText primary={`${metadataKeys[i]}: ${JSON.stringify(valueToPrint)}`} />
-        </ListItem>,
-      );
-    }
-    return metadataListEntries;
-  }
-
   render() {
     const checkboxesPrivate = this.getCheckboxes('private');
     const checkboxesPublic = this.getCheckboxes('public');
-    const metadata = this.getMetadataList();
     return (
       <div>
         <Typography type="headline" gutterBottom>
@@ -151,11 +112,7 @@ class DatasetSelect extends React.Component {
           Public Datasets
         </Typography>
         <List>{checkboxesPublic}</List>
-        <Typography type="headline" gutterBottom>{`Dataset Info ${this.state
-          .metadataDatasetName}`}</Typography>
-        <List>{metadata}</List>
         {this.state.tooltip}
-        {/* <Typography type="body1" gutterBottom align="left">{JSON.stringify(this.state.metadata, null, 2)}</Typography> */}
       </div>
     );
   }
@@ -165,7 +122,6 @@ DatasetSelect.propTypes = {
   datasetEnabled: PropTypes.object,
   datasetLoading: PropTypes.object,
   setEnableDataset: PropTypes.func,
-  getMetadata: PropTypes.func,
   setDatasetIcon: PropTypes.func,
   getDatasetIcon: PropTypes.func,
 };
