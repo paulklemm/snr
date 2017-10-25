@@ -53,6 +53,7 @@ class DatasetSelect extends React.Component {
             const metadata = this.props.getMetadataPromise(datasetName);
             tooltip.push(
               <div
+                key={`tooltip datasetselect ${datasetName}`}
                 style={{
                   position: 'absolute',
                   top: event.clientY + 15,
@@ -79,7 +80,10 @@ class DatasetSelect extends React.Component {
                 ? styleSheet.primaryDatasetIcon
                 : styleSheet.standardDatasetIcon
             }
-            onClick={() => this.props.setPrimaryDataset(datasetName)}
+            onClick={(event) => {
+              event.stopPropagation();
+              this.props.setPrimaryDataset(datasetName);
+            }}
           >
             <Icon name="check-circle-o" />
           </IconButton>

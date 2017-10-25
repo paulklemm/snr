@@ -5,7 +5,6 @@ import { Icon } from 'react-fa';
 import Drawer from 'material-ui/Drawer';
 import Grid from 'material-ui/Grid';
 import IconButton from 'material-ui/IconButton';
-import Card, { CardContent } from 'material-ui/Card';
 // Material-UI theming
 import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
 import orange from 'material-ui/colors/orange';
@@ -739,24 +738,23 @@ class App extends React.Component {
               style={{
                 maxWidth: `${this.layoutFactory.windowWidth / 2}px`,
                 minWidth: `${this.layoutFactory.windowWidth / 3}px`,
+                padding: '10px',
               }}
             >
-              <CardContent>
-                <IconButton style={{ float: 'right' }} onClick={this.toggleRightDrawer}>
-                  <Icon name="times" />
-                </IconButton>
-                <DatasetSelect
-                  getDatasetIcon={this.datasetHub.getDatasetIcon}
-                  setDatasetIcon={this.setDatasetIcon}
-                  datasetEnabled={this.state.datasetEnabled}
-                  datasetLoading={this.state.datasetLoading}
-                  setEnableDataset={this.setEnableDataset}
-                  datasetHub={this.datasetHub}
-                  setPrimaryDataset={this.setPrimaryDataset}
-                  primaryDataset={this.state.primaryDataset}
-                  getMetadataPromise={this.getMetadataPromise}
-                />
-              </CardContent>
+              <IconButton style={{ float: 'right' }} onClick={this.toggleRightDrawer}>
+                <Icon name="times" />
+              </IconButton>
+              <DatasetSelect
+                getDatasetIcon={this.datasetHub.getDatasetIcon}
+                setDatasetIcon={this.setDatasetIcon}
+                datasetEnabled={this.state.datasetEnabled}
+                datasetLoading={this.state.datasetLoading}
+                setEnableDataset={this.setEnableDataset}
+                datasetHub={this.datasetHub}
+                setPrimaryDataset={this.setPrimaryDataset}
+                primaryDataset={this.state.primaryDataset}
+                getMetadataPromise={this.getMetadataPromise}
+              />
             </div>
           </Drawer>
           <div

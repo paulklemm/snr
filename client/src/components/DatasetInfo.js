@@ -39,10 +39,10 @@ class DatasetInfo extends React.Component {
           </tr>
         </thead>
         <tbody>
-          {Object.keys(data).map((key) => {
+          {Object.keys(data).map((key, index) => {
             const value = data[key];
             return (
-              <tr>
+              <tr key={`${key}, ${index}`}>
                 <td>{key}</td>
                 <td>{value.toString()}</td>
               </tr>

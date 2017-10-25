@@ -19,6 +19,8 @@ class IconSelect extends Component {
   constructor(props) {
     super(props);
     this.handleButtonClick = this.handleButtonClick.bind(this);
+    this.handleMenuItemClick = this.handleMenuItemClick.bind(this);
+    this.handleRequestClose = this.handleRequestClose.bind(this);
     // Get the icon associated with the data set
     const iconName = props.getDatasetIcon(props.datasetName);
     this.state = {
@@ -29,6 +31,7 @@ class IconSelect extends Component {
   }
 
   handleMenuItemClick(event, iconName) {
+    event.stopPropagation();
     this.setState({ selectedIndex: iconName, open: false });
     this.props.setDatasetIcon(this.props.datasetName, iconName);
   }
@@ -38,6 +41,7 @@ class IconSelect extends Component {
   }
 
   handleButtonClick(event) {
+    event.stopPropagation();
     this.setState({ open: true, anchorEl: event.currentTarget });
   }
 
