@@ -75,7 +75,7 @@ class DatasetHub {
    * Get the count of enabled datasets in Hub.
    * @return {Integer} Enabled dataset count
    */
-  getCountOfEnabledDatasets() {
+  getEnabledDatasetsCount() {
     let count = 0;
     for (const dataset in this.enabled) if (this.enabled[dataset] === true) count += 1;
     return count;

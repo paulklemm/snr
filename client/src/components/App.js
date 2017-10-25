@@ -199,7 +199,7 @@ class App extends React.Component {
       datasetEnabled: this.datasetHub.enabled,
     });
     // Update the count of the small multiples
-    this.layoutFactory.setSmallMultiplesCount(this.datasetHub.getCountOfEnabledDatasets());
+    this.layoutFactory.setSmallMultiplesCount(this.datasetHub.getEnabledDatasetsCount() - 1);
     if (requiresLoading) {
       this.loadDataset(name);
     }
