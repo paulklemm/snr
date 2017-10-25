@@ -19,7 +19,7 @@
     "typeface-roboto": "0.0.22"
   },
   "devDependencies": {
-    "react-scripts": "1.0.10"
+    "react-scripts": "1.0.14"
   },
   "scripts": {
     "start": "react-scripts start",
