@@ -59,6 +59,7 @@ class GoPlotHub extends React.Component {
       numberTransferMin: -2,
       numberTransferMax: 2,
       dynamicTransferFunction: false,
+      animationEnabled: false,
       colorByDimension: 'fc',
       selectedGoTerms: {},
     };
@@ -216,7 +217,9 @@ class GoPlotHub extends React.Component {
               </tr>
               <tr>
                 <td>Filtered Gene Count</td>
-                <td>{`${goTerm.ids.length}/${currentSummary.count_genes} (${getPercentageFromFloat(goTerm.percentage)}%)`}</td>
+                <td>{`${goTerm.ids.length}/${currentSummary.count_genes} (${getPercentageFromFloat(
+                  goTerm.percentage,
+                )}%)`}</td>
               </tr>
               <tr>
                 <td>Transcript Count</td>
@@ -278,6 +281,10 @@ class GoPlotHub extends React.Component {
    * @return {boolean} Should include animations
    */
   shouldAnimate() {
+    // Return false if the settings is set to disable animations
+    if (!this.state.shouldAnimate) {
+      return false;
+    }
     // For whole-GO term drawings, animations are too slow, so disable them.
     return !this.state.drawWholeGO;
   }
@@ -422,6 +429,18 @@ class GoPlotHub extends React.Component {
               <Switch
                 checked={this.state.drawWholeGO}
                 onChange={(event, checked) => this.setState({ drawWholeGO: checked })}
+              />
+            </ListItemSecondaryAction>
+          </ListItem>
+          <ListItem>
+            <ListItemIcon>
+              <Icon name="rocket" />
+            </ListItemIcon>
+            <ListItemText primary="Animate changes" />
+            <ListItemSecondaryAction>
+              <Switch
+                checked={this.state.animationEnabled}
+                onChange={(event, checked) => this.setState({ animationEnabled: checked })}
               />
             </ListItemSecondaryAction>
           </ListItem>
