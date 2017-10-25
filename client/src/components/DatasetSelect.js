@@ -11,7 +11,7 @@ import IconSelect from './IconSelect';
 const styleSheet = {
   primaryDatasetIcon: {
     fontSize: '130%',
-    color: 'red',
+    color: '#EE6351',
   },
   standardDatasetIcon: {
     fontSize: '90%',
@@ -68,12 +68,15 @@ class DatasetSelect extends React.Component {
             disabled={this.props.datasetLoading[datasetName]}
           />
           <ListItemText primary={`Name: ${datasetName}`} />
-          {/* Icon to see whether the data set is primary on or not */}
-          {/* TODO: Get the status from the current session */}
+          {/* Icon indicating primary dataset */}
           <IconButton
             aria-owns="simple-menu"
-            style={styleSheet.primaryDatasetIcon}
-            onClick={this.handleButtonClick}
+            style={
+              this.props.primaryDataset.name === datasetName
+                ? styleSheet.primaryDatasetIcon
+                : styleSheet.standardDatasetIcon
+            }
+            onClick={() => this.props.setPrimaryDataset(datasetName)}
           >
             <Icon name="check-circle-o" />
           </IconButton>

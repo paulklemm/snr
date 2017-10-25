@@ -68,6 +68,7 @@ class App extends React.Component {
     this.toggleMainViewMode = this.toggleMainViewMode.bind(this);
     this.getMetadata = this.getMetadata.bind(this);
     this.getMetadataPromise = this.getMetadataPromise.bind(this);
+    this.setPrimaryDataset = this.setPrimaryDataset.bind(this);
     // Init datasethub and inject filterTriggered function
     this.datasetHub = new DatasetHub(this.filterBroadcasted);
     this.debug = false;
@@ -101,6 +102,19 @@ class App extends React.Component {
       viewMode: 'overview', // Steer the view mode of the main app
       toggleUpdate: true, // Dummy variable used for toggling an update in main app
     };
+  }
+
+  /**
+   * Set primary data set based on name
+   * @param {string} name Dataset name
+   */
+  setPrimaryDataset(name) {
+    const dataset = this.datasetHub.datasets[name];
+    // If dataset is undefined or it's data is undefined, do not load it
+    if (isUndefined(dataset) || isUndefined(dataset.data)) {
+      return;
+    }
+    this.setState({ primaryDataset: this.datasetHub.datasets[name] });
   }
 
   /**
@@ -739,6 +753,8 @@ class App extends React.Component {
                   datasetLoading={this.state.datasetLoading}
                   setEnableDataset={this.setEnableDataset}
                   datasetHub={this.datasetHub}
+                  setPrimaryDataset={this.setPrimaryDataset}
+                  primaryDataset={this.state.primaryDataset}
                 />
               </CardContent>
             </Card>
