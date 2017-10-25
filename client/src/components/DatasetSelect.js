@@ -44,6 +44,8 @@ class DatasetSelect extends React.Component {
           dense
           button
           key={`DatasetSelect_${datasetName}`}
+          onClick={() =>
+            this.props.setEnableDataset(datasetName, !this.props.datasetEnabled[datasetName])}
           onMouseLeave={() => this.setState({ tooltip: [] })}
           onMouseOver={(event) => {
             // Add tooltip event
