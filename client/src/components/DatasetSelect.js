@@ -7,6 +7,7 @@ import IconButton from 'material-ui/IconButton';
 import { Icon } from 'react-fa';
 import Loading from './Loading';
 import IconSelect from './IconSelect';
+import DatasetInfo from './DatasetInfo';
 
 const styleSheet = {
   primaryDatasetIcon: {
@@ -25,6 +26,7 @@ class DatasetSelect extends React.Component {
     this.state = {
       metadata: {},
       metadataDatasetName: '',
+      tooltip: '',
     };
   }
 
@@ -61,6 +63,23 @@ class DatasetSelect extends React.Component {
           button
           key={`DatasetSelect_${datasetName}`}
           onClick={() => this.handleListItemClick(datasetName)}
+          onMouseLeave={() => this.setState({ tooltip: [] })}
+          onMouseOver={(event) => {
+            const tooltip = [];
+            const metadata = this.props.getMetadataPromise(datasetName);
+            tooltip.push(
+              <div
+                style={{
+                  position: 'absolute',
+                  top: event.clientY + 15,
+                  marginLeft: 40,
+                }}
+              >
+                <DatasetInfo metadata={metadata} name={datasetName} />
+              </div>,
+            );
+            this.setState({ tooltip });
+          }}
         >
           <Checkbox
             onChange={(event, checked) => this.props.setEnableDataset(datasetName, checked)}
@@ -135,6 +154,7 @@ class DatasetSelect extends React.Component {
         <Typography type="headline" gutterBottom>{`Dataset Info ${this.state
           .metadataDatasetName}`}</Typography>
         <List>{metadata}</List>
+        {this.state.tooltip}
         {/* <Typography type="body1" gutterBottom align="left">{JSON.stringify(this.state.metadata, null, 2)}</Typography> */}
       </div>
     );

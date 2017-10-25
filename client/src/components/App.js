@@ -755,6 +755,7 @@ class App extends React.Component {
                   datasetHub={this.datasetHub}
                   setPrimaryDataset={this.setPrimaryDataset}
                   primaryDataset={this.state.primaryDataset}
+                  getMetadataPromise={this.getMetadataPromise}
                 />
               </CardContent>
             </Card>
