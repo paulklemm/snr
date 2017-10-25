@@ -63,6 +63,7 @@ class App extends React.Component {
     this.setTransformation = this.setTransformation.bind(this);
     this.setAxisValues = this.setAxisValues.bind(this);
     this.setZoom = this.setZoom.bind(this);
+    this.setZoomSmallMultiples = this.setZoomSmallMultiples.bind(this);
     this.login = this.login.bind(this);
     this.toggleMainViewMode = this.toggleMainViewMode.bind(this);
     this.getMetadata = this.getMetadata.bind(this);
@@ -97,6 +98,7 @@ class App extends React.Component {
       yTransformation: 'linear', // Default transformation on y axis
       axisValues: 'untransformed', // Can be 'both', 'transformed' or 'untransformed'
       zoom: true, // Zoom on filtering in the plots
+      zoomSmallMultiples: false, // Zoom on filtering in the small multiple plots
       highlight: new Highlight('EnsemblID'),
       viewMode: 'overview', // Steer the view mode of the main app
       toggleUpdate: true, // Dummy variable used for toggling an update in main app
@@ -144,6 +146,14 @@ class App extends React.Component {
    */
   setZoom(zoom) {
     this.setState({ zoom });
+  }
+
+  /**
+   * Should plots zoom into selection.
+   * @param {boolean} zoomSmallMultiples Zoom status
+   */
+  setZoomSmallMultiples(zoomSmallMultiples) {
+    this.setState({ zoomSmallMultiples });
   }
 
   /**
@@ -621,9 +631,11 @@ class App extends React.Component {
               showRenderGenesOption={false}
               setTransformation={this.setTransformation}
               setZoom={this.setZoom}
+              setZoomSmallMultiples={this.setZoomSmallMultiples}
               xTransformation={this.state.xTransformation}
               yTransformation={this.state.yTransformation}
-              zoom={this.state.zoom}
+              zoom={this.state.zoomSmallMultiples}
+              zoomSmallMultiples={this.state.zoomSmallMultiples}
               axisValues={this.state.axisValues}
               setAxisValues={this.setAxisValues}
             />
@@ -668,9 +680,11 @@ class App extends React.Component {
               showRenderGenesOption
               setTransformation={this.setTransformation}
               setZoom={this.setZoom}
+              setZoomSmallMultiples={this.setZoomSmallMultiples}
               xTransformation={this.state.xTransformation}
               yTransformation={this.state.yTransformation}
               zoom={this.state.zoom}
+              zoomSmallMultiples={this.state.zoomSmallMultiples}
               axisValues={this.state.axisValues}
               setAxisValues={this.setAxisValues}
             />

@@ -219,6 +219,18 @@ class Hexplot extends Scatterplot {
                   />
                 </ListItemSecondaryAction>
               </ListItem>
+              <ListItem>
+                <ListItemIcon>
+                  <Icon name="search" />
+                </ListItemIcon>
+                <ListItemText primary="Zoom on filter small mult." />
+                <ListItemSecondaryAction>
+                  <Switch
+                    checked={this.props.zoomSmallMultiples}
+                    onChange={(event, checked) => this.props.setZoomSmallMultiples(checked)}
+                  />
+                </ListItemSecondaryAction>
+              </ListItem>
             </List>
           </div>
         </Popover>
