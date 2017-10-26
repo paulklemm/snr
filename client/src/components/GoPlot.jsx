@@ -30,32 +30,6 @@ class GoPlot extends React.Component {
     this.update();
   }
 
-  render() {
-    return (
-      <div>
-        <Tooltip id="tooltip-icon" title={this.props.goTermSummary.go_term_name} placement="top">
-          <span
-            className="gotermlabel"
-            onClick={() => this.props.toggleGOTerm(this.props.goTerm.goId)}
-          >
-            <span
-              style={{
-                marginRight: this.props.drawIcon ? '5' : '0',
-              }}
-            >
-              {this.props.drawIcon ? DatasetIcons[this.props.icon] : undefined}
-            </span>
-            {`${getPercentageFromFloat(this.props.goTerm.percentage)}%: ${this.props.goTerm.goId}`}
-          </span>
-        </Tooltip>
-        <svg width={this.props.maxWidth} height={this.props.height}>
-          {this.renderBars()}
-        </svg>
-        {this.state.tooltip}
-      </div>
-    );
-  }
-
   /**
    * React to mouse movement on rect elements
    *
@@ -152,9 +126,9 @@ class GoPlot extends React.Component {
       return a.val - b.val;
     });
     // Calculate domain color space based on input props
-    let domainMin,
-      domainMax,
-      domainMean;
+    let domainMin;
+    let domainMax;
+    let domainMean;
     // Calculate the dimension boundaries dynamic from the minimum/maximum of the input data
     if (this.props.dimensionBoundariesDynamic) {
       // Use values of the data to determine transfer function
@@ -214,6 +188,33 @@ class GoPlot extends React.Component {
       );
     });
     return rects;
+  }
+
+  render() {
+    return (
+      <div>
+        <Tooltip id="tooltip-icon" title={this.props.goTermSummary.go_term_name} placement="top">
+          <span
+            className="gotermlabel"
+            role="presentation"
+            onClick={() => this.props.toggleGOTerm(this.props.goTerm.goId)}
+          >
+            <span
+              style={{
+                marginRight: this.props.drawIcon ? '5' : '0',
+              }}
+            >
+              {this.props.drawIcon ? DatasetIcons[this.props.icon] : undefined}
+            </span>
+            {`${getPercentageFromFloat(this.props.goTerm.percentage)}%: ${this.props.goTerm.goId}`}
+          </span>
+        </Tooltip>
+        <svg width={this.props.maxWidth} height={this.props.height}>
+          {this.renderBars()}
+        </svg>
+        {this.state.tooltip}
+      </div>
+    );
   }
 }
 
