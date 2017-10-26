@@ -99,7 +99,7 @@ class App extends React.Component {
       axisValues: 'untransformed', // Can be 'both', 'transformed' or 'untransformed'
       zoom: true, // Zoom on filtering in the plots
       zoomSmallMultiples: false, // Zoom on filtering in the small multiple plots
-      highlight: new Highlight('EnsemblID'),
+      highlight: new Highlight('EnsemblID', this.forceUpdateApp),
       viewMode: 'overview', // Steer the view mode of the main app
       toggleUpdate: true, // Dummy variable used for toggling an update in main app
     };
@@ -571,7 +571,6 @@ class App extends React.Component {
         dataset={this.state.primaryDataset}
         datasetHub={this.datasetHub}
         highlight={this.state.highlight}
-        forceUpdateApp={this.forceUpdateApp}
         goTermHub={this.goTermHub}
         width={leftDrawerWidth}
       />

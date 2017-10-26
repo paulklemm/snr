@@ -315,7 +315,6 @@ class GoPlotHub extends React.Component {
         dimensionBoundariesDynamic={this.state.dynamicTransferFunction}
         drawWholeGO={this.state.drawWholeGO}
         highlight={this.props.highlight}
-        forceUpdateApp={this.props.forceUpdateApp}
         maxGeneCount={maxGoTermSize}
         toggleGOTerm={this.toggleGOTerm}
         maxWidth={this.props.width - 160}

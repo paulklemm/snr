@@ -3,12 +3,14 @@ import { isUndefined } from './Helper';
 class Highlight {
   /**
    * Handle groups of data entries that need to be highlighted separately
-   * @param {String} idName Name of the unique Id for each data entry
+   * @param {string} idName Name of the unique Id for each data entry
+   * @param {function} forceUpdateApp Update function of App.js
    */
-  constructor(idName) {
+  constructor(idName, forceUpdateApp) {
     // Groups to highlight in the various view
     this.groups = {};
     this.idName = idName;
+    this.forceUpdateApp = forceUpdateApp;
   }
 
   /**
@@ -25,6 +27,7 @@ class Highlight {
         this.groups[name].push(point[this.idName]);
       }
     });
+    this.forceUpdateApp();
   }
 
   /**

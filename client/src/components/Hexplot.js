@@ -24,6 +24,19 @@ import { applyTransformationArray } from './TransformationHelper';
 import Scatterplot from './Scatterplot';
 import { objectValueToArray, isUndefined } from './Helper';
 
+const styleSheet = {
+  filteredCircle: {
+    fillOpacity: '0.1',
+  },
+  highlightedCircle: {
+    fillOpacity: '1',
+    fill: 'red',
+  },
+  circle: {
+    fillOpacity: '0.5',
+  },
+};
+
 // Important Links
 // https://github.com/d3/d3-hexbin
 // https://github.com/joelburget/d4/blob/master/demo/dynamic-hexbin.js
@@ -69,6 +82,86 @@ class Hexplot extends Scatterplot {
       />
     ));
     return hexagons;
+  }
+
+  /**
+   * Create array of SVG circle elements based on the input array
+   * Overwrites the renderDots function of Scatterplot
+   * @param {Integer} radius: Radius of the circles
+   * @param {Array} x: Array of values for x
+   * @param {Array} y: Array of values for y
+   * @param {Array} filtered: Array of boolean values indicating whether the element is filtered or not
+   * @param {Object} hightlight: Highlight object consisting of minX, maxX, minY, maxY defining circles to highlight
+   * @return {Array} Circle objects as array
+   */
+  renderDots(radius, x, y, filtered = [], highlight = undefined, data) {
+    // Keep track of the number of elements where one variable shows NaN
+    this.numberOfNaN = { x: 0, y: 0 };
+    const dots = [];
+    x.forEach((entry, index) => {
+      const currentX = x[index];
+      const currentY = y[index];
+      // Check whether the current element is filtered or not
+      const currentIsFiltered = isUndefined(filtered[index]) ? false : filtered[index];
+      // If the element is filtered, render the elements accordingly
+      const currentStyle = currentIsFiltered ? styleSheet.filteredCircle : styleSheet.circle;
+      // Only create dot if x and y are numbers
+      if (!isNaN(currentX) && !isNaN(currentY)) {
+        // Check if we have to highlight the elements
+        const cx = this.xScale(currentX);
+        const cy = this.yScale(currentY);
+        const newRadius =
+          !isUndefined(highlight) &&
+          cx >= highlight.minX &&
+          cx <= highlight.maxX &&
+          cy >= highlight.minY &&
+          cy <= highlight.maxY
+            ? radius + 1
+            : radius;
+        dots.push(
+          <circle
+            className="dot"
+            r={newRadius}
+            cx={cx}
+            cy={cy}
+            key={`${currentX},${currentY},${index}`}
+            onClick={e => this.handleClick(e, currentX, currentY)}
+            onMouseEnter={() =>
+              this.onMouseEnterTooltip(currentX, currentY, undefined, data[index].EnsemblID)}
+            onMouseLeave={this.onMouseLeaveTooltip}
+            style={currentStyle}
+          />,
+        );
+      } else {
+        if (isNaN(currentX)) this.numberOfNaN.x++;
+        if (isNaN(currentY)) this.numberOfNaN.y++;
+      }
+    });
+    return dots;
+  }
+
+  /**
+   * Trigger Tooltip and highlight selected ensemblId
+   * @param {integer} x 
+   * @param {integer} y 
+   * @param {string} idName 
+   * @param {string} ensemblId 
+   */
+  onMouseEnterTooltip(x, y, idName, ensemblId) {
+    const tooltip = [];
+    const dx = this.xScale(x) + 5;
+    const dy = this.yScale(y) + 5;
+    tooltip.push(
+      <text x={dx} y={dy} key={`${dx},${dy}`}>
+        {`${ensemblId}`}
+      </text>,
+    );
+    // Update highlighted selection
+    this.props.highlight.clear();
+    this.props.highlight.push('selection', [this.props.rnaSeqData.getEntry(ensemblId)]);
+    this.setState({
+      tooltip,
+    });
   }
 
   /**
@@ -291,18 +384,25 @@ class Hexplot extends Scatterplot {
       (this.state.renderDotsOnZoom && this.props.zoom && this.props.filter.doesFilter())
     ) {
       if (this.state.selectionRectangle.boundsSet) {
-        dots = this.renderDots(1, xArray, yArray, filter, this.state.selectionRectangle.bounds);
+        dots = this.renderDots(
+          1,
+          xArray,
+          yArray,
+          filter,
+          this.state.selectionRectangle.bounds,
+          data,
+        );
       } else {
-        dots = this.renderDots(1, xArray, yArray, filter);
+        dots = this.renderDots(1, xArray, yArray, filter, undefined, data);
       }
     }
     // Rename the labels based on the transformation
     const axisLabelPattern = (transformation, name) =>
       // If linear, use name, else use transformation(name)
       // If `this.props.axisValues` is set to untransformed, also use name
-      transformation !== 'linear' && this.props.axisValues !== 'untransformed'
+      (transformation !== 'linear' && this.props.axisValues !== 'untransformed'
         ? `${transformation}(${name})`
-        : name;
+        : name);
     const axisLabels = this.renderAxisLabels(
       axisLabelPattern(this.props.xTransformation, this.props.xName),
       axisLabelPattern(this.props.yTransformation, this.props.yName),

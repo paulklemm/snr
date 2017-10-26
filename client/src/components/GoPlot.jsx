@@ -39,8 +39,6 @@ class GoPlot extends React.Component {
     // Update select
     this.props.highlight.clear();
     this.props.highlight.push('selection', [this.props.dataset.getEntry(id)]);
-    // Update App to account for new highlight
-    this.props.forceUpdateApp();
 
     let dx = event.clientX - 55;
     let dy = event.clientY - 35;
