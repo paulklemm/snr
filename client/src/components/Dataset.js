@@ -45,7 +45,7 @@ class Dataset {
     for (const i in this.data) this.filtered[i] = false;
 
     // Setup collection associating id of each entry with row-id for fast access
-    this.ensemblToArrayIndex = this._updateEnsemblToArrayIndex(this.data);
+    this.ensemblToArrayIndex = Dataset._updateEnsemblToArrayIndex(this.data);
     // Keep a copy of the unfiltered one
     this.ensemblToArrayIndexUnfiltered = { ...this.ensemblToArrayIndex };
   }
@@ -84,12 +84,12 @@ class Dataset {
    * @param {Array} data data to create the collection for
    * @return {Object} Collection mapping row id to index in the array
    */
-  _updateEnsemblToArrayIndex(data) {
+  static _updateEnsemblToArrayIndex(data) {
     const ensemblToArrayIndex = {};
     // Iterate over all entries in the data and create the index
-    for (const rowIndex in data) {
-      ensemblToArrayIndex[data[rowIndex].EnsemblID] = parseInt(rowIndex, 10);
-    }
+    data.forEach((row, index) => {
+      ensemblToArrayIndex[row.EnsemblID] = parseInt(index, 10);
+    });
 
     return ensemblToArrayIndex;
   }
@@ -113,18 +113,21 @@ class Dataset {
   }
 
   /**
-   * 
+   * Get the dataset based on an external dataset
    * @param {Dataset} externalDataset
+   * @return {array} filtered Data array
    */
   getDataExternalFilter(externalDataset) {
     // Get the dataset
     const dataExternal = externalDataset.getData();
-    const filterExternal  = externalDataset.filtered;
+    const filterExternal = externalDataset.filtered;
     const dataExternalFiltered = [];
     // Iterate over all externalData, check if it is filtered and if so
     dataExternal.forEach((entry, index) => {
       // If it is not filtered, skip this iteration
-      if (filterExternal[index] === false) { return; }
+      if (filterExternal[index] === false) {
+        return;
+      }
       const id = entry.EnsemblID;
       // Get the value of this dataset
       dataExternalFiltered.push(this.getEntry(id));
@@ -148,7 +151,7 @@ class Dataset {
     for (const i in this.data) if (!this.filtered[i]) dataFiltered.push(this.data[i]);
 
     // Update element-ID to array index
-    this.ensemblToArrayIndex = this._updateEnsemblToArrayIndex(dataFiltered);
+    this.ensemblToArrayIndex = Dataset._updateEnsemblToArrayIndex(dataFiltered);
     this.dataFiltered = dataFiltered;
   }
 
@@ -162,34 +165,35 @@ class Dataset {
   setFilter(filter, debug = false) {
     const filterKeys = Object.keys(filter);
     if (debug) console.log(`Setfilter for ${this.name}`);
-    for (const i in this.data) {
+    this.data.forEach((row, rowIndex) => {
       // Init value with 'false' statement
-      this.filtered[i] = false;
-      for (const j in filterKeys) {
-        const filterKey = filterKeys[j];
+      this.filtered[rowIndex] = false;
+      filterKeys.forEach((filterKey) => {
         const dimName = filter[filterKey].name;
         // If data is undefined, filter it out!
-        if (isUndefined(this.data[i][dimName])) {
-          this.filtered[i] = true;
-          continue;
+        if (isUndefined(row[dimName])) {
+          this.filtered[rowIndex] = true;
+          // Exit the loop iteration
+          return;
         }
-        // Added a dirty check on FPKM value names. Every variable with `FPKM` in it will be classified as number
+        // Added a dirty check on FPKM value names.
+        // Every variable with `FPKM` in it will be classified as number
         if (DimensionTypes[dimName] === 'number' || /FPKM/i.test(dimName)) {
           // Process Numbers
           if (filter[filterKey].operator === '<') {
-            if (this.data[i][dimName] >= filter[filterKey].value) this.filtered[i] = true;
+            if (row[dimName] >= filter[filterKey].value) this.filtered[rowIndex] = true;
           } else if (filter[filterKey].operator === '>') {
-            if (this.data[i][dimName] <= filter[filterKey].value) this.filtered[i] = true;
+            if (row[dimName] <= filter[filterKey].value) this.filtered[rowIndex] = true;
           }
           // Not a number
         } else if (
-          typeof this.data[i][dimName] === 'undefined' ||
-          this.data[i][dimName].indexOf(filter[filterKey].value) === -1
+          typeof row[dimName] === 'undefined' ||
+          row[dimName].indexOf(filter[filterKey].value) === -1
         ) {
-          this.filtered[i] = true;
+          this.filtered[rowIndex] = true;
         }
-      }
-    }
+      });
+    });
     // Apply the filter to the data to be able to retrieve it fast
     // Set the flag that a new filter is applied, so when the data is queried next time
     // we have to update it. This may be saving some time when the data is not used
