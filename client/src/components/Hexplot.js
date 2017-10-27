@@ -20,7 +20,7 @@ import List, {
   ListItemText,
   ListSubheader,
 } from 'material-ui/List';
-import { applyTransformationArray } from './TransformationHelper';
+import { applyTransformationArrays } from './TransformationHelper';
 import Scatterplot from './Scatterplot';
 import { objectValueToArray, isUndefined } from './Helper';
 
@@ -171,7 +171,7 @@ class Hexplot extends Scatterplot {
   getOptionsPane() {
     return (
       <div
-        ref={(node) => {
+        ref={node => {
           this.optionIconRef = node;
         }}
       >
@@ -347,18 +347,23 @@ class Hexplot extends Scatterplot {
     this.setMargin();
     // Get the whole data set even if it was filtered
     const data = this.props.rnaSeqData.getData(!this.props.zoom);
-    // const data = this.props.rnaSeqData.getData(true);
     // Get the filter for the data set, which is a boolean array
-    const filter = this.props.rnaSeqData.filtered;
+    // const filter = this.props.rnaSeqData.filtered;
     // setScale requires an array of numeric values for each dimension
     // therefore we have to convert it
-    let xArray = objectValueToArray(data, this.props.xName);
-    let yArray = objectValueToArray(data, this.props.yName);
+    const xArrayRaw = objectValueToArray(data, this.props.xName);
+    const yArrayRaw = objectValueToArray(data, this.props.yName);
+    // Apply transformations
+    const { xArray, yArray } = applyTransformationArrays(
+      xArrayRaw,
+      yArrayRaw,
+      this.props.xTransformation,
+      this.props.yTransformation,
+      true,
+    );
+
     // Get count of x and y array
     const dataCount = xArray.length === yArray.length ? xArray.length : 'data count mismatch';
-    // Apply transformations
-    xArray = applyTransformationArray(xArray, this.props.xTransformation);
-    yArray = applyTransformationArray(yArray, this.props.yTransformation);
     // yArray = yArray.map((elem) => elem < 0 ? Math.sqrt(elem * -1) * -1 : Math.sqrt(elem));
     this.setScale(xArray, yArray);
 
@@ -385,44 +390,43 @@ class Hexplot extends Scatterplot {
       (this.state.renderDotsOnZoom && this.props.zoom && this.props.filter.doesFilter())
     ) {
       if (this.state.selectionRectangle.boundsSet) {
-        dots = this.renderDots(
-          1,
-          xArray,
-          yArray,
-          filter,
-          this.state.selectionRectangle.bounds,
-          data,
-        );
+        dots = this.renderDots(2, xArray, yArray, [], this.state.selectionRectangle.bounds, data);
       } else {
-        dots = this.renderDots(1, xArray, yArray, filter, undefined, data);
+        dots = this.renderDots(2, xArray, yArray, [], undefined, data);
       }
     } else if (this.props.showFilteredGenesAsDots && this.props.filter.doesFilter()) {
       // We have to get the primary data set to get the filter from there
       // Get the filtered data
       const dataFiltered = this.props.rnaSeqData.getDataExternalFilter(this.props.primaryDataset);
       // Get x and y array
-      let xArrayFiltered = objectValueToArray(dataFiltered, this.props.xName);
-      let yArrayFiltered = objectValueToArray(dataFiltered, this.props.yName);
+      let xArrayFilteredRaw = objectValueToArray(dataFiltered, this.props.xName);
+      let yArrayFilteredRaw = objectValueToArray(dataFiltered, this.props.yName);
       // Apply transformations
-      xArrayFiltered = applyTransformationArray(xArrayFiltered, this.props.xTransformation);
-      yArrayFiltered = applyTransformationArray(yArrayFiltered, this.props.yTransformation);
+      const { xArray: xArrayFiltered, yArray: yArrayFiltered, data: dataFilteredValid } = applyTransformationArrays(
+        xArrayFilteredRaw,
+        yArrayFilteredRaw,
+        this.props.xTransformation,
+        this.props.yTransformation,
+        true,
+        dataFiltered
+      );
       // Render dots using the filtered array
       filteredDots = this.renderDots(
-        1,
+        2,
         xArrayFiltered,
         yArrayFiltered,
-        filter,
+        [],
         this.state.selectionRectangle.bounds,
-        dataFiltered,
+        dataFilteredValid,
       );
     }
     // Rename the labels based on the transformation
     const axisLabelPattern = (transformation, name) =>
       // If linear, use name, else use transformation(name)
       // If `this.props.axisValues` is set to untransformed, also use name
-      (transformation !== 'linear' && this.props.axisValues !== 'untransformed'
+      transformation !== 'linear' && this.props.axisValues !== 'untransformed'
         ? `${transformation}(${name})`
-        : name);
+        : name;
     const axisLabels = this.renderAxisLabels(
       axisLabelPattern(this.props.xTransformation, this.props.xName),
       axisLabelPattern(this.props.yTransformation, this.props.yName),

@@ -118,16 +118,11 @@ class Dataset {
    * @return {array} filtered Data array
    */
   getDataExternalFilter(externalDataset) {
-    // Get the dataset
+    // Get the filtered dataset
     const dataExternal = externalDataset.getData();
-    const filterExternal = externalDataset.filtered;
     const dataExternalFiltered = [];
     // Iterate over all externalData, check if it is filtered and if so
     dataExternal.forEach((entry, index) => {
-      // If it is not filtered, skip this iteration
-      if (filterExternal[index] === false) {
-        return;
-      }
       const id = entry.EnsemblID;
       // Get the value of this dataset
       dataExternalFiltered.push(this.getEntry(id));
