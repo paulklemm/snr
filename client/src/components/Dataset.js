@@ -64,8 +64,8 @@ class Dataset {
    * Gives O(1) access to data entry or row based on EnsemblID
    *
    * @param {String} id EnsemblID of data row
-   * @param {String} dimension Entry of row to return
-   * @return {Object} Entry
+   * @param {String} dimension Entry of row to return. If undefined, return the whole row
+   * @return {Object} Entry if dimension is defined, row if dimension is undefined
    */
   getEntry(id, dimension) {
     // Get index data array position
@@ -110,6 +110,26 @@ class Dataset {
     // Since the dataFiltered is data when there is no filter applied, we can
     // return based on the wholeData variable
     return wholeData ? this.data : this.dataFiltered;
+  }
+
+  /**
+   * 
+   * @param {Dataset} externalDataset
+   */
+  getDataExternalFilter(externalDataset) {
+    // Get the dataset
+    const dataExternal = externalDataset.getData();
+    const filterExternal  = externalDataset.filtered;
+    const dataExternalFiltered = [];
+    // Iterate over all externalData, check if it is filtered and if so
+    dataExternal.forEach((entry, index) => {
+      // If it is not filtered, skip this iteration
+      if (filterExternal[index] === false) { return; }
+      const id = entry.EnsemblID;
+      // Get the value of this dataset
+      dataExternalFiltered.push(this.getEntry(id));
+    });
+    return dataExternalFiltered;
   }
 
   /**

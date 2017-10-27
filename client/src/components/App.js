@@ -99,6 +99,7 @@ class App extends React.Component {
       axisValues: 'untransformed', // Can be 'both', 'transformed' or 'untransformed'
       zoom: true, // Zoom on filtering in the plots
       zoomSmallMultiples: false, // Zoom on filtering in the small multiple plots
+      smallMultiplesShowFilteredGenesAsDots: true, // Show filtered genes as dots for small multiples
       highlight: new Highlight('EnsemblID', this.forceUpdateApp),
       viewMode: 'overview', // Steer the view mode of the main app
       toggleUpdate: true, // Dummy variable used for toggling an update in main app
@@ -638,6 +639,8 @@ class App extends React.Component {
               axisValues={this.state.axisValues}
               setAxisValues={this.setAxisValues}
               setPrimaryDataset={this.setPrimaryDataset}
+              showFilteredGenesAsDots={this.state.smallMultiplesShowFilteredGenesAsDots}
+              primaryDataset={this.state.primaryDataset}
             />
           </Grid>,
         );
@@ -688,6 +691,7 @@ class App extends React.Component {
               axisValues={this.state.axisValues}
               setAxisValues={this.setAxisValues}
               setPrimaryDataset={this.setPrimaryDataset}
+              showFilteredGenesAsDots={this.state.smallMultiplesShowFilteredGenesAsDots}
             />
           </Grid>
           {/* Small multiples */}

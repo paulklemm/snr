@@ -379,6 +379,7 @@ class Hexplot extends Scatterplot {
 
     const axes = this.renderAxes();
     let dots = [];
+    let filteredDots = [];
     if (
       this.state.renderDots ||
       (this.state.renderDotsOnZoom && this.props.zoom && this.props.filter.doesFilter())
@@ -395,6 +396,25 @@ class Hexplot extends Scatterplot {
       } else {
         dots = this.renderDots(1, xArray, yArray, filter, undefined, data);
       }
+    } else if (this.props.showFilteredGenesAsDots && this.props.filter.doesFilter()) {
+      // We have to get the primary data set to get the filter from there
+      // Get the filtered data
+      const dataFiltered = this.props.rnaSeqData.getDataExternalFilter(this.props.primaryDataset);
+      // Get x and y array
+      let xArrayFiltered = objectValueToArray(dataFiltered, this.props.xName);
+      let yArrayFiltered = objectValueToArray(dataFiltered, this.props.yName);
+      // Apply transformations
+      xArrayFiltered = applyTransformationArray(xArrayFiltered, this.props.xTransformation);
+      yArrayFiltered = applyTransformationArray(yArrayFiltered, this.props.yTransformation);
+      // Render dots using the filtered array
+      filteredDots = this.renderDots(
+        1,
+        xArrayFiltered,
+        yArrayFiltered,
+        filter,
+        this.state.selectionRectangle.bounds,
+        dataFiltered,
+      );
     }
     // Rename the labels based on the transformation
     const axisLabelPattern = (transformation, name) =>
@@ -465,6 +485,7 @@ class Hexplot extends Scatterplot {
               <g transform={`translate(${this.margin.left},${this.margin.top})`}>
                 {hexagons}
                 {dots}
+                {filteredDots}
                 {axes}
                 {axisLabels}
                 {highlightObj}
