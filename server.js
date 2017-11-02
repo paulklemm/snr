@@ -233,7 +233,8 @@ app.get('/api/echo', (req, res) => {
 app.get('/api/getdataset', async (req, res) => {
   const result = await userManager.tokenApiFunction('getdataset', req, async (req) => {
     const { name, user, ispublic } = req.query;
-    const datasets = ispublic ? sessions.getSession('quickngs') : sessions.getSession(user);
+    // ispublic will be interpreted as string, therfore we have to perform a string boolean check
+    const datasets = ispublic === 'true' ? sessions.getSession('quickngs') : sessions.getSession(user);
     // Load the data set using OpenCPU
     dataset = await openCPU.runRCommand(
       'sonaR',
