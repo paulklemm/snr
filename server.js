@@ -234,7 +234,8 @@ app.get('/api/getdataset', async (req, res) => {
   const result = await userManager.tokenApiFunction('getdataset', req, async (req) => {
     const { name, user, ispublic } = req.query;
     // ispublic will be interpreted as string, therfore we have to perform a string boolean check
-    const datasets = ispublic === 'true' ? sessions.getSession('quickngs') : sessions.getSession(user);
+    const datasets =
+      ispublic === 'true' ? sessions.getSession('quickngs') : sessions.getSession(user);
     // Load the data set using OpenCPU
     dataset = await openCPU.runRCommand(
       'sonaR',
@@ -363,8 +364,12 @@ async function loadData(user) {
 app.get('/api/loadpublicdata', async (req, res) => {
   // TokenAPIFunction returns a result object for authentication failure
   const result = await userManager.tokenApiFunction('loadpublicdata', req, async (req) => {
-    timeStampLog('Load public data');
-    const filenames = await loadData('quickngs');
+    timeStampLog('Load public data filenames');
+    let filenames = await openCPU.runRCommand('sonaR', 'get_public_filenames', {}, 'json', [
+      '.val',
+    ]);
+    filenames = filenames['.val'];
+    // const filenames = await loadData('quickngs');
     // Return result response in case of success
     return { name: 'loadpublicdata', success: true, filenames };
   });
