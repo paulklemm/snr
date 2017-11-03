@@ -291,8 +291,6 @@ app.get('/api/getpcaloadings', async (req, res) => {
     const { user, ensembldataset, ensemblversion } = req.query;
     // Check the user session and reload if required
     await checkUserSession(user);
-    // Check user session for quickngs
-    await checkUserSession('quickngs');
     // Get the GO summary from OpenCPU
     timeStampLog(
       `Get PCA loadings for: \n  user: ${user}\n  ensembl dataset: '${ensembldataset}'\n  ensembl version: '${ensemblversion}'`,
@@ -370,7 +368,6 @@ app.get('/api/loadpublicdata', async (req, res) => {
       '.val',
     ]);
     filenames = filenames['.val'];
-    // const filenames = await loadData('quickngs');
     // Return result response in case of success
     return { name: 'loadpublicdata', success: true, filenames };
   });
