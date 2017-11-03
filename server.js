@@ -297,22 +297,12 @@ app.get('/api/getpcaloadings', async (req, res) => {
     timeStampLog(
       `Get PCA loadings for: \n  user: ${user}\n  ensembl dataset: '${ensembldataset}'\n  ensembl version: '${ensemblversion}'`,
     );
-    // Concatinate the user's dataset as well as the quickngs dataset
-    const concat = await openCPU.runRCommand(
-      'sonaR',
-      'concat_two',
-      {
-        x: sessions.getSession(user),
-        y: sessions.getSession('quickngs'),
-      },
-      'json',
-      ['sessionID'],
-    );
+    // Concatiante public files with user data and get PCA-loadings from it
     const loadings = await openCPU.runRCommand(
       'sonaR',
-      'get_pca_loadings',
+      'get_pca_loadings_with_public_data',
       {
-        x: concat.sessionID,
+        x: sessions.getSession(user),
         ensembl_dataset: `'${ensembldataset}'`,
         ensembl_version: `'${ensemblversion}'`,
       },
