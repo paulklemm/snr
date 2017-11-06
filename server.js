@@ -396,23 +396,38 @@ app.get('/api/loaddata', async (req, res) => {
  */
 app.get('/api/getmetadata', async (req, res) => {
   const result = await userManager.tokenApiFunction('loadmetadata', req, async (req) => {
-    const { name, user } = req.query;
-    timeStampLog(`Received metadata query for file ${name}`);
-    timeStampLog(`filename: ${name}, data_folder: '${userManager.getUserSettings(user).path}'`);
+    const { name, user, ispublic } = req.query;
+    timeStampLog(
+      `Received metadata query for filename: ${name}, data_folder: '${userManager.getUserSettings(
+        user,
+      ).path}', ispublic: ${ispublic}`,
+    );
     // Load meta data through OpenCPU
     let metadata;
-    try {
+    if (ispublic === 'true') {
       metadata = await openCPU.runRCommand(
         'sonaR',
-        'get_metadata',
+        'get_metadata_public',
         {
           filename: `'${name}'`,
-          data_folder: `'${userManager.getUserSettings(user).path}'`,
         },
         'json',
       );
-    } catch (e) {
-      return { name: 'loadmetadata', success: false, reason: e };
+    } else {
+      // Fetch non-public files
+      try {
+        metadata = await openCPU.runRCommand(
+          'sonaR',
+          'get_metadata',
+          {
+            filename: `'${name}'`,
+            data_folder: `'${userManager.getUserSettings(user).path}'`,
+          },
+          'json',
+        );
+      } catch (e) {
+        return { name: 'loadmetadata', success: false, reason: e };
+      }
     }
 
     return {

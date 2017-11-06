@@ -154,10 +154,11 @@ class NodeBridge {
    * Get metadata for dataset
    *
    * @param {String} name Dataset to load
+   * @param {boolean} isPublic Dataset is public
    * @return {Object} Response
    */
-  getMetadata(name) {
-    return this._fetchWithUserAndToken(`api/getmetadata?name=${name}`);
+  getMetadata(name, isPublic) {
+    return this._fetchWithUserAndToken(`api/getmetadata?name=${name}&ispublic=${isPublic}`);
   }
 
   /**

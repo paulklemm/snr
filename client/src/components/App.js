@@ -216,10 +216,10 @@ class App extends React.Component {
   }
 
   getMetadataPromise(name) {
-    if (isUndefined(this.promises.name)) {
-      this.promises.name = this.getMetadata(name);
+    if (isUndefined(this.promises[name])) {
+      this.promises[name] = this.getMetadata(name);
     }
-    return this.promises.name;
+    return this.promises[name];
   }
 
   /**
@@ -234,7 +234,9 @@ class App extends React.Component {
       return metadataHub;
     }
     // When not defined, retrieve it from the server
-    const metadataResponse = await this.nodeBridge.getMetadata(name);
+    // We need to know if the file is public or private
+    const isPublic = this.datasetHub.datasets[name].isPublic;
+    const metadataResponse = await this.nodeBridge.getMetadata(name, isPublic);
     // Handle errors
     if (!metadataResponse.success) {
       metadataResponse.metadata = { Error: [`Cannot derive data for ${name}`] };
