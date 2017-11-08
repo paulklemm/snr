@@ -122,6 +122,21 @@ class DatasetHub {
   }
 
   /**
+   * Get number of private datasets
+   * @return {integer} Private dataset count
+   */
+  getCountPrivateDatasets() {
+    let count = 0;
+    const datasetNames = Object.keys(this.datasets);
+    datasetNames.forEach((name) => {
+      if (!this.datasets[name].isPublic) {
+        count += 1;
+      }
+    });
+    return count;
+  }
+
+  /**
    * Give default icon to dataset based on the total dataset count
    * @param {string} name Name of dataset to set icon for
    */
@@ -132,7 +147,7 @@ class DatasetHub {
       return;
     }
     const datasetIconNames = Object.keys(DatasetIcons);
-    let datasetCount = Object.keys(this.datasets).length;
+    let datasetCount = this.getCountPrivateDatasets();
     // Decrement datasetCount by 1 if it is not 0
     datasetCount = datasetCount === 0 ? datasetCount : datasetCount - 1;
     this.setDatasetIcon(name, datasetIconNames[datasetCount]);

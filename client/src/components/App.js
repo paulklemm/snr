@@ -317,6 +317,7 @@ class App extends React.Component {
    */
   async getPCA() {
     const loadings = await this.nodeBridge.getPcaLoadings('mmusculus_gene_ensembl', 'current');
+    console.log(loadings);
     this.setState({
       pca: loadings.loadings['.val'],
     });
