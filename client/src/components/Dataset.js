@@ -125,7 +125,12 @@ class Dataset {
     dataExternal.forEach((entry, index) => {
       const id = entry.EnsemblID;
       // Get the value of this dataset
-      dataExternalFiltered.push(this.getEntry(id));
+      const thisEntry = this.getEntry(id);
+      // Only push the entry if it is defined
+      // Undefined can happen when the sets if Ensembl IDs are not 100% overlapping between the data
+      if (!isUndefined(thisEntry)) {
+        dataExternalFiltered.push(thisEntry);
+      }
     });
     return dataExternalFiltered;
   }
