@@ -460,11 +460,11 @@ class Scatterplot extends React.Component {
 
 Scatterplot.propTypes = {
   responsiveWidth: PropTypes.bool,
-  responsiveHeight: PropTypes.bool.isRequired,
-  xLabel: PropTypes.string.isRequired,
-  yLabel: PropTypes.string.isRequired,
-  x: PropTypes.array.isRequired,
-  y: PropTypes.array.isRequired,
+  responsiveHeight: PropTypes.bool,
+  xLabel: PropTypes.string,
+  yLabel: PropTypes.string,
+  x: PropTypes.array,
+  y: PropTypes.array,
 };
 
 export default Scatterplot;
