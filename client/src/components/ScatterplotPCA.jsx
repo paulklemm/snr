@@ -73,7 +73,6 @@ class ScatterplotPCA extends Scatterplot {
           icons.push(icon);
         } catch (error) {
           icons.push('archive');
-          console.log(`${item._row} not yet defined`);
         }
       }
     });
