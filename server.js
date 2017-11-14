@@ -284,6 +284,30 @@ app.get('/api/getgosummary', async (req, res) => {
 });
 
 /**
+ * Get Biomart Variables
+ */
+app.get('/api/getbiomartvariables', async (req, res) => {
+  const result = await userManager.tokenApiFunction('getbiomartvariables', req, async (req) => {
+    const { ensembldataset, ensemblversion } = req.query;
+    // Get biomart variables
+    timeStampLog(
+      `Get biomart variables for: \n \ \ ensembl dataset '${ensembldataset}'\n \ \ ensembl version: '${ensemblversion}'`,
+    );
+    biomartVariables = await openCPU.runRCommand(
+      'sonaR',
+      'get_biomart_variables',
+      {
+        ensembl_dataset: `'${ensembldataset}'`,
+        ensembl_version: `'${ensemblversion}'`,
+      },
+      'json',
+    );
+    return { name: 'getbiomartvariables', success: true, biomartVariables };
+  });
+  res.json(result);
+});
+
+/**
  * Get PCA-loadings
  */
 app.get('/api/getpcaloadings', async (req, res) => {

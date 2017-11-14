@@ -332,6 +332,7 @@ class App extends React.Component {
 
     // PCA Plot
     this.getPCA();
+    this.getBiomartVariables();
 
     // Get GO-Term description
     // TODO: This "current" thing needs to go away, because this will change!
@@ -347,6 +348,23 @@ class App extends React.Component {
     // Load private and public data into the system
     this.loadData(true);
     this.loadData(false);
+  }
+
+  /**
+   * Get Biomart variables from server and store them in the dataset hub
+   */
+  async getBiomartVariables() {
+    const biomartVariablesResponse = await this.nodeBridge.getBiomartVariables(
+      'mmusculus_gene_ensembl',
+      'current',
+    );
+    const biomartVariables = biomartVariablesResponse.success
+      ? biomartVariablesResponse.biomartVariables['.val']
+      : ['Could not retreive from server'];
+    this.datasetHub.setBiomartVariables(biomartVariables);
+    console.log('Biomart variables');
+    console.log(biomartVariablesResponse);
+    console.log(this.datasetHub.getBiomartVariables());
   }
 
   /**

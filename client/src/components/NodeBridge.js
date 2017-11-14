@@ -175,6 +175,19 @@ class NodeBridge {
   }
 
   /**
+   * Get available biomart variables from the server
+   * If ensemblDataset or ensemblVersion are undefined, defaults from `R` package will be used.
+   * @param {String} ensemblDataset Biomart dataset
+   * @param {String} ensemblVersion Ensembl version ('release')
+   * @return {Object} Server response
+   */
+  getBiomartVariables(ensemblDataset, ensemblVersion) {
+    return this._fetchWithUserAndToken(
+      `api/getbiomartvariables?ensembldataset=${ensemblDataset}&ensemblversion=${ensemblVersion}`,
+    );
+  }
+
+  /**
    * Get GO-ids per gene
    * If ensemblDataset or ensemblVersion are undefined, defaults from `R` package will be used.
    * @param {String} ensemblDataset Biomart dataset

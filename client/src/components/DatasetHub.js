@@ -11,10 +11,28 @@ class DatasetHub {
     this.broadcastFilter = this.broadcastFilter.bind(this);
     this.getDatasetIcon = this.getDatasetIcon.bind(this);
     this.metadata = {};
+    this.biomartVariables = [];
     // Init filter object and inject broadcastFilter function
     this.filter = new Filter(this.broadcastFilter);
     // filterTriggered function from App.js
     this.filterBroadcasted = filterBroadcasted;
+  }
+
+  /**
+   * Set list of available biomart variables
+   * 
+   * @param {array} biomartVariables Biomart variables
+   */
+  setBiomartVariables(biomartVariables) {
+    this.biomartVariables = biomartVariables;
+  }
+
+  /**
+   * Get available biomart variablres
+   * @return {array} biomart variables
+   */
+  getBiomartVariables() {
+    return this.biomartVariables;
   }
 
   /**
