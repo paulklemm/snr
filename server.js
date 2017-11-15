@@ -232,16 +232,23 @@ app.get('/api/echo', (req, res) => {
  */
 app.get('/api/getdataset', async (req, res) => {
   const result = await userManager.tokenApiFunction('getdataset', req, async (req) => {
-    const { name, user, ispublic } = req.query;
+    const { name, user, ispublic, biomartvariables } = req.query;
     // Initialize dataset empty
     let dataset;
+    timeStampLog(
+      `Load data ${name} for ${user} (public = ${ispublic}), biomartVariables = ${biomartvariables.toString()}`,
+    );
     // ispublic will be interpreted as string, therfore we have to perform a string boolean check
     if (ispublic === 'false') {
       // Process as private dataset
       dataset = await openCPU.runRCommand(
         'sonaR',
         'get_dataset',
-        { datasets: sessions.getSession(user), name: `'${name}'` },
+        {
+          datasets: sessions.getSession(user),
+          name: `'${name}'`,
+          biomartVariables: biomartvariables,
+        },
         'json',
       );
     } else {
@@ -250,7 +257,7 @@ app.get('/api/getdataset', async (req, res) => {
       dataset = await openCPU.runRCommand(
         'sonaR',
         'get_dataset_public',
-        { name: `'${name}'` },
+        { name: `'${name}'`, biomartVariables: biomartvariables },
         'json',
       );
     }

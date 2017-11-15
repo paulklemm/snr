@@ -143,11 +143,16 @@ class NodeBridge {
    * Get dataset
    *
    * @param {String} name Dataset to load
+   * @param {array} biomartVariables Biomart variables to attach to dataset
    * @param {boolean} isPublic Dataset is public
    * @return {Object} Response
    */
-  getDataset(name, isPublic = false) {
-    return this._fetchWithUserAndToken(`api/getdataset?name=${name}&ispublic=${isPublic}`);
+  getDataset(name, biomartVariables, isPublic = false) {
+    return this._fetchWithUserAndToken(
+      `api/getdataset?name=${name}&ispublic=${isPublic}&biomartvariables=${JSON.stringify(
+        biomartVariables,
+      )}`,
+    );
   }
 
   /**

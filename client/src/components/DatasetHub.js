@@ -64,6 +64,22 @@ class DatasetHub {
   }
 
   /**
+   * Get array of selected Biomart variables
+   * @return {array} Selected Biomart variables
+   */
+  getBiomartVariablesSelected() {
+    const selectedBiomartVariables = [];
+    const biomartVariables = Object.keys(this.biomartVariables);
+    // Iterate over all variables and attach them to selected array if selected status is true
+    biomartVariables.forEach((biomartVar) => {
+      if (this.biomartVariables[biomartVar]) {
+        selectedBiomartVariables.push(biomartVar);
+      }
+    });
+    return selectedBiomartVariables;
+  }
+
+  /**
    * Get metadata for dataset
    * @param {string} name Dataset name
    * @return {array} Metadata array

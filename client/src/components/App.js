@@ -536,6 +536,7 @@ class App extends React.Component {
     // Load dataset
     const response = await this.nodeBridge.getDataset(
       name,
+      this.datasetHub.getBiomartVariablesSelected(),
       this.datasetHub.datasets[name].isPublic,
     );
     this.datasetHub.setData(
