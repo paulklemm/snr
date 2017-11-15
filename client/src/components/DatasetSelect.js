@@ -8,6 +8,7 @@ import { Icon } from 'react-fa';
 import Loading from './Loading';
 import IconSelect from './IconSelect';
 import DatasetInfo from './DatasetInfo';
+import BiomartVariablePicker from './BiomartVariablePicker';
 
 const styleSheet = {
   primaryDatasetIcon: {
@@ -110,6 +111,13 @@ class DatasetSelect extends React.Component {
     const checkboxesPublic = this.getCheckboxes('public');
     return (
       <div>
+        <Typography type="headline" gutterBottom>
+          Biomart Variables
+        </Typography>
+        <BiomartVariablePicker
+          biomartVariables={this.props.datasetHub.getBiomartVariables()}
+          setBiomartVariableSelection={this.props.datasetHub.setBiomartVariableSelection}
+        />
         <Typography type="headline" gutterBottom>
           My Datasets
         </Typography>

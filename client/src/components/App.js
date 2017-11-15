@@ -62,6 +62,7 @@ class App extends React.Component {
     this.toggleRightDrawer = this.toggleRightDrawer.bind(this);
     this.setTransformation = this.setTransformation.bind(this);
     this.setAxisValues = this.setAxisValues.bind(this);
+    this.setBiomartVariables = this.setBiomartVariables.bind(this);
     this.setZoom = this.setZoom.bind(this);
     this.setZoomSmallMultiples = this.setZoomSmallMultiples.bind(this);
     this.login = this.login.bind(this);
@@ -70,7 +71,7 @@ class App extends React.Component {
     this.getMetadataPromise = this.getMetadataPromise.bind(this);
     this.setPrimaryDataset = this.setPrimaryDataset.bind(this);
     // Init datasethub and inject filterTriggered function
-    this.datasetHub = new DatasetHub(this.filterBroadcasted);
+    this.datasetHub = new DatasetHub(this.filterBroadcasted, this.setBiomartVariables);
     this.debug = false;
     this.layoutFactory = new LayoutFactory(16);
     // Init NodeBridge and inject busystate functions
@@ -97,6 +98,7 @@ class App extends React.Component {
       xTransformation: '-log10', // Default transformation on x axis
       yTransformation: 'linear', // Default transformation on y axis
       axisValues: 'untransformed', // Can be 'both', 'transformed' or 'untransformed'
+      biomartVariables: {}, // Biomart variables maintained by DatasetHub
       zoom: true, // Zoom on filtering in the plots
       zoomSmallMultiples: false, // Zoom on filtering in the small multiple plots
       smallMultiplesShowFilteredGenesAsDots: true, // Show filtered genes as dots for small multiples
@@ -104,6 +106,15 @@ class App extends React.Component {
       viewMode: 'overview', // Steer the view mode of the main app
       toggleUpdate: true, // Dummy variable used for toggling an update in main app
     };
+  }
+
+  /**
+   * Set biomartVariables state function. Is maintained by DatasetHub function
+   * 
+   * @param {object} biomartVariables Dictionary linking biomart variables to selection state
+   */
+  setBiomartVariables(biomartVariables) {
+    this.setState(biomartVariables);
   }
 
   /**
@@ -362,9 +373,6 @@ class App extends React.Component {
       ? biomartVariablesResponse.biomartVariables['.val']
       : ['Could not retreive from server'];
     this.datasetHub.setBiomartVariables(biomartVariables);
-    console.log('Biomart variables');
-    console.log(biomartVariablesResponse);
-    console.log(this.datasetHub.getBiomartVariables());
   }
 
   /**

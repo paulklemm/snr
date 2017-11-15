@@ -3,19 +3,23 @@ import DatasetIcons from './DatasetIcons';
 import { isUndefined } from './Helper';
 
 class DatasetHub {
-  constructor(filterBroadcasted) {
+  constructor(filterBroadcasted, stateSetBiomartVariables) {
     this.datasets = {};
     this.names = [];
     this.enabled = {};
     this.loading = {};
     this.broadcastFilter = this.broadcastFilter.bind(this);
     this.getDatasetIcon = this.getDatasetIcon.bind(this);
+    this.setBiomartVariableSelection = this.setBiomartVariableSelection.bind(this);
     this.metadata = {};
-    this.biomartVariables = [];
+    // Biomart variables as key and selection status as value
+    this.biomartVariables = {};
     // Init filter object and inject broadcastFilter function
     this.filter = new Filter(this.broadcastFilter);
     // filterTriggered function from App.js
     this.filterBroadcasted = filterBroadcasted;
+    // setBiomartVaribales from App.js
+    this.stateSetBiomartVariables = stateSetBiomartVariables;
   }
 
   /**
@@ -24,7 +28,30 @@ class DatasetHub {
    * @param {array} biomartVariables Biomart variables
    */
   setBiomartVariables(biomartVariables) {
-    this.biomartVariables = biomartVariables;
+    const initValues = ['ensembl_gene_id', 'start_position', 'end_position'];
+    // Init empty biomartVariables object
+    this.biomartVariables = {};
+    // Initialize all biomart variables
+    biomartVariables.forEach((variable) => {
+      this.biomartVariables[variable] = initValues.indexOf(variable) !== -1;
+    });
+    // Update App.js state
+    this.stateSetBiomartVariables(this.biomartVariables)
+  }
+
+  /**
+   * Set selection status of biomart variable
+   * 
+   * @param {string} biomartVariable Biomart variable
+   * @param {boolean} selectStatus Selection status
+   */
+  setBiomartVariableSelection(biomartVariable, selectStatus) {
+    this.biomartVariables[biomartVariable] = selectStatus;
+    // Update App.js state
+    this.stateSetBiomartVariables(this.biomartVariables)
+    console.log(
+      `Set select status of ${biomartVariable} to ${this.biomartVariables[biomartVariable]}`,
+    );
   }
 
   /**
@@ -32,6 +59,7 @@ class DatasetHub {
    * @return {array} biomart variables
    */
   getBiomartVariables() {
+    // return Object.keys(this.biomartVariables);
     return this.biomartVariables;
   }
 
