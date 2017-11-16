@@ -3,17 +3,18 @@
 <!-- TOC -->
 
 - [Sonar Readme](#sonar-readme)
-	- [Project Roadmap](#project-roadmap)
-		- [ToDo](#todo)
-			- [Not in sprints](#not-in-sprints)
-	- [Structure of Data and OpenCPU Sessions](#structure-of-data-and-opencpu-sessions)
-	- [Data Layout & Metadata](#data-layout--metadata)
-	- [Node Server](#node-server)
-	- [Implementation Examples](#implementation-examples)
-		- [Pass an Array to `R`](#pass-an-array-to-r)
-		- [Rendering Graphics from `R` in `Sonar`](#rendering-graphics-from-r-in-sonar)
-		- [Rendering `Sonar` Components](#rendering-sonar-components)
-	- [Security](#security)
+  - [Project Roadmap](#project-roadmap)
+    - [ToDo](#todo)
+      - [Not in sprints](#not-in-sprints)
+  - [Structure of Data and OpenCPU Sessions](#structure-of-data-and-opencpu-sessions)
+  - [Data Layout & Metadata](#data-layout--metadata)
+  - [Node Server](#node-server)
+  - [Implementation Examples](#implementation-examples)
+    - [Pass an Array to `R`](#pass-an-array-to-r)
+    - [Rendering Graphics from `R` in `Sonar`](#rendering-graphics-from-r-in-sonar)
+    - [Rendering `Sonar` Components](#rendering-sonar-components)
+  - [Security](#security)
+    - [Generate User file](#generate-user-file)
 
 <!-- /TOC -->
 
@@ -172,7 +173,7 @@ Include the image in HTML using
 
 ## Security
 
-The `serversettings_json` file contains the path to the users file. A user file must contain `path` and `passwd` keys as follows.
+The `server_settings.json` file contains the path to the users file. A user file must contain `path` and `passwd` keys as follows.
 
 ```json
 {
@@ -186,3 +187,7 @@ On login, the password from the client side will be transmitted in clear text ([
 The server then compares the password against the hash stored in the users configuration file using `bcrypt`. If they match, a token is generated and returned to the client. The client stores the token in the HTML `localStorage`. In order to successfully run commands on the server, the client needs to transfer the token with every command. The server then checks if the tokens match up in the users configuration file and performs the command if it matches.
 
 There is a maximum number of allowed tokens per user, which is per default set to `3`.
+
+### Generate User file
+
+The server's API allows the create a user file by specifying path and password by calling: `http://<url_to_server>:<port>/api/makeuserfilejson?pw=mypassword&path=/home/opencpu/sonar/data`. You can use the response to create or edit the user files.

@@ -162,6 +162,15 @@ app.get('/api/isonline', (req, res) => {
 });
 
 /**
+ * Get hashed password
+ */
+app.get('/api/makeuserfilejson', (req, res) => {
+  // Destructure required commands in query
+  const { pw, path } = req.query;
+  res.json({ path, passwd: userManager.getHash(pw, 10) });
+});
+
+/**
  * Request R function to be executed on OpenCPU server
  */
 app.get('/api/runrcommand', async (req, res) => {
