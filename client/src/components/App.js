@@ -722,6 +722,7 @@ class App extends React.Component {
               setAxisValues={this.setAxisValues}
               setPrimaryDataset={this.setPrimaryDataset}
               showFilteredGenesAsDots={this.state.smallMultiplesShowFilteredGenesAsDots}
+              primaryDataset={this.state.primaryDataset}
             />
           </Grid>
           {/* Small multiples */}
