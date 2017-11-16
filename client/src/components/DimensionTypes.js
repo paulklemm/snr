@@ -19,6 +19,18 @@ export const DimensionTypes = {
   lfcSE: 'number',
   stat: 'number',
   pValueAdj: 'number',
+  ensembl_gene_id: 'string',
+  description: 'string',
+  chromosome_name: 'number',
+  start_position: 'number',
+  end_position: 'number',
+  band: 'number',
+  external_gene_name: 'string',
+  external_gene_source: 'string',
+  percentage_gene_gc_content: 'number',
+  gene_biotype: 'string',
+  source: 'string',
+  version: 'string',
 };
 
 export const DefaultFilterSetting = {
@@ -43,6 +55,17 @@ export const DefaultFilterSetting = {
   lfcSE: '<',
   stat: '<',
   pValueAdj: '<',
+  description: '=',
+  chromosome_name: '=',
+  start_position: '>',
+  end_position: '>',
+  band: '>',
+  external_gene_name: '=',
+  external_gene_source: '=',
+  percentage_gene_gc_content: '>',
+  gene_biotype: '=',
+  source: '=',
+  version: '=',
 };
 
 export default DimensionTypes;
