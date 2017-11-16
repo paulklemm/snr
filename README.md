@@ -15,6 +15,7 @@
     - [Rendering `Sonar` Components](#rendering-sonar-components)
   - [Security](#security)
     - [Generate User file](#generate-user-file)
+    - [Workflow for creating a new user](#workflow-for-creating-a-new-user)
 
 <!-- /TOC -->
 
@@ -191,3 +192,11 @@ There is a maximum number of allowed tokens per user, which is per default set t
 ### Generate User file
 
 The server's API allows the create a user file by specifying path and password by calling: `http://<url_to_server>:<port>/api/makeuserfilejson?pw=mypassword&path=/home/opencpu/sonar/data`. You can use the response to create or edit the user files.
+
+### Workflow for creating a new user
+
+1. Create a new folder for the user in the folder that is linked to the `docker` `R` back-end and add the data there
+1. Create a `dictionary.json` file in that folder (see [Structure of Data and OpenCPU Sessions](#structure-of-data-and-opencpu-sessions))
+1. Check `server_settings.json` file where the user configuration files are
+1. Go to this directory and save the output of `http://<url_to_server>:<port>/api/makeuserfilejson?pw=<user_password>&path=<path_to_data_on_r_back_end>` to `<username>.json`
+1. Log in to sonar with the new account
