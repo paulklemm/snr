@@ -30,7 +30,7 @@ class DatasetSelect extends React.Component {
       tooltip: '',
       biomartVariablePickerVisible: true,
       myDatasetsVisible: true,
-      publicDatasetsVisible: true,
+      publicDatasetsVisible: false,
     };
   }
 
@@ -120,6 +120,7 @@ class DatasetSelect extends React.Component {
       <BiomartVariablePicker
         biomartVariables={this.props.datasetHub.getBiomartVariables()}
         setBiomartVariableSelection={this.props.datasetHub.setBiomartVariableSelection}
+        redownloadData={this.props.redownloadData}
       />
     );
   }

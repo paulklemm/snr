@@ -71,6 +71,7 @@ class App extends React.Component {
     this.getMetadata = this.getMetadata.bind(this);
     this.getMetadataPromise = this.getMetadataPromise.bind(this);
     this.setPrimaryDataset = this.setPrimaryDataset.bind(this);
+    this.redownloadData = this.redownloadData.bind(this);
     // Init datasethub and inject filterTriggered function
     this.datasetHub = new DatasetHub(this.filterBroadcasted, this.setBiomartVariables);
     this.debug = false;
@@ -215,6 +216,11 @@ class App extends React.Component {
    */
   toggleEnabledDataset(name) {
     this.setEnableDataset(name, !this.datasetHub.isEnabled(name));
+  }
+
+  redownloadData() {
+    // TODO Implement
+    console.log('Redownload data');
   }
 
   /**
@@ -815,6 +821,7 @@ class App extends React.Component {
                 setPrimaryDataset={this.setPrimaryDataset}
                 primaryDataset={this.state.primaryDataset}
                 getMetadataPromise={this.getMetadataPromise}
+                redownloadData={this.redownloadData}
               />
             </div>
           </Drawer>

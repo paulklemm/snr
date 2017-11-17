@@ -2,6 +2,8 @@ import React from 'react';
 import List, { ListItem, ListItemSecondaryAction, ListItemText } from 'material-ui/List';
 import Checkbox from 'material-ui/Checkbox';
 import Paper from 'material-ui/Paper';
+import Button from 'material-ui/Button';
+import { Icon } from 'react-fa';
 import Loading from './Loading';
 
 class BiomartVariablePicker extends React.Component {
@@ -46,6 +48,14 @@ class BiomartVariablePicker extends React.Component {
     return (
       <Paper>
         <List>{listItems}</List>
+        <Button
+          style={{ marginLeft: '15px', marginBottom: '15px' }}
+          raised
+          onClick={this.props.redownloadData}
+        >
+          <Icon name="download" style={{ marginRight: '5px' }} />
+          Redownload Data
+        </Button>
       </Paper>
     );
   }
