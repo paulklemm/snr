@@ -763,7 +763,7 @@ class App extends React.Component {
           <Grid item xs={10}>
             <ScatterplotPCA
               width={200}
-              height={this.layoutFactory.heights.mainView}
+              height={this.layoutFactory.heights.appView}
               responsiveWidth
               pca={this.state.pca}
               datasetHub={this.datasetHub}

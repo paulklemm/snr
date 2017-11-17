@@ -14,6 +14,7 @@ class LayoutFactory {
     this.heights = {
       mainView: -1,
       smallMultiples: -1,
+      appView: -1,
     };
   }
 
@@ -41,6 +42,8 @@ class LayoutFactory {
       this.staticElementsHeights.header -
       this.staticElementsHeights.table -
       this.heigthPadding;
+    this.heights.appView =
+      this.windowHeight - this.staticElementsHeights.header - this.heigthPadding;
     const numTileRows = Math.ceil(this.smallMultiplesCount / 2);
     // Weirdly enough the height must be adjusted by a constant factor
     this.heights.smallMultiples =
