@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import Checkbox from 'material-ui/Checkbox';
 import List, { ListItem, ListItemText } from 'material-ui/List';
@@ -53,12 +54,13 @@ class DatasetSelect extends React.Component {
             // Add tooltip event
             const tooltip = [];
             const metadata = this.props.getMetadataPromise(datasetName);
+            const domNode = ReactDOM.findDOMNode(this);
             tooltip.push(
               <div
                 key={`tooltip datasetselect ${datasetName}`}
                 style={{
                   position: 'absolute',
-                  top: event.clientY + 15,
+                  top: event.clientY - domNode.getBoundingClientRect().top + 15,
                   marginLeft: 40,
                 }}
               >
