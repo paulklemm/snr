@@ -1,6 +1,7 @@
 import React from 'react';
 import List, { ListItem, ListItemSecondaryAction, ListItemText } from 'material-ui/List';
 import Checkbox from 'material-ui/Checkbox';
+import Paper from 'material-ui/Paper';
 import Loading from './Loading';
 
 class BiomartVariablePicker extends React.Component {
@@ -42,7 +43,11 @@ class BiomartVariablePicker extends React.Component {
         </ListItemSecondaryAction>
       </ListItem>
     ));
-    return <List>{listItems}</List>;
+    return (
+      <Paper>
+        <List>{listItems}</List>
+      </Paper>
+    );
   }
 
   render() {

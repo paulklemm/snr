@@ -26,6 +26,7 @@ class DatasetSelect extends React.Component {
     super();
     this.state = {
       tooltip: '',
+      biomartVariablePickerVisible: true,
     };
   }
 
@@ -106,18 +107,36 @@ class DatasetSelect extends React.Component {
     return datasetCheckboxes;
   }
 
+  /**
+   * Render Biomart variable picker component
+   */
+  renderBiomartVariablePicker() {
+    return (
+      <BiomartVariablePicker
+        biomartVariables={this.props.datasetHub.getBiomartVariables()}
+        setBiomartVariableSelection={this.props.datasetHub.setBiomartVariableSelection}
+      />
+    );
+  }
+
   render() {
     const checkboxesPrivate = this.getCheckboxes('private');
     const checkboxesPublic = this.getCheckboxes('public');
     return (
       <div>
-        <Typography type="headline" gutterBottom>
-          Biomart Variables
+        <Typography
+          onClick={() => {
+            this.setState({
+              biomartVariablePickerVisible: !this.state.biomartVariablePickerVisible,
+            });
+          }}
+          style={{ cursor: 'pointer' }}
+          type="headline"
+          gutterBottom
+        >
+          {this.state.biomartVariablePickerVisible ? '▾ Biomart Variables' : '▸ Biomart Variables'}
         </Typography>
-        <BiomartVariablePicker
-          biomartVariables={this.props.datasetHub.getBiomartVariables()}
-          setBiomartVariableSelection={this.props.datasetHub.setBiomartVariableSelection}
-        />
+        {this.state.biomartVariablePickerVisible ? this.renderBiomartVariablePicker() : ''}
         <Typography type="headline" gutterBottom>
           My Datasets
         </Typography>
