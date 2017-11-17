@@ -5,6 +5,7 @@ import Checkbox from 'material-ui/Checkbox';
 import List, { ListItem, ListItemText } from 'material-ui/List';
 import Typography from 'material-ui/Typography';
 import IconButton from 'material-ui/IconButton';
+import Paper from 'material-ui/Paper';
 import { Icon } from 'react-fa';
 import Loading from './Loading';
 import IconSelect from './IconSelect';
@@ -28,6 +29,8 @@ class DatasetSelect extends React.Component {
     this.state = {
       tooltip: '',
       biomartVariablePickerVisible: true,
+      myDatasetsVisible: true,
+      publicDatasetsVisible: true,
     };
   }
 
@@ -121,32 +124,56 @@ class DatasetSelect extends React.Component {
     );
   }
 
+  renderExpandableContainer(isVisible, content, headerName, onClick) {
+    return (
+      <div>
+        <Typography onClick={onClick} style={{ cursor: 'pointer' }} type="headline" gutterBottom>
+          {isVisible ? `▾ ${headerName}` : `▸ ${headerName}`}
+        </Typography>
+        {isVisible ? content : ''}
+      </div>
+    );
+  }
+
   render() {
     const checkboxesPrivate = this.getCheckboxes('private');
     const checkboxesPublic = this.getCheckboxes('public');
     return (
       <div>
-        <Typography
-          onClick={() => {
+        {this.renderExpandableContainer(
+          this.state.biomartVariablePickerVisible,
+          this.renderBiomartVariablePicker(),
+          'Biomart Variables',
+          () => {
             this.setState({
               biomartVariablePickerVisible: !this.state.biomartVariablePickerVisible,
             });
-          }}
-          style={{ cursor: 'pointer' }}
-          type="headline"
-          gutterBottom
-        >
-          {this.state.biomartVariablePickerVisible ? '▾ Biomart Variables' : '▸ Biomart Variables'}
-        </Typography>
-        {this.state.biomartVariablePickerVisible ? this.renderBiomartVariablePicker() : ''}
-        <Typography type="headline" gutterBottom>
-          My Datasets
-        </Typography>
-        <List>{checkboxesPrivate}</List>
-        <Typography type="headline" gutterBottom>
-          Public Datasets
-        </Typography>
-        <List>{checkboxesPublic}</List>
+          },
+        )}
+        {this.renderExpandableContainer(
+          this.state.myDatasetsVisible,
+          <Paper>
+            <List>{checkboxesPrivate}</List>
+          </Paper>,
+          'My Datasets',
+          () => {
+            this.setState({
+              myDatasetsVisible: !this.state.myDatasetsVisible,
+            });
+          },
+        )}
+        {this.renderExpandableContainer(
+          this.state.publicDatasetsVisible,
+          <Paper>
+            <List>{checkboxesPublic}</List>
+          </Paper>,
+          'Public Datasets',
+          () => {
+            this.setState({
+              publicDatasetsVisible: !this.state.publicDatasetsVisible,
+            });
+          },
+        )}
         {this.state.tooltip}
       </div>
     );
