@@ -65,6 +65,7 @@ class App extends React.Component {
     this.setBiomartVariables = this.setBiomartVariables.bind(this);
     this.setZoom = this.setZoom.bind(this);
     this.setZoomSmallMultiples = this.setZoomSmallMultiples.bind(this);
+    this.setShowFilteredGenesAsDots = this.setShowFilteredGenesAsDots.bind(this);
     this.login = this.login.bind(this);
     this.toggleMainViewMode = this.toggleMainViewMode.bind(this);
     this.getMetadata = this.getMetadata.bind(this);
@@ -101,7 +102,7 @@ class App extends React.Component {
       biomartVariables: {}, // Biomart variables maintained by DatasetHub
       zoom: true, // Zoom on filtering in the plots
       zoomSmallMultiples: false, // Zoom on filtering in the small multiple plots
-      smallMultiplesShowFilteredGenesAsDots: true, // Show filtered genes as dots for small multiples
+      showFilteredGenesAsDots: true, // Show filtered genes as dots for small multiples
       highlight: new Highlight('EnsemblID', this.forceUpdateApp),
       viewMode: 'overview', // Steer the view mode of the main app
       toggleUpdate: true, // Dummy variable used for toggling an update in main app
@@ -166,6 +167,14 @@ class App extends React.Component {
    */
   setZoomSmallMultiples(zoomSmallMultiples) {
     this.setState({ zoomSmallMultiples });
+  }
+
+  /**
+   * Should genes be rendered on filter
+   * @param {boolean} showFilteredGenesAsDots Show filtered genes status
+   */
+  setShowFilteredGenesAsDots(showFilteredGenesAsDots) {
+    this.setState({ showFilteredGenesAsDots });
   }
 
   /**
@@ -662,6 +671,7 @@ class App extends React.Component {
               setTransformation={this.setTransformation}
               setZoom={this.setZoom}
               setZoomSmallMultiples={this.setZoomSmallMultiples}
+              setShowFilteredGenesAsDots={this.setShowFilteredGenesAsDots}
               xTransformation={this.state.xTransformation}
               yTransformation={this.state.yTransformation}
               zoom={this.state.zoomSmallMultiples}
@@ -669,7 +679,7 @@ class App extends React.Component {
               axisValues={this.state.axisValues}
               setAxisValues={this.setAxisValues}
               setPrimaryDataset={this.setPrimaryDataset}
-              showFilteredGenesAsDots={this.state.smallMultiplesShowFilteredGenesAsDots}
+              showFilteredGenesAsDots={this.state.showFilteredGenesAsDots}
               primaryDataset={this.state.primaryDataset}
             />
           </Grid>,
@@ -714,6 +724,7 @@ class App extends React.Component {
               setTransformation={this.setTransformation}
               setZoom={this.setZoom}
               setZoomSmallMultiples={this.setZoomSmallMultiples}
+              setShowFilteredGenesAsDots={this.setShowFilteredGenesAsDots}
               xTransformation={this.state.xTransformation}
               yTransformation={this.state.yTransformation}
               zoom={this.state.zoom}
@@ -721,7 +732,7 @@ class App extends React.Component {
               axisValues={this.state.axisValues}
               setAxisValues={this.setAxisValues}
               setPrimaryDataset={this.setPrimaryDataset}
-              showFilteredGenesAsDots={this.state.smallMultiplesShowFilteredGenesAsDots}
+              showFilteredGenesAsDots={this.state.showFilteredGenesAsDots}
               primaryDataset={this.state.primaryDataset}
             />
           </Grid>

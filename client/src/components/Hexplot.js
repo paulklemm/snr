@@ -48,7 +48,6 @@ class Hexplot extends Scatterplot {
     super();
     this.state = {
       renderDots: false,
-      renderDotsOnZoom: true,
       selectionRectangle: new SelectionRectangle(),
       popoverOpen: false,
     };
@@ -295,8 +294,8 @@ class Hexplot extends Scatterplot {
                 <ListItemSecondaryAction>
                   <Switch
                     disabled={this.state.renderDots}
-                    checked={this.state.renderDotsOnZoom}
-                    onChange={(event, checked) => this.setState({ renderDotsOnZoom: checked })}
+                    checked={this.props.showFilteredGenesAsDots}
+                    onChange={(event, checked) => this.props.setShowFilteredGenesAsDots(checked)}
                   />
                 </ListItemSecondaryAction>
               </ListItem>
@@ -387,7 +386,7 @@ class Hexplot extends Scatterplot {
     let filteredDots = [];
     if (
       this.state.renderDots ||
-      (this.state.renderDotsOnZoom && this.props.zoom && this.props.filter.doesFilter())
+      (this.props.showFilteredGenesAsDots && this.props.zoom && this.props.filter.doesFilter())
     ) {
       if (this.state.selectionRectangle.boundsSet) {
         dots = this.renderDots(2, xArray, yArray, [], this.state.selectionRectangle.bounds, data);
