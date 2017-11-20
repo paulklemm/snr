@@ -221,6 +221,16 @@ class App extends React.Component {
   redownloadData() {
     // TODO Implement
     console.log('Redownload data');
+    // Get all dataset names
+    const datasetNames = this.datasetHub.getDatasetNames();
+    datasetNames.forEach((name) => {
+      // Get dataset
+      const dataset = this.datasetHub.getDataset(name);
+      // if dataset is enabled, redownload it
+      if (dataset.loading || dataset.loaded) {
+        this.loadDataset(name, true);
+      }
+    });
   }
 
   /**

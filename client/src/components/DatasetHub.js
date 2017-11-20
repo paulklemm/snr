@@ -40,6 +40,23 @@ class DatasetHub {
   }
 
   /**
+   * Get names of available data sets
+   * @return {array} dataset names
+   */
+  getDatasetNames() {
+    return Object.keys(this.datasets);
+  }
+
+  /**
+   * Return dataset object
+   * @param {string} name Dataset name
+   * @return {Dataset} dataset
+   */
+  getDataset(name) {
+    return this.datasets[name];
+  }
+
+  /**
    * Set selection status of biomart variable
    * 
    * @param {string} biomartVariable Biomart variable
