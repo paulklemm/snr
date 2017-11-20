@@ -28,7 +28,7 @@ class DatasetHub {
    * @param {array} biomartVariables Biomart variables
    */
   setBiomartVariables(biomartVariables) {
-    const initValues = ['ensembl_gene_id', 'start_position', 'end_position'];
+    const initValues = ['description', 'external_gene_name', 'start_position', 'end_position'];
     // Init empty biomartVariables object
     this.biomartVariables = {};
     // Initialize all biomart variables
@@ -36,7 +36,7 @@ class DatasetHub {
       this.biomartVariables[variable] = initValues.indexOf(variable) !== -1;
     });
     // Update App.js state
-    this.stateSetBiomartVariables(this.biomartVariables)
+    this.stateSetBiomartVariables(this.biomartVariables);
   }
 
   /**
@@ -65,7 +65,7 @@ class DatasetHub {
   setBiomartVariableSelection(biomartVariable, selectStatus) {
     this.biomartVariables[biomartVariable] = selectStatus;
     // Update App.js state
-    this.stateSetBiomartVariables(this.biomartVariables)
+    this.stateSetBiomartVariables(this.biomartVariables);
     console.log(
       `Set select status of ${biomartVariable} to ${this.biomartVariables[biomartVariable]}`,
     );
