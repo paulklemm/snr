@@ -16,6 +16,7 @@
     "no-console": "off",
     "comma-dangle": "off",
     "no-restricted-syntax": "off",
-    "no-continue": "off"
+    "no-continue": "off",
+    "react/jsx-filename-extension": "off"
   }
 }
