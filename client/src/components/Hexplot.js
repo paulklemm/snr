@@ -20,9 +20,11 @@ import List, {
   ListItemText,
   ListSubheader,
 } from 'material-ui/List';
+import { applyTransformation} from './TransformationHelper';
 import { applyTransformationArrays } from './TransformationHelper';
 import Scatterplot from './Scatterplot';
 import { objectValueToArray, isUndefined } from './Helper';
+import GeneInfo from './GeneInfo';
 
 const styleSheet = {
   filteredCircle: {
@@ -125,8 +127,11 @@ class Hexplot extends Scatterplot {
             cy={cy}
             key={`${currentX},${currentY},${index}`}
             onClick={e => this.handleClick(e, currentX, currentY)}
-            onMouseEnter={() =>
-              this.onMouseEnterTooltip(currentX, currentY, undefined, data[index].EnsemblID)}
+            onMouseEnter={() => {
+              const ensemblId = data[index].EnsemblID;
+              this.props.highlight.clear();
+              this.props.highlight.push('selection', [this.props.rnaSeqData.getEntry(ensemblId)]);
+            }}
             onMouseLeave={this.onMouseLeaveTooltip}
             style={currentStyle}
           />,
@@ -140,27 +145,31 @@ class Hexplot extends Scatterplot {
   }
 
   /**
-   * Trigger Tooltip and highlight selected ensemblId
-   * @param {integer} x 
-   * @param {integer} y 
-   * @param {string} idName 
-   * @param {string} ensemblId 
+   * Create tooltip on element with Id `ensemblId`
+   * 
+   * @param {string} ensemblId Id
+   * @return {foreignObject} Tooltip element
    */
-  onMouseEnterTooltip(x, y, idName, ensemblId) {
-    const tooltip = [];
-    const dx = this.xScale(x) + 5;
-    const dy = this.yScale(y) + 5;
-    tooltip.push(
-      <text x={dx} y={dy} key={`${dx},${dy}`}>
-        {`${ensemblId}`}
-      </text>,
-    );
-    // Update highlighted selection
-    this.props.highlight.clear();
-    this.props.highlight.push('selection', [this.props.rnaSeqData.getEntry(ensemblId)]);
-    this.setState({
-      tooltip,
-    });
+  createTooltip(ensemblId) {
+    const { x, y } = this.getPositionById(ensemblId);
+    if (!isUndefined(x) && !isUndefined(y)) {
+      const tooltip = [];
+      const dx = this.xScale(x) + 5;
+      const dy = this.yScale(y) + 5;
+      // const metadata = this.props.getMetadataPromise(name);
+      tooltip.push(
+        <foreignObject
+          width="1"
+          height="1"
+          x={dx}
+          y={dy}
+          key={`Tooltip_Gene: ${dx}, ${dy}, ${ensemblId}`}
+        >
+          <GeneInfo geneEntry={this.props.rnaSeqData.getEntry(ensemblId)} />
+        </foreignObject>,
+      );
+      return tooltip;
+    }
   }
 
   /**
@@ -170,7 +179,7 @@ class Hexplot extends Scatterplot {
   getOptionsPane() {
     return (
       <div
-        ref={node => {
+        ref={(node) => {
           this.optionIconRef = node;
         }}
       >
@@ -398,16 +407,20 @@ class Hexplot extends Scatterplot {
       // Get the filtered data
       const dataFiltered = this.props.rnaSeqData.getDataExternalFilter(this.props.primaryDataset);
       // Get x and y array
-      let xArrayFilteredRaw = objectValueToArray(dataFiltered, this.props.xName);
-      let yArrayFilteredRaw = objectValueToArray(dataFiltered, this.props.yName);
+      const xArrayFilteredRaw = objectValueToArray(dataFiltered, this.props.xName);
+      const yArrayFilteredRaw = objectValueToArray(dataFiltered, this.props.yName);
       // Apply transformations
-      const { xArray: xArrayFiltered, yArray: yArrayFiltered, data: dataFilteredValid } = applyTransformationArrays(
+      const {
+        xArray: xArrayFiltered,
+        yArray: yArrayFiltered,
+        data: dataFilteredValid,
+      } = applyTransformationArrays(
         xArrayFilteredRaw,
         yArrayFilteredRaw,
         this.props.xTransformation,
         this.props.yTransformation,
         true,
-        dataFiltered
+        dataFiltered,
       );
       // Render dots using the filtered array
       filteredDots = this.renderDots(
@@ -424,9 +437,7 @@ class Hexplot extends Scatterplot {
       // If linear, use name, else use transformation(name)
       // If `this.props.axisValues` is set to untransformed, also use name
       // transformation !== 'linear' && this.props.axisValues !== 'untransformed'
-      transformation !== 'linear'
-        ? `${transformation}(${name})`
-        : name;
+      (transformation !== 'linear' ? `${transformation}(${name})` : name);
     const axisLabels = this.renderAxisLabels(
       axisLabelPattern(this.props.xTransformation, this.props.xName),
       axisLabelPattern(this.props.yTransformation, this.props.yName),
@@ -440,10 +451,14 @@ class Hexplot extends Scatterplot {
     // Get highlights if there are any
     const highlight = this.props.highlight.groups.selection;
     let highlightObj = '';
+    let tooltip = '';
+    // Only highlight if highlight not undefined and no tooltip is shown (for primary plot)
     if (!isUndefined(highlight)) {
+      const ensemblId = highlight[0];
+      tooltip = this.createTooltip(ensemblId);
       // Only proceed if the array is equal to one
       if (highlight.length === 1) {
-        highlightObj = this.renderDot(highlight[0], this.props.highlight.idName);
+        highlightObj = this.renderDot(ensemblId);
       }
     }
 
@@ -493,7 +508,7 @@ class Hexplot extends Scatterplot {
                 {axes}
                 {axisLabels}
                 {highlightObj}
-                {this.state.tooltip}
+                {tooltip}
                 {this.state.selectionRectangle.getRectangle()}
                 />
               </g>

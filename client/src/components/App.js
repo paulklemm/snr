@@ -672,6 +672,7 @@ class App extends React.Component {
         hexplots.push(
           <Grid item xs={6} key={name}>
             <Hexplot
+              isSmallMultiple={true}
               responsiveWidth
               height={this.layoutFactory.heights.smallMultiples}
               width={0}
@@ -725,6 +726,7 @@ class App extends React.Component {
           {welcome}
           <Grid item xs={8}>
             <Hexplot
+              isSmallMultiple={false}
               height={this.layoutFactory.heights.mainView}
               width={600}
               responsiveWidth

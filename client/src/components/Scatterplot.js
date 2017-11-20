@@ -173,7 +173,7 @@ class Scatterplot extends React.Component {
     return fauxAxes.toReact();
   }
 
-  onMouseEnterTooltip(e, x, y) {
+  onMouseEnterDot(x, y) {
     const tooltip = [];
     const dx = this.xScale(x) + 5;
     const dy = this.yScale(y) + 5;
@@ -193,36 +193,38 @@ class Scatterplot extends React.Component {
     });
   }
 
-  renderDot(datapoint, idName, radius = 5) {
-    for (const i in this.props.rnaSeqData.data) {
-      if (this.props.rnaSeqData.data[i][idName] === datapoint) {
-        let x = this.props.rnaSeqData.data[i][this.props.xName];
-        let y = this.props.rnaSeqData.data[i][this.props.yName];
-        // If we have a transformation set, apply it
-        x = !isUndefined(this.props.xTransformation)
-          ? applyTransformation(x, this.props.xTransformation)
-          : x;
-        y = !isUndefined(this.props.yTransformation)
-          ? applyTransformation(y, this.props.yTransformation)
-          : y;
-        if (!isUndefined(x) && !isUndefined(y)) {
-          const cx = this.xScale(x);
-          const cy = this.yScale(y);
-          return (
-            <circle
-              className="dot"
-              r={radius}
-              cx={cx}
-              cy={cy}
-              key={`${x},${y},highlighted`}
-              onClick={e => this.handleClick(e, x, y)}
-              onMouseEnter={e => this.onMouseEnterTooltip(e, x, y)}
-              onMouseLeave={this.onMouseLeaveTooltip}
-              style={styleSheet.highlightedCircle}
-            />
-          );
-        }
-      }
+  getPositionById(id) {
+    const entry = this.props.rnaSeqData.getEntry(id);
+    let x = entry[this.props.xName];
+    let y = entry[this.props.yName];
+    // If we have a transformation set, apply it
+    x = !isUndefined(this.props.xTransformation)
+      ? applyTransformation(x, this.props.xTransformation)
+      : x;
+    y = !isUndefined(this.props.yTransformation)
+      ? applyTransformation(y, this.props.yTransformation)
+      : y;
+    return { x, y };
+  }
+
+  renderDot(id, radius = 5, tooltip = false) {
+    const { x, y } = this.getPositionById(id);
+    if (!isUndefined(x) && !isUndefined(y)) {
+      const cx = this.xScale(x);
+      const cy = this.yScale(y);
+      return (
+        <circle
+          className="dot"
+          r={radius}
+          cx={cx}
+          cy={cy}
+          key={`${x},${y},highlighted`}
+          onClick={e => this.handleClick(e, x, y)}
+          onMouseEnter={tooltip ? () => this.onMouseEnterDot(x, y, undefined, id) : () => {}}
+          onMouseLeave={tooltip ? this.onMouseLeaveTooltip : () => {}}
+          style={styleSheet.highlightedCircle}
+        />
+      );
     }
   }
 
@@ -267,7 +269,7 @@ class Scatterplot extends React.Component {
             cy={cy}
             key={`${currentX},${currentY},${i}`}
             onClick={e => this.handleClick(e, currentX, currentY)}
-            onMouseEnter={e => this.onMouseEnterTooltip(e, currentX, currentY)}
+            onMouseEnter={e => this.onMouseEnterDot(currentX, currentY)}
             onMouseLeave={this.onMouseLeaveTooltip}
             style={currentStyle}
           />,
