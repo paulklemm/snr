@@ -37,6 +37,8 @@ class GeneInfo extends React.Component {
       <Paper
         onMouseLeave={() => this.props.clearHighlight()}
         style={{
+          position: 'fixed',
+          zIndex: 9001,
           padding: '10px',
           display: 'inline-block',
         }}

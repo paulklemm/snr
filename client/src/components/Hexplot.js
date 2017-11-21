@@ -153,8 +153,8 @@ class Hexplot extends Scatterplot {
     const { x, y } = this.getPositionById(ensemblId);
     if (!isUndefined(x) && !isUndefined(y)) {
       const tooltip = [];
-      const dx = this.xScale(x) + 5;
-      const dy = this.yScale(y) + 5;
+      const dx = this.xScale(x) + 2;
+      const dy = this.yScale(y) + 2;
       // const metadata = this.props.getMetadataPromise(name);
       tooltip.push(
         <foreignObject
