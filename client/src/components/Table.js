@@ -3,7 +3,7 @@ import IconButton from 'material-ui/IconButton';
 import TextField from 'material-ui/TextField';
 import PropTypes from 'prop-types';
 import { DefaultFilterSetting } from './DimensionTypes.js';
-import { isUndefined, areIdentical } from './Helper';
+import { isUndefined, areIdentical, Stopwatch } from './Helper';
 
 const styleSheet = {
   headerTR: {
@@ -50,10 +50,13 @@ class Table extends React.Component {
     const filterSetting = isUndefined(props.dimNames)
       ? undefined
       : this.getDefaultFilterSettings(props.dimNames);
+    const inputTimeLimit = 1000;
     this.state = {
       rowTop: 0,
       rowBottom: 40,
       filterSetting,
+      inputTimeLimit, // Input time limit in milliseconds
+      lastInputStopwatch: new Stopwatch(inputTimeLimit), // When was filter manipulated last
     };
   }
 
@@ -90,17 +93,22 @@ class Table extends React.Component {
   }
 
   handleFilter(dimension) {
-    // Scroll back to the top of the list
-    this.refs.scrollable.scrollTop = 0;
-    // Remove all filters of this dimension
-    this.props.filter.removeFilter(dimension);
-    this.props.filter.setFilter(
-      dimension,
-      this.textFieldValues[dimension],
-      this.state.filterSetting[dimension],
-    );
-    // Update the app
-    this.props.forceUpdateApp();
+    setTimeout(() => {
+      if (this.state.lastInputStopwatch.overLimit()) {
+        return;
+      }
+      // Scroll back to the top of the list
+      this.refs.scrollable.scrollTop = 0;
+      // Remove all filters of this dimension
+      this.props.filter.removeFilter(dimension);
+      this.props.filter.setFilter(
+        dimension,
+        this.textFieldValues[dimension],
+        this.state.filterSetting[dimension],
+      );
+      // Update the app
+      this.props.forceUpdateApp();
+    }, 1000);
   }
 
   /**
@@ -172,8 +180,14 @@ class Table extends React.Component {
                 id="filter"
                 label="Filter"
                 type="search"
-                value={filterValue}
+                value={
+                  this.state.lastInputStopwatch.overLimit()
+                    ? filterValue
+                    : this.textFieldValues[dimension]
+                }
                 onChange={(event) => {
+                  // Reset input stopwatch
+                  this.setState({ lastInputStopwatch: new Stopwatch(this.state.inputTimeLimit) });
                   // Update the textfieldValue object with the newly changed value
                   this.textFieldValues[dimension] = event.target.value;
                   this.handleFilter(dimension);

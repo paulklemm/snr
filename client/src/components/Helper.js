@@ -886,6 +886,24 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
+class Stopwatch {
+  /**
+   * Stopwatch is started on object creation.
+   * @param {integer} limit Time limit in milliseconds
+   */
+  constructor(limit) {
+    this.limit = limit;
+    this.startTime = new Date().getTime();
+  }
+  /**
+   * Check if limit amount time has passed since object creation
+   * @return {boolean} Time passed sine object creation is over limit.
+   */
+  overLimit() {
+    return new Date().getTime() - this.startTime > this.limit;
+  }
+}
+
 export {
   createDummyDataScatterplot,
   createDummySettingsScatterplot,
@@ -899,4 +917,5 @@ export {
   injectStyle,
   areIdentical,
   getPercentageFromFloat,
+  Stopwatch,
 };
