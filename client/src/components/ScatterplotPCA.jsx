@@ -230,6 +230,7 @@ class ScatterplotPCA extends Scatterplot {
           <div ref={measureRef}>
             <svg
               className="scatterplot"
+              style={{ overflow: 'visible' }}
               width={this.widthNoMargin + this.margin.left + this.margin.right}
               height={this.heightNoMargin + this.margin.top + this.margin.bottom}
             >
