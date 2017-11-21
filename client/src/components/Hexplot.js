@@ -20,7 +20,7 @@ import List, {
   ListItemText,
   ListSubheader,
 } from 'material-ui/List';
-import { applyTransformation} from './TransformationHelper';
+import { applyTransformation } from './TransformationHelper';
 import { applyTransformationArrays } from './TransformationHelper';
 import Scatterplot from './Scatterplot';
 import { objectValueToArray, isUndefined } from './Helper';
@@ -51,6 +51,8 @@ class Hexplot extends Scatterplot {
     this.state = {
       renderDots: false,
       selectionRectangle: new SelectionRectangle(),
+      // Maximum number of dots allowed for rendering
+      maximumDots: 20000,
       popoverOpen: false,
     };
     this.onMeasure = this.onMeasure.bind(this);
@@ -432,6 +434,14 @@ class Hexplot extends Scatterplot {
         dataFilteredValid,
       );
     }
+
+    if (dots.length > this.state.maximumDots) {
+      dots = [];
+    }
+    if (filteredDots.length > this.state.maximumDots) {
+      filteredDots = [];
+    }
+
     // Rename the labels based on the transformation
     const axisLabelPattern = (transformation, name) =>
       // If linear, use name, else use transformation(name)
@@ -455,6 +465,7 @@ class Hexplot extends Scatterplot {
     // Only highlight if highlight not undefined and no tooltip is shown (for primary plot)
     if (!isUndefined(highlight)) {
       const ensemblId = highlight[0];
+      // Only create tooltip if this is the main window
       tooltip = this.createTooltip(ensemblId);
       // Only proceed if the array is equal to one
       if (highlight.length === 1) {
@@ -498,6 +509,7 @@ class Hexplot extends Scatterplot {
               onMouseDown={e => this.handleMouseDown(e)}
               onMouseMove={e => this.handleMouseMove(e)}
               onMouseUp={e => this.handleMouseUp(e)}
+              style={{ overflow: 'visible' }}
               width={this.widthNoMargin + this.margin.left + this.margin.right}
               height={this.heightNoMargin + this.margin.top + this.margin.bottom}
             >
