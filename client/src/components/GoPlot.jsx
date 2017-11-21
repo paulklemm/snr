@@ -49,7 +49,6 @@ class GoPlot extends React.Component {
       dx -= domNode.parentElement.offsetLeft;
       dy -= domNode.parentElement.offsetTop;
     }
-    console.log(`${dx}, ${dy}`);
     const tooltip = (
       <div
         className="tooltip"
