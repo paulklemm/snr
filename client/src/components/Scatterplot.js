@@ -156,7 +156,7 @@ class Scatterplot extends React.Component {
    * @param {boolean} rotateAxisLabelsX Rotate x-axis labels
    * @return {jsx} React element
    */
-  renderAxes(rotateAxisLabelsX = true) {
+  renderAxes(rotateAxisLabelsX = false) {
     const xAxis = axisBottom()
       .scale(this.xScale)
       .tickFormat(x => this.renderAxisTickHelper(x, this.props.xTransformation));

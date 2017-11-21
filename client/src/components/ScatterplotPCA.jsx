@@ -135,6 +135,10 @@ class ScatterplotPCA extends Scatterplot {
       }
 
       if (this.icons.length > 0) {
+        // Dirty check if the current icon is a public dataset
+        // TODO: Make this proper by pulling the dataset from the hub and get information from there
+        const isPublic = this.icons[i] === 'archive';
+        const iconOpacity = isPublic ? 0.3 : 1;
         dots.push(
           <g
             onMouseEnter={() => this.showTooltip(currentX, currentY, currentRowName)}
@@ -145,6 +149,7 @@ class ScatterplotPCA extends Scatterplot {
             <foreignObject
               width="20"
               height="20"
+              style={{ opacity: iconOpacity }}
               x={
                 isUndefined(this.iconSize[currentRowName])
                   ? cx - 8
@@ -214,7 +219,6 @@ class ScatterplotPCA extends Scatterplot {
     this.setMargin();
     // SetScale is dependant on the width and height, therefore it belongs to render
     this.setScale(this.x, this.y);
-    // this.setScale([-1, 1], [-1, 1]);
 
     return (
       <Measure
