@@ -74,6 +74,7 @@ class App extends React.Component {
     this.redownloadData = this.redownloadData.bind(this);
     this.clearHighlight = this.clearHighlight.bind(this);
     this.setMaximumRenderedDots = this.setMaximumRenderedDots.bind(this);
+    this.setRenderGeneInfoInSmallMultiples = this.setRenderGeneInfoInSmallMultiples.bind(this);
     // Init datasethub and inject filterTriggered function
     this.datasetHub = new DatasetHub(this.filterBroadcasted, this.setBiomartVariables);
     this.debug = false;
@@ -107,6 +108,7 @@ class App extends React.Component {
       zoomSmallMultiples: false, // Zoom on filtering in the small multiple plots
       showFilteredGenesAsDots: true, // Show filtered genes as dots for small multiples
       maximumRenderedDots: 10000, // Maximum number of dots allowed for rendering
+      renderGeneInfoInSmallMultiples: true, // Render GeneInfo pane also for small multiples
       highlight: new Highlight('EnsemblID', this.forceUpdateApp),
       viewMode: 'overview', // Steer the view mode of the main app
       toggleUpdate: true, // Dummy variable used for toggling an update in main app
@@ -120,6 +122,14 @@ class App extends React.Component {
     const highlight = this.state.highlight;
     highlight.clear();
     this.setState(highlight);
+  }
+
+  /**
+   * Render GeneInfo in small multiples or not
+   * @param {boolean} renderGeneInfoInSmallMultiples Render GeneInfo in small multiples
+   */
+  setRenderGeneInfoInSmallMultiples(renderGeneInfoInSmallMultiples) {
+    this.setState({ renderGeneInfoInSmallMultiples });
   }
 
   /**
@@ -721,6 +731,8 @@ class App extends React.Component {
               primaryDataset={this.state.primaryDataset}
               maximumRenderedDots={this.state.maximumRenderedDots}
               setMaximumRenderedDots={this.setMaximumRenderedDots}
+              renderGeneInfoInSmallMultiples={this.state.renderGeneInfoInSmallMultiples}
+              setRenderGeneInfoInSmallMultiples={this.setRenderGeneInfoInSmallMultiples}
             />
           </Grid>,
         );
@@ -778,6 +790,8 @@ class App extends React.Component {
               primaryDataset={this.state.primaryDataset}
               maximumRenderedDots={this.state.maximumRenderedDots}
               setMaximumRenderedDots={this.setMaximumRenderedDots}
+              renderGeneInfoInSmallMultiples={this.state.renderGeneInfoInSmallMultiples}
+              setRenderGeneInfoInSmallMultiples={this.setRenderGeneInfoInSmallMultiples}
             />
           </Grid>
           {/* Small multiples */}

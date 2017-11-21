@@ -155,7 +155,6 @@ class Hexplot extends Scatterplot {
       const tooltip = [];
       const dx = this.xScale(x) + 2;
       const dy = this.yScale(y) + 2;
-      // const metadata = this.props.getMetadataPromise(name);
       tooltip.push(
         <foreignObject
           width="1"
@@ -223,7 +222,7 @@ class Hexplot extends Scatterplot {
               width: '320px',
             }}
           >
-            <List subheader={<ListSubheader>Plot Settings</ListSubheader>}>
+            <List subheader={<ListSubheader>Transformation</ListSubheader>}>
               <ListItem>
                 <ListItemIcon>
                   <Icon name="bar-chart-o" />
@@ -285,6 +284,7 @@ class Hexplot extends Scatterplot {
                   </Select>
                 </ListItemSecondaryAction>
               </ListItem>
+              <ListSubheader>Render Genes as Dots</ListSubheader>
               <ListItem>
                 <ListItemIcon>
                   <Icon name="dot-circle-o" />
@@ -325,6 +325,7 @@ class Hexplot extends Scatterplot {
                   />
                 </ListItemSecondaryAction>
               </ListItem>
+              <ListSubheader>Filtering</ListSubheader>
               <ListItem>
                 <ListItemIcon>
                   <Icon name="search" />
@@ -346,6 +347,19 @@ class Hexplot extends Scatterplot {
                   <Switch
                     checked={this.props.zoomSmallMultiples}
                     onChange={(event, checked) => this.props.setZoomSmallMultiples(checked)}
+                  />
+                </ListItemSecondaryAction>
+              </ListItem>
+              <ListSubheader>Highlight</ListSubheader>
+              <ListItem>
+                <ListItemIcon>
+                  <Icon name="id-card-o" />
+                </ListItemIcon>
+                <ListItemText primary="Info in Small Multiples" />
+                <ListItemSecondaryAction>
+                  <Switch
+                    checked={this.props.renderGeneInfoInSmallMultiples}
+                    onChange={(event, checked) => this.props.setRenderGeneInfoInSmallMultiples(checked)}
                   />
                 </ListItemSecondaryAction>
               </ListItem>
@@ -480,8 +494,8 @@ class Hexplot extends Scatterplot {
     // Only highlight if highlight not undefined and no tooltip is shown (for primary plot)
     if (!isUndefined(highlight)) {
       const ensemblId = highlight[0];
-      // Only create tooltip if this is the main window
-      tooltip = this.createTooltip(ensemblId);
+      // Only create tooltip if this is the main window or small multiples tooltips are allowed
+      tooltip = (!this.props.isSmallMultiple || this.props.renderGeneInfoInSmallMultiples) ? this.createTooltip(ensemblId) : '';
       // Only proceed if the array is equal to one
       if (highlight.length === 1) {
         highlightObj = this.renderDot(ensemblId);
