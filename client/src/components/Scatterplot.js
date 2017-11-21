@@ -150,8 +150,13 @@ class Scatterplot extends React.Component {
         return value;
     }
   }
-  // renderAxes expects xScale and yScale to be set prior to this call using setScale
-  renderAxes() {
+  /**
+   * Render axis scales using ReactFauxDOM
+   * Expects xScale and yScale to be set prior to this call using setScale
+   * @param {boolean} rotateAxisLabelsX Rotate x-axis labels
+   * @return {jsx} React element
+   */
+  renderAxes(rotateAxisLabelsX = true) {
     const xAxis = axisBottom()
       .scale(this.xScale)
       .tickFormat(x => this.renderAxisTickHelper(x, this.props.xTransformation));
@@ -166,6 +171,15 @@ class Scatterplot extends React.Component {
       .attr('class', 'x axis')
       .attr('transform', `translate(0,${this.heightNoMargin})`)
       .call(xAxis);
+    // Rotate x axis if specified
+    if (rotateAxisLabelsX) {
+      select(fauxAxes)
+        .selectAll('text')
+        .style('text-anchor', 'end')
+        .attr('dx', '-.8em')
+        .attr('dy', '.15em')
+        .attr('transform', 'rotate(-65)');
+    }
     select(fauxAxes)
       .append('g')
       .attr('class', 'y axis')

@@ -420,8 +420,8 @@ class Hexplot extends Scatterplot {
         this.props.yTransformation,
       );
     }
-
-    const axes = this.renderAxes();
+    // Render x and y axes and rotate labels if this is a small multiple
+    const axes = this.renderAxes(this.props.isSmallMultiple);
     let dots = [];
     let filteredDots = [];
     if (
