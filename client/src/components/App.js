@@ -73,6 +73,7 @@ class App extends React.Component {
     this.setPrimaryDataset = this.setPrimaryDataset.bind(this);
     this.redownloadData = this.redownloadData.bind(this);
     this.clearHighlight = this.clearHighlight.bind(this);
+    this.setMaximumRenderedDots = this.setMaximumRenderedDots.bind(this);
     // Init datasethub and inject filterTriggered function
     this.datasetHub = new DatasetHub(this.filterBroadcasted, this.setBiomartVariables);
     this.debug = false;
@@ -105,6 +106,7 @@ class App extends React.Component {
       zoom: true, // Zoom on filtering in the plots
       zoomSmallMultiples: false, // Zoom on filtering in the small multiple plots
       showFilteredGenesAsDots: true, // Show filtered genes as dots for small multiples
+      maximumRenderedDots: 10000, // Maximum number of dots allowed for rendering
       highlight: new Highlight('EnsemblID', this.forceUpdateApp),
       viewMode: 'overview', // Steer the view mode of the main app
       toggleUpdate: true, // Dummy variable used for toggling an update in main app
@@ -118,6 +120,14 @@ class App extends React.Component {
     const highlight = this.state.highlight;
     highlight.clear();
     this.setState(highlight);
+  }
+
+  /**
+   * Set the maximum number of dots rendered in Hexplots
+   * @param {integer} maximum Maximum dot number
+   */
+  setMaximumRenderedDots(maximum) {
+    this.setState({ maximumRenderedDots: maximum });
   }
 
   /**
@@ -709,6 +719,8 @@ class App extends React.Component {
               showFilteredGenesAsDots={this.state.showFilteredGenesAsDots}
               clearHighlight={this.clearHighlight}
               primaryDataset={this.state.primaryDataset}
+              maximumRenderedDots={this.state.maximumRenderedDots}
+              setMaximumRenderedDots={this.setMaximumRenderedDots}
             />
           </Grid>,
         );
@@ -764,6 +776,8 @@ class App extends React.Component {
               showFilteredGenesAsDots={this.state.showFilteredGenesAsDots}
               clearHighlight={this.clearHighlight}
               primaryDataset={this.state.primaryDataset}
+              maximumRenderedDots={this.state.maximumRenderedDots}
+              setMaximumRenderedDots={this.setMaximumRenderedDots}
             />
           </Grid>
           {/* Small multiples */}

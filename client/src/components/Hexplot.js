@@ -13,6 +13,7 @@ import Measure from 'react-measure';
 import Select from 'material-ui/Select';
 import { MenuItem } from 'material-ui/Menu';
 import Input from 'material-ui/Input';
+import TextField from 'material-ui/TextField';
 import List, {
   ListItem,
   ListItemIcon,
@@ -20,7 +21,6 @@ import List, {
   ListItemText,
   ListSubheader,
 } from 'material-ui/List';
-import { applyTransformation } from './TransformationHelper';
 import { applyTransformationArrays } from './TransformationHelper';
 import Scatterplot from './Scatterplot';
 import { objectValueToArray, isUndefined } from './Helper';
@@ -51,8 +51,6 @@ class Hexplot extends Scatterplot {
     this.state = {
       renderDots: false,
       selectionRectangle: new SelectionRectangle(),
-      // Maximum number of dots allowed for rendering
-      maximumDots: 20000,
       popoverOpen: false,
     };
     this.onMeasure = this.onMeasure.bind(this);
@@ -121,7 +119,6 @@ class Hexplot extends Scatterplot {
           cy <= highlight.maxY
             ? radius + 1
             : radius;
-            // onMouseLeave={this.onMouseLeaveTooltip}
         dots.push(
           <circle
             className="dot"
@@ -292,6 +289,21 @@ class Hexplot extends Scatterplot {
                 <ListItemIcon>
                   <Icon name="dot-circle-o" />
                 </ListItemIcon>
+                <ListItemText primary="Max displayed dots" />
+                <ListItemSecondaryAction>
+                  <TextField
+                    style={{ maxWidth: '90px' }}
+                    label="# Maximum"
+                    value={this.props.maximumRenderedDots}
+                    onChange={e => this.props.setMaximumRenderedDots(e.target.value)}
+                    type="number"
+                  />
+                </ListItemSecondaryAction>
+              </ListItem>
+              <ListItem>
+                <ListItemIcon>
+                  <Icon name="dot-circle-o" />
+                </ListItemIcon>
                 <ListItemText primary="Genes as dots 🐢" />
                 <ListItemSecondaryAction>
                   <Switch
@@ -438,10 +450,10 @@ class Hexplot extends Scatterplot {
       );
     }
 
-    if (dots.length > this.state.maximumDots) {
+    if (dots.length > this.props.maximumRenderedDots) {
       dots = [];
     }
-    if (filteredDots.length > this.state.maximumDots) {
+    if (filteredDots.length > this.props.maximumRenderedDots) {
       filteredDots = [];
     }
 
