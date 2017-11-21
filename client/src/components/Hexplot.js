@@ -21,6 +21,7 @@ import List, {
   ListItemText,
   ListSubheader,
 } from 'material-ui/List';
+import Tooltip from 'material-ui/Tooltip';
 import { applyTransformationArrays } from './TransformationHelper';
 import Scatterplot from './Scatterplot';
 import { objectValueToArray, isUndefined } from './Helper';
@@ -507,6 +508,7 @@ class Hexplot extends Scatterplot {
         {({ measureRef }) => (
           <div ref={measureRef}>
             {this.props.showRenderGenesOption ? renderGenesOption : ''}
+            <Tooltip title="Set as primary data set" placement="top">
             <span
               style={{
                 fontSize: 9,
@@ -520,6 +522,8 @@ class Hexplot extends Scatterplot {
             >
               {`${pointArray.length}/${dataCount} valid points`}
             </span>
+            </Tooltip>
+            <Tooltip title="Set as primary data set" placement="top">
             <span
               style={{
                 fontSize: 9,
@@ -533,6 +537,7 @@ class Hexplot extends Scatterplot {
               <Icon name={this.props.rnaSeqData.icon} />
               {`${this.props.rnaSeqData.name}`}
             </span>
+            </Tooltip>
             <svg
               className="hexagons"
               onMouseDown={e => this.handleMouseDown(e)}
