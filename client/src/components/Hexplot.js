@@ -121,6 +121,7 @@ class Hexplot extends Scatterplot {
           cy <= highlight.maxY
             ? radius + 1
             : radius;
+            // onMouseLeave={this.onMouseLeaveTooltip}
         dots.push(
           <circle
             className="dot"
@@ -131,10 +132,9 @@ class Hexplot extends Scatterplot {
             onClick={e => this.handleClick(e, currentX, currentY)}
             onMouseEnter={() => {
               const ensemblId = data[index].EnsemblID;
-              this.props.highlight.clear();
+              this.props.clearHighlight();
               this.props.highlight.push('selection', [this.props.rnaSeqData.getEntry(ensemblId)]);
             }}
-            onMouseLeave={this.onMouseLeaveTooltip}
             style={currentStyle}
           />,
         );
@@ -167,7 +167,10 @@ class Hexplot extends Scatterplot {
           y={dy}
           key={`Tooltip_Gene: ${dx}, ${dy}, ${ensemblId}`}
         >
-          <GeneInfo geneEntry={this.props.rnaSeqData.getEntry(ensemblId)} />
+          <GeneInfo
+            geneEntry={this.props.rnaSeqData.getEntry(ensemblId)}
+            clearHighlight={this.props.clearHighlight}
+          />
         </foreignObject>,
       );
       return tooltip;

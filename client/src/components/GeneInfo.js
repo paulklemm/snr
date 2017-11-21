@@ -12,7 +12,7 @@ class GeneInfo extends React.Component {
       <table className="gosummarytable">
         <thead>
           <tr>
-            <th>Name</th>
+            <th>Name</th>2
             <th>Details</th>
           </tr>
         </thead>
@@ -35,6 +35,7 @@ class GeneInfo extends React.Component {
     const body = this.getDatasetInfoTable(this.props.geneEntry);
     return (
       <Paper
+        onMouseLeave={() => this.props.clearHighlight()}
         style={{
           padding: '10px',
           display: 'inline-block',

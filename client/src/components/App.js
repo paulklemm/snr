@@ -72,6 +72,7 @@ class App extends React.Component {
     this.getMetadataPromise = this.getMetadataPromise.bind(this);
     this.setPrimaryDataset = this.setPrimaryDataset.bind(this);
     this.redownloadData = this.redownloadData.bind(this);
+    this.clearHighlight = this.clearHighlight.bind(this);
     // Init datasethub and inject filterTriggered function
     this.datasetHub = new DatasetHub(this.filterBroadcasted, this.setBiomartVariables);
     this.debug = false;
@@ -108,6 +109,15 @@ class App extends React.Component {
       viewMode: 'overview', // Steer the view mode of the main app
       toggleUpdate: true, // Dummy variable used for toggling an update in main app
     };
+  }
+
+  /**
+   * Clear Highlight object
+   */
+  clearHighlight() {
+    const highlight = this.state.highlight;
+    highlight.clear();
+    this.setState(highlight);
   }
 
   /**
@@ -697,6 +707,7 @@ class App extends React.Component {
               setAxisValues={this.setAxisValues}
               setPrimaryDataset={this.setPrimaryDataset}
               showFilteredGenesAsDots={this.state.showFilteredGenesAsDots}
+              clearHighlight={this.clearHighlight}
               primaryDataset={this.state.primaryDataset}
             />
           </Grid>,
@@ -751,6 +762,7 @@ class App extends React.Component {
               setAxisValues={this.setAxisValues}
               setPrimaryDataset={this.setPrimaryDataset}
               showFilteredGenesAsDots={this.state.showFilteredGenesAsDots}
+              clearHighlight={this.clearHighlight}
               primaryDataset={this.state.primaryDataset}
             />
           </Grid>
