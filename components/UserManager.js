@@ -13,7 +13,7 @@ class UserManager {
   }
 
   /**
-   * This function can be deleted later on. It is used for debugging purposes to check 
+   * This function can be deleted later on. It is used for debugging purposes to check
    * aspects of the UserManager component to be working properly
    */
   debugTestUserPassword(user, password) {
@@ -28,10 +28,15 @@ class UserManager {
    * If the the provided token is available for the user, then the apifunction will be executed
    * @param {String} name name of the function so that errors can be traced properly
    * @param {Object} req request containing `req.query.user` and `req.query.token`
-   * @param {Function} apiFunction 
+   * @param {Function} apiFunction
+   * @param {string} method Is received object created with get or post
    * @return {Object} return object that indicated failure or return `apiFunction`
    */
-  tokenApiFunction(name, req, apiFunction) {
+  tokenApiFunction(name, req, apiFunction, method = 'get') {
+    // If method is post, rename object containing the variables from body to query
+    if (method === 'post') {
+      req.query = req.body;
+    }
     // Destructure user and token from the query
     const { user, token } = req.query;
     // Check if token is available for the user
@@ -77,8 +82,9 @@ class UserManager {
     // Check if the array of tokens is not larger than the size of maximumTokens which could indicate a token attack
     if (tokens.length > this.maximumTokensPerUser) {
       timeStampLog(
-        `Error, tokens of user ${user} exceed the maximum number of allowed tokens (${this
-          .maximumTokensPerUser})`,
+        `Error, tokens of user ${user} exceed the maximum number of allowed tokens (${
+          this.maximumTokensPerUser
+        })`,
         true,
       );
       return false;
@@ -105,7 +111,9 @@ class UserManager {
     // Create tokens object if it doesn't already exist
     if (typeof userSettings.tokens !== 'object') userSettings.tokens = {};
     // Remove oldest tokens until it is smaller than the number of valid tokens
-    while (Object.keys(userSettings.tokens).length >= this.maximumTokensPerUser) { userSettings.tokens = this.removeOldestToken(userSettings.tokens); }
+    while (Object.keys(userSettings.tokens).length >= this.maximumTokensPerUser) {
+      userSettings.tokens = this.removeOldestToken(userSettings.tokens);
+    }
     // Add the new token
     userSettings.tokens[tokenHash] = token;
     // Store the token to disk and return success
@@ -128,7 +136,7 @@ class UserManager {
     return isUndefined(tokens.b);
   }
 
-  /** 
+  /**
    * Removes the oldest token by comparing the `created` times
    * @param {Object} tokens is the token list where each token consists of `created` property
    * @return {Object} tokens object without oldest one
@@ -197,7 +205,8 @@ class UserManager {
     if (isUndefined(userSettings) || isUndefined(userSettings.passwd)) {
       timeStampLog(`Password or user not defined for ${user}`, true);
       return '';
-    } return userSettings.passwd;
+    }
+    return userSettings.passwd;
   }
 
   /**
@@ -211,8 +220,9 @@ class UserManager {
     // If settings are empty, show error
     if (isUndefined(userSettings)) {
       timeStampLog(
-        `Cannot find user ${user} at ${this.getUserConfigPath(user)}. Either user folder (${this
-          .userPath}) is wrong or user does not exist.`,
+        `Cannot find user ${user} at ${this.getUserConfigPath(user)}. Either user folder (${
+          this.userPath
+        }) is wrong or user does not exist.`,
         true,
       );
     }

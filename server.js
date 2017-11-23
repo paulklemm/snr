@@ -5,6 +5,7 @@ const { timeStampLog, readJSONFSSync, isUndefined } = require('./Components/Help
 const { UserManager } = require('./Components/UserManager');
 const { OpenCPUBridge } = require('./Components/OpenCPUBridge');
 const { Sessions } = require('./Components/Sessions');
+const bodyParser = require('body-parser');
 // Promises Collection
 const promises = {};
 
@@ -42,7 +43,7 @@ function getSettings(path = 'server_settings.json') {
 
 /**
  * Perform OpenCPU session validity check.
- * 
+ *
  * @param {String} session OpenCPU session string to check
  * @param {String} dataFolder Path to data folder that should contain the OpenCPU session
  * @return {Boolean} session is valid or not
@@ -83,7 +84,9 @@ async function checkUserSession(user) {
     const jobName = `Loading ${user}`;
     if (alreadyRunning(jobName)) {
       timeStampLog(
-        `Call R to load data for user quickngs. Data for ${user} is already loading, waiting for job to finish`,
+        `Call R to load data for user quickngs. Data for ${
+          user
+        } is already loading, waiting for job to finish`,
       );
       await promises[jobName];
       return;
@@ -146,6 +149,11 @@ const sessions = new Sessions(settings.sessionsPath);
 // });
 
 const app = express();
+// Setup body parsing for POST requests following
+// https://scotch.io/tutorials/use-expressjs-to-get-url-and-post-parameters#toc-post-parameters
+app.use(bodyParser.json()); // support json encoded bodies
+app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
+
 app.set('port', process.env.PORT || settings.port);
 
 // Express only serves static assets in production
@@ -245,7 +253,9 @@ app.get('/api/getdataset', async (req, res) => {
     // Initialize dataset empty
     let dataset;
     timeStampLog(
-      `Load data ${name} for ${user} (public = ${ispublic}), biomartVariables = ${biomartvariables.toString()}`,
+      `Load data ${name} for ${user} (public = ${
+        ispublic
+      }), biomartVariables = ${biomartvariables.toString()}`,
     );
     // ispublic will be interpreted as string, therfore we have to perform a string boolean check
     if (ispublic === 'false') {
@@ -275,6 +285,21 @@ app.get('/api/getdataset', async (req, res) => {
   res.json(result);
 });
 
+// https://scotch.io/tutorials/use-expressjs-to-get-url-and-post-parameters
+app.post('/api/posttest', async (req, res) => {
+  const result = await userManager.tokenApiFunction(
+    'postTest',
+    req,
+    async (req) => {
+      const { name, user, token } = req.query;
+      timeStampLog(`POST REQUEST, name: ${name}, user: ${user}, token: ${token}`);
+      return { name: 'postTest', success: true, bla: 'blubb' };
+    },
+    'post',
+  );
+  res.json(result);
+});
+
 /**
  * Get GO Summary for all GO terms
  */
@@ -283,7 +308,9 @@ app.get('/api/getgosummary', async (req, res) => {
     const { name, user, ensembldataset, ensemblversion } = req.query;
     // Get the GO summary from OpenCPU
     timeStampLog(
-      `Get GO summary for: \n \ \ ensembl dataset '${ensembldataset}'\n \ \ ensembl version: '${ensemblversion}'`,
+      `Get GO summary for: \n \ \ ensembl dataset '${ensembldataset}'\n \ \ ensembl version: '${
+        ensemblversion
+      }'`,
     );
     summary = await openCPU.runRCommand(
       'sonaRGO',
@@ -307,7 +334,9 @@ app.get('/api/getbiomartvariables', async (req, res) => {
     const { ensembldataset, ensemblversion } = req.query;
     // Get biomart variables
     timeStampLog(
-      `Get biomart variables for: \n \ \ ensembl dataset '${ensembldataset}'\n \ \ ensembl version: '${ensemblversion}'`,
+      `Get biomart variables for: \n \ \ ensembl dataset '${
+        ensembldataset
+      }'\n \ \ ensembl version: '${ensemblversion}'`,
     );
     biomartVariables = await openCPU.runRCommand(
       'sonaR',
@@ -333,7 +362,9 @@ app.get('/api/getpcaloadings', async (req, res) => {
     await checkUserSession(user);
     // Get the GO summary from OpenCPU
     timeStampLog(
-      `Get PCA loadings for: \n  user: ${user}\n  ensembl dataset: '${ensembldataset}'\n  ensembl version: '${ensemblversion}'`,
+      `Get PCA loadings for: \n  user: ${user}\n  ensembl dataset: '${
+        ensembldataset
+      }'\n  ensembl version: '${ensemblversion}'`,
     );
     // Concatiante public files with user data and get PCA-loadings from it
     const loadings = await openCPU.runRCommand(
@@ -361,7 +392,9 @@ app.get('/api/getgopergene', async (req, res) => {
     const { name, user, ensembldataset, ensemblversion } = req.query;
     // Get the GO terms from OpenCPU
     timeStampLog(
-      `Get GO per Gene for: \n \ \ ensembl dataset '${ensembldataset}'\n \ \ ensembl version: '${ensemblversion}'`,
+      `Get GO per Gene for: \n \ \ ensembl dataset '${ensembldataset}'\n \ \ ensembl version: '${
+        ensemblversion
+      }'`,
     );
     goPerGene = await openCPU.runRCommand(
       'sonaRGO',
@@ -438,9 +471,9 @@ app.get('/api/getmetadata', async (req, res) => {
   const result = await userManager.tokenApiFunction('loadmetadata', req, async (req) => {
     const { name, user, ispublic } = req.query;
     timeStampLog(
-      `Received metadata query for filename: ${name}, data_folder: '${userManager.getUserSettings(
-        user,
-      ).path}', ispublic: ${ispublic}`,
+      `Received metadata query for filename: ${name}, data_folder: '${
+        userManager.getUserSettings(user).path
+      }', ispublic: ${ispublic}`,
     );
     // Load meta data through OpenCPU
     let metadata;

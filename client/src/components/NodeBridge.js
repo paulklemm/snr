@@ -37,7 +37,7 @@ class NodeBridge {
    * @param {String} fetchUrl URL to call. User and token will be appended with
    * @return {Object} Response from the server containing name of the call, success boolean and data
    */
-  async _fetchWithUserAndToken(fetchUrl) {
+  async _fetchWithUserAndTokenGet(fetchUrl) {
     // Set busy state of the app
     this.addBusyState(fetchUrl);
     // Get User and Token
@@ -48,6 +48,31 @@ class NodeBridge {
       accept: 'application/json',
     }).then(this.parseJSON);
 
+    // Set busy state of the app
+    this.removeBusyState(fetchUrl);
+    return response;
+  }
+
+  async _fetchWithUserAndTokenPost(fetchUrl, data) {
+    // Set busy state of the app
+    this.addBusyState(fetchUrl);
+    // Get User and Token
+    const { user, token } = this._getUserAndToken();
+    const dataWithCredentials = data;
+    dataWithCredentials.user = user;
+    dataWithCredentials.token = token;
+    // Prepare POST request
+    const fetchData = {
+      method: 'POST',
+      body: JSON.stringify(dataWithCredentials), // The data we are going to send in our request
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    };
+    const response = await fetch(fetchUrl, fetchData).then(response => response.json());
+    // TODO Debug statement
+    console.log(response);
     // Set busy state of the app
     this.removeBusyState(fetchUrl);
     return response;
@@ -94,7 +119,7 @@ class NodeBridge {
    * @return {Object} Response object of server
    */
   echoToken(query, debug = false) {
-    const response = this._fetchWithUserAndToken(`api/echotoken?q=${query}`);
+    const response = this._fetchWithUserAndTokenGet(`api/echotoken?q=${query}`);
     if (debug) console.log(response);
     return response;
   }
@@ -127,7 +152,7 @@ class NodeBridge {
    * @return {Object} Server response
    */
   loadData() {
-    return this._fetchWithUserAndToken('api/loaddata?');
+    return this._fetchWithUserAndTokenGet('api/loaddata?');
   }
 
   /**
@@ -136,7 +161,7 @@ class NodeBridge {
    * @return {Object} Server response
    */
   loadPublicData() {
-    return this._fetchWithUserAndToken('api/loadpublicdata?');
+    return this._fetchWithUserAndTokenGet('api/loadpublicdata?');
   }
 
   /**
@@ -148,7 +173,7 @@ class NodeBridge {
    * @return {Object} Response
    */
   getDataset(name, biomartVariables, isPublic = false) {
-    return this._fetchWithUserAndToken(
+    return this._fetchWithUserAndTokenGet(
       `api/getdataset?name=${name}&ispublic=${isPublic}&biomartvariables=${JSON.stringify(
         biomartVariables,
       )}`,
@@ -163,7 +188,7 @@ class NodeBridge {
    * @return {Object} Response
    */
   getMetadata(name, isPublic) {
-    return this._fetchWithUserAndToken(`api/getmetadata?name=${name}&ispublic=${isPublic}`);
+    return this._fetchWithUserAndTokenGet(`api/getmetadata?name=${name}&ispublic=${isPublic}`);
   }
 
   /**
@@ -174,7 +199,7 @@ class NodeBridge {
    * @return {Object} Server response
    */
   getGoSummary(ensemblDataset, ensemblVersion) {
-    return this._fetchWithUserAndToken(
+    return this._fetchWithUserAndTokenGet(
       `api/getgosummary?ensembldataset=${ensemblDataset}&ensemblversion=${ensemblVersion}`,
     );
   }
@@ -187,7 +212,7 @@ class NodeBridge {
    * @return {Object} Server response
    */
   getBiomartVariables(ensemblDataset, ensemblVersion) {
-    return this._fetchWithUserAndToken(
+    return this._fetchWithUserAndTokenGet(
       `api/getbiomartvariables?ensembldataset=${ensemblDataset}&ensemblversion=${ensemblVersion}`,
     );
   }
@@ -200,7 +225,7 @@ class NodeBridge {
    * @return {Object} Server response
    */
   getGoPerGene(ensemblDataset, ensemblVersion) {
-    return this._fetchWithUserAndToken(
+    return this._fetchWithUserAndTokenGet(
       `api/getgopergene?ensembldataset=${ensemblDataset}&ensemblversion=${ensemblVersion}`,
     );
   }
@@ -213,7 +238,7 @@ class NodeBridge {
    * @return {Object} Server response
    */
   getPcaLoadings(ensemblDataset, ensemblVersion) {
-    return this._fetchWithUserAndToken(
+    return this._fetchWithUserAndTokenGet(
       `api/getpcaloadings?ensembldataset=${ensemblDataset}&ensemblversion=${ensemblVersion}`,
     );
   }

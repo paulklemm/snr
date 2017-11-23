@@ -107,7 +107,7 @@ class App extends React.Component {
       zoom: true, // Zoom on filtering in the plots
       zoomSmallMultiples: false, // Zoom on filtering in the small multiple plots
       showFilteredGenesAsDots: true, // Show filtered genes as dots for small multiples
-      maximumRenderedDots: 10000, // Maximum number of dots allowed for rendering
+      maximumRenderedDots: 5000, // Maximum number of dots allowed for rendering
       renderGeneInfoInSmallMultiples: true, // Render GeneInfo pane also for small multiples
       highlight: new Highlight('EnsemblID', this.forceUpdateApp),
       viewMode: 'overview', // Steer the view mode of the main app
@@ -390,6 +390,8 @@ class App extends React.Component {
   }
 
   async initSession() {
+    console.log("Starting testpost");
+    await this.nodeBridge._fetchWithUserAndTokenPost('api/posttest', { message: 'Whoop whoop!' });
     // TODO: Clear existing session first, especially the loaded data sets
     // Check if we ned to login or not
     await this.checkLogin();
