@@ -285,21 +285,6 @@ app.get('/api/getdataset', async (req, res) => {
   res.json(result);
 });
 
-// https://scotch.io/tutorials/use-expressjs-to-get-url-and-post-parameters
-app.post('/api/posttest', async (req, res) => {
-  const result = await userManager.tokenApiFunction(
-    'postTest',
-    req,
-    async (req) => {
-      const { name, user, token } = req.query;
-      timeStampLog(`POST REQUEST, name: ${name}, user: ${user}, token: ${token}`);
-      return { name: 'postTest', success: true, bla: 'blubb' };
-    },
-    'post',
-  );
-  res.json(result);
-});
-
 /**
  * Get GO Summary for all GO terms
  */
@@ -352,35 +337,52 @@ app.get('/api/getbiomartvariables', async (req, res) => {
   res.json(result);
 });
 
-/**
- * Get PCA-loadings
- */
-app.get('/api/getpcaloadings', async (req, res) => {
-  const result = await userManager.tokenApiFunction('getpcaloadings', req, async (req) => {
-    const { user, ensembldataset, ensemblversion } = req.query;
-    // Check the user session and reload if required
-    await checkUserSession(user);
-    // Get the GO summary from OpenCPU
-    timeStampLog(
-      `Get PCA loadings for: \n  user: ${user}\n  ensembl dataset: '${
-        ensembldataset
-      }'\n  ensembl version: '${ensemblversion}'`,
-    );
-    // Concatiante public files with user data and get PCA-loadings from it
-    const loadings = await openCPU.runRCommand(
-      'sonaR',
-      'get_pca_loadings_with_public_data',
-      {
-        x: sessions.getSession(user),
-        ensembl_dataset: `'${ensembldataset}'`,
-        ensembl_version: `'${ensemblversion}'`,
-      },
-      'json',
-      ['.val'],
-    );
-    timeStampLog('Getting PCA loadings done');
-    return { name: 'getpcaloadings', success: true, loadings };
-  });
+// https://scotch.io/tutorials/use-expressjs-to-get-url-and-post-parameters
+app.post('/api/posttest', async (req, res) => {
+  const result = await userManager.tokenApiFunction(
+    'postTest',
+    req,
+    async (req) => {
+      const { name, user, token } = req.query;
+      timeStampLog(`POST REQUEST, name: ${name}, user: ${user}, token: ${token}`);
+      return { name: 'postTest', success: true, bla: 'blubb' };
+    },
+    'post',
+  );
+  res.json(result);
+});
+
+app.post('/api/getpcaloadings', async (req, res) => {
+  const result = await userManager.tokenApiFunction(
+    'getpcaloadings',
+    req,
+    async (req) => {
+      const { user, ensemblDataset, ensemblVersion } = req.body;
+      // Check the user session and reload if required
+      await checkUserSession(user);
+      // Get the GO summary from OpenCPU
+      timeStampLog(
+        `Get PCA loadings for: \n  user: ${user}\n  ensembl dataset: '${
+          ensemblDataset
+        }'\n  ensembl version: '${ensemblVersion}'`,
+      );
+      // Concatiante public files with user data and get PCA-loadings from it
+      const loadings = await openCPU.runRCommand(
+        'sonaR',
+        'get_pca_loadings_with_public_data',
+        {
+          x: sessions.getSession(user),
+          ensembl_dataset: `'${ensemblDataset}'`,
+          ensembl_version: `'${ensemblVersion}'`,
+        },
+        'json',
+        ['.val'],
+      );
+      timeStampLog('Getting PCA loadings done');
+      return { name: 'getpcaloadings', success: true, loadings };
+    },
+    'post',
+  );
   res.json(result);
 });
 

@@ -238,9 +238,8 @@ class NodeBridge {
    * @return {Object} Server response
    */
   getPcaLoadings(ensemblDataset, ensemblVersion) {
-    return this._fetchWithUserAndTokenGet(
-      `api/getpcaloadings?ensembldataset=${ensemblDataset}&ensemblversion=${ensemblVersion}`,
-    );
+    const data = { ensemblDataset, ensemblVersion };
+    return this._fetchWithUserAndTokenPost('api/getpcaloadings', data);
   }
 
   /**
