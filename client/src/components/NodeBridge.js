@@ -233,12 +233,18 @@ class NodeBridge {
   /**
    * Get PCA loadings for the loaded datasets
    * If ensemblDataset or ensemblVersion are undefined, defaults from `R` package will be used.
-   * @param {String} ensemblDataset Biomart dataset
-   * @param {String} ensemblVersion Ensembl version ('release')
-   * @return {Object} Server response
+   * @param {string} ensemblDataset Biomart dataset
+   * @param {string} ensemblVersion Ensembl version ('release')
+   * @param {array} ensemblIds Ids of genes to filter
+   * @return {object} Server response
    */
-  getPcaLoadings(ensemblDataset, ensemblVersion) {
-    const data = { ensemblDataset, ensemblVersion };
+  getPcaLoadings(ensemblDataset, ensemblVersion, ensemblIds) {
+    const data = {
+      ensemblDataset,
+      ensemblVersion,
+      ensemblIds,
+    };
+    console.log(ensemblIds);
     return this._fetchWithUserAndTokenPost('api/getpcaloadings', data);
   }
 

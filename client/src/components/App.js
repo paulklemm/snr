@@ -5,6 +5,7 @@ import { Icon } from 'react-fa';
 import Drawer from 'material-ui/Drawer';
 import Grid from 'material-ui/Grid';
 import IconButton from 'material-ui/IconButton';
+import Button from 'material-ui/Button';
 // Material-UI theming
 import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
 import orange from 'material-ui/colors/orange';
@@ -75,6 +76,7 @@ class App extends React.Component {
     this.clearHighlight = this.clearHighlight.bind(this);
     this.setMaximumRenderedDots = this.setMaximumRenderedDots.bind(this);
     this.setRenderGeneInfoInSmallMultiples = this.setRenderGeneInfoInSmallMultiples.bind(this);
+    this.getPCA = this.getPCA.bind(this);
     // Init datasethub and inject filterTriggered function
     this.datasetHub = new DatasetHub(this.filterBroadcasted, this.setBiomartVariables);
     this.debug = false;
@@ -142,7 +144,7 @@ class App extends React.Component {
 
   /**
    * Set biomartVariables state function. Is maintained by DatasetHub function
-   * 
+   *
    * @param {object} biomartVariables Dictionary linking biomart variables to selection state
    */
   setBiomartVariables(biomartVariables) {
@@ -253,7 +255,7 @@ class App extends React.Component {
     console.log('Redownload data');
     // Get all dataset names
     const datasetNames = this.datasetHub.getDatasetNames();
-    datasetNames.forEach((name) => {
+    datasetNames.forEach(name => {
       // Get dataset
       const dataset = this.datasetHub.getDataset(name);
       // if dataset is enabled, redownload it
@@ -382,7 +384,19 @@ class App extends React.Component {
    * Get PCA from node server
    */
   async getPCA() {
-    const loadings = await this.nodeBridge.getPcaLoadings('mmusculus_gene_ensembl', 'current');
+    // Get a list of filtered genes
+    // TODO Handle case of no filter and handle too large size of EnsemblIDs
+    let ensemblIds = [];
+    if (!isUndefined(this.state.primaryDataset.getData)) {
+      // Get EnsemblIDs
+      const primaryData = this.state.primaryDataset.getData();
+      ensemblIds = objectValueToArray(primaryData, 'EnsemblID');
+    }
+    const loadings = await this.nodeBridge.getPcaLoadings(
+      'mmusculus_gene_ensembl',
+      'current',
+      ensemblIds,
+    );
     console.log(loadings);
     this.setState({
       pca: loadings.loadings['.val'],
@@ -390,7 +404,7 @@ class App extends React.Component {
   }
 
   async initSession() {
-    console.log("Starting testpost");
+    console.log('Starting testpost');
     await this.nodeBridge._fetchWithUserAndTokenPost('api/posttest', { message: 'Whoop whoop!' });
     // TODO: Clear existing session first, especially the loaded data sets
     // Check if we ned to login or not
@@ -821,6 +835,9 @@ class App extends React.Component {
         <Grid container spacing={16}>
           <Grid item xs={1} />
           <Grid item xs={10}>
+            <Button raised onClick={this.getPCA}>
+              Rerun PCA
+            </Button>
             <ScatterplotPCA
               width={200}
               height={this.layoutFactory.heights.appView}

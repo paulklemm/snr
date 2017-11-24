@@ -357,7 +357,14 @@ app.post('/api/getpcaloadings', async (req, res) => {
     'getpcaloadings',
     req,
     async (req) => {
-      const { user, ensemblDataset, ensemblVersion } = req.body;
+      const { user, ensemblDataset, ensemblVersion, ensemblIds } = req.body;
+      // Convert [ENSMUSG00000041378,ENSMUSG00000010110] to ["ENSMUSG00000041378","ENSMUSG00000010110"]
+      const ensemblIdsProcessed = Object.values(ensemblIds).map(item => `"${item}"`);
+      // Gettings the format of strings to work with OpenCPU right is troublesome
+      // The empty array neets to be [""] while all other values need to be surrounded by
+      // quotes to count as string and in brackets to count as array
+      const ensemblIdsString =
+        ensemblIdsProcessed.length === 0 ? '[""]' : `[${ensemblIdsProcessed}]`;
       // Check the user session and reload if required
       await checkUserSession(user);
       // Get the GO summary from OpenCPU
@@ -366,6 +373,8 @@ app.post('/api/getpcaloadings', async (req, res) => {
           ensemblDataset
         }'\n  ensembl version: '${ensemblVersion}'`,
       );
+      timeStampLog('  EnsemblIds for PCA loadings: ');
+      timeStampLog(ensemblIdsString);
       // Concatiante public files with user data and get PCA-loadings from it
       const loadings = await openCPU.runRCommand(
         'sonaR',
@@ -374,6 +383,7 @@ app.post('/api/getpcaloadings', async (req, res) => {
           x: sessions.getSession(user),
           ensembl_dataset: `'${ensemblDataset}'`,
           ensembl_version: `'${ensemblVersion}'`,
+          ensemblIds: ensemblIdsString,
         },
         'json',
         ['.val'],
