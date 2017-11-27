@@ -2,7 +2,7 @@ import { range } from 'd3-array';
 
 /**
  * Check if symbol is undefined
- * @param {Symbol} x 
+ * @param {Symbol} x
  * @return {Boolean} isUndefined
  */
 function isUndefined(x) {
@@ -11,11 +11,34 @@ function isUndefined(x) {
 
 /**
  * Convert floating point percentage scaled between 0 and 1 to percentage between 0 and 100
- * @param {float} x 
+ * @param {float} x
  * @return {integer} Converted percentage
  */
 function getPercentageFromFloat(x) {
   return Math.round(parseFloat(x) * 100);
+}
+
+/**
+ * Compare two arrays and check if their contents are identical
+ * @param {array} a Array a
+ * @param {array} b Array b
+ * @return {boolean} Arrays are identical
+ */
+function areIdentical2(a, b) {
+  // If lengths do not match they are not identical
+  if (a.length !== b.length) {
+    return false;
+  }
+
+  // Iterate over all array entries of a and their indexes
+  for (const { itemA, index } of toItemIndexes(a)) {
+    const itemB = b[index];
+    if (itemA !== itemB) {
+      return false;
+    }
+  }
+  // If we find nothing, they are identical
+  return true;
 }
 
 /**
@@ -29,13 +52,14 @@ function areIdentical(a, b) {
   if (a.length !== b.length) {
     return false;
   }
-
   // Iterate over all array entries of a and their indexes
-  for (const { itemA, index } of toItemIndexes(a)) {
+  let index = 0;
+  for (const itemA of a) {
     const itemB = b[index];
     if (itemA !== itemB) {
       return false;
     }
+    index += 1;
   }
   // If we find nothing, they are identical
   return true;
@@ -53,7 +77,7 @@ const injectStyle = style => {
 /**
  * Map out value index for usage in for of loop
  * See [https://stackoverflow.com/questions/36108110/typescript-for-of-with-index-key](https://stackoverflow.com/questions/36108110/typescript-for-of-with-index-key)
- * @param {Array} a 
+ * @param {Array} a
  */
 function toItemIndexes<T>(a: T[]) {
   return a.map((item, index) => ({ item, index }));
@@ -875,7 +899,7 @@ function objectValueToArray(objectArray, key) {
 
 /**
  * Get random value between min and max.
- * 
+ *
  * @param {Integer} min Minimum value
  * @param {Integer} max Maximum value
  * @return {Integer} Random integer between min and max

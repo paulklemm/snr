@@ -9,6 +9,8 @@ import Button from 'material-ui/Button';
 // Material-UI theming
 import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
 import orange from 'material-ui/colors/orange';
+import RefreshIcon from 'material-ui-icons/Refresh';
+import { CircularProgress } from 'material-ui/Progress';
 import './App.css';
 // Sonar components
 // eslint-disable-next-line
@@ -17,7 +19,7 @@ import BarChart from './BarChart';
 import Scatterplot from './Scatterplot';
 import ScatterplotPCA from './ScatterplotPCA.jsx';
 // eslint-disable-next-line
-import { objectValueToArray, isUndefined, getIris } from './Helper';
+import { objectValueToArray, isUndefined, getIris, areIdentical } from './Helper';
 // eslint-disable-next-line
 import Hexplot from './Hexplot';
 // eslint-disable-next-line
@@ -87,7 +89,7 @@ class App extends React.Component {
     this.authentication = new Authentication(this.nodeBridge);
     // Set Authenticator object for the Node Bridge
     this.nodeBridge.setAuthentication(this.authentication);
-    this.maxElementsForPCA = 2500 // Limit for POST getting the PCA dimensions
+    this.maxElementsForPCA = 2500; // Limit for POST getting the PCA dimensions
     this.promises = {}; // Collection of promises
     this.state = {
       datasetEnabled: {},
@@ -115,6 +117,8 @@ class App extends React.Component {
       highlight: new Highlight('EnsemblID', this.forceUpdateApp),
       viewMode: 'overview', // Steer the view mode of the main app
       toggleUpdate: true, // Dummy variable used for toggling an update in main app
+      pcaLoading: false, // PCA is loading variable to steer icons of PCA plot
+      pcaEnsemblIds: [], // EnsembleID variable to steer icons of PCA plot
     };
   }
 
@@ -256,7 +260,7 @@ class App extends React.Component {
     console.log('Redownload data');
     // Get all dataset names
     const datasetNames = this.datasetHub.getDatasetNames();
-    datasetNames.forEach(name => {
+    datasetNames.forEach((name) => {
       // Get dataset
       const dataset = this.datasetHub.getDataset(name);
       // if dataset is enabled, redownload it
@@ -386,20 +390,20 @@ class App extends React.Component {
    */
   async getPCA() {
     // Get a list of filtered genes
-    // TODO Handle too large size of EnsemblIDs
     let ensemblIds = [];
     if (!isUndefined(this.state.primaryDataset.getData)) {
       // Get EnsemblIDs
       const primaryData = this.state.primaryDataset.getData();
       ensemblIds = objectValueToArray(primaryData, 'EnsemblID');
       // If all genes are filtered, return empty array
-      ensemblIds = (this.state.primaryDataset.getRowCount() === ensemblIds.length) ? [] : ensemblIds;
+      ensemblIds = this.state.primaryDataset.getRowCount() === ensemblIds.length ? [] : ensemblIds;
       // If number of filtered genes is larger than the threshold, do nothing
       if (ensemblIds.length > this.maxElementsForPCA) {
         return;
       }
     }
 
+    this.setState({ pcaLoading: true });
     const loadings = await this.nodeBridge.getPcaLoadings(
       'mmusculus_gene_ensembl',
       'current',
@@ -408,6 +412,11 @@ class App extends React.Component {
     console.log(loadings);
     this.setState({
       pca: loadings.loadings['.val'],
+    });
+    // Set EnsemblIds
+    this.setState({
+      pcaLoading: false,
+      pcaEnsemblIds: ensemblIds
     });
   }
 
@@ -705,6 +714,25 @@ class App extends React.Component {
     );
   }
 
+  /**
+   * Can PCA plot be reloaded?
+   * @param {Dataset} dataset Primary dataset
+   * @param {array} filteredEnsemblIds array of filtered datasets
+   * @return {boolean} PCA plot can be rerendered
+   */
+  pcaPlotRequiresReload(dataset, filteredEnsemblIds, previouslyFilteredEnsemblIds) {
+    // If there is no primary data available, no reload is required
+    if (isUndefined(dataset.data)) {
+      return false;
+    }
+    // Check if all ensemblIDs are selected
+    if (filteredEnsemblIds.length === dataset.getRowCount() && previouslyFilteredEnsemblIds.length === 0) {
+      return false;
+    }
+    // Check if the ensemblIds match the previously selected ones
+    return !areIdentical(filteredEnsemblIds, previouslyFilteredEnsemblIds);
+  }
+
   render() {
     const leftDrawerWidth = this.layoutFactory.windowWidth / 3;
     const styleSheet = {
@@ -726,7 +754,7 @@ class App extends React.Component {
         hexplots.push(
           <Grid item xs={6} key={name}>
             <Hexplot
-              isSmallMultiple={true}
+              isSmallMultiple
               responsiveWidth
               height={this.layoutFactory.heights.smallMultiples}
               width={0}
@@ -776,6 +804,22 @@ class App extends React.Component {
     ) : (
       ''
     );
+
+    // PCA IDs
+    let pcaPlotRequiresReload = false;
+    let pcaIDsLabel = 'All IDs';
+    if (!isUndefined(this.state.primaryDataset.data)) {
+      // If the count of ensemblIds is smaller than the total size of the dataset, print count
+      const filteredEnsemblIds = objectValueToArray(this.state.primaryDataset.getData(), 'EnsemblID');
+      // Get reload status
+      pcaPlotRequiresReload = this.pcaPlotRequiresReload(this.state.primaryDataset, filteredEnsemblIds, this.state.pcaEnsemblIds);
+      // Get label
+      if (filteredEnsemblIds.length < this.state.primaryDataset.getRowCount()) {
+        pcaIDsLabel = `${filteredEnsemblIds.length} IDs`;
+      }
+    }
+    // If reload is required, append text
+    pcaIDsLabel = pcaPlotRequiresReload ? `${pcaIDsLabel} (reload)` : pcaIDsLabel;
 
     // Choose between Small Multiples View and Overview
     let appBody = '';
@@ -843,9 +887,34 @@ class App extends React.Component {
         <Grid container spacing={16}>
           <Grid item xs={1} />
           <Grid item xs={10}>
-            <Button raised onClick={this.getPCA}>
-              Rerun PCA
-            </Button>
+            <div
+              style={{
+                display: 'flex',
+                margin: theme.spacing.unit,
+                position: 'relative',
+                alignItems: 'center',
+              }}
+            >
+              <Button fab color="primary" disabled={this.state.pcaLoading || !pcaPlotRequiresReload} onClick={this.getPCA}>
+                <RefreshIcon />
+              </Button>
+              {this.state.pcaLoading && (
+                <CircularProgress
+                  size={68}
+                  style={{
+                    position: 'absolute',
+                    top: -6,
+                    left: -6,
+                    zIndex: 1,
+                  }}
+                />
+              )}
+              <div style={{marginLeft: '10px'}}>
+                <span style={pcaPlotRequiresReload ? {color: 'gray'} : { }}>
+                  {pcaIDsLabel}
+                </span>
+              </div>
+            </div>
             <ScatterplotPCA
               width={200}
               height={this.layoutFactory.heights.appView}
