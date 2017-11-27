@@ -136,6 +136,14 @@ class Dataset {
   }
 
   /**
+   * Get number of rows stored in data
+   * @return {integer} Row count
+   */
+  getRowCount() {
+    return this.data.length;
+  }
+
+  /**
    * Apply the filters to the dataset
    */
   _applyFilterToData() {

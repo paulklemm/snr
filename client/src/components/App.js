@@ -87,6 +87,7 @@ class App extends React.Component {
     this.authentication = new Authentication(this.nodeBridge);
     // Set Authenticator object for the Node Bridge
     this.nodeBridge.setAuthentication(this.authentication);
+    this.maxElementsForPCA = 2500 // Limit for POST getting the PCA dimensions
     this.promises = {}; // Collection of promises
     this.state = {
       datasetEnabled: {},
@@ -385,13 +386,20 @@ class App extends React.Component {
    */
   async getPCA() {
     // Get a list of filtered genes
-    // TODO Handle case of no filter and handle too large size of EnsemblIDs
+    // TODO Handle too large size of EnsemblIDs
     let ensemblIds = [];
     if (!isUndefined(this.state.primaryDataset.getData)) {
       // Get EnsemblIDs
       const primaryData = this.state.primaryDataset.getData();
       ensemblIds = objectValueToArray(primaryData, 'EnsemblID');
+      // If all genes are filtered, return empty array
+      ensemblIds = (this.state.primaryDataset.getRowCount() === ensemblIds.length) ? [] : ensemblIds;
+      // If number of filtered genes is larger than the threshold, do nothing
+      if (ensemblIds.length > this.maxElementsForPCA) {
+        return;
+      }
     }
+
     const loadings = await this.nodeBridge.getPcaLoadings(
       'mmusculus_gene_ensembl',
       'current',
