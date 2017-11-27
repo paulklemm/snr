@@ -5,12 +5,9 @@ import { Icon } from 'react-fa';
 import Drawer from 'material-ui/Drawer';
 import Grid from 'material-ui/Grid';
 import IconButton from 'material-ui/IconButton';
-import Button from 'material-ui/Button';
 // Material-UI theming
 import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
 import orange from 'material-ui/colors/orange';
-import RefreshIcon from 'material-ui-icons/Refresh';
-import { CircularProgress } from 'material-ui/Progress';
 import './App.css';
 // Sonar components
 // eslint-disable-next-line
@@ -402,21 +399,19 @@ class App extends React.Component {
         return;
       }
     }
-
+    // Set loading flag to true
     this.setState({ pcaLoading: true });
+    // Get PCA data
     const loadings = await this.nodeBridge.getPcaLoadings(
       'mmusculus_gene_ensembl',
       'current',
       ensemblIds,
     );
-    console.log(loadings);
-    this.setState({
-      pca: loadings.loadings['.val'],
-    });
     // Set EnsemblIds
     this.setState({
+      pca: loadings.loadings['.val'],
       pcaLoading: false,
-      pcaEnsemblIds: ensemblIds
+      pcaEnsemblIds: ensemblIds,
     });
   }
 
@@ -714,25 +709,6 @@ class App extends React.Component {
     );
   }
 
-  /**
-   * Can PCA plot be reloaded?
-   * @param {Dataset} dataset Primary dataset
-   * @param {array} filteredEnsemblIds array of filtered datasets
-   * @return {boolean} PCA plot can be rerendered
-   */
-  pcaPlotRequiresReload(dataset, filteredEnsemblIds, previouslyFilteredEnsemblIds) {
-    // If there is no primary data available, no reload is required
-    if (isUndefined(dataset.data)) {
-      return false;
-    }
-    // Check if all ensemblIDs are selected
-    if (filteredEnsemblIds.length === dataset.getRowCount() && previouslyFilteredEnsemblIds.length === 0) {
-      return false;
-    }
-    // Check if the ensemblIds match the previously selected ones
-    return !areIdentical(filteredEnsemblIds, previouslyFilteredEnsemblIds);
-  }
-
   render() {
     const leftDrawerWidth = this.layoutFactory.windowWidth / 3;
     const styleSheet = {
@@ -805,22 +781,6 @@ class App extends React.Component {
       ''
     );
 
-    // PCA IDs
-    let pcaPlotRequiresReload = false;
-    let pcaIDsLabel = 'All IDs';
-    if (!isUndefined(this.state.primaryDataset.data)) {
-      // If the count of ensemblIds is smaller than the total size of the dataset, print count
-      const filteredEnsemblIds = objectValueToArray(this.state.primaryDataset.getData(), 'EnsemblID');
-      // Get reload status
-      pcaPlotRequiresReload = this.pcaPlotRequiresReload(this.state.primaryDataset, filteredEnsemblIds, this.state.pcaEnsemblIds);
-      // Get label
-      if (filteredEnsemblIds.length < this.state.primaryDataset.getRowCount()) {
-        pcaIDsLabel = `${filteredEnsemblIds.length} IDs`;
-      }
-    }
-    // If reload is required, append text
-    pcaIDsLabel = pcaPlotRequiresReload ? `${pcaIDsLabel} (reload)` : pcaIDsLabel;
-
     // Choose between Small Multiples View and Overview
     let appBody = '';
     if (this.state.viewMode === 'detailed') {
@@ -887,34 +847,6 @@ class App extends React.Component {
         <Grid container spacing={16}>
           <Grid item xs={1} />
           <Grid item xs={10}>
-            <div
-              style={{
-                display: 'flex',
-                margin: theme.spacing.unit,
-                position: 'relative',
-                alignItems: 'center',
-              }}
-            >
-              <Button fab color="primary" disabled={this.state.pcaLoading || !pcaPlotRequiresReload} onClick={this.getPCA}>
-                <RefreshIcon />
-              </Button>
-              {this.state.pcaLoading && (
-                <CircularProgress
-                  size={68}
-                  style={{
-                    position: 'absolute',
-                    top: -6,
-                    left: -6,
-                    zIndex: 1,
-                  }}
-                />
-              )}
-              <div style={{marginLeft: '10px'}}>
-                <span style={pcaPlotRequiresReload ? {color: 'gray'} : { }}>
-                  {pcaIDsLabel}
-                </span>
-              </div>
-            </div>
             <ScatterplotPCA
               width={200}
               height={this.layoutFactory.heights.appView}
@@ -925,6 +857,10 @@ class App extends React.Component {
               yPc={2}
               toggleEnabledDataset={this.toggleEnabledDataset}
               getMetadataPromise={this.getMetadataPromise}
+              primaryDataset={this.state.primaryDataset}
+              pcaLoading={this.state.pcaLoading}
+              pcaEnsemblIds={this.state.pcaEnsemblIds}
+              getPCA={this.getPCA}
             />
           </Grid>
           <Grid item xs={1} />

@@ -5,6 +5,7 @@ import { isUndefined, objectValueToArray, injectStyle } from './Helper';
 import DatasetIcons from './DatasetIcons';
 import Loading from './Loading';
 import DatasetInfo from './DatasetInfo';
+import PCAReloadButton from './PCAReloadButton';
 
 const styleSheet = {
   datasetLoaded: {
@@ -232,6 +233,21 @@ class ScatterplotPCA extends Scatterplot {
       >
         {({ measureRef }) => (
           <div ref={measureRef}>
+            <span
+              style={{
+                fontSize: 15,
+                position: 'absolute',
+                marginLeft: this.widthNoMargin,
+                marginTop: 20,
+              }}
+            >
+              <PCAReloadButton
+                primaryDataset={this.props.primaryDataset}
+                pcaLoading={this.props.pcaLoading}
+                pcaEnsemblIds={this.props.pcaEnsemblIds}
+                getPCA={this.props.getPCA}
+              />
+            </span>
             <svg
               className="scatterplot"
               style={{ overflow: 'visible' }}

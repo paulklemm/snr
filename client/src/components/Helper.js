@@ -24,29 +24,6 @@ function getPercentageFromFloat(x) {
  * @param {array} b Array b
  * @return {boolean} Arrays are identical
  */
-function areIdentical2(a, b) {
-  // If lengths do not match they are not identical
-  if (a.length !== b.length) {
-    return false;
-  }
-
-  // Iterate over all array entries of a and their indexes
-  for (const { itemA, index } of toItemIndexes(a)) {
-    const itemB = b[index];
-    if (itemA !== itemB) {
-      return false;
-    }
-  }
-  // If we find nothing, they are identical
-  return true;
-}
-
-/**
- * Compare two arrays and check if their contents are identical
- * @param {array} a Array a
- * @param {array} b Array b
- * @return {boolean} Arrays are identical
- */
 function areIdentical(a, b) {
   // If lengths do not match they are not identical
   if (a.length !== b.length) {
