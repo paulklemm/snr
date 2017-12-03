@@ -50,7 +50,7 @@ class Table extends React.Component {
     const filterSetting = isUndefined(props.dimNames)
       ? undefined
       : this.getDefaultFilterSettings(props.dimNames);
-    const inputTimeLimit = 1000;
+    const inputTimeLimit = 500;
     this.state = {
       rowTop: 0,
       rowBottom: 40,
@@ -78,7 +78,7 @@ class Table extends React.Component {
 
   /** Since the FPKM value names differ, they need to be derived from the dimension names
    * @param {Array} dimNames Array of dimension names
-  */
+   */
   getDefaultFilterSettings(dimNames) {
     const filterSetting = DefaultFilterSetting;
     // Iterate through the values and look for FPKM values
@@ -92,23 +92,48 @@ class Table extends React.Component {
     return filterSetting;
   }
 
-  handleFilter(dimension) {
+  handleFilter(dimension, stopWatch, immediate = false, debug = true) {
+    // If immediate is true, don't care about all the stopWatch Jazz
+    if (immediate) {
+      this.applyFilter(dimension);
+    }
+    // Get Stopwatch either from state or from stopWatch function variable
+    const _stopWatch = isUndefined(stopWatch) ? this.state.lastInputStopwatch : stopWatch;
     setTimeout(() => {
-      if (this.state.lastInputStopwatch.overLimit()) {
-        return;
+      if (debug) {
+        console.log(`Get Time: ${_stopWatch.getTimeDifference()}`);
+        console.log(`SetTimeout is overLimit: ${_stopWatch.overLimit()}`);
       }
-      // Scroll back to the top of the list
-      this.refs.scrollable.scrollTop = 0;
-      // Remove all filters of this dimension
-      this.props.filter.removeFilter(dimension);
-      this.props.filter.setFilter(
-        dimension,
-        this.textFieldValues[dimension],
-        this.state.filterSetting[dimension],
-      );
-      // Update the app
-      this.props.forceUpdateApp();
-    }, 1000);
+      // Get the time from the stopwatch triggered by the last input
+      // If this stopwatch does not show more than the minimum limit
+      // then there must have been a additional input since then and therefore we will
+      // discard this filter
+      if (!this.state.lastInputStopwatch.overLimit()) {
+
+      } else {
+        // Apply the filter
+        this.applyFilter(dimension);
+      }
+    }, _stopWatch.limit);
+  }
+
+  /**
+   * Apply the text-input filter on the dimension
+   * @param {string} dimension Dimension to apply filter on
+   */
+  applyFilter(dimension) {
+    // Apply the filter
+    // Scroll back to the top of the list
+    this.refs.scrollable.scrollTop = 0;
+    // Remove all filters of this dimension
+    this.props.filter.removeFilter(dimension);
+    this.props.filter.setFilter(
+      dimension,
+      this.textFieldValues[dimension],
+      this.state.filterSetting[dimension],
+    );
+    // Update the app
+    this.props.forceUpdateApp();
   }
 
   /**
@@ -165,11 +190,13 @@ class Table extends React.Component {
                   if (currentOperator === '<') {
                     filterSetting[dimension] = '>';
                     this.setState({ filterSetting });
-                    this.handleFilter(dimension);
+                    // Apply the filter immediately
+                    this.handleFilter(dimension, undefined, true);
                   } else if (currentOperator === '>') {
                     filterSetting[dimension] = '<';
                     this.setState({ filterSetting });
-                    this.handleFilter(dimension);
+                    // Apply the filter immediately
+                    this.handleFilter(dimension, undefined, true);
                   }
                 }}
               >
@@ -186,11 +213,16 @@ class Table extends React.Component {
                     : this.textFieldValues[dimension]
                 }
                 onChange={(event) => {
+                  console.log(`Table Input Event, value: ${event.target.value}`);
                   // Reset input stopwatch
-                  this.setState({ lastInputStopwatch: new Stopwatch(this.state.inputTimeLimit) });
+                  const stopWatch = new Stopwatch(this.state.inputTimeLimit);
+                  // Set new Stopwatch
+                  this.setState({ lastInputStopwatch: stopWatch });
                   // Update the textfieldValue object with the newly changed value
                   this.textFieldValues[dimension] = event.target.value;
-                  this.handleFilter(dimension);
+                  // Pass the stopwatch to handleFilter, because state might not be set in time
+                  // for handleFilter to act on it
+                  this.handleFilter(dimension, stopWatch);
                 }}
               />
             </div>
@@ -277,9 +309,11 @@ class Table extends React.Component {
     if (this.debug) {
       console.log('------------------------');
       console.log(
-        `Data length: ${this.props.data.length}, Topmost element:${this.state
-          .rowTop}, Bottom element: ${this.state
-          .rowBottom}, Bottom spacer height: ${bottomSpacerHeight}, Top spacer height: ${topSpacerHeight}`,
+        `Data length: ${this.props.data.length}, Topmost element:${
+          this.state.rowTop
+        }, Bottom element: ${this.state.rowBottom}, Bottom spacer height: ${
+          bottomSpacerHeight
+        }, Top spacer height: ${topSpacerHeight}`,
       );
     }
 

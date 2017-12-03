@@ -896,6 +896,9 @@ class Stopwatch {
     this.limit = limit;
     this.startTime = new Date().getTime();
   }
+  getTimeDifference() {
+    return new Date().getTime() - this.startTime;
+  }
   /**
    * Check if limit amount time has passed since object creation
    * @return {boolean} Time passed sine object creation is over limit.
