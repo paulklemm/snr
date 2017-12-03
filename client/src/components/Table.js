@@ -92,7 +92,7 @@ class Table extends React.Component {
     return filterSetting;
   }
 
-  delayedFilter(dimension, stopWatch, immediate = false, debug = true) {
+  delayedFilter(dimension, stopWatch, immediate = false, debug = false) {
     // If immediate is true, don't care about all the stopWatch Jazz
     if (immediate) {
       this.applyFilter(dimension);
@@ -202,6 +202,9 @@ class Table extends React.Component {
                   // Apply the filtersettings
                   this.setState({ filterSetting });
                   // Apply the filter immediately and get value from the filter object
+                  if (isUndefined(this.props.filter.getFilterOfDimension(dimension)[0].value)) {
+                    return;
+                  }
                   this.applyFilter(
                     dimension,
                     this.props.filter.getFilterOfDimension(dimension)[0].value,
@@ -221,7 +224,6 @@ class Table extends React.Component {
                     : this.textFieldValues[dimension]
                 }
                 onChange={(event) => {
-                  console.log(`Table Input Event, value: ${event.target.value}`);
                   // Reset input stopwatch
                   const stopWatch = new Stopwatch(this.state.inputTimeLimit);
                   // Set new Stopwatch
