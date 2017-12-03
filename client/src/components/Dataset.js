@@ -184,21 +184,27 @@ class Dataset {
           // Exit the loop iteration
           return;
         }
-        // Added a dirty check on FPKM value names.
-        // Every variable with `FPKM` in it will be classified as number
-        if (DimensionTypes[dimName] === 'number' || /FPKM/i.test(dimName)) {
+        if (DimensionTypes[dimName] === 'number') {
           // Process Numbers
           if (filter[filterKey].operator === '<') {
             if (row[dimName] >= filter[filterKey].value) this.filtered[rowIndex] = true;
           } else if (filter[filterKey].operator === '>') {
             if (row[dimName] <= filter[filterKey].value) this.filtered[rowIndex] = true;
+          } else if (filter[filterKey].operator === '=') {
+            if (row[dimName] === filter[filterKey].value) this.filtered[rowIndex] = true;
           }
-          // Not a number
-        } else if (
-          typeof row[dimName] === 'undefined' ||
-          row[dimName].indexOf(filter[filterKey].value) === -1
-        ) {
-          this.filtered[rowIndex] = true;
+        } else {
+          // Not a number, so only check for equal
+          // If is not defined, filter it out
+          if (isUndefined(row[dimName])) {
+            this.filtered[rowIndex] = true;
+          }
+          // Convert number to string if needed
+          const val = typeof row[dimName] === 'number' ? row[dimName].toString() : row[dimName];
+          // Check if filterstring is in val, if not filter the element out
+          if (val.indexOf(filter[filterKey].value) === -1) {
+            this.filtered[rowIndex] = true;
+          }
         }
       });
     });

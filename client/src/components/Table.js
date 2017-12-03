@@ -2,7 +2,7 @@ import React from 'react';
 import IconButton from 'material-ui/IconButton';
 import TextField from 'material-ui/TextField';
 import PropTypes from 'prop-types';
-import { DefaultFilterSetting } from './DimensionTypes.js';
+import { DefaultFilterSetting, DimensionTypes } from './DimensionTypes.js';
 import { isUndefined, areIdentical, Stopwatch } from './Helper';
 
 const styleSheet = {
@@ -185,24 +185,27 @@ class Table extends React.Component {
                   // Update filter
                   const currentOperator = event.target.textContent;
                   const filterSetting = this.state.filterSetting;
+                  // Get dimension type
+                  const dimensionType = DimensionTypes[dimension];
+                  // If dimensiontype is string, do nothing
+                  if (dimensionType === 'string') {
+                    return;
+                  }
                   // Switch signs
-                  if (currentOperator === '<') {
+                  if (currentOperator === '=') {
                     filterSetting[dimension] = '>';
-                    this.setState({ filterSetting });
-                    // Apply the filter immediately and get value from the filter object
-                    this.applyFilter(
-                      dimension,
-                      this.props.filter.getFilterOfDimension(dimension)[0].value,
-                    );
                   } else if (currentOperator === '>') {
                     filterSetting[dimension] = '<';
-                    this.setState({ filterSetting });
-                    // Apply the filter immediately and get value from the filter object
-                    this.applyFilter(
-                      dimension,
-                      this.props.filter.getFilterOfDimension(dimension)[0].value,
-                    );
+                  } else if (currentOperator === '<') {
+                    filterSetting[dimension] = '=';
                   }
+                  // Apply the filtersettings
+                  this.setState({ filterSetting });
+                  // Apply the filter immediately and get value from the filter object
+                  this.applyFilter(
+                    dimension,
+                    this.props.filter.getFilterOfDimension(dimension)[0].value,
+                  );
                 }}
               >
                 {this.state.filterSetting[dimension]}
