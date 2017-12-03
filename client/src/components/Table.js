@@ -92,7 +92,7 @@ class Table extends React.Component {
     return filterSetting;
   }
 
-  handleFilter(dimension, stopWatch, immediate = false, debug = true) {
+  delayedFilter(dimension, stopWatch, immediate = false, debug = true) {
     // If immediate is true, don't care about all the stopWatch Jazz
     if (immediate) {
       this.applyFilter(dimension);
@@ -109,7 +109,6 @@ class Table extends React.Component {
       // then there must have been a additional input since then and therefore we will
       // discard this filter
       if (!this.state.lastInputStopwatch.overLimit()) {
-
       } else {
         // Apply the filter
         this.applyFilter(dimension);
@@ -120,18 +119,18 @@ class Table extends React.Component {
   /**
    * Apply the text-input filter on the dimension
    * @param {string} dimension Dimension to apply filter on
+   * @param {string} value Value for filter. If set blank we will get it from this.textfieldValuies
    */
-  applyFilter(dimension) {
+  applyFilter(dimension, value) {
+    const filterValue = isUndefined(value) ? this.textFieldValues[dimension] : value;
     // Apply the filter
     // Scroll back to the top of the list
     this.refs.scrollable.scrollTop = 0;
     // Remove all filters of this dimension
     this.props.filter.removeFilter(dimension);
-    this.props.filter.setFilter(
-      dimension,
-      this.textFieldValues[dimension],
-      this.state.filterSetting[dimension],
-    );
+    this.props.filter.setFilter(dimension, filterValue, this.state.filterSetting[dimension]);
+    // Remove the value from the local array feeding the text fields when filter is not applied yet
+    this.textFieldValues[dimension] = '';
     // Update the app
     this.props.forceUpdateApp();
   }
@@ -190,13 +189,19 @@ class Table extends React.Component {
                   if (currentOperator === '<') {
                     filterSetting[dimension] = '>';
                     this.setState({ filterSetting });
-                    // Apply the filter immediately
-                    this.handleFilter(dimension, undefined, true);
+                    // Apply the filter immediately and get value from the filter object
+                    this.applyFilter(
+                      dimension,
+                      this.props.filter.getFilterOfDimension(dimension)[0].value,
+                    );
                   } else if (currentOperator === '>') {
                     filterSetting[dimension] = '<';
                     this.setState({ filterSetting });
-                    // Apply the filter immediately
-                    this.handleFilter(dimension, undefined, true);
+                    // Apply the filter immediately and get value from the filter object
+                    this.applyFilter(
+                      dimension,
+                      this.props.filter.getFilterOfDimension(dimension)[0].value,
+                    );
                   }
                 }}
               >
@@ -222,7 +227,7 @@ class Table extends React.Component {
                   this.textFieldValues[dimension] = event.target.value;
                   // Pass the stopwatch to handleFilter, because state might not be set in time
                   // for handleFilter to act on it
-                  this.handleFilter(dimension, stopWatch);
+                  this.delayedFilter(dimension, stopWatch);
                 }}
               />
             </div>
