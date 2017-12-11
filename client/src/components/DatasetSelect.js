@@ -110,7 +110,7 @@ class DatasetSelect extends React.Component {
         </ListItem>,
       );
     });
-    if (datasetCheckboxes.length === 0) {
+    if (datasets.length === 0) {
       datasetCheckboxes.push(<Loading key="CircularProgress_getCheckboxes" />);
     }
 
