@@ -243,6 +243,11 @@ class DatasetHub {
     this.update();
   }
 
+  /**
+   * Set enabled status for dataset
+   * @param {string} datasetName Dataset name
+   * @param {boolean} enabled Enabled status
+   */
   setEnable(datasetName, enabled) {
     this.datasets[datasetName].enabled = enabled;
     this.update();

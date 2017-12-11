@@ -726,7 +726,7 @@ class App extends React.Component {
         continue;
       }
       const dataset = this.datasetHub.datasets[name];
-      if (dataset.loaded) {
+      if (dataset.loaded && dataset.enabled) {
         hexplots.push(
           <Grid item xs={6} key={name}>
             <Hexplot
