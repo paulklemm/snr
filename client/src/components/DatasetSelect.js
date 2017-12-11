@@ -36,14 +36,19 @@ class DatasetSelect extends React.Component {
 
   getCheckboxes(mode = 'public') {
     const datasetCheckboxes = [];
-    let index = 0;
-    for (const datasetName of Object.keys(this.props.datasetEnabled)) {
+    const datasets = Object.keys(this.props.datasetEnabled);
+    // for (const datasetName of Object.keys(this.props.datasetEnabled)) {
+    datasets.forEach((datasetName, index) => {
       // Check if we should render public or private data
       if (mode === 'public' && !this.props.datasetHub.datasets[datasetName].isPublic) {
-        continue;
+        return;
       }
       if (mode === 'private' && this.props.datasetHub.datasets[datasetName].isPublic) {
-        continue;
+        return;
+      }
+      // Check if the data is public and if not enabled, don't add it
+      if (mode === 'public' && !this.props.datasetEnabled[datasetName]) {
+        return;
       }
       datasetCheckboxes.push(
         <ListItem
@@ -51,7 +56,8 @@ class DatasetSelect extends React.Component {
           button
           key={`DatasetSelect_${datasetName}`}
           onClick={() =>
-            this.props.setEnableDataset(datasetName, !this.props.datasetEnabled[datasetName])}
+            this.props.setEnableDataset(datasetName, !this.props.datasetEnabled[datasetName])
+          }
           onMouseLeave={() => this.setState({ tooltip: [] })}
           onMouseOver={(event) => {
             // Add tooltip event
@@ -103,8 +109,7 @@ class DatasetSelect extends React.Component {
           />
         </ListItem>,
       );
-      index += index;
-    }
+    });
     if (datasetCheckboxes.length === 0) {
       datasetCheckboxes.push(<Loading key="CircularProgress_getCheckboxes" />);
     }
