@@ -181,6 +181,7 @@ class DatasetSelect extends React.Component {
           },
         )}
         {this.state.tooltip}
+        <div style={{ height: '600px' }} />
       </div>
     );
   }
