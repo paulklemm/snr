@@ -139,7 +139,7 @@ class ScatterplotPCA extends Scatterplot {
         // Dirty check if the current icon is a public dataset
         // TODO: Make this proper by pulling the dataset from the hub and get information from there
         const isPublic = this.icons[i] === 'archive';
-        const iconOpacity = isPublic ? 0.3 : 1;
+        const iconOpacity = isPublic ? 0.1 : 1;
         dots.push(
           <g
             onMouseEnter={() => this.showTooltip(currentX, currentY, currentRowName)}

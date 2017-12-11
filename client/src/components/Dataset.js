@@ -191,6 +191,7 @@ class Dataset {
           } else if (filter[filterKey].operator === '>') {
             if (row[dimName] <= filter[filterKey].value) this.filtered[rowIndex] = true;
           } else if (filter[filterKey].operator === '=') {
+            // eslint-disable-next-line 
             if (row[dimName] != filter[filterKey].value) this.filtered[rowIndex] = true;
           }
         } else {

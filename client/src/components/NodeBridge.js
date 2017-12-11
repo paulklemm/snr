@@ -244,7 +244,6 @@ class NodeBridge {
       ensemblVersion,
       ensemblIds,
     };
-    console.log(ensemblIds);
     return this._fetchWithUserAndTokenPost('api/getpcaloadings', data);
   }
 
