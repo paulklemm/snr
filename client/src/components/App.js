@@ -638,7 +638,10 @@ class App extends React.Component {
     );
     // Loading is done, so update it again
     this.setState({ datasetLoading: this.datasetHub.loading });
-    this.setState({ primaryDataset: this.datasetHub.datasets[name] });
+    // Only set primary dataset if it's the first dataset to load
+    if (isUndefined(this.state.primaryDataset.name)) {
+      this.setState({ primaryDataset: this.datasetHub.datasets[name] });
+    }
 
     // Remove busy state
     this.removeBusyState(`Load dataset ${name}`);
