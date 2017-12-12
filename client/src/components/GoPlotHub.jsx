@@ -239,7 +239,7 @@ class GoPlotHub extends React.Component {
         // Iterate over all datasets
         const goPlotsPerDataset = [];
         Object.values(this.props.datasetHub.datasets).forEach((dataset) => {
-          if (dataset.loaded) {
+          if (this.props.datasetIsEnabled(dataset.name) && dataset.loaded) {
             goPlotsPerDataset.push(this.getGoPlot(dataset, goTerm, maxGoTermSize, true));
           }
         });

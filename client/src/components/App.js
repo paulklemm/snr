@@ -693,6 +693,7 @@ class App extends React.Component {
         goTerms={this.state.goTerms}
         dataset={this.state.primaryDataset}
         datasetHub={this.datasetHub}
+        datasetIsEnabled={this.datasetIsEnabled}
         highlight={this.state.highlight}
         goTermHub={this.goTermHub}
         width={leftDrawerWidth}
