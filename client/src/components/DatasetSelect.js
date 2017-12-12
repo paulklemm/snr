@@ -46,8 +46,9 @@ class DatasetSelect extends React.Component {
       if (mode === 'private' && this.props.datasetHub.datasets[datasetName].isPublic) {
         return;
       }
-      // Check if the data is public and if not enabled, don't add it
-      if (mode === 'public' && !this.props.datasetEnabled[datasetName]) {
+      // Check if the data is public and if not loaded, don't add it
+      const datasetObj = this.props.datasetHub.getDataset(datasetName);
+      if (mode === 'public' && !(datasetObj.loading || datasetObj.loaded)) {
         return;
       }
       datasetCheckboxes.push(
