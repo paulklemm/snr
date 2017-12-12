@@ -129,7 +129,10 @@ class ScatterplotPCA extends Scatterplot {
       //     : radius;
       // Get style for the element
       let divStyle = styleSheet.myPulse;
-      if (this.props.datasetHub.isLoaded(currentRowName)) {
+      if (
+        this.props.datasetHub.isLoaded(currentRowName) &&
+        this.props.datasetIsEnabled(currentRowName)
+      ) {
         divStyle = styleSheet.datasetLoaded;
       } else if (this.props.datasetHub.isLoading(currentRowName)) {
         divStyle = styleSheet.datasetLoading;
@@ -138,8 +141,9 @@ class ScatterplotPCA extends Scatterplot {
       if (this.icons.length > 0) {
         // Dirty check if the current icon is a public dataset
         // TODO: Make this proper by pulling the dataset from the hub and get information from there
-        const isPublic = this.icons[i] === 'archive';
-        const iconOpacity = isPublic && !this.props.datasetHub.isLoaded(currentRowName) ? 0.1 : 1;
+        const dataset = this.props.datasetHub.getDataset(currentRowName);
+        const iconOpacity =
+          dataset.isPublic && !this.props.datasetIsEnabled(currentRowName) ? 0.1 : 1;
         dots.push(
           <g
             onMouseEnter={() => this.showTooltip(currentX, currentY, currentRowName)}

@@ -76,6 +76,7 @@ class App extends React.Component {
     this.setMaximumRenderedDots = this.setMaximumRenderedDots.bind(this);
     this.setRenderGeneInfoInSmallMultiples = this.setRenderGeneInfoInSmallMultiples.bind(this);
     this.getPCA = this.getPCA.bind(this);
+    this.datasetIsEnabled = this.datasetIsEnabled.bind(this);
     // Init datasethub and inject filterTriggered function
     this.datasetHub = new DatasetHub(this.filterBroadcasted, this.setBiomartVariables);
     this.debug = false;
@@ -283,6 +284,14 @@ class App extends React.Component {
     if (requiresLoading) {
       this.loadDataset(name);
     }
+  }
+
+  /**
+   * Check if dataset is enabled
+   * @param {String} name Dataset name
+   */
+  datasetIsEnabled(name) {
+    return this.state.datasetEnabled[name];
   }
 
   getMetadataPromise(name) {
@@ -849,7 +858,7 @@ class App extends React.Component {
           <Grid item xs={10}>
             <ScatterplotPCA
               width={200}
-              height={this.layoutFactory.heights.appView}
+              height={this.layoutFactory.heights.appView - (this.layoutFactory.heights.appView / 4)}
               responsiveWidth
               pca={this.state.pca}
               datasetHub={this.datasetHub}
@@ -860,6 +869,7 @@ class App extends React.Component {
               primaryDataset={this.state.primaryDataset}
               pcaLoading={this.state.pcaLoading}
               pcaEnsemblIds={this.state.pcaEnsemblIds}
+              datasetIsEnabled={this.datasetIsEnabled}
               getPCA={this.getPCA}
             />
           </Grid>
