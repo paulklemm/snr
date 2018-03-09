@@ -31,7 +31,7 @@ This repo knows two origins:
 
 ```bash
 # From https://stackoverflow.com/questions/14290113/git-pushing-code-to-two-remotes
-git remote set-url --add --push origin git@github.com:paulklemm/snr.git
+git remote set-url --add --push origin git@github.com:snr-vis/snr.git
 git remote set-url --add --push origin git@github.sf.mpg.de:pklemm/sonar.git
 # Check with `git remote show origin`
 ```
