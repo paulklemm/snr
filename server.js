@@ -1,10 +1,10 @@
 // Conjunction with create-react-app from [https://github.com/fullstackreact/food-lookup-demo](https://github.com/fullstackreact/food-lookup-demo)
 // Node classes: https://stackoverflow.com/questions/42684177/node-js-es6-classes-with-require
 const express = require('express');
-const { timeStampLog, readJSONFSSync, isUndefined } = require('./Components/Helper');
-const { UserManager } = require('./Components/UserManager');
-const { OpenCPUBridge } = require('./Components/OpenCPUBridge');
-const { Sessions } = require('./Components/Sessions');
+const { timeStampLog, readJSONFSSync, isUndefined } = require('./components/Helper');
+const { UserManager } = require('./components/UserManager');
+const { OpenCPUBridge } = require('./components/OpenCPUBridge');
+const { Sessions } = require('./components/Sessions');
 const bodyParser = require('body-parser');
 // Promises Collection
 const promises = {};

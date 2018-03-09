@@ -23,6 +23,7 @@ package-lock.json
 # data
 data/
 users/
+server_settings_mac.json
 
 # VS Code
 .vscode
