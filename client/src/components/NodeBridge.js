@@ -31,8 +31,8 @@ class NodeBridge {
    * Wrapper function that calls the fetchURL on the node back-end with user credentials.
    * If you provide no post-variables, be sure to end the fetchURL with a '?'.
    * Examples:
-   *   _fetchWithUserAndToken(`api/loaddata?`);
-   *   _fetchWithUserAndToken(`api/getdataset?name=${name}`);
+   *   _fetchWithUserAndToken(`http://localhost:3099/api/loaddata?`);
+   *   _fetchWithUserAndToken(`http://localhost:3099/api/getdataset?name=${name}`);
    *
    * @param {String} fetchUrl URL to call. User and token will be appended with
    * @return {Object} Response from the server containing name of the call, success boolean and data
@@ -92,7 +92,7 @@ class NodeBridge {
    * @return {Promise} of Check
    */
   checkServer() {
-    return fetch('api/isonline').then(() => {
+    return fetch('http://localhost:3099/api/isonline').then(() => {
       this.isOnline = true;
     });
   }
@@ -105,7 +105,7 @@ class NodeBridge {
    * @return {Promise} of sendLogin fetch
    */
   sendLogin(user, password, cb) {
-    return fetch(`api/login?user=${user}&password=${password}`, {
+    return fetch(`http://localhost:3099/api/login?user=${user}&password=${password}`, {
       accept: 'application/json',
     })
       .then(this.parseJSON)
@@ -119,7 +119,7 @@ class NodeBridge {
    * @return {Object} Response object of server
    */
   echoToken(query, debug = false) {
-    const response = this._fetchWithUserAndTokenGet(`api/echotoken?q=${query}`);
+    const response = this._fetchWithUserAndTokenGet(`http://localhost:3099/api/echotoken?q=${query}`);
     if (debug) console.log(response);
     return response;
   }
@@ -137,7 +137,7 @@ class NodeBridge {
     // Get user and token
     const { user, token } = this._getUserAndToken();
     const response = fetch(
-      `api/runrcommand?rpackage=${rpackage}&rfunction=${rfunction}&params=${JSON.stringify(
+      `http://localhost:3099/api/runrcommand?rpackage=${rpackage}&rfunction=${rfunction}&params=${JSON.stringify(
         params,
       )}&valformat=${valformat}&user=${user}&token=${token}`,
       { accept: 'application/json' },
@@ -152,7 +152,7 @@ class NodeBridge {
    * @return {Object} Server response
    */
   loadData() {
-    return this._fetchWithUserAndTokenGet('api/loaddata?');
+    return this._fetchWithUserAndTokenGet('http://localhost:3099/api/loaddata?');
   }
 
   /**
@@ -161,7 +161,7 @@ class NodeBridge {
    * @return {Object} Server response
    */
   loadPublicData() {
-    return this._fetchWithUserAndTokenGet('api/loadpublicdata?');
+    return this._fetchWithUserAndTokenGet('http://localhost:3099/api/loadpublicdata?');
   }
 
   /**
@@ -174,7 +174,7 @@ class NodeBridge {
    */
   getDataset(name, biomartVariables, isPublic = false) {
     return this._fetchWithUserAndTokenGet(
-      `api/getdataset?name=${name}&ispublic=${isPublic}&biomartvariables=${JSON.stringify(
+      `http://localhost:3099/api/getdataset?name=${name}&ispublic=${isPublic}&biomartvariables=${JSON.stringify(
         biomartVariables,
       )}`,
     );
@@ -188,7 +188,7 @@ class NodeBridge {
    * @return {Object} Response
    */
   getMetadata(name, isPublic) {
-    return this._fetchWithUserAndTokenGet(`api/getmetadata?name=${name}&ispublic=${isPublic}`);
+    return this._fetchWithUserAndTokenGet(`http://localhost:3099/api/getmetadata?name=${name}&ispublic=${isPublic}`);
   }
 
   /**
@@ -200,7 +200,7 @@ class NodeBridge {
    */
   getGoSummary(ensemblDataset, ensemblVersion) {
     return this._fetchWithUserAndTokenGet(
-      `api/getgosummary?ensembldataset=${ensemblDataset}&ensemblversion=${ensemblVersion}`,
+      `http://localhost:3099/api/getgosummary?ensembldataset=${ensemblDataset}&ensemblversion=${ensemblVersion}`,
     );
   }
 
@@ -213,7 +213,7 @@ class NodeBridge {
    */
   getBiomartVariables(ensemblDataset, ensemblVersion) {
     return this._fetchWithUserAndTokenGet(
-      `api/getbiomartvariables?ensembldataset=${ensemblDataset}&ensemblversion=${ensemblVersion}`,
+      `http://localhost:3099/api/getbiomartvariables?ensembldataset=${ensemblDataset}&ensemblversion=${ensemblVersion}`,
     );
   }
 
@@ -226,7 +226,7 @@ class NodeBridge {
    */
   getGoPerGene(ensemblDataset, ensemblVersion) {
     return this._fetchWithUserAndTokenGet(
-      `api/getgopergene?ensembldataset=${ensemblDataset}&ensemblversion=${ensemblVersion}`,
+      `http://localhost:3099/api/getgopergene?ensembldataset=${ensemblDataset}&ensemblversion=${ensemblVersion}`,
     );
   }
 
@@ -244,7 +244,7 @@ class NodeBridge {
       ensemblVersion,
       ensemblIds,
     };
-    return this._fetchWithUserAndTokenPost('api/getpcaloadings', data);
+    return this._fetchWithUserAndTokenPost('http://localhost:3099/api/getpcaloadings', data);
   }
 
   /**

@@ -33,7 +33,8 @@ function alreadyRunning(name) {
  * @param {String} path to settings.json, default is set to "server_settings.json"
  * @return {Object} settings object
  */
-function getSettings(path = 'server_settings.json') {
+function getSettings(path = '/usr/src/snr/server_settings.json') {
+  // TODO Hack with full file path to fix pm2 start that doesn't find it
   const settings = readJSONFSSync(path);
   if (typeof settings === 'undefined') {
     timeStampLog(`Cannot read settings at ${path}`, true);
