@@ -2,22 +2,27 @@
 
 <!-- TOC -->
 
-- [Sonar Readme](#sonar-readme)
-  - [Project Roadmap](#project-roadmap)
-    - [ToDo](#todo)
-      - [Not in sprints](#not-in-sprints)
-  - [Structure of Data and OpenCPU Sessions](#structure-of-data-and-opencpu-sessions)
-  - [Data Layout & Metadata](#data-layout--metadata)
-  - [Node Server](#node-server)
-  - [Implementation Examples](#implementation-examples)
-    - [Pass an Array to `R`](#pass-an-array-to-r)
-    - [Rendering Graphics from `R` in `Sonar`](#rendering-graphics-from-r-in-sonar)
-    - [Rendering `Sonar` Components](#rendering-sonar-components)
-  - [Security](#security)
-    - [Generate User file](#generate-user-file)
-    - [Workflow for creating a new user](#workflow-for-creating-a-new-user)
+* [Sonar Readme](#sonar-readme)
+  * [License](#license)
+  * [Project Roadmap](#project-roadmap)
+    * [ToDo](#todo)
+      * [Not in sprints](#not-in-sprints)
+  * [Structure of Data and OpenCPU Sessions](#structure-of-data-and-opencpu-sessions)
+  * [Data Layout & Metadata](#data-layout--metadata)
+  * [Node Server](#node-server)
+  * [Implementation Examples](#implementation-examples)
+    * [Pass an Array to `R`](#pass-an-array-to-r)
+    * [Rendering Graphics from `R` in `Sonar`](#rendering-graphics-from-r-in-sonar)
+    * [Rendering `Sonar` Components](#rendering-sonar-components)
+  * [Security](#security)
+    * [Generate User file](#generate-user-file)
+    * [Workflow for creating a new user](#workflow-for-creating-a-new-user)
 
 <!-- /TOC -->
+
+## License
+
+Until release of the paper presenting SNR it is under the restrictive **Attribution-NonCommercial-NoDerivatives 4.0 International** license. After that we'll switch to the **MIT** license.
 
 ## Project Roadmap
 
@@ -25,34 +30,34 @@
 
 Priority Legend:
 
-- 🔥 Must have
-- 🤖 Normal
-- 🏝 Nice to have
+* 🔥 Must have
+* 🤖 Normal
+* 🏝 Nice to have
 
 Development is divided into sprints to achieve milestones. Head over to [Issues](https://github.sf.mpg.de/pklemm/sonar/issues) for the ToDo list.
 
-- [ ] 🏝 Create project homepage
-- [ ] 🤖 Write documentation on how to set up the infrastructure
-- [ ] 🤖 Create docker images
-  - [ ] 🤖 Docker image for `R` back-end
-  - [ ] 🤖 Docker image for `node` server and client
-  - [ ] 🏝 Docker image for both
-- [ ] 🔥 Include GO-Term analysis
-- [ ] 🤖 Add Similarity Analysis based on ExpressionAtlas
-- [ ] 🔥 Include Analyses from QuickNGS
-- [ ] 🤖 Add Icon-visualization of each dataset in table
-- [ ] 🔥 Add Metadata structure for each dataset to display in the client
-  - [ ] 🔥 Implement Proper data transfer function between back- and front-end
-- [ ] 🔥 Implement Analysis system of ArrayExpress data using either Kallisto or QuickNGS
-- [ ] 🔥 Write paper
-- [ ] 🔥 Add PCA plot including results from ArrayExpress/Kallisto
-- [ ] 🔥 Conduct user studies
-- [ ] 🤖 Create function to add new users
+* [ ] 🏝 Create project homepage
+* [ ] 🤖 Write documentation on how to set up the infrastructure
+* [ ] 🤖 Create docker images
+  * [ ] 🤖 Docker image for `R` back-end
+  * [ ] 🤖 Docker image for `node` server and client
+  * [ ] 🏝 Docker image for both
+* [ ] 🔥 Include GO-Term analysis
+* [ ] 🤖 Add Similarity Analysis based on ExpressionAtlas
+* [ ] 🔥 Include Analyses from QuickNGS
+* [ ] 🤖 Add Icon-visualization of each dataset in table
+* [ ] 🔥 Add Metadata structure for each dataset to display in the client
+  * [ ] 🔥 Implement Proper data transfer function between back- and front-end
+* [ ] 🔥 Implement Analysis system of ArrayExpress data using either Kallisto or QuickNGS
+* [ ] 🔥 Write paper
+* [ ] 🔥 Add PCA plot including results from ArrayExpress/Kallisto
+* [ ] 🔥 Conduct user studies
+* [ ] 🤖 Create function to add new users
 
 #### Not in sprints
 
-- [ ] 🏝 Save sessions locally and on the server to exchange with people (maybe via link)
-  - Maybe using a bookmark system
+* [ ] 🏝 Save sessions locally and on the server to exchange with people (maybe via link)
+  * Maybe using a bookmark system
 
 ## Structure of Data and OpenCPU Sessions
 
@@ -108,7 +113,7 @@ To account for data from different sources, each file in the user folder should 
 
 This file can also be called `dictionary.json` and then acts as fallback configuration for all files in a folder if there is no specific dictionary file provided for a dataset.
 
-The `dictionary.json` file is also used to add *metadata* to each dataset. All the available metadata will be displayed by Sonar.
+The `dictionary.json` file is also used to add _metadata_ to each dataset. All the available metadata will be displayed by Sonar.
 
 Currently the metadata facilities are rather restricted. The elements will be displayed as they are on the first nesting level. There are, however, no special handling or URLs or similar things. This needs to be enhanced soon.
 
@@ -133,13 +138,17 @@ The ajax request used to pass arguments to the `OpenCPU` back-end server needs t
 
 ```javascript
 // Show how to pass arrays into OpenCPU
-openCPU.runRCommand("base", "mean", { x:'c(1, 2, 3, 4, 5, 6)' }, "json").then((result) => {
-  timeStampLog(JSON.stringify(result, null, 2));
-});
+openCPU
+  .runRCommand('base', 'mean', { x: 'c(1, 2, 3, 4, 5, 6)' }, 'json')
+  .then(result => {
+    timeStampLog(JSON.stringify(result, null, 2));
+  });
 // Alternative
-openCPU.runRCommand("base", "mean", { x:'[1, 2, 3, 4, 5, 6]' }, "json").then((result) => {
-  timeStampLog(JSON.stringify(result, null, 2));
-});
+openCPU
+  .runRCommand('base', 'mean', { x: '[1, 2, 3, 4, 5, 6]' }, 'json')
+  .then(result => {
+    timeStampLog(JSON.stringify(result, null, 2));
+  });
 ```
 
 ### Rendering Graphics from `R` in `Sonar`
@@ -147,11 +156,19 @@ openCPU.runRCommand("base", "mean", { x:'[1, 2, 3, 4, 5, 6]' }, "json").then((re
 Get a graphic from `R`
 
 ```javascript
-this.openCPU.runRCommand("graphics", "hist", { x: "[1,2,2,2,3,4,5,6,6,7]", breaks: 10}, 'ascii', false).then(output => {
-  this.setState({
-    image: `${output.graphics[0]}/svg`
+this.openCPU
+  .runRCommand(
+    'graphics',
+    'hist',
+    { x: '[1,2,2,2,3,4,5,6,6,7]', breaks: 10 },
+    'ascii',
+    false
+  )
+  .then(output => {
+    this.setState({
+      image: `${output.graphics[0]}/svg`
+    });
   });
-});
 ```
 
 Include the image in HTML using
@@ -179,7 +196,7 @@ The `server_settings.json` file contains the path to the users file. A user file
 ```json
 {
   "path": "/home/opencpu/sonar/data",
-  "passwd": "$2a$10$GJl7RZ8xfKnLieVLPH3sMeAE/EM3Z2JVRI21/YDEaELMMbV3.XWhm",
+  "passwd": "$2a$10$GJl7RZ8xfKnLieVLPH3sMeAE/EM3Z2JVRI21/YDEaELMMbV3.XWhm"
 }
 ```
 
@@ -195,8 +212,8 @@ The server's API allows the create a user file by specifying path and password b
 
 ### Workflow for creating a new user
 
-1. Create a new folder for the user in the folder that is linked to the `docker` `R` back-end and add the data there
-1. Create a `dictionary.json` file in that folder (see [Structure of Data and OpenCPU Sessions](#structure-of-data-and-opencpu-sessions))
-1. Check `server_settings.json` file where the user configuration files are
-1. Go to this directory and save the output of `http://<url_to_server>:<port>/api/makeuserfilejson?pw=<user_password>&path=<path_to_data_on_r_back_end>` to `<username>.json`
-1. Log in to sonar with the new account
+1.  Create a new folder for the user in the folder that is linked to the `docker` `R` back-end and add the data there
+1.  Create a `dictionary.json` file in that folder (see [Structure of Data and OpenCPU Sessions](#structure-of-data-and-opencpu-sessions))
+1.  Check `server_settings.json` file where the user configuration files are
+1.  Go to this directory and save the output of `http://<url_to_server>:<port>/api/makeuserfilejson?pw=<user_password>&path=<path_to_data_on_r_back_end>` to `<username>.json`
+1.  Log in to sonar with the new account
