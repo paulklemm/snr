@@ -23,7 +23,7 @@ class NodeBridge {
   _getUserAndToken() {
     return {
       user: this.authentication.getUser(),
-      token: this.authentication.getToken(),
+      token: this.authentication.getToken()
     };
   }
 
@@ -31,8 +31,8 @@ class NodeBridge {
    * Wrapper function that calls the fetchURL on the node back-end with user credentials.
    * If you provide no post-variables, be sure to end the fetchURL with a '?'.
    * Examples:
-   *   _fetchWithUserAndToken(`http://localhost:3099/api/loaddata?`);
-   *   _fetchWithUserAndToken(`http://localhost:3099/api/getdataset?name=${name}`);
+   *   _fetchWithUserAndToken(`api/loaddata?`);
+   *   _fetchWithUserAndToken(`api/getdataset?name=${name}`);
    *
    * @param {String} fetchUrl URL to call. User and token will be appended with
    * @return {Object} Response from the server containing name of the call, success boolean and data
@@ -45,7 +45,7 @@ class NodeBridge {
     // Some functions like the getData functions do not take aruments, therefore we have to omit the first `&`
     const andSymbol = fetchUrl.endsWith('?') ? '' : '&';
     const response = await fetch(`${fetchUrl}${andSymbol}user=${user}&token=${token}`, {
-      accept: 'application/json',
+      accept: 'application/json'
     }).then(this.parseJSON);
 
     // Set busy state of the app
@@ -67,8 +67,8 @@ class NodeBridge {
       body: JSON.stringify(dataWithCredentials), // The data we are going to send in our request
       headers: {
         Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
+        'Content-Type': 'application/json'
+      }
     };
     const response = await fetch(fetchUrl, fetchData).then(response => response.json());
     // TODO Debug statement
@@ -92,7 +92,7 @@ class NodeBridge {
    * @return {Promise} of Check
    */
   checkServer() {
-    return fetch('http://localhost:3099/api/isonline').then(() => {
+    return fetch('api/isonline').then(() => {
       this.isOnline = true;
     });
   }
@@ -105,8 +105,8 @@ class NodeBridge {
    * @return {Promise} of sendLogin fetch
    */
   sendLogin(user, password, cb) {
-    return fetch(`http://localhost:3099/api/login?user=${user}&password=${password}`, {
-      accept: 'application/json',
+    return fetch(`api/login?user=${user}&password=${password}`, {
+      accept: 'application/json'
     })
       .then(this.parseJSON)
       .then(cb);
@@ -119,7 +119,7 @@ class NodeBridge {
    * @return {Object} Response object of server
    */
   echoToken(query, debug = false) {
-    const response = this._fetchWithUserAndTokenGet(`http://localhost:3099/api/echotoken?q=${query}`);
+    const response = this._fetchWithUserAndTokenGet(`api/echotoken?q=${query}`);
     if (debug) console.log(response);
     return response;
   }
@@ -137,10 +137,10 @@ class NodeBridge {
     // Get user and token
     const { user, token } = this._getUserAndToken();
     const response = fetch(
-      `http://localhost:3099/api/runrcommand?rpackage=${rpackage}&rfunction=${rfunction}&params=${JSON.stringify(
-        params,
+      `api/runrcommand?rpackage=${rpackage}&rfunction=${rfunction}&params=${JSON.stringify(
+        params
       )}&valformat=${valformat}&user=${user}&token=${token}`,
-      { accept: 'application/json' },
+      { accept: 'application/json' }
     ).then(this.parseJSON);
 
     return response;
@@ -152,7 +152,7 @@ class NodeBridge {
    * @return {Object} Server response
    */
   loadData() {
-    return this._fetchWithUserAndTokenGet('http://localhost:3099/api/loaddata?');
+    return this._fetchWithUserAndTokenGet('api/loaddata?');
   }
 
   /**
@@ -161,7 +161,7 @@ class NodeBridge {
    * @return {Object} Server response
    */
   loadPublicData() {
-    return this._fetchWithUserAndTokenGet('http://localhost:3099/api/loadpublicdata?');
+    return this._fetchWithUserAndTokenGet('api/loadpublicdata?');
   }
 
   /**
@@ -174,9 +174,9 @@ class NodeBridge {
    */
   getDataset(name, biomartVariables, isPublic = false) {
     return this._fetchWithUserAndTokenGet(
-      `http://localhost:3099/api/getdataset?name=${name}&ispublic=${isPublic}&biomartvariables=${JSON.stringify(
-        biomartVariables,
-      )}`,
+      `api/getdataset?name=${name}&ispublic=${isPublic}&biomartvariables=${JSON.stringify(
+        biomartVariables
+      )}`
     );
   }
 
@@ -188,7 +188,7 @@ class NodeBridge {
    * @return {Object} Response
    */
   getMetadata(name, isPublic) {
-    return this._fetchWithUserAndTokenGet(`http://localhost:3099/api/getmetadata?name=${name}&ispublic=${isPublic}`);
+    return this._fetchWithUserAndTokenGet(`api/getmetadata?name=${name}&ispublic=${isPublic}`);
   }
 
   /**
@@ -200,7 +200,7 @@ class NodeBridge {
    */
   getGoSummary(ensemblDataset, ensemblVersion) {
     return this._fetchWithUserAndTokenGet(
-      `http://localhost:3099/api/getgosummary?ensembldataset=${ensemblDataset}&ensemblversion=${ensemblVersion}`,
+      `api/getgosummary?ensembldataset=${ensemblDataset}&ensemblversion=${ensemblVersion}`
     );
   }
 
@@ -213,7 +213,7 @@ class NodeBridge {
    */
   getBiomartVariables(ensemblDataset, ensemblVersion) {
     return this._fetchWithUserAndTokenGet(
-      `http://localhost:3099/api/getbiomartvariables?ensembldataset=${ensemblDataset}&ensemblversion=${ensemblVersion}`,
+      `api/getbiomartvariables?ensembldataset=${ensemblDataset}&ensemblversion=${ensemblVersion}`
     );
   }
 
@@ -226,7 +226,7 @@ class NodeBridge {
    */
   getGoPerGene(ensemblDataset, ensemblVersion) {
     return this._fetchWithUserAndTokenGet(
-      `http://localhost:3099/api/getgopergene?ensembldataset=${ensemblDataset}&ensemblversion=${ensemblVersion}`,
+      `api/getgopergene?ensembldataset=${ensemblDataset}&ensemblversion=${ensemblVersion}`
     );
   }
 
@@ -242,9 +242,9 @@ class NodeBridge {
     const data = {
       ensemblDataset,
       ensemblVersion,
-      ensemblIds,
+      ensemblIds
     };
-    return this._fetchWithUserAndTokenPost('http://localhost:3099/api/getpcaloadings', data);
+    return this._fetchWithUserAndTokenPost('api/getpcaloadings', data);
   }
 
   /**
