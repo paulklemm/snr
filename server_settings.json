@@ -1,6 +1,6 @@
 {
-  "users": "/Users/paul/Workshop/MPI/MPI-MR-Projects/SONAR/app/users/",
-  "sessionsPath": "/Users/paul/Workshop/MPI/MPI-MR-Projects/SONAR/app/sessions.json",
+  "users": "/home/opencpu/sonar/users/",
+  "sessionsPath": "/home/opencpu/sonar/sessions.json",
   "opencpuPath": "http://localhost:8004",
   "port": 3099
 }
