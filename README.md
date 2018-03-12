@@ -1,10 +1,9 @@
-# Sonar Readme
+# ⚓️ Sonar Readme
 
 <!-- TOC -->
 
-* [Sonar Readme](#sonar-readme)
+* [⚓️ Sonar Readme](#⚓️-sonar-readme)
   * [License](#license)
-  * [Git Setup](#git-setup)
   * [Project Roadmap](#project-roadmap)
     * [ToDo](#todo)
       * [Not in sprints](#not-in-sprints)
@@ -25,17 +24,6 @@
 ## License
 
 Until release of the paper presenting SNR it is under the restrictive **Attribution-NonCommercial-NoDerivatives 4.0 International** license. After that we'll switch to the **MIT** license.
-
-## Git Setup
-
-This repo knows two origins:
-
-```bash
-# From https://stackoverflow.com/questions/14290113/git-pushing-code-to-two-remotes
-git remote set-url --add --push origin git@github.com:snr-vis/snr.git
-git remote set-url --add --push origin git@github.sf.mpg.de:pklemm/sonar.git
-# Check with `git remote show origin`
-```
 
 ## Project Roadmap
 
