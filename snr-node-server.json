@@ -1,0 +1,5 @@
+{
+  "name": "snr-node-server",
+  "script": "server.js",
+  "cwd": "/usr/src/snr"
+}

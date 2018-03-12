@@ -15,6 +15,7 @@
     * [Pass an Array to `R`](#pass-an-array-to-r)
     * [Rendering Graphics from `R` in `Sonar`](#rendering-graphics-from-r-in-sonar)
     * [Rendering `Sonar` Components](#rendering-sonar-components)
+  * [🐳 Deployment Using pm2 in Docker image](#🐳-deployment-using-pm2-in-docker-image)
   * [Security](#security)
     * [Generate User file](#generate-user-file)
     * [Workflow for creating a new user](#workflow-for-creating-a-new-user)
@@ -199,6 +200,14 @@ Include the image in HTML using
 <Hexplot width={600} height={400} rnaSeqData={getIrisNewFormat()} xName="sepalWidth" yName="sepalLength" hexSize={10} hexMax={10} />
 <Piechart width={200} height={200} data={[1, 1, 2, 3, 5, 8, 13, 21]}/>
 <Hexplot width={500} height={400} rnaSeqData={this.state.rnaSeqData} xName="pValue" yName="fc" hexSize={10} hexMax={10} />
+```
+
+## 🐳 Deployment Using pm2 in Docker image
+
+In the docker image ([https://github.com/snr-vis/snr-docker](https://github.com/snr-vis/snr-docker)) the node server is started using [pm2](http://pm2.keymetrics.io). For this we provided a `snr-node-server.json` file that provides the required info. It is launched using:
+
+```bash
+pm2 <path-to-snr>/snr-node-server.json
 ```
 
 ## Security
